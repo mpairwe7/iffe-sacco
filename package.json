@@ -1,0 +1,20 @@
+{
+  "name": "iffe-sacco-monorepo",
+  "private": true,
+  "workspaces": ["apps/*", "packages/*"],
+  "scripts": {
+    "dev": "bun run --filter '*' dev",
+    "dev:web": "bun run --filter web dev",
+    "dev:api": "bun run --filter api dev",
+    "build": "bun run --filter '*' build",
+    "build:web": "bun run --filter web build",
+    "build:api": "bun run --filter api build",
+    "db:generate": "bun run --filter api db:generate",
+    "db:migrate": "bun run --filter api db:migrate",
+    "db:push": "bun run --filter api db:push",
+    "db:studio": "bun run --filter api db:studio",
+    "db:seed": "bun run --filter api db:seed",
+    "lint": "bun run --filter '*' lint",
+    "clean": "rm -rf node_modules apps/*/node_modules packages/*/node_modules"
+  }
+}

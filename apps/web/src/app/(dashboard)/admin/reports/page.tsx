@@ -1,0 +1,205 @@
+"use client";
+
+import { useState } from "react";
+import Link from "next/link";
+import { BarChart3, FileText, TrendingUp, Wallet, Receipt, Building2, Coins, PieChart, Download, Loader2 } from "lucide-react";
+import { apiClient } from "@/lib/api-client";
+import { toast } from "sonner";
+import { formatCurrency } from "@/lib/utils";
+
+const reports = [
+  { title: "Account Statement", desc: "Generate detailed account statements for any member", icon: FileText, color: "primary", href: "/admin/reports?type=statement" },
+  { title: "Account Balances", desc: "View current balances across all member accounts", icon: Wallet, color: "info", href: "/admin/reports?type=balances" },
+  { title: "Loan Report", desc: "Overview of all active, pending, and closed loans", icon: TrendingUp, color: "warning", href: "/admin/reports?type=loans" },
+  { title: "Loan Due Report", desc: "Loans with upcoming payment deadlines", icon: BarChart3, color: "danger", href: "/admin/reports?type=loan-due" },
+  { title: "Transaction Report", desc: "Comprehensive transaction history with filters", icon: Coins, color: "success", href: "/admin/reports?type=transactions" },
+  { title: "Expense Report", desc: "Breakdown of all organizational expenses", icon: Receipt, color: "danger", href: "/admin/reports?type=expenses" },
+  { title: "Revenue Report", desc: "Income from interest, fees, and other sources", icon: PieChart, color: "primary", href: "/admin/reports?type=revenue" },
+  { title: "Bank Transactions", desc: "All bank-related transaction records", icon: Building2, color: "info", href: "/admin/reports?type=bank" },
+];
+
+const colorMap: Record<string, string> = {
+  primary: "bg-primary/10 text-primary",
+  info: "bg-info/10 text-info",
+  warning: "bg-warning/10 text-warning",
+  danger: "bg-danger/10 text-danger",
+  success: "bg-success/10 text-success",
+};
+
+interface ReportResult {
+  title: string;
+  generatedAt: string;
+  summary?: Record<string, number>;
+  downloadUrl?: string;
+  rows?: Record<string, unknown>[];
+}
+
+export default function ReportsPage() {
+  const [reportType, setReportType] = useState("statement");
+  const [dateFrom, setDateFrom] = useState("2026-01-01");
+  const [dateTo, setDateTo] = useState("2026-03-25");
+  const [generating, setGenerating] = useState(false);
+  const [result, setResult] = useState<ReportResult | null>(null);
+
+  async function handleGenerate() {
+    setGenerating(true);
+    setResult(null);
+    try {
+      const data = await apiClient.post<ReportResult>("/reports/generate", {
+        type: reportType,
+        startDate: dateFrom,
+        endDate: dateTo,
+      });
+      setResult(data);
+      toast.success("Report generated successfully");
+    } catch (err) {
+      toast.error((err as Error).message || "Failed to generate report");
+    } finally {
+      setGenerating(false);
+    }
+  }
+
+  return (
+    <div className="space-y-6">
+      <div className="flex items-center gap-3">
+        <div className="w-10 h-10 rounded-xl bg-info/10 flex items-center justify-center">
+          <BarChart3 className="w-5 h-5 text-info" />
+        </div>
+        <div>
+          <h1 className="text-2xl font-bold text-text">Reports</h1>
+          <p className="text-text-muted text-sm">Generate and view financial reports</p>
+        </div>
+      </div>
+
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+        {reports.map((report) => (
+          <Link key={report.title} href={report.href} className="group glass-card rounded-2xl p-6 hover:shadow-lg hover:border-primary/20 transition-all hover:-translate-y-0.5">
+            <div className={`w-12 h-12 rounded-2xl flex items-center justify-center mb-4 ${colorMap[report.color]}`}>
+              <report.icon className="w-6 h-6" />
+            </div>
+            <h3 className="font-semibold text-text mb-1 group-hover:text-primary transition-colors">{report.title}</h3>
+            <p className="text-sm text-text-muted">{report.desc}</p>
+          </Link>
+        ))}
+      </div>
+
+      {/* Quick Report Generator */}
+      <div className="glass-card rounded-2xl p-6">
+        <h3 className="text-base font-semibold text-text mb-4">Quick Report Generator</h3>
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+          <div>
+            <label className="block text-sm font-medium text-text mb-2">Report Type</label>
+            <select
+              value={reportType}
+              onChange={(e) => setReportType(e.target.value)}
+              className="w-full px-4 py-2.5 bg-white/60 border border-white/40 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
+            >
+              <option value="statement">Account Statement</option>
+              <option value="transactions">Transaction Report</option>
+              <option value="loans">Loan Report</option>
+              <option value="expenses">Expense Report</option>
+              <option value="revenue">Revenue Report</option>
+            </select>
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-text mb-2">Date From</label>
+            <input
+              type="date"
+              value={dateFrom}
+              onChange={(e) => setDateFrom(e.target.value)}
+              className="w-full px-4 py-2.5 bg-white/60 border border-white/40 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-text mb-2">Date To</label>
+            <input
+              type="date"
+              value={dateTo}
+              onChange={(e) => setDateTo(e.target.value)}
+              className="w-full px-4 py-2.5 bg-white/60 border border-white/40 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
+            />
+          </div>
+          <div className="flex items-end">
+            <button
+              onClick={handleGenerate}
+              disabled={generating}
+              className="w-full px-6 py-2.5 text-sm font-medium text-white bg-primary rounded-xl hover:bg-primary-dark transition-colors disabled:opacity-50 inline-flex items-center justify-center gap-2"
+            >
+              {generating ? (
+                <Loader2 className="w-4 h-4 animate-spin" />
+              ) : null}
+              {generating ? "Generating..." : "Generate Report"}
+            </button>
+          </div>
+        </div>
+      </div>
+
+      {/* Report Results */}
+      {result && (
+        <div className="glass-card rounded-2xl">
+          <div className="p-6 border-b border-border/50 flex items-center justify-between">
+            <div>
+              <h3 className="text-base font-semibold text-text">{result.title || "Generated Report"}</h3>
+              {result.generatedAt && (
+                <p className="text-xs text-text-muted mt-1">Generated: {new Date(result.generatedAt).toLocaleString()}</p>
+              )}
+            </div>
+            {result.downloadUrl && (
+              <a
+                href={result.downloadUrl}
+                download
+                className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-primary border border-primary/30 rounded-xl hover:bg-primary/10"
+              >
+                <Download className="w-4 h-4" /> Download
+              </a>
+            )}
+          </div>
+
+          {result.summary && (
+            <div className="p-6 grid grid-cols-2 sm:grid-cols-4 gap-4">
+              {Object.entries(result.summary).map(([key, value]) => (
+                <div key={key} className="text-center">
+                  <p className="text-xs text-text-muted uppercase tracking-wider">
+                    {key.replace(/([A-Z])/g, " $1").replace(/_/g, " ").trim()}
+                  </p>
+                  <p className="text-lg font-bold text-text mt-1">
+                    {typeof value === "number" && value > 999
+                      ? formatCurrency(value)
+                      : String(value)}
+                  </p>
+                </div>
+              ))}
+            </div>
+          )}
+
+          {result.rows && result.rows.length > 0 && (
+            <div className="overflow-x-auto">
+              <table className="w-full">
+                <thead>
+                  <tr className="border-b border-border/50">
+                    {Object.keys(result.rows[0]).map((key) => (
+                      <th key={key} className="text-xs font-semibold text-text-muted uppercase tracking-wider px-4 py-3 text-left">
+                        {key.replace(/([A-Z])/g, " $1").replace(/_/g, " ").trim()}
+                      </th>
+                    ))}
+                  </tr>
+                </thead>
+                <tbody>
+                  {result.rows.map((row, i) => (
+                    <tr key={i} className="border-b border-border/30">
+                      {Object.values(row).map((val, j) => (
+                        <td key={j} className="px-4 py-3 text-sm text-text">
+                          {String(val ?? "")}
+                        </td>
+                      ))}
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
+        </div>
+      )}
+    </div>
+  );
+}

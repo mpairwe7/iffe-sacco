@@ -1,0 +1,14 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "outDir": "./dist",
+    "rootDir": "./src",
+    "types": ["bun-types"],
+    "paths": {
+      "@/*": ["./src/*"],
+      "@iffe/shared": ["../shared/src"],
+      "@iffe/shared/*": ["../shared/src/*"]
+    }
+  },
+  "include": ["src/**/*", "prisma/**/*"]
+}

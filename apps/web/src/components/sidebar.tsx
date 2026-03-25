@@ -1,0 +1,320 @@
+"use client";
+
+import { useState } from "react";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
+import { cn } from "@/lib/utils";
+import {
+  LayoutDashboard,
+  Users,
+  Calendar,
+  Landmark,
+  Coins,
+  Banknote,
+  Wallet,
+  Receipt,
+  CreditCard,
+  ClipboardList,
+  Building2,
+  Heart,
+  UserCog,
+  Globe,
+  BarChart3,
+  Settings,
+  HelpCircle,
+  ChevronDown,
+  LogOut,
+  X,
+} from "lucide-react";
+
+interface SidebarProps {
+  open: boolean;
+  onClose: () => void;
+}
+
+interface NavItem {
+  label: string;
+  href?: string;
+  icon: React.ElementType;
+  children?: { label: string; href: string }[];
+  divider?: boolean;
+  section?: string;
+}
+
+const navItems: NavItem[] = [
+  { label: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
+  // Member Portal Section
+  { label: "", href: undefined, icon: LayoutDashboard, divider: true, section: "Member Portal" },
+  {
+    label: "My Savings",
+    icon: Wallet,
+    children: [
+      { label: "My Accounts", href: "/portal/savings" },
+      { label: "Deposit Funds", href: "/portal/deposits" },
+      { label: "Withdraw Funds", href: "/portal/withdrawals" },
+    ],
+  },
+  {
+    label: "My Loans",
+    icon: CreditCard,
+    children: [
+      { label: "Loan Overview", href: "/portal/loans" },
+      { label: "Apply for Loan", href: "/portal/loans#apply" },
+    ],
+  },
+  { label: "My Transactions", href: "/portal/transactions", icon: Wallet },
+  { label: "Social Welfare", href: "/portal/welfare", icon: Heart },
+  // Admin Section
+  { label: "", href: undefined, icon: LayoutDashboard, divider: true, section: "Administration" },
+  {
+    label: "Members",
+    icon: Users,
+    children: [
+      { label: "View Members", href: "/admin/members" },
+      { label: "Add Member", href: "/admin/members/create" },
+      { label: "Member Requests", href: "/admin/members/requests" },
+    ],
+  },
+  { label: "Upcoming Payments", href: "/admin/loans", icon: Calendar },
+  {
+    label: "Accounts",
+    icon: Landmark,
+    children: [
+      { label: "Member Accounts", href: "/admin/savings-accounts" },
+      { label: "Interest Calculation", href: "/admin/interest" },
+      { label: "Account Types", href: "/admin/savings-products" },
+    ],
+  },
+  {
+    label: "Deposit",
+    icon: Coins,
+    children: [
+      { label: "Deposit Money", href: "/admin/transactions/create?type=deposit" },
+      { label: "Deposit Requests", href: "/admin/deposit-requests" },
+    ],
+  },
+  {
+    label: "Withdraw",
+    icon: Banknote,
+    children: [
+      { label: "Withdraw Money", href: "/admin/transactions/create?type=withdraw" },
+      { label: "Withdraw Requests", href: "/admin/withdraw-requests" },
+    ],
+  },
+  {
+    label: "Transactions",
+    icon: Wallet,
+    children: [
+      { label: "New Transaction", href: "/admin/transactions/create" },
+      { label: "Transaction History", href: "/admin/transactions" },
+    ],
+  },
+  {
+    label: "Expenses",
+    icon: Receipt,
+    children: [
+      { label: "All Expenses", href: "/admin/expenses" },
+      { label: "Expense Categories", href: "/admin/expense-categories" },
+    ],
+  },
+  {
+    label: "Payment Methods",
+    icon: CreditCard,
+    children: [
+      { label: "Payment Gateways", href: "/admin/payment-gateways" },
+      { label: "Deposit Methods", href: "/admin/deposit-methods" },
+      { label: "Withdraw Methods", href: "/admin/withdraw-methods" },
+    ],
+  },
+  {
+    label: "Bank Accounts",
+    icon: Building2,
+    children: [
+      { label: "Bank Accounts", href: "/admin/bank-accounts" },
+      { label: "Bank Transactions", href: "/admin/bank-transactions" },
+    ],
+  },
+  {
+    label: "Social Welfare",
+    icon: Heart,
+    children: [
+      { label: "Welfare Programs", href: "/admin/welfare" },
+      { label: "Pledges", href: "/admin/pledges" },
+    ],
+  },
+  {
+    label: "User Management",
+    icon: UserCog,
+    children: [
+      { label: "All Users", href: "/admin/users" },
+      { label: "User Roles", href: "/admin/roles" },
+      { label: "Access Control", href: "/admin/access-control" },
+    ],
+  },
+  { label: "Languages", href: "/admin/languages", icon: Globe },
+  {
+    label: "Reports",
+    icon: BarChart3,
+    children: [
+      { label: "Account Statement", href: "/admin/reports?type=statement" },
+      { label: "Account Balances", href: "/admin/reports?type=balances" },
+      { label: "Loan Report", href: "/admin/reports?type=loans" },
+      { label: "Transaction Report", href: "/admin/reports?type=transactions" },
+      { label: "Expense Report", href: "/admin/reports?type=expenses" },
+      { label: "Revenue Report", href: "/admin/reports?type=revenue" },
+    ],
+  },
+  { label: "Help & Support", href: "/portal/help", icon: HelpCircle },
+  {
+    label: "Settings",
+    icon: Settings,
+    children: [
+      { label: "General Settings", href: "/admin/settings" },
+      { label: "Currency", href: "/admin/currency" },
+      { label: "Notifications", href: "/admin/notifications" },
+      { label: "Database Backup", href: "/admin/backup" },
+    ],
+  },
+];
+
+export function Sidebar({ open, onClose }: SidebarProps) {
+  const pathname = usePathname();
+  const [expanded, setExpanded] = useState<string | null>(null);
+
+  const toggleExpand = (label: string) => {
+    setExpanded(expanded === label ? null : label);
+  };
+
+  const isActive = (href: string) => pathname === href || pathname.startsWith(href + "/");
+
+  return (
+    <>
+      {/* Overlay for mobile */}
+      {open && (
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-40 lg:hidden" onClick={onClose} aria-hidden="true" />
+      )}
+
+      <aside
+        role="navigation"
+        aria-label="Main navigation"
+        className={cn(
+          "fixed top-0 left-0 h-full w-[280px] lg:w-72 glass-dark z-50 flex flex-col transition-transform duration-300 lg:translate-x-0",
+          open ? "translate-x-0" : "-translate-x-full"
+        )}
+        onKeyDown={(e) => { if (e.key === "Escape" && open) onClose(); }}
+      >
+        {/* Logo */}
+        <div className="flex items-center justify-between px-6 h-20 border-b border-white/10">
+          <Link href="/dashboard" className="flex items-center gap-3">
+            { /* eslint-disable-next-line @next/next/no-img-element */ }
+            <img src="/logo.png" alt="IFFE SACCO" className="w-9 h-9 object-contain" />
+            <span className="text-lg font-bold text-white">IFFE SACCO</span>
+          </Link>
+          <button onClick={onClose} className="lg:hidden text-white/60 hover:text-white">
+            <X className="w-5 h-5" />
+          </button>
+        </div>
+
+        {/* User */}
+        <div className="px-6 py-4 border-b border-white/10">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-full bg-primary/20 flex items-center justify-center">
+              <span className="text-sm font-bold text-primary">AD</span>
+            </div>
+            <div>
+              <div className="text-sm font-semibold text-white">Admin</div>
+              <div className="text-xs text-white/50">Administrator</div>
+            </div>
+          </div>
+        </div>
+
+        {/* Navigation */}
+        <nav className="flex-1 overflow-y-auto px-3 py-4 space-y-1">
+          {navItems.map((item, idx) => {
+            if (item.divider) {
+              return (
+                <div key={`divider-${idx}`} className="pt-4 pb-2">
+                  <div className="border-t border-white/10 pt-3 px-3">
+                    <span className="text-[11px] font-semibold uppercase tracking-wider text-white/30">{item.section}</span>
+                  </div>
+                </div>
+              );
+            }
+
+            if (item.children) {
+              const isOpen = expanded === item.label;
+              const hasActive = item.children.some((c) => isActive(c.href));
+
+              return (
+                <div key={item.label}>
+                  <button
+                    onClick={() => toggleExpand(item.label)}
+                    className={cn(
+                      "w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-colors",
+                      hasActive
+                        ? "text-white bg-white/10"
+                        : "text-white/60 hover:text-white hover:bg-white/5"
+                    )}
+                  >
+                    <item.icon className="w-5 h-5 shrink-0" />
+                    <span className="flex-1 text-left">{item.label}</span>
+                    <ChevronDown
+                      className={cn("w-4 h-4 transition-transform", isOpen && "rotate-180")}
+                    />
+                  </button>
+                  {isOpen && (
+                    <div className="ml-8 mt-1 space-y-0.5 border-l border-white/10 pl-3">
+                      {item.children.map((child) => (
+                        <Link
+                          key={child.href}
+                          href={child.href}
+                          onClick={onClose}
+                          className={cn(
+                            "block px-3 py-2 rounded-lg text-sm transition-colors",
+                            isActive(child.href)
+                              ? "text-primary font-medium bg-primary/10"
+                              : "text-white/50 hover:text-white hover:bg-white/5"
+                          )}
+                        >
+                          {child.label}
+                        </Link>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              );
+            }
+
+            return (
+              <Link
+                key={item.href}
+                href={item.href!}
+                onClick={onClose}
+                className={cn(
+                  "flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-colors",
+                  isActive(item.href!)
+                    ? "text-white bg-primary"
+                    : "text-white/60 hover:text-white hover:bg-white/5"
+                )}
+              >
+                <item.icon className="w-5 h-5 shrink-0" />
+                <span>{item.label}</span>
+              </Link>
+            );
+          })}
+        </nav>
+
+        {/* Logout */}
+        <div className="px-3 py-4 border-t border-white/10">
+          <Link
+            href="/login"
+            className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-white/60 hover:text-danger hover:bg-danger/10 transition-colors"
+          >
+            <LogOut className="w-5 h-5" />
+            <span>Logout</span>
+          </Link>
+        </div>
+      </aside>
+    </>
+  );
+}

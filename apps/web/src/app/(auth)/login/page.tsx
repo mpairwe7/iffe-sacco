@@ -1,0 +1,116 @@
+"use client";
+
+import Link from "next/link";
+import { useState } from "react";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { Eye, EyeOff, Mail, Lock, ArrowRight, Loader2 } from "lucide-react";
+import { toast } from "sonner";
+import { loginSchema, type LoginInput } from "@/lib/schemas";
+import { useLogin } from "@/hooks/use-auth";
+import { useAuthStore } from "@/stores/auth-store";
+import { SecurityBadge } from "@/components/ui/security-badge";
+import { useRouter } from "next/navigation";
+
+export default function LoginPage() {
+  const [showPassword, setShowPassword] = useState(false);
+  const router = useRouter();
+  const login = useLogin();
+  const setAuth = useAuthStore((s) => s.setAuth);
+
+  const { register, handleSubmit, formState: { errors } } = useForm<LoginInput>({
+    resolver: zodResolver(loginSchema),
+  });
+
+  async function onSubmit(data: LoginInput) {
+    try {
+      const result = await login.mutateAsync({ email: data.email, password: data.password });
+      setAuth(result.user, result.tokens);
+      toast.success("Welcome back!");
+      router.push("/dashboard");
+    } catch (err: any) {
+      toast.error(err.message || "Login failed");
+    }
+  }
+
+  return (
+    <>
+      <div className="glass-card rounded-3xl p-8 shadow-xl">
+        <h2 className="text-2xl font-bold text-text text-center">Welcome Back</h2>
+        <p className="text-text-muted text-center mt-2 mb-8">Sign in to your account</p>
+
+        <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
+          <div>
+            <label htmlFor="email" className="block text-sm font-medium text-text mb-2">Email Address</label>
+            <div className="relative">
+              <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-text-light" />
+              <input
+                id="email"
+                type="email"
+                placeholder="you@example.com"
+                autoComplete="email"
+                {...register("email")}
+                aria-invalid={!!errors.email}
+                className={`w-full pl-12 pr-4 py-3.5 bg-white/60 dark:bg-white/5 border rounded-xl text-sm text-text placeholder:text-text-light focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary focus:bg-white/80 dark:focus:bg-white/10 ${errors.email ? "border-danger" : "border-white/40 dark:border-white/10"}`}
+              />
+            </div>
+            {errors.email && <p className="text-xs text-danger mt-1.5" role="alert">{errors.email.message}</p>}
+          </div>
+
+          <div>
+            <label htmlFor="password" className="block text-sm font-medium text-text mb-2">Password</label>
+            <div className="relative">
+              <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-text-light" />
+              <input
+                id="password"
+                type={showPassword ? "text" : "password"}
+                placeholder="Enter your password"
+                autoComplete="current-password"
+                {...register("password")}
+                aria-invalid={!!errors.password}
+                className={`w-full pl-12 pr-12 py-3.5 bg-white/60 dark:bg-white/5 border rounded-xl text-sm text-text placeholder:text-text-light focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary focus:bg-white/80 dark:focus:bg-white/10 ${errors.password ? "border-danger" : "border-white/40 dark:border-white/10"}`}
+              />
+              <button
+                type="button"
+                onClick={() => setShowPassword(!showPassword)}
+                className="absolute right-4 top-1/2 -translate-y-1/2 text-text-light hover:text-text"
+                tabIndex={-1}
+              >
+                {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+              </button>
+            </div>
+            {errors.password && <p className="text-xs text-danger mt-1.5" role="alert">{errors.password.message}</p>}
+          </div>
+
+          <div className="flex items-center justify-between">
+            <label className="flex items-center gap-2 cursor-pointer">
+              <input type="checkbox" {...register("remember")} className="w-4 h-4 rounded border-border text-primary focus:ring-primary/20" />
+              <span className="text-sm text-text-muted">Remember me</span>
+            </label>
+            <Link href="/password/reset" className="text-sm font-medium text-primary hover:text-primary-dark">
+              Forgot Password?
+            </Link>
+          </div>
+
+          <button
+            type="submit"
+            disabled={login.isPending}
+            className="w-full flex items-center justify-center gap-2 px-6 py-3.5 text-base font-semibold text-white bg-gradient-to-r from-primary to-primary-dark rounded-xl hover:shadow-xl hover:shadow-primary/30 hover:-translate-y-0.5 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:translate-y-0 disabled:hover:shadow-none"
+          >
+            {login.isPending ? (
+              <><Loader2 className="w-5 h-5 animate-spin" /> Signing in...</>
+            ) : (
+              <>Sign In <ArrowRight className="w-5 h-5" /></>
+            )}
+          </button>
+        </form>
+
+        <p className="text-center text-sm text-text-muted mt-6">
+          Don&apos;t have an account?{" "}
+          <Link href="/register" className="font-semibold text-primary hover:text-primary-dark">Create Account</Link>
+        </p>
+      </div>
+      <SecurityBadge />
+    </>
+  );
+}

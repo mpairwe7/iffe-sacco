@@ -1,0 +1,230 @@
+"use client";
+
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { ArrowLeft, Save, UserPlus, Loader2 } from "lucide-react";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { memberSchema, type MemberInput } from "@/lib/schemas";
+import { useCreateMember } from "@/hooks/use-members";
+import { toast } from "sonner";
+
+export default function CreateMemberPage() {
+  const router = useRouter();
+  const createMember = useCreateMember();
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isSubmitting },
+  } = useForm<MemberInput>({
+    resolver: zodResolver(memberSchema) as any,
+    defaultValues: {
+      country: "UG",
+    },
+  });
+
+  async function onSubmit(data: MemberInput) {
+    try {
+      await createMember.mutateAsync(data as Parameters<typeof createMember.mutateAsync>[0]);
+      toast.success("Member created");
+      router.push("/admin/members");
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : "Failed to create member");
+    }
+  }
+
+  return (
+    <div className="space-y-6">
+      <div className="flex items-center gap-4">
+        <Link href="/admin/members" className="p-2 hover:bg-white rounded-xl border border-border">
+          <ArrowLeft className="w-5 h-5 text-text-muted" />
+        </Link>
+        <div className="flex items-center gap-3">
+          <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center">
+            <UserPlus className="w-5 h-5 text-primary" />
+          </div>
+          <div>
+            <h1 className="text-2xl font-bold text-text">Add New Member</h1>
+            <p className="text-text-muted text-sm">Register a new SACCO member</p>
+          </div>
+        </div>
+      </div>
+
+      <form onSubmit={handleSubmit(onSubmit)} className="glass-card rounded-2xl">
+        {/* Personal Information */}
+        <div className="p-6 border-b border-border">
+          <h3 className="text-base font-semibold text-text mb-4">Personal Information</h3>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+            <div>
+              <label className="block text-sm font-medium text-text mb-2">First Name *</label>
+              <input
+                type="text"
+                {...register("firstName")}
+                className="w-full px-4 py-2.5 bg-white/60 border border-white/40 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
+              />
+              {errors.firstName && <p className="text-xs text-danger mt-1">{errors.firstName.message}</p>}
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-text mb-2">Last Name *</label>
+              <input
+                type="text"
+                {...register("lastName")}
+                className="w-full px-4 py-2.5 bg-white/60 border border-white/40 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
+              />
+              {errors.lastName && <p className="text-xs text-danger mt-1">{errors.lastName.message}</p>}
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-text mb-2">Member ID</label>
+              <input type="text" placeholder="Auto-generated" disabled className="w-full px-4 py-2.5 bg-white/60 border border-white/40 rounded-xl text-sm text-text-muted" />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-text mb-2">Email *</label>
+              <input
+                type="email"
+                {...register("email")}
+                className="w-full px-4 py-2.5 bg-white/60 border border-white/40 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
+              />
+              {errors.email && <p className="text-xs text-danger mt-1">{errors.email.message}</p>}
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-text mb-2">Phone Number *</label>
+              <input
+                type="tel"
+                {...register("phone")}
+                className="w-full px-4 py-2.5 bg-white/60 border border-white/40 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
+              />
+              {errors.phone && <p className="text-xs text-danger mt-1">{errors.phone.message}</p>}
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-text mb-2">Date of Birth</label>
+              <input
+                type="date"
+                {...register("dateOfBirth")}
+                className="w-full px-4 py-2.5 bg-white/60 border border-white/40 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-text mb-2">Gender</label>
+              <select
+                {...register("gender")}
+                className="w-full px-4 py-2.5 bg-white/60 border border-white/40 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
+              >
+                <option value="">Select Gender</option>
+                <option value="male">Male</option>
+                <option value="female">Female</option>
+                <option value="other">Other</option>
+              </select>
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-text mb-2">National ID</label>
+              <input
+                type="text"
+                {...register("nationalId")}
+                className="w-full px-4 py-2.5 bg-white/60 border border-white/40 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-text mb-2">Occupation</label>
+              <input
+                type="text"
+                {...register("occupation")}
+                className="w-full px-4 py-2.5 bg-white/60 border border-white/40 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
+              />
+            </div>
+          </div>
+        </div>
+
+        {/* Address */}
+        <div className="p-6 border-b border-border">
+          <h3 className="text-base font-semibold text-text mb-4">Address Information</h3>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+            <div className="lg:col-span-2">
+              <label className="block text-sm font-medium text-text mb-2">Street Address</label>
+              <input
+                type="text"
+                {...register("address")}
+                className="w-full px-4 py-2.5 bg-white/60 border border-white/40 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-text mb-2">City</label>
+              <input
+                type="text"
+                {...register("city")}
+                className="w-full px-4 py-2.5 bg-white/60 border border-white/40 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-text mb-2">District</label>
+              <input
+                type="text"
+                {...register("district")}
+                className="w-full px-4 py-2.5 bg-white/60 border border-white/40 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-text mb-2">Country</label>
+              <select
+                {...register("country")}
+                className="w-full px-4 py-2.5 bg-white/60 border border-white/40 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
+              >
+                <option value="UG">Uganda</option>
+                <option value="KE">Kenya</option>
+                <option value="TZ">Tanzania</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        {/* Account Settings */}
+        <div className="p-6 border-b border-border">
+          <h3 className="text-base font-semibold text-text mb-4">Account Settings</h3>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+            <div>
+              <label className="block text-sm font-medium text-text mb-2">Account Type *</label>
+              <select
+                {...register("accountType")}
+                className="w-full px-4 py-2.5 bg-white/60 border border-white/40 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
+              >
+                <option value="">Select Account Type</option>
+                <option value="savings">Savings Account</option>
+                <option value="current">Current Account</option>
+                <option value="fixed">Fixed Deposit</option>
+              </select>
+              {errors.accountType && <p className="text-xs text-danger mt-1">{errors.accountType.message}</p>}
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-text mb-2">Initial Deposit</label>
+              <input
+                type="number"
+                min="0"
+                placeholder="0.00"
+                {...register("initialDeposit", { valueAsNumber: true })}
+                className="w-full px-4 py-2.5 bg-white/60 border border-white/40 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
+              />
+            </div>
+          </div>
+        </div>
+
+        {/* Actions */}
+        <div className="flex items-center justify-end gap-3 p-6">
+          <Link href="/admin/members" className="px-6 py-2.5 text-sm font-medium text-text-muted border border-border rounded-xl hover:bg-surface-alt">
+            Cancel
+          </Link>
+          <button
+            type="submit"
+            disabled={isSubmitting || createMember.isPending}
+            className="inline-flex items-center gap-2 px-6 py-2.5 text-sm font-medium text-white bg-primary rounded-xl hover:bg-primary-dark transition-colors disabled:opacity-50"
+          >
+            {isSubmitting || createMember.isPending ? (
+              <Loader2 className="w-4 h-4 animate-spin" />
+            ) : (
+              <Save className="w-4 h-4" />
+            )}
+            Save Member
+          </button>
+        </div>
+      </form>
+    </div>
+  );
+}
