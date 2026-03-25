@@ -34,18 +34,19 @@ IFFE/
 ├── packages/
 │   ├── api/                        # Hono API Backend
 │   │   ├── prisma/
-│   │   │   ├── schema.prisma       # 11 database models
-│   │   │   ├── migrations/         # Version-controlled migrations
-│   │   │   └── seed.ts             # Database seeder
+│   │   │   ├── schema.prisma       # 14 database models (User, Member, Account, Transaction, Loan, Expense, WelfareProgram, Pledge, AuditLog, BankAccount, DepositRequest, WithdrawRequest, PaymentGateway, Setting)
+│   │   │   ├── migrations/         # 2 version-controlled migrations
+│   │   │   ├── seed.ts             # TypeScript seeder (alternative)
+│   │   │   └── seed.sql            # SQL seeder (recommended, 209+ records)
 │   │   ├── prisma.config.ts        # Prisma 7.x config
 │   │   └── src/
-│   │       ├── index.ts            # Hono server entry point
-│   │       ├── config/             # Environment, database connection
-│   │       ├── middleware/          # Auth (JWT), error handler
-│   │       ├── routes/             # HTTP route handlers
-│   │       ├── services/           # Business logic layer
-│   │       ├── repositories/       # Data access layer (Prisma)
-│   │       └── utils/              # JWT, password hashing
+│   │       ├── index.ts            # Hono server entry (17 route groups, 87 endpoints)
+│   │       ├── config/             # Environment validation, PrismaPg database connection
+│   │       ├── middleware/          # JWT auth (role-based), error handler (Zod + HTTP)
+│   │       ├── routes/             # 17 route files (auth, members, accounts, transactions, loans, expenses, welfare, dashboard, deposit-requests, withdraw-requests, payment-gateways, bank-accounts, users, settings, interest, reports, audit-logs)
+│   │       ├── services/           # 9 service files (business logic, validation, orchestration)
+│   │       ├── repositories/       # 9 repository files (Prisma queries, pagination, aggregation)
+│   │       └── utils/              # JWT (jose), password hashing (bcrypt)
 │   │
 │   └── shared/                     # Shared between frontend & backend
 │       └── src/

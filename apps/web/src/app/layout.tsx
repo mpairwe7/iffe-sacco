@@ -11,6 +11,10 @@ export const metadata: Metadata = {
     "Join IFFE Sacco for secure savings, affordable loans, and financial empowerment. A modern cooperative society dedicated to your growth.",
   keywords:
     "Sacco, savings, loans, finance, cooperative, IFFE, investment, membership",
+  icons: {
+    icon: "/favicon.png",
+    apple: "/favicon.png",
+  },
   openGraph: {
     title: "IFFE SACCO - Empowering Financial Freedom",
     description:
