@@ -10,12 +10,19 @@ export default function AuthLayout({ children }: { children: React.ReactNode }) 
       <div className="blob blob-3 w-[350px] h-[350px] bg-secondary/15 -bottom-20 left-1/4" />
 
       <div className="relative z-10 w-full max-w-2xl">
-        <div className="text-center mb-8">
-          <Link href="/" className="inline-flex items-center gap-3 group">
-            <div className="glass rounded-2xl p-2 shadow-lg group-hover:scale-105 transition-transform">
-              <img src="/logo.png" alt="IFFE SACCO" className="w-10 h-10 object-contain" />
+        <div className="text-center mb-10">
+          <Link href="/" className="inline-flex flex-col items-center gap-4 group">
+            <div className="glass rounded-3xl p-4 shadow-xl group-hover:scale-105 transition-transform ring-1 ring-white/30">
+              <img src="/logo.png" alt="IFFE SACCO Logo" className="w-20 h-20 sm:w-24 sm:h-24 object-contain drop-shadow-md" />
             </div>
-            <span className="text-2xl font-extrabold text-text">IFFE <span className="text-primary">SACCO</span></span>
+            <div className="leading-tight">
+              <span className="text-3xl sm:text-4xl font-extrabold tracking-tight text-text">
+                IFFE <span className="text-primary">SACCO</span>
+              </span>
+              <p className="text-xs sm:text-sm font-medium text-text-muted tracking-widest uppercase mt-1.5">
+                Empowering Financial Freedom
+              </p>
+            </div>
           </Link>
         </div>
         {children}
