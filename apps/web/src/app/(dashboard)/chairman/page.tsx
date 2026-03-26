@@ -98,7 +98,7 @@ export default function ChairmanPage() {
           <>
             <StatCard
               title="Total Members"
-              value={stats ? String(stats.totalMembers.toLocaleString()) : "\u2014"}
+              value={stats ? String(stats.totalMembers.toLocaleString()) : "Failed to load"}
               changeType="positive"
               icon={Users}
               color="primary"
@@ -108,7 +108,7 @@ export default function ChairmanPage() {
               value={
                 stats
                   ? formatCurrency(Number(stats.activeLoanAmount))
-                  : "\u2014"
+                  : "Failed to load"
               }
               change={stats ? `${stats.activeLoans} active loans` : undefined}
               changeType="neutral"
@@ -118,7 +118,7 @@ export default function ChairmanPage() {
             <StatCard
               title="Total Deposits"
               value={
-                stats ? formatCurrency(Number(stats.totalDeposits)) : "\u2014"
+                stats ? formatCurrency(Number(stats.totalDeposits)) : "Failed to load"
               }
               changeType="positive"
               icon={Coins}
@@ -127,7 +127,7 @@ export default function ChairmanPage() {
             <StatCard
               title="Total Expenses"
               value={
-                stats ? formatCurrency(Number(stats.totalExpenses)) : "\u2014"
+                stats ? formatCurrency(Number(stats.totalExpenses)) : "Failed to load"
               }
               changeType="neutral"
               icon={Receipt}
@@ -189,7 +189,7 @@ export default function ChairmanPage() {
                     <Banknote className="w-5 h-5 text-warning" />
                   </div>
                   <div className="flex-1 min-w-0">
-                    <p className="text-sm font-medium text-text truncate">
+                    <p className="text-sm font-medium text-text truncate" title={expense.description}>
                       {expense.description}
                     </p>
                     <p className="text-xs text-text-muted">

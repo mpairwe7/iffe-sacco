@@ -21,7 +21,7 @@ const colorMap = {
 
 export function StatCard({ title, value, change, changeType = "positive", icon: Icon, color }: StatCardProps) {
   return (
-    <div className="glass-card rounded-2xl p-6 hover:-translate-y-0.5">
+    <div role="status" aria-label={`${title}: ${value}`} className="glass-card rounded-2xl p-6 hover:-translate-y-0.5">
       <div className="flex items-start justify-between">
         <div>
           <p className="text-sm text-text-muted font-medium">{title}</p>

@@ -45,16 +45,17 @@ function SectionCard({
   icon: React.ElementType;
   children: React.ReactNode;
 }) {
+  const id = title.toLowerCase().replace(/\s+/g, "-");
   return (
-    <div className="glass-card rounded-2xl p-6">
+    <section aria-labelledby={id} className="glass-card rounded-2xl p-6">
       <div className="flex items-center gap-2 mb-4">
         <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center">
           <Icon className="w-4 h-4 text-primary" />
         </div>
-        <h3 className="text-base font-semibold text-text">{title}</h3>
+        <h3 id={id} className="text-base font-semibold text-text">{title}</h3>
       </div>
       {children}
-    </div>
+    </section>
   );
 }
 
@@ -76,6 +77,7 @@ function JsonTable({
             {columns.map((col) => (
               <th
                 key={col.key}
+                scope="col"
                 className="text-left text-xs font-semibold text-text-muted uppercase tracking-wider px-4 py-2"
               >
                 {col.label}
@@ -410,7 +412,7 @@ export default function ApplicationDetailPage() {
 
       {/* Action Buttons (only for pending) */}
       {app.status === "pending" && (
-        <div className="flex items-center justify-end gap-3">
+        <div className="sticky bottom-0 bg-surface/80 backdrop-blur-lg border-t border-border/50 p-4 -mx-4 mt-6 flex gap-3 justify-end">
           <button
             onClick={() => {
               setRejectReason("");

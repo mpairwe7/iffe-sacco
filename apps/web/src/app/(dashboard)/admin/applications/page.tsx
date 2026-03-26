@@ -111,8 +111,9 @@ export default function ApplicationsPage() {
       <div className="flex items-center gap-1">
         <Link
           href={`/admin/applications/${row.id}`}
-          className="p-1.5 text-text-muted hover:text-primary rounded-lg hover:bg-primary/10"
+          className="p-2 text-text-muted hover:text-primary rounded-lg hover:bg-primary/10"
           title="View"
+          aria-label="View application"
         >
           <Eye className="w-4 h-4" />
         </Link>
@@ -123,8 +124,9 @@ export default function ApplicationsPage() {
                 setApproveId(row.id);
                 setApproveOpen(true);
               }}
-              className="p-1.5 text-text-muted hover:text-success rounded-lg hover:bg-success/10"
+              className="p-2 text-text-muted hover:text-success rounded-lg hover:bg-success/10"
               title="Approve"
+              aria-label="Approve application"
             >
               <Check className="w-4 h-4" />
             </button>
@@ -134,8 +136,9 @@ export default function ApplicationsPage() {
                 setRejectReason("");
                 setRejectOpen(true);
               }}
-              className="p-1.5 text-text-muted hover:text-danger rounded-lg hover:bg-danger/10"
+              className="p-2 text-text-muted hover:text-danger rounded-lg hover:bg-danger/10"
               title="Reject"
+              aria-label="Reject application"
             >
               <X className="w-4 h-4" />
             </button>

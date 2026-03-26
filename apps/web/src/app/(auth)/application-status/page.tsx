@@ -86,7 +86,7 @@ export default function ApplicationStatusPage() {
       </p>
 
       {/* Status Badge - Large and Centered */}
-      <div className="flex flex-col items-center mb-8">
+      <div className="flex flex-col items-center mb-8" aria-live="polite">
         {application.status === "pending" && (
           <>
             <div className="w-20 h-20 rounded-full bg-warning/10 flex items-center justify-center mb-4">

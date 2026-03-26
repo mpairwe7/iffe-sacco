@@ -181,7 +181,7 @@ export function DataTable<T extends Record<string, any>>({
       {/* Desktop Table */}
       <div className="hidden md:block overflow-x-auto">
         <table className="w-full" role="grid" aria-label={title}>
-          <thead>
+          <thead className="sticky top-0 z-10 bg-surface">
             <tr className="border-b border-border/50">
               {columns.map((col) => (
                 <th
@@ -284,7 +284,7 @@ export function DataTable<T extends Record<string, any>>({
               else if (page >= totalPages - 3) { p = totalPages - 6 + i; }
               else { p = page - 3 + i; }
               return (
-                <button key={p} onClick={() => setPage(p)} className={cn("w-8 h-8 rounded-lg text-sm font-medium", p === page ? "bg-primary text-white" : "hover:bg-surface-hover text-text-muted")}>
+                <button key={p} onClick={() => setPage(p)} aria-label={`Page ${p}`} className={cn("w-8 h-8 rounded-lg text-sm font-medium", p === page ? "bg-primary text-white" : "hover:bg-surface-hover text-text-muted")}>
                   {p}
                 </button>
               );

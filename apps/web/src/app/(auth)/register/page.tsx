@@ -154,6 +154,7 @@ function CollapsibleSection({
       <button
         type="button"
         onClick={() => setOpen(!open)}
+        aria-expanded={open}
         className="w-full flex items-center justify-between px-4 py-3 bg-white/30 dark:bg-white/5 hover:bg-white/40 dark:hover:bg-white/10 text-sm font-semibold text-text"
       >
         {title}
@@ -316,7 +317,10 @@ export default function RegisterPage() {
   const goNext = useCallback(async () => {
     const fieldsToValidate = STEP_FIELDS[step];
     const valid = await trigger(fieldsToValidate as any);
-    if (!valid) return;
+    if (!valid) {
+      toast.error("Please complete all required fields before continuing");
+      return;
+    }
     setDirection(1);
     setStep((s) => Math.min(s + 1, STEPS.length - 1));
   }, [step, trigger]);
@@ -456,7 +460,7 @@ export default function RegisterPage() {
                 <div className="space-y-4">
                   <FormField label="Full Name" icon={User} required {...register("fullName")} error={errors.fullName?.message} placeholder="e.g. Mukasa John" />
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <FormField label="Date of Birth" type="date" {...register("dateOfBirth")} error={errors.dateOfBirth?.message} />
+                    <FormField label="Date of Birth" type="date" min="1930-01-01" max={new Date().toISOString().split("T")[0]} {...register("dateOfBirth")} error={errors.dateOfBirth?.message} />
                     <div>
                       <label className="block text-sm font-medium text-text mb-2">Sex</label>
                       <select
@@ -525,14 +529,14 @@ export default function RegisterPage() {
                         <table className="w-full min-w-[700px] text-sm">
                           <thead>
                             <tr className="text-left text-text-muted border-b border-white/20">
-                              <th className="pb-2 pr-2">Name</th>
-                              <th className="pb-2 pr-2">Father</th>
-                              <th className="pb-2 pr-2 w-10">F. Alive</th>
-                              <th className="pb-2 pr-2">Mother</th>
-                              <th className="pb-2 pr-2 w-10">M. Alive</th>
-                              <th className="pb-2 pr-2">Contact</th>
-                              <th className="pb-2 pr-2">Address</th>
-                              <th className="pb-2 w-8" />
+                              <th scope="col" className="pb-2 pr-2">Name</th>
+                              <th scope="col" className="pb-2 pr-2">Father</th>
+                              <th scope="col" className="pb-2 pr-2 w-10">F. Alive</th>
+                              <th scope="col" className="pb-2 pr-2">Mother</th>
+                              <th scope="col" className="pb-2 pr-2 w-10">M. Alive</th>
+                              <th scope="col" className="pb-2 pr-2">Contact</th>
+                              <th scope="col" className="pb-2 pr-2">Address</th>
+                              <th scope="col" className="pb-2 w-8" />
                             </tr>
                           </thead>
                           <tbody>
@@ -568,10 +572,10 @@ export default function RegisterPage() {
                         <table className="w-full min-w-[400px] text-sm">
                           <thead>
                             <tr className="text-left text-text-muted border-b border-white/20">
-                              <th className="pb-2 pr-2">Name</th>
-                              <th className="pb-2 pr-2 w-28">Sex</th>
-                              <th className="pb-2 pr-2">Contact</th>
-                              <th className="pb-2 w-8" />
+                              <th scope="col" className="pb-2 pr-2">Name</th>
+                              <th scope="col" className="pb-2 pr-2 w-28">Sex</th>
+                              <th scope="col" className="pb-2 pr-2">Contact</th>
+                              <th scope="col" className="pb-2 w-8" />
                             </tr>
                           </thead>
                           <tbody>
@@ -609,11 +613,11 @@ export default function RegisterPage() {
                         <table className="w-full min-w-[500px] text-sm">
                           <thead>
                             <tr className="text-left text-text-muted border-b border-white/20">
-                              <th className="pb-2 pr-2">Full Name</th>
-                              <th className="pb-2 pr-2">Relationship</th>
-                              <th className="pb-2 pr-2">Location</th>
-                              <th className="pb-2 pr-2">Contact</th>
-                              <th className="pb-2 w-8" />
+                              <th scope="col" className="pb-2 pr-2">Full Name</th>
+                              <th scope="col" className="pb-2 pr-2">Relationship</th>
+                              <th scope="col" className="pb-2 pr-2">Location</th>
+                              <th scope="col" className="pb-2 pr-2">Contact</th>
+                              <th scope="col" className="pb-2 w-8" />
                             </tr>
                           </thead>
                           <tbody>
@@ -658,6 +662,7 @@ export default function RegisterPage() {
                         <input
                           type="file"
                           accept=".pdf,.doc,.docx"
+                          aria-label="Upload application letter"
                           onChange={handleFileChange}
                           className="hidden"
                         />
@@ -683,7 +688,7 @@ export default function RegisterPage() {
                           type="button"
                           onClick={() => setShowPassword(!showPassword)}
                           className="absolute right-4 top-1/2 -translate-y-1/2 text-text-light hover:text-text"
-                          tabIndex={-1}
+                          aria-label={showPassword ? "Hide password" : "Show password"}
                         >
                           {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
                         </button>
