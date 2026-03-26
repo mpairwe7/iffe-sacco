@@ -13,18 +13,33 @@ accounts.get("/", zValidator("query", paginationSchema), async (c) => {
   const params = c.req.valid("query");
   const type = c.req.query("type");
   const status = c.req.query("status");
-  const memberId = c.req.query("memberId");
+  const user = c.get("user");
+
+  // Members can only see their own accounts
+  const memberId = user.role === "member" ? user.memberId : c.req.query("memberId");
+
   const result = await service.getAll({ ...params, type, status, memberId });
   return c.json({ success: true, data: result });
 });
 
 accounts.get("/stats", async (c) => {
+  const user = c.get("user");
+  if (user.role === "member") {
+    return c.json({ success: false, message: "Insufficient permissions" }, 403);
+  }
   const stats = await service.getStats();
   return c.json({ success: true, data: stats });
 });
 
 accounts.get("/:id", async (c) => {
   const account = await service.getById(c.req.param("id"));
+  const user = c.get("user");
+
+  // Members can only view their own accounts
+  if (user.role === "member" && account.memberId !== user.memberId) {
+    return c.json({ success: false, message: "Insufficient permissions" }, 403);
+  }
+
   return c.json({ success: true, data: account });
 });
 

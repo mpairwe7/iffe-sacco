@@ -3,7 +3,7 @@ import { HTTPException } from "hono/http-exception";
 import { verifyAccessToken } from "../utils/jwt";
 import { prisma } from "../config/db";
 
-export type AuthUser = { id: string; role: string };
+export type AuthUser = { id: string; role: string; memberId: string | null };
 
 export const authMiddleware = createMiddleware<{ Variables: { user: AuthUser } }>(
   async (c, next) => {
@@ -24,7 +24,14 @@ export const authMiddleware = createMiddleware<{ Variables: { user: AuthUser } }
         throw new HTTPException(401, { message: "Account is deactivated or not found" });
       }
 
-      c.set("user", { id: dbUser.id, role: dbUser.role });
+      // Look up memberId for member-role users to enable per-member data scoping
+      let memberId: string | null = null;
+      if (dbUser.role === "member") {
+        const member = await prisma.member.findFirst({ where: { userId: dbUser.id }, select: { id: true } });
+        memberId = member?.id || null;
+      }
+
+      c.set("user", { id: dbUser.id, role: dbUser.role, memberId });
       await next();
     } catch (err) {
       if (err instanceof HTTPException) throw err;

@@ -2,35 +2,37 @@
 
 import { Command } from "cmdk";
 import { useRouter } from "next/navigation";
-import { useEffect } from "react";
+import { useEffect, useMemo } from "react";
 import { useUIStore } from "@/stores/ui-store";
+import { useAuthStore } from "@/stores/auth-store";
 import {
   LayoutDashboard, Users, Wallet, CreditCard, BarChart3, Settings, HelpCircle,
   Landmark, Receipt, Heart, UserCog, Calculator, ArrowDownToLine, ArrowUpFromLine,
   Search, Building2, Moon, Sun,
 } from "lucide-react";
 import { useTheme } from "next-themes";
+import type { Role } from "@iffe/shared";
 
-const pages = [
-  { label: "Dashboard", href: "/dashboard", icon: LayoutDashboard, group: "Pages" },
-  { label: "Members", href: "/admin/members", icon: Users, group: "Pages" },
-  { label: "Add Member", href: "/admin/members/create", icon: Users, group: "Pages" },
-  { label: "Accounts", href: "/admin/savings-accounts", icon: Landmark, group: "Pages" },
-  { label: "Transactions", href: "/admin/transactions", icon: Wallet, group: "Pages" },
-  { label: "New Transaction", href: "/admin/transactions/create", icon: Wallet, group: "Pages" },
-  { label: "Loans", href: "/admin/loans", icon: CreditCard, group: "Pages" },
-  { label: "Expenses", href: "/admin/expenses", icon: Receipt, group: "Pages" },
-  { label: "Reports", href: "/admin/reports", icon: BarChart3, group: "Pages" },
-  { label: "Users", href: "/admin/users", icon: UserCog, group: "Pages" },
-  { label: "Settings", href: "/admin/settings", icon: Settings, group: "Pages" },
-  { label: "Bank Accounts", href: "/admin/bank-accounts", icon: Building2, group: "Pages" },
-  { label: "Interest Calculator", href: "/admin/interest", icon: Calculator, group: "Pages" },
-  { label: "Social Welfare", href: "/portal/welfare", icon: Heart, group: "Pages" },
-  { label: "My Savings", href: "/portal/savings", icon: Wallet, group: "Member" },
-  { label: "My Loans", href: "/portal/loans", icon: CreditCard, group: "Member" },
-  { label: "Deposit Funds", href: "/portal/deposits", icon: ArrowDownToLine, group: "Member" },
-  { label: "Withdraw Funds", href: "/portal/withdrawals", icon: ArrowUpFromLine, group: "Member" },
-  { label: "Help & Support", href: "/portal/help", icon: HelpCircle, group: "Member" },
+const allPages = [
+  { label: "Dashboard", href: "/dashboard", icon: LayoutDashboard, group: "Pages", roles: ["admin", "chairman", "staff", "member"] as Role[] },
+  { label: "Members", href: "/admin/members", icon: Users, group: "Pages", roles: ["admin", "staff"] as Role[] },
+  { label: "Add Member", href: "/admin/members/create", icon: Users, group: "Pages", roles: ["admin", "staff"] as Role[] },
+  { label: "Accounts", href: "/admin/savings-accounts", icon: Landmark, group: "Pages", roles: ["admin", "staff"] as Role[] },
+  { label: "Transactions", href: "/admin/transactions", icon: Wallet, group: "Pages", roles: ["admin", "staff"] as Role[] },
+  { label: "New Transaction", href: "/admin/transactions/create", icon: Wallet, group: "Pages", roles: ["admin", "staff"] as Role[] },
+  { label: "Loans", href: "/admin/loans", icon: CreditCard, group: "Pages", roles: ["admin", "staff"] as Role[] },
+  { label: "Expenses", href: "/admin/expenses", icon: Receipt, group: "Pages", roles: ["admin", "chairman", "staff"] as Role[] },
+  { label: "Reports", href: "/admin/reports", icon: BarChart3, group: "Pages", roles: ["admin", "chairman", "staff"] as Role[] },
+  { label: "Users", href: "/admin/users", icon: UserCog, group: "Pages", roles: ["admin"] as Role[] },
+  { label: "Settings", href: "/admin/settings", icon: Settings, group: "Pages", roles: ["admin"] as Role[] },
+  { label: "Bank Accounts", href: "/admin/bank-accounts", icon: Building2, group: "Pages", roles: ["admin", "staff"] as Role[] },
+  { label: "Interest Calculator", href: "/admin/interest", icon: Calculator, group: "Pages", roles: ["admin", "staff"] as Role[] },
+  { label: "Social Welfare", href: "/portal/welfare", icon: Heart, group: "Pages", roles: ["admin", "chairman", "staff", "member"] as Role[] },
+  { label: "My Savings", href: "/portal/savings", icon: Wallet, group: "Member", roles: ["member"] as Role[] },
+  { label: "My Loans", href: "/portal/loans", icon: CreditCard, group: "Member", roles: ["member"] as Role[] },
+  { label: "Deposit Funds", href: "/portal/deposits", icon: ArrowDownToLine, group: "Member", roles: ["member"] as Role[] },
+  { label: "Withdraw Funds", href: "/portal/withdrawals", icon: ArrowUpFromLine, group: "Member", roles: ["member"] as Role[] },
+  { label: "Help & Support", href: "/portal/help", icon: HelpCircle, group: "Member", roles: ["member"] as Role[] },
 ];
 
 export function CommandPalette() {
@@ -38,6 +40,12 @@ export function CommandPalette() {
   const setOpen = useUIStore((s) => s.setCommandPaletteOpen);
   const router = useRouter();
   const { theme, setTheme } = useTheme();
+  const userRole = useAuthStore((s) => s.user?.role ?? "member");
+
+  const pages = useMemo(
+    () => allPages.filter((p) => p.roles.includes(userRole as Role)),
+    [userRole]
+  );
 
   useEffect(() => {
     function onKeyDown(e: KeyboardEvent) {

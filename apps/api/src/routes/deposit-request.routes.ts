@@ -17,12 +17,11 @@ const createSchema = z.object({
 
 depositRequests.get("/", zValidator("query", paginationSchema), async (c) => {
   const { page = 1, limit = 20, search, sortOrder = "desc" } = c.req.valid("query");
-  const user = c.get("user" as any) as { id: string; role: string };
+  const user = c.get("user");
   const where: any = {};
   // Members see only their own requests
-  if (user.role === "member") {
-    const member = await prisma.member.findFirst({ where: { userId: user.id } });
-    if (member) where.memberId = member.id;
+  if (user.role === "member" && user.memberId) {
+    where.memberId = user.memberId;
   }
   if (search) where.OR = [{ description: { contains: search, mode: "insensitive" } }];
   const skip = (page - 1) * limit;
@@ -35,16 +34,15 @@ depositRequests.get("/", zValidator("query", paginationSchema), async (c) => {
 
 depositRequests.post("/", zValidator("json", createSchema), async (c) => {
   const data = c.req.valid("json");
-  const user = c.get("user" as any) as { id: string; role: string };
-  const member = await prisma.member.findFirst({ where: { userId: user.id } });
-  const memberId = member?.id || "";
+  const user = c.get("user");
+  const memberId = user.memberId || "";
   const req = await prisma.depositRequest.create({ data: { ...data, memberId } });
   return c.json({ success: true, data: req }, 201);
 });
 
 depositRequests.patch("/:id/approve", requireRole("admin", "staff"), async (c) => {
   const id = c.req.param("id");
-  const user = c.get("user" as any) as { id: string; role: string };
+  const user = c.get("user");
 
   const result = await prisma.$transaction(async (tx: any) => {
     const req = await tx.depositRequest.update({
@@ -79,7 +77,7 @@ depositRequests.patch("/:id/approve", requireRole("admin", "staff"), async (c) =
 
 depositRequests.patch("/:id/reject", requireRole("admin", "staff"), async (c) => {
   const id = c.req.param("id");
-  const user = c.get("user" as any) as { id: string; role: string };
+  const user = c.get("user");
   const req = await prisma.depositRequest.update({ where: { id }, data: { status: "rejected", processedBy: user.id } });
   return c.json({ success: true, data: req });
 });

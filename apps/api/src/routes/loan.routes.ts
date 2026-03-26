@@ -13,18 +13,33 @@ loans.use("*", authMiddleware);
 loans.get("/", zValidator("query", paginationSchema), async (c) => {
   const params = c.req.valid("query");
   const status = c.req.query("status");
-  const memberId = c.req.query("memberId");
+  const user = c.get("user");
+
+  // Members can only see their own loans
+  const memberId = user.role === "member" ? user.memberId : c.req.query("memberId");
+
   const result = await service.getAll({ ...params, status, memberId });
   return c.json({ success: true, data: result });
 });
 
 loans.get("/stats", async (c) => {
+  const user = c.get("user");
+  if (user.role === "member") {
+    return c.json({ success: false, message: "Insufficient permissions" }, 403);
+  }
   const stats = await service.getStats();
   return c.json({ success: true, data: stats });
 });
 
 loans.get("/:id", async (c) => {
   const loan = await service.getById(c.req.param("id"));
+  const user = c.get("user");
+
+  // Members can only view their own loans
+  if (user.role === "member" && loan.memberId !== user.memberId) {
+    return c.json({ success: false, message: "Insufficient permissions" }, 403);
+  }
+
   return c.json({ success: true, data: loan });
 });
 

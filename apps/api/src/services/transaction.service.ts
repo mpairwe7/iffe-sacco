@@ -3,13 +3,14 @@ import { HTTPException } from "hono/http-exception";
 import type { PaginationInput } from "@iffe/shared";
 
 export class TransactionService {
-  async getAll(params: PaginationInput & { type?: string; status?: string; accountId?: string }) {
-    const { page = 1, limit = 20, search, sortBy = "createdAt", sortOrder = "desc", type, status, accountId } = params;
+  async getAll(params: PaginationInput & { type?: string; status?: string; accountId?: string; accountIds?: string[] }) {
+    const { page = 1, limit = 20, search, sortBy = "createdAt", sortOrder = "desc", type, status, accountId, accountIds } = params;
     const skip = (page - 1) * limit;
     const where: any = {};
     if (type) where.type = type;
     if (status) where.status = status;
-    if (accountId) where.accountId = accountId;
+    if (accountIds) where.accountId = { in: accountIds };
+    else if (accountId) where.accountId = accountId;
     if (search) where.OR = [
       { description: { contains: search, mode: "insensitive" } },
       { reference: { contains: search, mode: "insensitive" } },

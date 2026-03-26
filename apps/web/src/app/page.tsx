@@ -283,15 +283,15 @@ export default function HomePage() {
               <ul className="space-y-4">
                 <li className="flex items-center gap-3">
                   <div className="w-8 h-8 rounded-lg bg-white/10 flex items-center justify-center"><MapPin className="w-4 h-4 text-primary" /></div>
-                  <span className="text-white/60">Nairobi, Kenya</span>
+                  <span className="text-white/60">Jinja City, Uganda</span>
                 </li>
                 <li className="flex items-center gap-3">
                   <div className="w-8 h-8 rounded-lg bg-white/10 flex items-center justify-center"><Phone className="w-4 h-4 text-primary" /></div>
-                  <a href="tel:+254700000000" className="text-white/60 hover:text-white">+254 700 000 000</a>
+                  <a href="tel:+256782894875" className="text-white/60 hover:text-white">+256 782 894 875</a>
                 </li>
                 <li className="flex items-center gap-3">
                   <div className="w-8 h-8 rounded-lg bg-white/10 flex items-center justify-center"><Mail className="w-4 h-4 text-primary" /></div>
-                  <a href="mailto:info@iffeds.org" className="text-white/60 hover:text-white">info@iffeds.org</a>
+                  <a href="mailto:bdfsocial.selfhelp@gmail.com" className="text-white/60 hover:text-white">bdfsocial.selfhelp@gmail.com</a>
                 </li>
               </ul>
             </div>

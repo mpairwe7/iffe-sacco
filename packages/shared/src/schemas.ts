@@ -166,7 +166,7 @@ export const createDepositRequestSchema = z.object({
 // ===== Withdraw Request =====
 export const createWithdrawRequestSchema = z.object({
   accountId: z.string().uuid(),
-  amount: z.number().min(1000, "Minimum withdrawal is 1,000"),
+  amount: z.number().min(5000, "Minimum withdrawal is 5,000").max(5000000, "Maximum daily withdrawal is 5,000,000"),
   method: z.string().default("cash"),
   reason: z.string().optional(),
 });

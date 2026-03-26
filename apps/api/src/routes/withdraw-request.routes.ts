@@ -11,19 +11,18 @@ withdrawRequests.use("*", authMiddleware);
 
 const createSchema = z.object({
   accountId: z.string().uuid(),
-  amount: z.number().min(1000, "Minimum withdrawal is 1,000"),
+  amount: z.number().min(5000, "Minimum withdrawal is 5,000").max(5000000, "Maximum daily withdrawal is 5,000,000"),
   method: z.string().default("cash"),
   reason: z.string().optional(),
 });
 
 withdrawRequests.get("/", zValidator("query", paginationSchema), async (c) => {
   const { page = 1, limit = 20, search, sortOrder = "desc" } = c.req.valid("query");
-  const user = c.get("user" as any) as { id: string; role: string };
+  const user = c.get("user");
   const where: any = {};
   // Members see only their own requests
-  if (user.role === "member") {
-    const member = await prisma.member.findFirst({ where: { userId: user.id } });
-    if (member) where.memberId = member.id;
+  if (user.role === "member" && user.memberId) {
+    where.memberId = user.memberId;
   }
   if (search) where.OR = [{ reason: { contains: search, mode: "insensitive" } }];
   const skip = (page - 1) * limit;
@@ -36,7 +35,7 @@ withdrawRequests.get("/", zValidator("query", paginationSchema), async (c) => {
 
 withdrawRequests.post("/", zValidator("json", createSchema), async (c) => {
   const data = c.req.valid("json");
-  const user = c.get("user" as any) as { id: string; role: string };
+  const user = c.get("user");
 
   // Validate sufficient balance before creating request
   const account = await prisma.account.findUnique({ where: { id: data.accountId } });
@@ -44,15 +43,14 @@ withdrawRequests.post("/", zValidator("json", createSchema), async (c) => {
   if (account.status !== "active") return c.json({ success: false, message: "Account is not active" }, 400);
   if (Number(account.balance) < data.amount) return c.json({ success: false, message: "Insufficient balance" }, 400);
 
-  const member = await prisma.member.findFirst({ where: { userId: user.id } });
-  const memberId = member?.id || "";
+  const memberId = user.memberId || "";
   const req = await prisma.withdrawRequest.create({ data: { ...data, memberId } });
   return c.json({ success: true, data: req }, 201);
 });
 
 withdrawRequests.patch("/:id/approve", requireRole("admin", "staff"), async (c) => {
   const id = c.req.param("id");
-  const user = c.get("user" as any) as { id: string; role: string };
+  const user = c.get("user");
 
   const result = await prisma.$transaction(async (tx: any) => {
     const req = await tx.withdrawRequest.update({
@@ -93,7 +91,7 @@ withdrawRequests.patch("/:id/approve", requireRole("admin", "staff"), async (c) 
 
 withdrawRequests.patch("/:id/reject", requireRole("admin", "staff"), async (c) => {
   const id = c.req.param("id");
-  const user = c.get("user" as any) as { id: string; role: string };
+  const user = c.get("user");
   const req = await prisma.withdrawRequest.update({ where: { id }, data: { status: "rejected", processedBy: user.id } });
   return c.json({ success: true, data: req });
 });

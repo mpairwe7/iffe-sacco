@@ -171,7 +171,8 @@ export default function MemberDepositsPage() {
             <h3 className="font-semibold text-primary mb-2">Deposit Information</h3>
             <ul className="text-sm text-text-muted space-y-2">
               <li>&#8226; Minimum deposit: USh 1,000</li>
-              <li>&#8226; Mobile Money deposits are processed instantly</li>
+              <li>&#8226; Mobile Money deposits are typically processed within hours</li>
+              <li>&#8226; All deposits require admin verification</li>
               <li>&#8226; Bank transfers may take 1-2 business days</li>
               <li>&#8226; Cash deposits require branch verification</li>
             </ul>
