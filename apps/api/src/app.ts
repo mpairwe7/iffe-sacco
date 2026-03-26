@@ -9,6 +9,7 @@ import { Hono } from "hono";
 import { cors } from "hono/cors";
 import { secureHeaders } from "hono/secure-headers";
 import { errorHandler } from "./middleware/error-handler";
+import { initPrisma } from "./config/db";
 import { authRoutes } from "./routes/auth.routes";
 import { memberRoutes } from "./routes/member.routes";
 import { transactionRoutes } from "./routes/transaction.routes";
@@ -43,6 +44,16 @@ app.use("*", cors({
   allowMethods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
   allowHeaders: ["Content-Type", "Authorization"],
 }));
+
+// ===== Initialize Prisma on first request =====
+let prismaReady = false;
+app.use("*", async (_c, next) => {
+  if (!prismaReady) {
+    await initPrisma();
+    prismaReady = true;
+  }
+  await next();
+});
 
 // ===== Routes =====
 app.route("/auth", authRoutes);
