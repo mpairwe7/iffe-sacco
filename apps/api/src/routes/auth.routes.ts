@@ -53,12 +53,15 @@ const resetPasswordSchema = z.object({
 
 auth.post("/reset-password", zValidator("json", resetPasswordSchema), async (c) => {
   const { email } = c.req.valid("json");
-  // Mock: In production, generate a token and send an email
-  // For now just verify the user exists and return success
+  // Anti-enumeration: always return same message regardless of user existence
+  // In production: generate time-limited token, store in DB, send email via Resend/SES
   const user = await prisma.user.findUnique({ where: { email } });
-  if (!user) {
-    // Return success even if user doesn't exist (prevent email enumeration)
-    return c.json({ success: true, message: "If an account with that email exists, a reset link has been sent" });
+  if (user) {
+    // TODO: Integrate email service (Resend/SES) to send actual reset link
+    // const token = crypto.randomUUID();
+    // await prisma.setting.upsert({ where: { key: `reset:${user.id}` }, ... });
+    // await sendEmail({ to: email, subject: "Password Reset", body: `https://iffe-sacco.vercel.app/password/reset?token=${token}` });
+    console.log(`[PASSWORD_RESET] Requested for ${email} (user: ${user.id})`);
   }
   return c.json({ success: true, message: "If an account with that email exists, a reset link has been sent" });
 });

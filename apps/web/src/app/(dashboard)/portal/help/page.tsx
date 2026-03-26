@@ -1,4 +1,3 @@
-import Link from "next/link";
 import { HelpCircle, UserPlus, Upload, Wallet, CreditCard, CheckCircle, Calculator, ArrowDownToLine, ArrowUpFromLine, Shield, Heart, BarChart3, ArrowRight } from "lucide-react";
 
 const helpArticles = [
@@ -36,7 +35,7 @@ export default function HelpPage() {
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {helpArticles.map((article) => (
-          <Link key={article.title} href="#" className="group glass-card rounded-2xl p-6 hover:shadow-xl hover:border-primary/20 transition-all hover:-translate-y-1">
+          <div key={article.title} className="group glass-card rounded-2xl p-6 hover:shadow-xl hover:border-primary/20 transition-all">
             <div className={`w-14 h-14 rounded-2xl flex items-center justify-center mb-4 ${colorMap[article.color]}`}>
               <article.icon className="w-7 h-7" />
             </div>
@@ -45,7 +44,7 @@ export default function HelpPage() {
             <span className="inline-flex items-center gap-1.5 text-sm font-semibold text-primary">
               Learn more <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
             </span>
-          </Link>
+          </div>
         ))}
       </div>
     </div>
