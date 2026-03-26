@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { BarChart3, FileText, TrendingUp, Wallet, Receipt, Building2, Coins, PieChart, Download, Loader2 } from "lucide-react";
 import { apiClient } from "@/lib/api-client";
@@ -33,10 +34,29 @@ interface ReportResult {
   records: Record<string, unknown>[];
 }
 
+const datePresets = [
+  { label: "Last 7 days", days: 7 },
+  { label: "Last 30 days", days: 30 },
+  { label: "This month", fn: () => {
+    const now = new Date();
+    const first = new Date(now.getFullYear(), now.getMonth(), 1);
+    return { from: first.toISOString().split("T")[0], to: now.toISOString().split("T")[0] };
+  }},
+  { label: "This quarter", fn: () => {
+    const now = new Date();
+    const qMonth = Math.floor(now.getMonth() / 3) * 3;
+    const first = new Date(now.getFullYear(), qMonth, 1);
+    return { from: first.toISOString().split("T")[0], to: now.toISOString().split("T")[0] };
+  }},
+];
+
 export default function ReportsPage() {
-  const [reportType, setReportType] = useState("statement");
-  const [dateFrom, setDateFrom] = useState("2026-01-01");
-  const [dateTo, setDateTo] = useState("2026-03-25");
+  const searchParams = useSearchParams();
+  const today = new Date().toISOString().split("T")[0];
+  const thirtyDaysAgo = new Date(Date.now() - 30 * 86400000).toISOString().split("T")[0];
+  const [reportType, setReportType] = useState(searchParams.get("type") || "statement");
+  const [dateFrom, setDateFrom] = useState(thirtyDaysAgo);
+  const [dateTo, setDateTo] = useState(today);
   const [generating, setGenerating] = useState(false);
   const [result, setResult] = useState<ReportResult | null>(null);
 
@@ -85,6 +105,28 @@ export default function ReportsPage() {
       {/* Quick Report Generator */}
       <div className="glass-card rounded-2xl p-6">
         <h3 className="text-base font-semibold text-text mb-4">Quick Report Generator</h3>
+        <div className="flex flex-wrap gap-2 mb-4">
+          {datePresets.map((preset) => (
+            <button
+              key={preset.label}
+              onClick={() => {
+                if ("fn" in preset && preset.fn) {
+                  const range = preset.fn();
+                  setDateFrom(range.from);
+                  setDateTo(range.to);
+                } else if ("days" in preset) {
+                  const to = new Date().toISOString().split("T")[0];
+                  const from = new Date(Date.now() - preset.days * 86400000).toISOString().split("T")[0];
+                  setDateFrom(from);
+                  setDateTo(to);
+                }
+              }}
+              className="px-3 py-1.5 text-xs font-medium text-text-muted bg-white/60 border border-white/40 rounded-full hover:bg-primary/10 hover:text-primary hover:border-primary/30 transition-colors"
+            >
+              {preset.label}
+            </button>
+          ))}
+        </div>
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
           <div>
             <label className="block text-sm font-medium text-text mb-2">Report Type</label>

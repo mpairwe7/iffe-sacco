@@ -5,27 +5,18 @@ import { StatCard } from "@/components/stat-card";
 import { DepositsWithdrawalsChart, ExpenseChart, LoanChart } from "@/components/dashboard-charts";
 import Link from "next/link";
 import { useDashboardStats, useRecentTransactions, useUpcomingPayments } from "@/hooks/use-dashboard";
-import { useTransactions } from "@/hooks/use-transactions";
-import { useExpenses } from "@/hooks/use-expenses";
-import { useLoans } from "@/hooks/use-loans";
 import { formatCurrency, formatDate } from "@/lib/utils";
 import { Skeleton } from "@/components/ui/skeleton";
-import type { Transaction, Loan, DashboardStats, PaginatedResponse, Expense } from "@iffe/shared";
+import type { Transaction, Loan, DashboardStats } from "@iffe/shared";
 
 export default function DashboardPage() {
   const statsQuery = useDashboardStats();
   const recentQuery = useRecentTransactions(5);
   const upcomingQuery = useUpcomingPayments(7);
-  const allTransactionsQuery = useTransactions({ limit: 200 });
-  const expensesQuery = useExpenses({ limit: 200 });
-  const loansQuery = useLoans({ limit: 200 });
 
   const stats = statsQuery.data as DashboardStats | undefined;
   const recentTransactions = (recentQuery.data || []) as Transaction[];
   const upcomingPayments = (upcomingQuery.data || []) as Loan[];
-  const chartTransactions = ((allTransactionsQuery.data as PaginatedResponse<Transaction> | undefined)?.data ?? []) as Transaction[];
-  const chartExpenses = ((expensesQuery.data as PaginatedResponse<Expense> | undefined)?.data ?? []) as Expense[];
-  const chartLoans = ((loansQuery.data as PaginatedResponse<Loan> | undefined)?.data ?? []) as Loan[];
 
   return (
     <div className="space-y-8">
@@ -83,14 +74,14 @@ export default function DashboardPage() {
       {/* Charts */}
       <div className="grid lg:grid-cols-3 gap-6">
         <div className="lg:col-span-2">
-          <DepositsWithdrawalsChart transactions={chartTransactions} />
+          <DepositsWithdrawalsChart transactions={recentTransactions || []} />
         </div>
-        <ExpenseChart expenses={chartExpenses} />
+        <ExpenseChart expenses={[]} />
       </div>
 
       <div className="grid lg:grid-cols-3 gap-6">
         <div className="lg:col-span-2">
-          <LoanChart loans={chartLoans} />
+          <LoanChart loans={[]} />
         </div>
 
         {/* Upcoming Payments */}

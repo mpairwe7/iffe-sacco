@@ -36,7 +36,9 @@ function exportToCSV<T extends Record<string, any>>(data: T[], columns: Column<T
   const rows = data.map((row) =>
     columns.map((c) => {
       const val = row[c.key];
-      const str = String(val ?? "").replace(/"/g, '""');
+      const str = typeof val === "object" && val !== null
+        ? JSON.stringify(val)
+        : String(val ?? "").replace(/"/g, '""');
       return `"${str}"`;
     }).join(",")
   );
@@ -189,16 +191,23 @@ export function DataTable<T extends Record<string, any>>({
                   scope="col"
                   className={cn(
                     "text-xs font-semibold text-text-muted uppercase tracking-wider px-6 py-3",
-                    col.align === "right" ? "text-right" : col.align === "center" ? "text-center" : "text-left",
-                    col.sortable !== false && "cursor-pointer select-none hover:text-text"
+                    col.align === "right" ? "text-right" : col.align === "center" ? "text-center" : "text-left"
                   )}
-                  onClick={() => col.sortable !== false && handleSort(col.key)}
                   aria-sort={sortKey === col.key ? (sortDir === "asc" ? "ascending" : "descending") : undefined}
                 >
-                  <span className="inline-flex items-center gap-1.5">
-                    {col.label}
-                    {col.sortable !== false && <SortIcon colKey={col.key} />}
-                  </span>
+                  {col.sortable !== false ? (
+                    <button
+                      type="button"
+                      onClick={() => handleSort(col.key)}
+                      className="inline-flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wider hover:text-text"
+                      aria-label={`Sort by ${col.label}`}
+                    >
+                      {col.label}
+                      <SortIcon colKey={col.key} />
+                    </button>
+                  ) : (
+                    <span className="text-xs font-semibold uppercase tracking-wider">{col.label}</span>
+                  )}
                 </th>
               ))}
             </tr>

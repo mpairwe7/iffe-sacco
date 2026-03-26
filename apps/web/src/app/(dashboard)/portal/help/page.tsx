@@ -1,8 +1,7 @@
-import { HelpCircle, UserPlus, Upload, Wallet, CreditCard, CheckCircle, Calculator, ArrowDownToLine, ArrowUpFromLine, Shield, Heart, BarChart3, ArrowRight } from "lucide-react";
+import { HelpCircle, UserPlus, Wallet, CreditCard, CheckCircle, Calculator, ArrowDownToLine, ArrowUpFromLine, Heart, BarChart3, ArrowRight } from "lucide-react";
 
 const helpArticles = [
   { title: "Adding a New Member", desc: "A step-by-step guide on how to register and onboard new members into the system.", icon: UserPlus, color: "primary" },
-  { title: "Importing Members in Bulk", desc: "Learn how to upload multiple member profiles at once using the CSV import feature.", icon: Upload, color: "info" },
   { title: "Opening a Savings Account", desc: "How to open and assign savings accounts to members.", icon: Wallet, color: "success" },
   { title: "Applying for a Loan", desc: "Guide for users and admins on how to submit a loan application.", icon: CreditCard, color: "warning" },
   { title: "Loan Approval & Disbursal", desc: "How to review, approve, and release funds for loan applications.", icon: CheckCircle, color: "primary" },
@@ -11,7 +10,6 @@ const helpArticles = [
   { title: "Withdrawing Funds", desc: "How to process fund withdrawals from member accounts safely.", icon: ArrowUpFromLine, color: "warning" },
   { title: "Social Welfare Pledges", desc: "How to manage and contribute to social welfare programs.", icon: Heart, color: "danger" },
   { title: "Generating System Reports", desc: "How to generate and export financial and activity reports.", icon: BarChart3, color: "info" },
-  { title: "Security & Two-Factor Auth", desc: "How to enable 2FA and keep your account secure.", icon: Shield, color: "primary" },
 ];
 
 const colorMap: Record<string, string> = {

@@ -30,7 +30,7 @@ export function ConfirmDialog({
   children,
 }: ConfirmDialogProps) {
   return (
-    <Dialog.Root open={open} onOpenChange={onOpenChange}>
+    <Dialog.Root open={open} onOpenChange={(v) => { if (!loading) onOpenChange(v); }}>
       <Dialog.Portal>
         <Dialog.Overlay className="fixed inset-0 bg-black/40 backdrop-blur-sm z-50 data-[state=open]:animate-in data-[state=open]:fade-in data-[state=closed]:animate-out data-[state=closed]:fade-out" />
         <Dialog.Content className="fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-md glass-card rounded-3xl p-6 z-50 data-[state=open]:animate-in data-[state=open]:fade-in data-[state=open]:zoom-in-95 data-[state=open]:slide-in-from-left-1/2 data-[state=open]:slide-in-from-top-[48%]">
@@ -47,7 +47,7 @@ export function ConfirmDialog({
               {children}
             </div>
             <Dialog.Close asChild>
-              <button className="p-1.5 text-text-light hover:text-text rounded-lg" aria-label="Close">
+              <button disabled={loading} className="p-1.5 text-text-light hover:text-text rounded-lg disabled:opacity-50" aria-label="Close">
                 <X className="w-4 h-4" />
               </button>
             </Dialog.Close>
@@ -55,12 +55,12 @@ export function ConfirmDialog({
 
           <div className="flex items-center justify-end gap-3 mt-6">
             <Dialog.Close asChild>
-              <button className="px-5 py-2.5 text-sm font-medium text-text-muted border border-border rounded-xl hover:bg-surface-hover">
+              <button disabled={loading} className="px-5 py-2.5 text-sm font-medium text-text-muted border border-border rounded-xl hover:bg-surface-hover disabled:opacity-50">
                 {cancelLabel}
               </button>
             </Dialog.Close>
             <button
-              onClick={() => { onConfirm(); onOpenChange(false); }}
+              onClick={onConfirm}
               disabled={loading}
               className={cn(
                 "px-5 py-2.5 text-sm font-semibold text-white rounded-xl disabled:opacity-50",
