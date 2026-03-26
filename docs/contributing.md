@@ -114,7 +114,7 @@ lib/            → Utilities, API client, schemas
    });
    ```
 
-3. **Prisma model** — `packages/api/prisma/schema.prisma`:
+3. **Prisma model** — `apps/api/prisma/schema.prisma`:
    ```prisma
    model Notification {
      id        String   @id @default(uuid())
@@ -130,13 +130,13 @@ lib/            → Utilities, API client, schemas
 
 4. **Migration** — `bunx prisma migrate dev --name add-notifications`
 
-5. **Repository** — `packages/api/src/repositories/notification.repository.ts`
+5. **Repository** — `apps/api/src/repositories/notification.repository.ts`
 
-6. **Service** — `packages/api/src/services/notification.service.ts`
+6. **Service** — `apps/api/src/services/notification.service.ts`
 
-7. **Routes** — `packages/api/src/routes/notification.routes.ts`
+7. **Routes** — `apps/api/src/routes/notification.routes.ts`
 
-8. **Wire up** — Add to `packages/api/src/index.ts`:
+8. **Wire up** — Add to `apps/api/src/index.ts`:
    ```typescript
    import { notificationRoutes } from "./routes/notification.routes";
    app.route("/notifications", notificationRoutes);

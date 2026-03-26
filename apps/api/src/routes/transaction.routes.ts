@@ -1,6 +1,6 @@
 import { Hono } from "hono";
 import { zValidator } from "@hono/zod-validator";
-import { createTransactionSchema, paginationSchema } from "../../../shared/src";
+import { createTransactionSchema, paginationSchema } from "@iffe/shared";
 import { TransactionService } from "../services/transaction.service";
 import { authMiddleware, requireRole } from "../middleware/auth";
 

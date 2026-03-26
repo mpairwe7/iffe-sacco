@@ -1,5 +1,5 @@
 import { prisma } from "../config/db";
-import type { PaginationInput } from "../../../shared/src";
+import type { PaginationInput } from "@iffe/shared";
 
 export class LoanRepository {
   async findAll(params: PaginationInput & { status?: string; memberId?: string }) {

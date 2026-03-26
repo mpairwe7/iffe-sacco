@@ -1,6 +1,6 @@
 import { Hono } from "hono";
 import { zValidator } from "@hono/zod-validator";
-import { createLoanSchema, paginationSchema } from "../../../shared/src";
+import { createLoanSchema, paginationSchema } from "@iffe/shared";
 import { LoanService } from "../services/loan.service";
 import { authMiddleware, requireRole } from "../middleware/auth";
 import { z } from "zod/v4";

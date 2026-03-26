@@ -1,5 +1,5 @@
 import bcrypt from "bcryptjs";
-import { PASSWORD } from "../../../shared/src";
+import { PASSWORD } from "@iffe/shared";
 
 export async function hashPassword(password: string): Promise<string> {
   return bcrypt.hash(password, PASSWORD.SALT_ROUNDS);

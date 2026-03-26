@@ -1,7 +1,7 @@
 import { Hono } from "hono";
 import { HTTPException } from "hono/http-exception";
 import { zValidator } from "@hono/zod-validator";
-import { paginationSchema } from "../../../shared/src";
+import { paginationSchema } from "@iffe/shared";
 import { prisma } from "../config/db";
 import { authMiddleware, requireRole } from "../middleware/auth";
 import { z } from "zod/v4";

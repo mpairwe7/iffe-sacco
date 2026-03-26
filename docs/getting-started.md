@@ -19,17 +19,17 @@ cd IFFE
 bun install
 ```
 
-This installs dependencies for all workspaces (root, apps/web, packages/api, packages/shared).
+This installs dependencies for all workspaces (root, apps/web, apps/api, packages/shared).
 
 ### 2. Environment Setup
 
-#### Backend API (`packages/api/.env`)
+#### Backend API (`apps/api/.env`)
 
 ```bash
-cp packages/api/.env.example packages/api/.env
+cp apps/api/.env.example apps/api/.env
 ```
 
-Edit `packages/api/.env`:
+Edit `apps/api/.env`:
 
 ```env
 DATABASE_URL=postgresql://user:password@host.neon.tech/neondb?sslmode=require
@@ -53,7 +53,7 @@ NEXT_PUBLIC_API_URL=http://localhost:4000/api/v1
 If you have the NeonDB project already created:
 
 ```bash
-cd packages/api
+cd apps/api
 
 # Generate Prisma client
 bunx prisma generate
@@ -77,10 +77,10 @@ neonctl projects create \
   --region-id aws-ap-southeast-1 \
   --output json
 
-# Copy the connection_uri from output to packages/api/.env
+# Copy the connection_uri from output to apps/api/.env
 
 # Then run migrations and seed
-cd packages/api
+cd apps/api
 bunx prisma generate
 bunx prisma migrate dev --name init
 bun run db:seed
@@ -137,7 +137,7 @@ curl -X POST http://localhost:4000/api/v1/auth/login \
 | `build` | `next build` | Production build |
 | `start` | `next start` | Start production server |
 
-### Backend (`packages/api`)
+### Backend (`apps/api`)
 
 | Script | Command | Description |
 |--------|---------|-------------|
@@ -159,7 +159,7 @@ curl -X POST http://localhost:4000/api/v1/auth/login \
 Ensure you ran `bun install` from the root directory. Path aliases require `tsconfig.json` to be properly configured.
 
 ### Prisma `datasource.url` errors
-Prisma 7.x uses `prisma.config.ts` for connection URLs, not `schema.prisma`. Ensure `.env` file exists in `packages/api/`.
+Prisma 7.x uses `prisma.config.ts` for connection URLs, not `schema.prisma`. Ensure `.env` file exists in `apps/api/`.
 
 ### NeonDB connection timeouts
 NeonDB serverless databases suspend after 5 minutes of inactivity. The first request after suspension takes 1-3 seconds (cold start). This is normal.

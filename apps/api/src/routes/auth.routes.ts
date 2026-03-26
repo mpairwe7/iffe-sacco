@@ -1,6 +1,6 @@
 import { Hono } from "hono";
 import { zValidator } from "@hono/zod-validator";
-import { loginSchema, registerSchema, refreshTokenSchema, changePasswordSchema, updateProfileSchema } from "../../../shared/src";
+import { loginSchema, registerSchema, refreshTokenSchema, changePasswordSchema, updateProfileSchema } from "@iffe/shared";
 import { AuthService } from "../services/auth.service";
 import { prisma } from "../config/db";
 import { authMiddleware } from "../middleware/auth";

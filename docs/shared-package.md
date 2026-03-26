@@ -1,6 +1,6 @@
 # Shared Package (`@iffe/shared`)
 
-The shared package contains TypeScript types, Zod validation schemas, and constants used by both the frontend (`apps/web`) and backend (`packages/api`).
+The shared package contains TypeScript types, Zod validation schemas, and constants used by both the frontend (`apps/web`) and backend (`apps/api`).
 
 ## Installation
 

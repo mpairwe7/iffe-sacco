@@ -17,7 +17,7 @@
 Prisma 7.x uses `prisma.config.ts` for connection URLs (no longer in `schema.prisma`):
 
 ```typescript
-// packages/api/prisma.config.ts
+// apps/api/prisma.config.ts
 import { defineConfig } from "prisma/config";
 
 export default defineConfig({
@@ -35,7 +35,7 @@ export default defineConfig({
 Runtime connection uses the `PrismaPg` adapter:
 
 ```typescript
-// packages/api/src/config/db.ts
+// apps/api/src/config/db.ts
 import { PrismaPg } from "@prisma/adapter-pg";
 import pg from "pg";
 
@@ -248,7 +248,7 @@ audit_logs:         userId, entity, createdAt
 ## Migrations
 
 ```bash
-cd packages/api
+cd apps/api
 
 # Create a new migration
 bunx prisma migrate dev --name <description>
@@ -278,14 +278,14 @@ bunx prisma studio
 ### SQL Seed (Recommended)
 
 ```bash
-cd packages/api
+cd apps/api
 bunx prisma db execute --stdin < prisma/seed.sql
 ```
 
 ### TypeScript Seed (Alternative)
 
 ```bash
-cd packages/api
+cd apps/api
 bun run db:seed
 ```
 

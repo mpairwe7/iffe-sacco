@@ -1,6 +1,6 @@
 import { Hono } from "hono";
 import { zValidator } from "@hono/zod-validator";
-import { createMemberSchema, updateMemberSchema, paginationSchema } from "../../../shared/src";
+import { createMemberSchema, updateMemberSchema, paginationSchema } from "@iffe/shared";
 import { MemberService } from "../services/member.service";
 import { authMiddleware, requireRole } from "../middleware/auth";
 

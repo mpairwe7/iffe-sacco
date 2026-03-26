@@ -2,7 +2,7 @@ import { prisma } from "../config/db";
 import { hashPassword, comparePassword } from "../utils/password";
 import { signAccessToken, signRefreshToken, verifyRefreshToken } from "../utils/jwt";
 import { HTTPException } from "hono/http-exception";
-import type { LoginInput, RegisterInput, UpdateProfileInput } from "../../../shared/src";
+import type { LoginInput, RegisterInput, UpdateProfileInput } from "@iffe/shared";
 
 export class AuthService {
   async register(input: RegisterInput) {

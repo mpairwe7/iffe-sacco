@@ -1,5 +1,5 @@
 import { prisma } from "../config/db";
-import type { DashboardStats } from "../../../shared/src";
+import type { DashboardStats } from "@iffe/shared";
 
 export class DashboardService {
   async getStats(): Promise<DashboardStats> {

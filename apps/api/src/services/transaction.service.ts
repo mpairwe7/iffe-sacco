@@ -1,6 +1,6 @@
 import { prisma } from "../config/db";
 import { HTTPException } from "hono/http-exception";
-import type { PaginationInput } from "../../../shared/src";
+import type { PaginationInput } from "@iffe/shared";
 
 export class TransactionService {
   async getAll(params: PaginationInput & { type?: string; status?: string; accountId?: string }) {

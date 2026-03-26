@@ -9,45 +9,45 @@ IFFE/
 ├── .gitignore
 │
 ├── apps/
-│   └── web/                        # Next.js 16 Frontend
-│       ├── src/
-│       │   ├── app/                # App Router pages (35 routes)
-│       │   │   ├── (auth)/         # Login, Register, Reset, Terms, Privacy
-│       │   │   ├── (dashboard)/    # Dashboard, Admin, Portal, Profile
-│       │   │   ├── layout.tsx      # Root layout with Providers
-│       │   │   ├── page.tsx        # Landing page
-│       │   │   ├── not-found.tsx   # Custom 404
-│       │   │   └── error.tsx       # Global error boundary
-│       │   ├── components/         # Reusable UI components
-│       │   │   ├── ui/             # Primitives (skeleton, dialog, breadcrumb, etc.)
-│       │   │   ├── providers.tsx   # QueryClient + Theme + Toast + Tooltip
-│       │   │   ├── sidebar.tsx     # Dashboard sidebar navigation
-│       │   │   ├── data-table.tsx  # Advanced data table (sort, filter, export)
-│       │   │   ├── motion.tsx      # Framer Motion wrappers
-│       │   │   └── ...
-│       │   ├── hooks/              # TanStack Query hooks
-│       │   ├── stores/             # Zustand stores (ui, auth)
-│       │   └── lib/                # Utilities, mock data, API client, schemas
-│       ├── public/                 # Static assets (logo, favicon)
-│       └── package.json
+│   ├── web/                        # Next.js 16 Frontend
+│   │   ├── src/
+│   │   │   ├── app/                # App Router pages (35 routes)
+│   │   │   │   ├── (auth)/         # Login, Register, Reset, Terms, Privacy
+│   │   │   │   ├── (dashboard)/    # Dashboard, Admin, Portal, Profile
+│   │   │   │   ├── layout.tsx      # Root layout with Providers
+│   │   │   │   ├── page.tsx        # Landing page
+│   │   │   │   ├── not-found.tsx   # Custom 404
+│   │   │   │   └── error.tsx       # Global error boundary
+│   │   │   ├── components/         # Reusable UI components
+│   │   │   │   ├── ui/             # Primitives (skeleton, dialog, breadcrumb, etc.)
+│   │   │   │   ├── providers.tsx   # QueryClient + Theme + Toast + Tooltip
+│   │   │   │   ├── sidebar.tsx     # Dashboard sidebar navigation
+│   │   │   │   ├── data-table.tsx  # Advanced data table (sort, filter, export)
+│   │   │   │   ├── motion.tsx      # Framer Motion wrappers
+│   │   │   │   └── ...
+│   │   │   ├── hooks/              # TanStack Query hooks
+│   │   │   ├── stores/             # Zustand stores (ui, auth)
+│   │   │   └── lib/                # Utilities, API client, schemas
+│   │   ├── public/                 # Static assets (logo, favicon)
+│   │   └── package.json
+│   │
+│   └── api/                        # Hono API Backend
+│       ├── prisma/
+│       │   ├── schema.prisma       # 14 models
+│       │   ├── migrations/         # 2 version-controlled migrations
+│       │   ├── seed.ts             # TypeScript seeder (alternative)
+│       │   └── seed.sql            # SQL seeder (recommended, 209+ records)
+│       ├── prisma.config.ts        # Prisma 7.x config
+│       └── src/
+│           ├── index.ts            # Hono server entry (17 route groups, 87 endpoints)
+│           ├── config/             # Environment validation, PrismaPg database
+│           ├── middleware/          # JWT auth (role-based), error handler
+│           ├── routes/             # 17 route files
+│           ├── services/           # 9 service files
+│           ├── repositories/       # 9 repository files
+│           └── utils/              # JWT, password hashing
 │
 ├── packages/
-│   ├── api/                        # Hono API Backend
-│   │   ├── prisma/
-│   │   │   ├── schema.prisma       # 14 database models (User, Member, Account, Transaction, Loan, Expense, WelfareProgram, Pledge, AuditLog, BankAccount, DepositRequest, WithdrawRequest, PaymentGateway, Setting)
-│   │   │   ├── migrations/         # 2 version-controlled migrations
-│   │   │   ├── seed.ts             # TypeScript seeder (alternative)
-│   │   │   └── seed.sql            # SQL seeder (recommended, 209+ records)
-│   │   ├── prisma.config.ts        # Prisma 7.x config
-│   │   └── src/
-│   │       ├── index.ts            # Hono server entry (17 route groups, 87 endpoints)
-│   │       ├── config/             # Environment validation, PrismaPg database connection
-│   │       ├── middleware/          # JWT auth (role-based), error handler (Zod + HTTP)
-│   │       ├── routes/             # 17 route files (auth, members, accounts, transactions, loans, expenses, welfare, dashboard, deposit-requests, withdraw-requests, payment-gateways, bank-accounts, users, settings, interest, reports, audit-logs)
-│   │       ├── services/           # 9 service files (business logic, validation, orchestration)
-│   │       ├── repositories/       # 9 repository files (Prisma queries, pagination, aggregation)
-│   │       └── utils/              # JWT (jose), password hashing (bcrypt)
-│   │
 │   └── shared/                     # Shared between frontend & backend
 │       └── src/
 │           ├── types.ts            # TypeScript interfaces

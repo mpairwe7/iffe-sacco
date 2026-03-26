@@ -1,8 +1,8 @@
 import { MemberRepository } from "../repositories/member.repository";
 import { prisma } from "../config/db";
 import { HTTPException } from "hono/http-exception";
-import type { CreateMemberInput, PaginationInput } from "../../../shared/src";
-import { INTEREST_RATES } from "../../../shared/src";
+import type { CreateMemberInput, PaginationInput } from "@iffe/shared";
+import { INTEREST_RATES } from "@iffe/shared";
 
 const repo = new MemberRepository();
 

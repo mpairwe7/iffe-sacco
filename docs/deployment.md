@@ -58,23 +58,23 @@ railway up
 ```
 
 Or connect GitHub:
-- **Root Directory**: `packages/api`
+- **Root Directory**: `apps/api`
 - **Build Command**: `bun build src/index.ts --outdir dist --target bun`
 - **Start Command**: `bun run dist/index.js`
 
 ## Backend API (Fly.io)
 
-### 1. Create `packages/api/Dockerfile`
+### 1. Create `apps/api/Dockerfile`
 
 ```dockerfile
 FROM oven/bun:1.3-alpine
 
 WORKDIR /app
-COPY packages/api/package.json packages/api/bun.lock ./
+COPY apps/api/package.json apps/api/bun.lock ./
 RUN bun install --production
 
 COPY packages/shared ./packages/shared
-COPY packages/api ./
+COPY apps/api ./
 
 RUN bun build src/index.ts --outdir dist --target bun
 
@@ -85,7 +85,7 @@ CMD ["bun", "run", "dist/index.js"]
 ### 2. Deploy
 
 ```bash
-cd packages/api
+cd apps/api
 fly launch --name iffe-sacco-api --region sin  # Singapore
 fly secrets set DATABASE_URL="..." JWT_SECRET="..." JWT_REFRESH_SECRET="..."
 fly deploy
@@ -114,13 +114,13 @@ fly deploy
 ### Run Migrations in Production
 
 ```bash
-cd packages/api
+cd apps/api
 DATABASE_URL="production-url" bunx prisma migrate deploy
 ```
 
 ## Environment Variables Reference
 
-### Backend (`packages/api`)
+### Backend (`apps/api`)
 
 | Variable | Required | Description |
 |----------|----------|-------------|
