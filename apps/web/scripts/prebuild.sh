@@ -29,17 +29,39 @@ for PKG in "@prisma/client" "@prisma/adapter-neon" "@neondatabase/serverless"; d
   fi
 done
 
-# Also dereference @prisma/* sub-deps
-for DIR in node_modules/@prisma/*/; do
-  PKG=$(basename "$DIR")
-  FULL="node_modules/@prisma/$PKG"
-  if [ -L "$FULL" ]; then
-    REAL=$(readlink -f "$FULL")
-    rm -rf "$FULL"
-    cp -r "$REAL" "$FULL"
-    echo "Dereferenced @prisma/$PKG"
-  fi
-done
+# Dereference ALL @prisma/* packages from Bun's .bun/ cache
+# This catches sub-deps like @prisma/client-runtime-utils, @prisma/debug, etc.
+BUN_DIR="../../node_modules/.bun"
+if [ -d "$BUN_DIR" ]; then
+  for ENTRY in "$BUN_DIR"/@prisma+*/; do
+    [ -d "$ENTRY" ] || continue
+    NM_DIR="$ENTRY/node_modules"
+    [ -d "$NM_DIR" ] || continue
+    for PKG_DIR in "$NM_DIR"/@prisma/*/; do
+      [ -d "$PKG_DIR" ] || continue
+      PKG_NAME="@prisma/$(basename "$PKG_DIR")"
+      DEST="node_modules/$PKG_NAME"
+      if [ ! -d "$DEST" ] || [ -L "$DEST" ]; then
+        rm -rf "$DEST"
+        mkdir -p "$(dirname "$DEST")"
+        cp -r "$PKG_DIR" "$DEST"
+        echo "Copied $PKG_NAME"
+      fi
+    done
+    # Also copy non-scoped deps from prisma packages
+    for PKG_DIR in "$NM_DIR"/*/; do
+      PKG_NAME=$(basename "$PKG_DIR")
+      [ "$PKG_NAME" = "@prisma" ] && continue
+      [ "$PKG_NAME" = ".bin" ] && continue
+      DEST="node_modules/$PKG_NAME"
+      if [ ! -d "$DEST" ] || [ -L "$DEST" ]; then
+        rm -rf "$DEST"
+        cp -r "$PKG_DIR" "$DEST"
+      fi
+    done
+  done
+  echo "All @prisma/* sub-deps copied"
+fi
 
 # Copy .prisma/client generated files
 PRISMA_GEN=$(find ../../node_modules/.bun -path "*@prisma+client*/node_modules/.prisma/client" -type d 2>/dev/null | head -1)
