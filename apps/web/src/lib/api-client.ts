@@ -1,6 +1,6 @@
 import type { ApiResponse } from "@iffe/shared";
 
-const BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000/api/v1";
+const BASE_URL = process.env.NEXT_PUBLIC_API_URL || "/api/v1";
 
 let refreshPromise: Promise<void> | null = null;
 
