@@ -1,4 +1,5 @@
 {
+  "$schema": "https://json.schemastore.org/tsconfig",
   "compilerOptions": {
     "target": "ES2023",
     "module": "ESNext",
@@ -12,9 +13,8 @@
     "declaration": true,
     "declarationMap": true,
     "sourceMap": true,
-    "paths": {
-      "@iffe/shared": ["./packages/shared/src"],
-      "@iffe/shared/*": ["./packages/shared/src/*"]
-    }
-  }
+    "noUncheckedIndexedAccess": true,
+    "noEmit": true
+  },
+  "exclude": ["node_modules", "dist", ".next", "out"]
 }

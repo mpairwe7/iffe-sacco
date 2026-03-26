@@ -4,41 +4,42 @@ node_modules/
 # Build outputs
 dist/
 .next/
+out/
 *.tsbuildinfo
 
 # Environment files
 .env
 .env.local
 .env.*.local
-packages/api/.env
-apps/web/.env.local
 
-# Python
-venv/
-__pycache__/
-*.pyc
-
-# Scraped data
-scraped_data/
+# Lock files (only root bun.lock is tracked)
+apps/*/bun.lock
+packages/*/bun.lock
 
 # IDE
 .vscode/
 .idea/
+*.swp
+*.swo
 
 # OS
 .DS_Store
 Thumbs.db
 
 # Vercel
-.vercel
+.vercel/
 
-# Bun
-bun.lock
+# Testing
+coverage/
+.nyc_output/
 
-# Prisma
-packages/api/prisma/migrations/
+# Logs
+*.log
+npm-debug.log*
 
-# Claude
+# Claude / AI
 .claude/
-scraper.py
-scrape_portals.py
+
+# Misc
+*.tgz
+.cache/

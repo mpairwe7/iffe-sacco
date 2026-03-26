@@ -1,7 +1,13 @@
 {
-  "name": "iffe-sacco-monorepo",
+  "name": "iffe-sacco",
+  "version": "1.0.0",
   "private": true,
-  "workspaces": ["apps/*", "packages/*"],
+  "description": "IFFE SACCO - Modern cooperative financial management platform",
+  "license": "UNLICENSED",
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
   "scripts": {
     "dev": "bun run --filter '*' dev",
     "dev:web": "bun run --filter web dev",
@@ -9,12 +15,24 @@
     "build": "bun run --filter '*' build",
     "build:web": "bun run --filter web build",
     "build:api": "bun run --filter api build",
+    "lint": "bun run --filter '*' lint",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "typecheck": "bun run --filter '*' typecheck",
     "db:generate": "bun run --filter api db:generate",
     "db:migrate": "bun run --filter api db:migrate",
     "db:push": "bun run --filter api db:push",
     "db:studio": "bun run --filter api db:studio",
     "db:seed": "bun run --filter api db:seed",
-    "lint": "bun run --filter '*' lint",
-    "clean": "rm -rf node_modules apps/*/node_modules packages/*/node_modules"
+    "db:seed:sql": "cd apps/api && bunx prisma db execute --stdin < prisma/seed.sql",
+    "clean": "rm -rf node_modules apps/*/node_modules packages/*/node_modules apps/web/.next apps/api/dist",
+    "clean:build": "rm -rf apps/web/.next apps/api/dist"
+  },
+  "devDependencies": {
+    "prettier": "^3"
+  },
+  "engines": {
+    "node": ">=20",
+    "bun": ">=1.3"
   }
 }
