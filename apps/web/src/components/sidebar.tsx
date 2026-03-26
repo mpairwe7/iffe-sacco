@@ -205,44 +205,52 @@ export function Sidebar({ open, onClose }: SidebarProps) {
         role="navigation"
         aria-label="Main navigation"
         className={cn(
-          "fixed top-0 left-0 h-full w-[280px] lg:w-72 glass-dark z-50 flex flex-col transition-transform duration-300 lg:translate-x-0",
+          "fixed top-0 left-0 h-full w-[280px] lg:w-72 bg-gray-950 z-50 flex flex-col transition-transform duration-300 lg:translate-x-0 shadow-2xl",
           open ? "translate-x-0" : "-translate-x-full"
         )}
         onKeyDown={(e) => { if (e.key === "Escape" && open) onClose(); }}
       >
-        {/* Logo */}
-        <div className="flex items-center justify-between px-6 h-20 border-b border-white/10">
+        {/* Logo — matching header/footer/auth design */}
+        <div className="flex items-center justify-between px-5 h-24 border-b border-gray-800">
           <Link href={role === "chairman" ? "/chairman" : role === "member" ? "/portal/savings" : "/dashboard"} className="flex items-center gap-3">
             { /* eslint-disable-next-line @next/next/no-img-element */ }
-            <img src="/logo.png" alt="IFFE SACCO" className="w-9 h-9 object-contain" />
-            <span className="text-lg font-bold text-white">IFFE SACCO</span>
+            <div className="w-11 h-11 rounded-full bg-primary/10 ring-2 ring-primary/30 shadow-lg flex items-center justify-center overflow-hidden shrink-0">
+              <img src="/logo.png" alt="IFFE SACCO" className="w-11 h-11 object-cover rounded-full" />
+            </div>
+            <div className="leading-tight">
+              <span className="text-lg font-extrabold">
+                <span className="text-primary font-black">IFFE</span>{" "}
+                <span className="text-white font-extrabold">SACCO</span>
+              </span>
+              <p className="text-[9px] font-semibold text-gray-500 tracking-widest uppercase">Financial Freedom</p>
+            </div>
           </Link>
-          <button onClick={onClose} className="lg:hidden text-white/60 hover:text-white">
+          <button onClick={onClose} className="lg:hidden p-1.5 text-gray-400 hover:text-white rounded-lg hover:bg-gray-800">
             <X className="w-5 h-5" />
           </button>
         </div>
 
-        {/* User */}
-        <div className="px-6 py-4 border-b border-white/10">
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-full bg-primary/20 flex items-center justify-center">
-              <span className="text-sm font-bold text-primary">{userInitials}</span>
+        {/* User profile card */}
+        <div className="px-4 py-4 border-b border-gray-800">
+          <div className="flex items-center gap-3 bg-gray-900 rounded-xl px-3 py-3 ring-1 ring-gray-800">
+            <div className="w-10 h-10 rounded-full bg-primary/20 ring-2 ring-primary/30 flex items-center justify-center shrink-0">
+              <span className="text-sm font-black text-primary">{userInitials}</span>
             </div>
-            <div>
-              <div className="text-sm font-semibold text-white">{user?.name || "User"}</div>
-              <div className="text-xs text-white/50">{roleLabel}</div>
+            <div className="min-w-0">
+              <div className="text-sm font-bold text-white truncate">{user?.name || "User"}</div>
+              <span className="inline-block text-[10px] font-bold text-primary bg-primary/10 px-2 py-0.5 rounded-full uppercase tracking-wider mt-0.5">{roleLabel}</span>
             </div>
           </div>
         </div>
 
         {/* Navigation */}
-        <nav className="flex-1 overflow-y-auto px-3 py-4 space-y-1">
+        <nav className="flex-1 overflow-y-auto px-3 py-4 space-y-0.5">
           {filteredNavItems.map((item, idx) => {
             if (item.divider) {
               return (
-                <div key={`divider-${idx}`} className="pt-4 pb-2">
-                  <div className="border-t border-white/10 pt-3 px-3">
-                    <span className="text-[11px] font-semibold uppercase tracking-wider text-white/30">{item.section}</span>
+                <div key={`divider-${idx}`} className="pt-5 pb-2">
+                  <div className="border-t border-gray-800 pt-3 px-3">
+                    <span className="text-[10px] font-bold uppercase tracking-widest text-gray-500">{item.section}</span>
                   </div>
                 </div>
               );
@@ -257,10 +265,10 @@ export function Sidebar({ open, onClose }: SidebarProps) {
                   <button
                     onClick={() => toggleExpand(item.label)}
                     className={cn(
-                      "w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-colors",
+                      "w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-semibold transition-colors",
                       hasActive
-                        ? "text-white bg-white/10"
-                        : "text-white/60 hover:text-white hover:bg-white/5"
+                        ? "text-white bg-gray-800"
+                        : "text-gray-400 hover:text-white hover:bg-gray-800/60"
                     )}
                   >
                     <item.icon className="w-5 h-5 shrink-0" />
@@ -270,17 +278,17 @@ export function Sidebar({ open, onClose }: SidebarProps) {
                     />
                   </button>
                   {isOpen && (
-                    <div className="ml-8 mt-1 space-y-0.5 border-l border-white/10 pl-3">
+                    <div className="ml-8 mt-1 space-y-0.5 border-l-2 border-gray-800 pl-3">
                       {item.children.map((child) => (
                         <Link
                           key={child.href}
                           href={child.href}
                           onClick={onClose}
                           className={cn(
-                            "block px-3 py-2 rounded-lg text-sm transition-colors",
+                            "block px-3 py-2 rounded-lg text-sm font-medium transition-colors",
                             isActive(child.href)
-                              ? "text-primary font-medium bg-primary/10"
-                              : "text-white/50 hover:text-white hover:bg-white/5"
+                              ? "text-primary font-semibold bg-primary/10"
+                              : "text-gray-500 hover:text-white hover:bg-gray-800/60"
                           )}
                         >
                           {child.label}
@@ -298,10 +306,10 @@ export function Sidebar({ open, onClose }: SidebarProps) {
                 href={item.href!}
                 onClick={onClose}
                 className={cn(
-                  "flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-colors",
+                  "flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-semibold transition-colors",
                   isActive(item.href!)
-                    ? "text-white bg-primary"
-                    : "text-white/60 hover:text-white hover:bg-white/5"
+                    ? "text-white bg-primary shadow-md shadow-primary/20"
+                    : "text-gray-400 hover:text-white hover:bg-gray-800/60"
                 )}
               >
                 <item.icon className="w-5 h-5 shrink-0" />
@@ -311,14 +319,22 @@ export function Sidebar({ open, onClose }: SidebarProps) {
           })}
         </nav>
 
+        {/* Help link */}
+        <div className="px-3 pb-1">
+          <Link href="/portal/help" onClick={onClose} className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-gray-500 hover:text-white hover:bg-gray-800/60 transition-colors">
+            <HelpCircle className="w-5 h-5 shrink-0" />
+            <span>Help & Support</span>
+          </Link>
+        </div>
+
         {/* Logout */}
-        <div className="px-3 py-4 border-t border-white/10">
+        <div className="px-3 py-3 border-t border-gray-800">
           <button
             onClick={handleLogout}
-            className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-white/60 hover:text-danger hover:bg-danger/10 transition-colors"
+            className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-semibold text-gray-400 hover:text-danger hover:bg-danger/10 transition-colors"
           >
             <LogOut className="w-5 h-5" />
-            <span>Logout</span>
+            <span>Sign out</span>
           </button>
         </div>
       </aside>
