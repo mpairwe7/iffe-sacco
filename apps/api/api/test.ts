@@ -1,3 +1,8 @@
-export default function handler(req: any, res: any) {
-  res.json({ ok: true, env: { hasDb: !!process.env.DATABASE_URL, node: process.version } });
+export const config = { runtime: "nodejs" };
+
+export default function handler(_req: Request) {
+  return new Response(
+    JSON.stringify({ ok: true, node: process.version, hasDb: !!process.env.DATABASE_URL }),
+    { headers: { "content-type": "application/json" } }
+  );
 }
