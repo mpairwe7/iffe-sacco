@@ -1,16 +1,17 @@
 /**
- * Copy native/runtime dependencies into api/ so the Vercel serverless
- * function can resolve them. Bun stores packages in
- * node_modules/.bun/<pkg>@<ver>/node_modules/ with symlinks that
- * Vercel's bundler can't follow.
+ * Copy runtime dependencies into api/node_modules/ so Vercel serverless
+ * functions can resolve them. Bun stores packages with symlinks that
+ * Vercel's bundler can't follow at runtime.
  */
 import { cpSync, readdirSync, mkdirSync, existsSync, realpathSync } from "node:fs";
 import { join, dirname } from "node:path";
 
 const apiDir = join(import.meta.dirname, "..");
+const rootDir = join(apiDir, "..", "..");
 const targetNodeModules = join(apiDir, "api", "node_modules");
 mkdirSync(targetNodeModules, { recursive: true });
 
+// Packages the bundle externalizes
 const deps = [
   "@prisma/client",
   "@prisma/adapter-neon",
@@ -19,42 +20,47 @@ const deps = [
   "jose",
 ];
 
-for (const dep of deps) {
-  try {
-    const symlink = join(apiDir, "node_modules", dep);
-    if (!existsSync(symlink)) {
-      // Try monorepo root
-      const rootSymlink = join(apiDir, "..", "..", "node_modules", dep);
-      if (!existsSync(rootSymlink)) {
-        console.log(`  SKIP ${dep} (not found)`);
-        continue;
-      }
-      const real = realpathSync(rootSymlink);
-      const dest = join(targetNodeModules, dep);
-      cpSync(real, dest, { recursive: true, dereference: true, force: true });
-      console.log(`  OK ${dep} (from root)`);
-      continue;
-    }
-    const real = realpathSync(symlink);
+function findAndCopy(dep) {
+  // Check local node_modules first, then monorepo root
+  for (const base of [join(apiDir, "node_modules"), join(rootDir, "node_modules")]) {
+    const src = join(base, dep);
+    if (!existsSync(src)) continue;
+
+    const real = realpathSync(src);
     const dest = join(targetNodeModules, dep);
     cpSync(real, dest, { recursive: true, dereference: true, force: true });
 
-    // Also copy sibling deps from the resolved node_modules
+    // Copy sibling deps from the resolved parent
     const parent = dirname(real);
     for (const entry of readdirSync(parent, { withFileTypes: true })) {
-      if (entry.name === ".bin" || entry.name === dep.split("/").pop()) continue;
-      const src = join(parent, entry.name);
-      const entryDest = entry.name.startsWith("@")
-        ? join(targetNodeModules, entry.name)
-        : join(targetNodeModules, entry.name);
-      if (!existsSync(entryDest)) {
-        cpSync(src, entryDest, { recursive: true, dereference: true, force: true });
+      if (entry.name === ".bin") continue;
+      const sibling = join(parent, entry.name);
+      const sibDest = join(targetNodeModules, entry.name);
+      if (!existsSync(sibDest)) {
+        cpSync(sibling, sibDest, { recursive: true, dereference: true, force: true });
       }
     }
-    console.log(`  OK ${dep}`);
-  } catch (e) {
-    console.log(`  ERR ${dep}: ${e.message}`);
+    return true;
+  }
+  return false;
+}
+
+for (const dep of deps) {
+  const ok = findAndCopy(dep);
+  console.log(`  ${ok ? "OK" : "SKIP"} ${dep}`);
+}
+
+// CRITICAL: Copy the generated Prisma client (.prisma/client/)
+// @prisma/client requires this at runtime
+for (const base of [join(apiDir, "node_modules"), join(rootDir, "node_modules")]) {
+  const prismaGen = join(base, ".prisma", "client");
+  if (existsSync(prismaGen)) {
+    const dest = join(targetNodeModules, ".prisma", "client");
+    mkdirSync(dirname(dest), { recursive: true });
+    cpSync(realpathSync(prismaGen), dest, { recursive: true, dereference: true, force: true });
+    console.log("  OK .prisma/client (generated)");
+    break;
   }
 }
 
-console.log("Native deps copied to api/node_modules/");
+console.log("Deps copied to api/node_modules/");
