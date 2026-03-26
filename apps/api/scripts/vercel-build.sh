@@ -1,15 +1,23 @@
 #!/bin/bash
 set -e
 
-# Build @iffe/shared to JS and replace symlink AFTER Vercel's install phase
-cd ../../packages/shared
-bun build src/index.ts src/types.ts src/schemas.ts src/constants.ts --outdir dist --target node
-cd ../../apps/api
+echo "=== IFFE SACCO API — Vercel Build ==="
 
-# Replace workspace symlink with real compiled files
-rm -rf node_modules/@iffe/shared
-mkdir -p node_modules/@iffe/shared/dist
-cp ../../packages/shared/dist/* node_modules/@iffe/shared/dist/
-echo '{"name":"@iffe/shared","main":"dist/index.js"}' > node_modules/@iffe/shared/package.json
+# Bundle the entire app into a single JS file using bun
+# This resolves all workspace imports (@iffe/shared), Prisma, etc at build time
+cd ../..
+bun build apps/api/src/app.ts \
+  --outfile apps/api/dist/app.js \
+  --target node \
+  --external hono \
+  --external "hono/*" \
+  --external "@prisma/client" \
+  --external "@prisma/adapter-neon" \
+  --external "@neondatabase/serverless" \
+  --external "bcryptjs" \
+  --external "jose" \
+  --external "zod" \
+  --external "zod/*"
 
-echo "Build complete - @iffe/shared compiled and copied"
+echo "Bundle created: apps/api/dist/app.js"
+ls -lh apps/api/dist/app.js
