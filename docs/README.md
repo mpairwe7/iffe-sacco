@@ -8,26 +8,26 @@ A modern Savings and Credit Cooperative Organization (SACCO) management platform
 |----------|-------------|
 | [Architecture](./architecture.md) | System architecture, clean architecture layers, monorepo structure |
 | [Getting Started](./getting-started.md) | Prerequisites, installation, environment setup, running the project |
-| [API Reference](./api-reference.md) | All 87 REST API endpoints, request/response schemas, authentication |
-| [Database](./database.md) | 14 Prisma models, NeonDB setup, migrations, seed data (209+ records) |
-| [Frontend](./frontend.md) | Next.js app structure, 35 pages, components, design system |
-| [Shared Package](./shared-package.md) | 23 types, 23 Zod schemas, 17 constants shared between frontend and backend |
-| [Deployment](./deployment.md) | Production deployment guide for Vercel, Railway, Fly.io |
+| [API Reference](./api-reference.md) | All 95+ REST API endpoints, request/response schemas, authentication |
+| [Database](./database.md) | 15 Prisma models, NeonDB setup, migrations, seed data (209+ records) |
+| [Frontend](./frontend.md) | Next.js app structure, 39 pages, components, design system |
+| [Shared Package](./shared-package.md) | 26+ types, 25+ Zod schemas, 20+ constants shared between frontend and backend |
+| [Deployment](./deployment.md) | Unified Vercel deployment (recommended) + split deployment guide |
 | [Contributing](./contributing.md) | Development workflow, code standards, PR guidelines |
 
 ## System Summary
 
 | Metric | Count |
 |--------|-------|
-| Frontend Routes | 35 |
-| API Endpoints | 87 |
-| Route Groups | 17 |
-| Services | 9 |
-| Repositories | 9 |
-| Database Models | 14 |
+| Frontend Routes | 39 |
+| API Endpoints | 95+ |
+| Route Groups | 18 |
+| Services | 10 |
+| Repositories | 10 |
+| Database Models | 15 |
 | Seed Records | 209+ |
-| Shared Types | 23 |
-| Shared Schemas | 23 |
+| Shared Types | 26+ |
+| Shared Schemas | 25+ |
 | Documentation Pages | 9 |
 
 ## Tech Stack
@@ -54,6 +54,8 @@ Every frontend page is backed by corresponding API endpoints:
 | Frontend Area | Pages | API Endpoints |
 |--------------|-------|---------------|
 | Auth | 6 | 7 (login, register, reset, refresh, me, change-password, profile) |
+| Applications | 3 | 8 (submit, authenticated submit, mine, list, stats, detail, approve, reject) |
+| Chairman Dashboard | 1 | 1 (chairman overview data) |
 | Dashboard | 1 | 3 (stats, recent-txns, upcoming-payments) |
 | Admin Members | 2 | 6 (CRUD + stats) |
 | Admin Accounts | 1 | 5 (list, stats, get, create, status) |
@@ -72,4 +74,4 @@ Every frontend page is backed by corresponding API endpoints:
 | Portal (Member) | 7 | Reuses member-filtered endpoints |
 | Profile | 2 | 2 (update profile, change password) |
 | Audit Logs | — | 2 (list, get) |
-| **Total** | **35** | **87** |
+| **Total** | **39** | **95+** |

@@ -96,9 +96,23 @@ const prisma = new PrismaClient({ adapter });
 │ accountNo    │  │ amount   │  │ value    │
 │ balance      │  │ status   │  └──────────┘
 └──────────────┘  └──────────┘
+
+┌──────────────────┐
+│   Application    │     On Approval
+│                  │─────────────────▶ Creates Member
+│ surname          │
+│ firstName        │
+│ sex, dateOfBirth │
+│ phone, email     │
+│ status           │  pending / approved / rejected
+│ userId?          │──FK to User (optional)
+│ memberId?        │──FK to Member (set on approval)
+│ reviewedBy?      │──FK to User (reviewer)
+│ (40+ fields)     │
+└──────────────────┘
 ```
 
-## Models (14)
+## Models (15)
 
 ### User
 Central authentication entity. Links to Member (1:1) and AuditLog (1:N).
@@ -110,13 +124,13 @@ Central authentication entity. Links to Member (1:1) and AuditLog (1:N).
 | email | String | Unique, indexed |
 | phone | String? | Optional |
 | password | String | bcrypt hash |
-| role | String | "admin" / "member" / "staff" |
+| role | String | "admin" / "chairman" / "member" / "staff" |
 | avatar | String? | URL |
 | isActive | Boolean | Default true |
 | lastLogin | DateTime? | Updated on login |
 
 ### Member
-SACCO member profile. Optionally linked to User for self-service portal access.
+SACCO member profile. Optionally linked to User for self-service portal access. Extended with IBDA Bio Data fields.
 
 | Column | Type | Constraints |
 |--------|------|-------------|
@@ -126,8 +140,53 @@ SACCO member profile. Optionally linked to User for self-service portal access.
 | email, phone | String | Required, email indexed |
 | gender, nationalId, occupation | String? | Optional profile fields |
 | address, city, district, country | String? | Address (country default "UG") |
+| clan | String? | Member's clan |
+| totem | String? | Member's totem |
+| birthPlace | String? | Place of birth |
+| ancestralPlace | String? | Ancestral home area |
+| residencePlace | String? | Current residence |
+| fatherName | String? | Father's full name |
+| motherName | String? | Mother's full name |
+| spouses | Json? | Array of spouse records |
+| children | Json? | Array of children records |
+| relatives | Json? | Array of relative records |
 | status | String | "active" / "pending" / "inactive" / "suspended", indexed |
 | userId | UUID? | FK to User (unique, 1:1) |
+
+### Application
+Membership application using the full IBDA Bio Data form. Contains 40+ fields across 5 sections (General, Places, Work, Family, Documents). Approved applications auto-create a Member record.
+
+| Column | Type | Constraints |
+|--------|------|-------------|
+| id | UUID | PK |
+| status | String | "pending" / "approved" / "rejected", indexed |
+| rejectionReason | String? | Reason if rejected |
+| reviewedBy | UUID? | FK to User who reviewed |
+| reviewedAt | DateTime? | When review occurred |
+| userId | UUID? | FK to User (if submitted by logged-in user) |
+| memberId | UUID? | FK to Member (set on approval) |
+| **General Info** | | |
+| surname, firstName, otherNames | String | Required |
+| sex | String | "Male" / "Female" |
+| dateOfBirth | DateTime | Required |
+| nationalId | String? | National ID number |
+| phone, email | String | Required |
+| **Places** | | |
+| birthPlace, birthDistrict | String? | Place of birth |
+| ancestralHome, ancestralDistrict | String? | Ancestral home |
+| currentResidence, currentDistrict | String? | Current residence |
+| **Work** | | |
+| occupation, employer, workAddress | String? | Employment details |
+| **Family** | | |
+| fatherName, fatherStatus | String? | Father info |
+| motherName, motherStatus | String? | Mother info |
+| clan, totem | String? | Clan/totem |
+| spouses | Json? | Array of spouse records |
+| children | Json? | Array of children records |
+| relatives | Json? | Array of relative records |
+| **Documents** | | |
+| passportPhoto, nationalIdPhoto | String? | Document file paths |
+| signature | String? | Signature file path |
 
 ### Account
 Financial account for a member. Supports multiple types per member.
@@ -243,6 +302,7 @@ deposit_requests:   memberId, status
 withdraw_requests:  memberId, status
 pledges:            programId, memberId
 audit_logs:         userId, entity, createdAt
+applications:       status, userId, email
 ```
 
 ## Migrations
@@ -293,7 +353,8 @@ bun run db:seed
 
 | Entity | Count | Status Distribution | Notes |
 |--------|-------|-------------------|-------|
-| **Users** | 8 | 2 admin, 3 staff (1 inactive), 2 member, 1 inactive staff | All password: `password123` |
+| **Users** | 9 | 2 admin, 1 chairman, 3 staff (1 inactive), 2 member, 1 inactive staff | All password: `password123` (chairman: `chairman123`) |
+| **Applications** | 3+ | Sample pending, approved, rejected applications | IBDA Bio Data form submissions |
 | **Members** | 16 | 10 active, 3 pending, 1 inactive, 1 suspended | Linked to users where applicable |
 | **Accounts** | 20 | 16 active, 1 dormant, 1 frozen, 1 closed | Mix: 13 savings, 3 fixed_deposit, 4 current |
 | **Transactions** | 40 | 28 completed, 6 pending, 2 rejected, 1 reversed | All types: deposit, withdrawal, transfer, loan_repayment, loan_disbursement, interest_credit, fee. Spread over 40 days. |
@@ -318,5 +379,6 @@ bun run db:seed
 | **Staff** | mike@iffeds.org | password123 |
 | **Member** | john@example.com | password123 |
 | **Member** | grace@example.com | password123 |
+| **Chairman** | chairman@iffeds.org | chairman123 |
 
 > **Security**: Change all passwords immediately in production.

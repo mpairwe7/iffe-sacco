@@ -18,14 +18,14 @@
 | cmdk 1.1 | Command palette (CMD+K) |
 | next-themes | Dark mode support |
 
-## Routes (35 total)
+## Routes (39 total)
 
 ### Public
 | Route | Page | Description |
 |-------|------|-------------|
 | `/` | Landing | Hero, features, portals, stats, CTA, footer |
 | `/login` | Login | Email/password with validation, loading state, toast |
-| `/register` | Register | Multi-field form with password strength |
+| `/register` | Register | Multi-step 5-page membership application form (IBDA Bio Data) |
 | `/password/reset` | Reset | Email input with success state |
 | `/terms` | Terms | Terms of Service |
 | `/privacy` | Privacy | Privacy Policy |
@@ -34,12 +34,21 @@
 | Route | Page | Description |
 |-------|------|-------------|
 | `/dashboard` | Overview | Stats, charts, recent transactions, upcoming payments |
+| `/application-status` | Application Status | Applicant sees Pending/Approved/Rejected status tracking |
+
+### Chairman (chairman role)
+| Route | Page | Description |
+|-------|------|-------------|
+| `/chairman` | Chairman Dashboard | View-only oversight dashboard with expense approve/reject |
 
 ### Admin
 | Route | Page |
 |-------|------|
 | `/admin/members` | Member list with DataTable |
 | `/admin/members/create` | Add new member form |
+| `/admin/members/[id]` | Member detail view |
+| `/admin/applications` | Application management (list, filter, review) |
+| `/admin/applications/[id]` | Application detail view with approve/reject actions |
 | `/admin/savings-accounts` | Account management |
 | `/admin/transactions` | Transaction history |
 | `/admin/transactions/create` | New transaction form |
@@ -72,13 +81,49 @@
 | `/profile` | Edit profile |
 | `/profile/change-password` | Change password |
 
+## Role-Based Sidebar Navigation
+
+The sidebar dynamically renders navigation items based on the authenticated user's role:
+
+| Role | Sidebar Items |
+|------|--------------|
+| **Admin** | Dashboard, Members, Applications, Accounts, Transactions, Loans, Expenses, Welfare, Users, Settings, Reports, Interest, Bank Accounts, Payment Gateways, Deposit/Withdraw Requests |
+| **Chairman** | Chairman Dashboard, Expenses (approve/reject only) |
+| **Staff** | Dashboard, Members, Accounts, Transactions, Loans, Deposit/Withdraw Requests |
+| **Member** | Portal (Savings, Loans, Transactions, Deposits, Withdrawals, Welfare, Help) |
+
+### Auth Guard Redirects
+
+On login, users are redirected based on their role:
+
+| Role | Redirect |
+|------|----------|
+| admin | `/dashboard` |
+| chairman | `/chairman` |
+| staff | `/dashboard` |
+| member | `/portal` |
+
+## Multi-Step Registration Form
+
+The `/register` route implements a 5-step form wizard for the IBDA Bio Data membership application:
+
+| Step | Name | Fields |
+|------|------|--------|
+| 1 | General | Surname, first name, other names, sex, date of birth, national ID, phone, email |
+| 2 | Places | Birth place/district, ancestral home/district, current residence/district |
+| 3 | Work | Occupation, employer, work address |
+| 4 | Family | Father name/status, mother name/status, clan, totem, spouses, children, relatives |
+| 5 | Documents | Passport photo, national ID photo, signature |
+
+Each step validates independently before allowing progression. The form state persists across steps.
+
 ## Component Library
 
 ### Layout Components
 
 | Component | File | Description |
 |-----------|------|-------------|
-| `Sidebar` | `components/sidebar.tsx` | Glass-dark sidebar, collapsible on mobile, Escape key close, section dividers |
+| `Sidebar` | `components/sidebar.tsx` | Glass-dark sidebar, collapsible on mobile, Escape key close, section dividers, role-based nav items |
 | `DashboardHeader` | `components/dashboard-header.tsx` | Glass header, CMD+K search, theme toggle, notifications, profile dropdown |
 | `MobileNav` | `components/mobile-nav.tsx` | Landing page mobile navigation with login portal dropdown |
 | `LoginDropdown` | `components/login-dropdown.tsx` | Portal selection dropdown (Admin/Member/Staff) |
@@ -136,10 +181,13 @@ All CSS custom properties have `.dark` overrides in `globals.css`.
 - **Framer Motion**: FadeIn, SlideUp, StaggerChildren, PageTransition, ScaleIn
 - **`prefers-reduced-motion`**: Disables all animations when user requests
 
-### Accessibility
+### Accessibility (WCAG 2.1 AA)
 
 - **Skip-to-content**: Hidden link, visible on focus
 - **Focus-visible**: 2px primary outline on all focusable elements
-- **ARIA**: `role="grid"` on DataTable, `aria-label` on navigation, `aria-invalid` on form errors
+- **ARIA**: `role="grid"` on DataTable, `aria-label` on navigation and interactive elements, `aria-invalid` on form errors
+- **Semantic sections**: Proper use of `<main>`, `<nav>`, `<section>`, `<header>` elements
+- **Sticky headers**: Dashboard header stays visible during scroll for context
+- **Touch targets**: Minimum 44x44px touch targets for mobile interactions
 - **Keyboard**: Escape closes sidebar/modals, CMD+K opens command palette
 - **Contrast**: All text meets WCAG AA (4.5:1) requirements

@@ -2,6 +2,24 @@
 
 ## Architecture Overview
 
+### Unified Vercel Deployment (Recommended)
+
+The API is bundled as a Next.js API route, enabling single-deployment on Vercel:
+
+```
+┌──────────────────────────────────┐     ┌──────────────┐
+│          Vercel                    │────▶│   NeonDB     │
+│   Next.js 16 (Frontend + API)     │     │ (Singapore)  │
+│   Frontend: /                     │     │  PostgreSQL  │
+│   API:      /api/v1/*             │     │  Port 5432   │
+│   Port 443                        │     └──────────────┘
+└──────────────────────────────────┘
+```
+
+A `prebuild.sh` script runs before the build to copy the API source and shared package into the Next.js project, enabling the Hono API to be served as a catch-all API route at `/api/v1/[...path]`.
+
+### Split Deployment (Alternative)
+
 ```
 ┌─────────────────┐     ┌──────────────────┐     ┌──────────────┐
 │   Vercel / CF    │────▶│  Railway / Fly   │────▶│   NeonDB     │
@@ -11,16 +29,29 @@
 └─────────────────┘     └──────────────────┘     └──────────────┘
 ```
 
-## Frontend (Vercel)
+## Unified Vercel Deployment (Recommended)
 
 ### 1. Configure
 
 Create `apps/web/.env.production`:
 ```env
-NEXT_PUBLIC_API_URL=https://api.iffeds.org/api/v1
+NEXT_PUBLIC_API_URL=/api/v1
+DATABASE_URL=postgresql://...@....neon.tech/neondb?sslmode=require
+JWT_SECRET=<production-secret>
+JWT_REFRESH_SECRET=<production-secret>
+NODE_ENV=production
 ```
 
-### 2. Deploy
+> Note: `NEXT_PUBLIC_API_URL=/api/v1` (relative path) for unified deployment. No CORS needed since API is same-origin.
+
+### 2. prebuild.sh
+
+The `prebuild.sh` script prepares the unified build:
+- Copies `packages/shared/src/` into the Next.js project
+- Copies `packages/api/src/` into the Next.js project
+- Sets up the catch-all API route at `src/app/api/v1/[...path]/route.ts`
+
+### 3. Deploy
 
 ```bash
 # From project root
@@ -30,13 +61,26 @@ npx vercel --prod
 
 Or connect the GitHub repo to Vercel:
 - **Root Directory**: `apps/web`
-- **Build Command**: `bun run build`
+- **Build Command**: `bash prebuild.sh && bun run build`
 - **Install Command**: `bun install`
 - **Output Directory**: `.next`
 
-## Backend API (Railway)
+## Split Deployment (Alternative)
 
-### 1. Configure
+### Frontend (Vercel)
+
+Create `apps/web/.env.production`:
+```env
+NEXT_PUBLIC_API_URL=https://api.iffeds.org/api/v1
+```
+
+Deploy:
+```bash
+cd apps/web
+npx vercel --prod
+```
+
+### Backend API (Railway)
 
 Set environment variables in Railway dashboard:
 
@@ -49,10 +93,8 @@ NODE_ENV=production
 CORS_ORIGIN=https://iffeds.org
 ```
 
-### 2. Deploy
-
+Deploy:
 ```bash
-# Railway CLI
 railway init
 railway up
 ```
@@ -62,9 +104,9 @@ Or connect GitHub:
 - **Build Command**: `bun build src/index.ts --outdir dist --target bun`
 - **Start Command**: `bun run dist/index.js`
 
-## Backend API (Fly.io)
+### Backend API (Fly.io)
 
-### 1. Create `apps/api/Dockerfile`
+Create `apps/api/Dockerfile`:
 
 ```dockerfile
 FROM oven/bun:1.3-alpine
@@ -82,8 +124,7 @@ EXPOSE 4000
 CMD ["bun", "run", "dist/index.js"]
 ```
 
-### 2. Deploy
-
+Deploy:
 ```bash
 cd apps/api
 fly launch --name iffe-sacco-api --region sin  # Singapore
@@ -118,9 +159,30 @@ cd apps/api
 DATABASE_URL="production-url" bunx prisma migrate deploy
 ```
 
+## Default Credentials
+
+| Role | Email | Password |
+|------|-------|----------|
+| Admin | admin@iffeds.org | password123 |
+| Chairman | chairman@iffeds.org | chairman123 |
+| Staff | staff@iffeds.org | password123 |
+| Member | john@example.com | password123 |
+
+> **Security**: Change all passwords immediately in production.
+
 ## Environment Variables Reference
 
-### Backend (`apps/api`)
+### Unified Deployment (`apps/web` with bundled API)
+
+| Variable | Required | Description |
+|----------|----------|-------------|
+| `NEXT_PUBLIC_API_URL` | No | API base URL (`/api/v1` for unified, full URL for split) |
+| `DATABASE_URL` | Yes | NeonDB PostgreSQL connection string |
+| `JWT_SECRET` | Yes | Secret for access token signing (min 32 chars) |
+| `JWT_REFRESH_SECRET` | Yes | Secret for refresh token signing (min 32 chars) |
+| `NODE_ENV` | No | Environment (default: development) |
+
+### Split Deployment - Backend (`apps/api`)
 
 | Variable | Required | Description |
 |----------|----------|-------------|
@@ -131,11 +193,11 @@ DATABASE_URL="production-url" bunx prisma migrate deploy
 | `NODE_ENV` | No | Environment (default: development) |
 | `CORS_ORIGIN` | No | Allowed CORS origin (default: http://localhost:3000) |
 
-### Frontend (`apps/web`)
+### Split Deployment - Frontend (`apps/web`)
 
 | Variable | Required | Description |
 |----------|----------|-------------|
-| `NEXT_PUBLIC_API_URL` | No | Backend API base URL |
+| `NEXT_PUBLIC_API_URL` | No | Backend API base URL (full URL for split deployment) |
 
 ## Security Checklist
 

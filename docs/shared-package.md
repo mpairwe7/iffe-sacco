@@ -38,12 +38,14 @@ import { type Member, ACCOUNT_TYPES } from "@iffe/shared";
 | `BankAccount` | id, bankName, accountNo, balance | Bank management |
 | `AuditLog` | id, action, entity, details | Audit trail |
 | `Setting` | id, key, value | System config |
+| `Application` | id, surname, firstName, sex, dateOfBirth, status, 40+ IBDA fields | Membership application |
+| `ApplicationStatus` | status, reviewedBy, reviewedAt, rejectionReason | Application review state |
 
 ### Utility Types
 
 | Type | Description |
 |------|-------------|
-| `Role` | `"admin" \| "member" \| "staff"` |
+| `Role` | `"admin" \| "chairman" \| "member" \| "staff"` |
 | `AccountType` | `"savings" \| "current" \| "fixed_deposit"` |
 | `TransactionType` | deposit, withdrawal, transfer, loan_repayment, etc. |
 | `LoanStatus` | pending, approved, active, paid, overdue, defaulted, rejected |
@@ -77,6 +79,8 @@ All schemas use **Zod v4** and export both the schema and inferred TypeScript ty
 | `createExpenseSchema` | Expense entry |
 | `createWelfareSchema` | Welfare program creation |
 | `pledgeSchema` | Welfare pledge (min 1,000) |
+| `createApplicationSchema` | Full IBDA Bio Data membership application (40+ fields across 5 steps) |
+| `reviewApplicationSchema` | Application approve/reject with optional reason |
 
 ### Utility Schemas
 
@@ -101,6 +105,9 @@ All schemas use **Zod v4** and export both the schema and inferred TypeScript ty
 | `ACCOUNT_TYPES` | `["savings", "current", "fixed_deposit"]` | Account type options |
 | `LOAN_TYPES` | `["business", "personal", "emergency", "education", "housing"]` | Loan type options |
 | `TRANSACTION_METHODS` | `["cash", "mobile_money", "bank_transfer", "cheque", "internal"]` | Payment methods |
+| `ROLES` | `["admin", "chairman", "member", "staff"]` | Available user roles |
+| `APPLICATION_STATUS` | `["pending", "approved", "rejected"]` | Application statuses |
+| `SEX_OPTIONS` | `["Male", "Female"]` | Sex options for forms |
 | `EXPENSE_CATEGORIES` | 10 categories | Expense categorization |
 | `INTEREST_RATES` | `{ savings: 12, current: 5, fixed_deposit: 15 }` | Default rates |
 | `PAGINATION` | `{ DEFAULT_PAGE: 1, DEFAULT_LIMIT: 20, MAX_LIMIT: 100 }` | Pagination defaults |

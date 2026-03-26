@@ -11,9 +11,16 @@ IFFE/
 ├── apps/
 │   ├── web/                        # Next.js 16 Frontend
 │   │   ├── src/
-│   │   │   ├── app/                # App Router pages (35 routes)
-│   │   │   │   ├── (auth)/         # Login, Register, Reset, Terms, Privacy
+│   │   │   ├── app/                # App Router pages (39 routes)
+│   │   │   │   ├── (auth)/         # Login, Register (5-step), Reset, Terms, Privacy
 │   │   │   │   ├── (dashboard)/    # Dashboard, Admin, Portal, Profile
+│   │   │   │   │   ├── admin/
+│   │   │   │   │   │   ├── applications/    # Application management
+│   │   │   │   │   │   └── ...              # Members, Accounts, Loans, etc.
+│   │   │   │   │   ├── chairman/            # Chairman oversight dashboard
+│   │   │   │   │   ├── application-status/  # Applicant status tracking
+│   │   │   │   │   └── ...                  # Portal, Profile
+│   │   │   │   ├── api/v1/[...path]/        # Unified API route (BFF)
 │   │   │   │   ├── layout.tsx      # Root layout with Providers
 │   │   │   │   ├── page.tsx        # Landing page
 │   │   │   │   ├── not-found.tsx   # Custom 404
@@ -21,7 +28,7 @@ IFFE/
 │   │   │   ├── components/         # Reusable UI components
 │   │   │   │   ├── ui/             # Primitives (skeleton, dialog, breadcrumb, etc.)
 │   │   │   │   ├── providers.tsx   # QueryClient + Theme + Toast + Tooltip
-│   │   │   │   ├── sidebar.tsx     # Dashboard sidebar navigation
+│   │   │   │   ├── sidebar.tsx     # Role-based dashboard sidebar navigation
 │   │   │   │   ├── data-table.tsx  # Advanced data table (sort, filter, export)
 │   │   │   │   ├── motion.tsx      # Framer Motion wrappers
 │   │   │   │   └── ...
@@ -33,18 +40,18 @@ IFFE/
 │   │
 │   └── api/                        # Hono API Backend
 │       ├── prisma/
-│       │   ├── schema.prisma       # 14 models
-│       │   ├── migrations/         # 2 version-controlled migrations
+│       │   ├── schema.prisma       # 15 models
+│       │   ├── migrations/         # 3+ version-controlled migrations
 │       │   ├── seed.ts             # TypeScript seeder (alternative)
 │       │   └── seed.sql            # SQL seeder (recommended, 209+ records)
 │       ├── prisma.config.ts        # Prisma 7.x config
 │       └── src/
-│           ├── index.ts            # Hono server entry (17 route groups, 87 endpoints)
+│           ├── index.ts            # Hono server entry (18 route groups, 95+ endpoints)
 │           ├── config/             # Environment validation, PrismaPg database
 │           ├── middleware/          # JWT auth (role-based), error handler
-│           ├── routes/             # 17 route files
-│           ├── services/           # 9 service files
-│           ├── repositories/       # 9 repository files
+│           ├── routes/             # 18 route files (incl. application.routes.ts)
+│           ├── services/           # 10 service files (incl. application.service.ts)
+│           ├── repositories/       # 10 repository files (incl. application.repository.ts)
 │           └── utils/              # JWT, password hashing
 │
 ├── packages/
@@ -106,11 +113,14 @@ Request → Logger → Secure Headers → CORS → Auth (JWT) → Route Handler 
 │  │  (auth)   │  │(dashboard) │  │  Landing   │ │
 │  │  Layout   │  │  Layout    │  │   Page     │ │
 │  │           │  │ + Sidebar  │  │            │ │
-│  │ Login     │  │ + Header   │  │ Hero       │ │
-│  │ Register  │  │ + Breadcrumb│ │ Features   │ │
-│  │ Reset     │  │ + CMD+K    │  │ Portals    │ │
-│  │ Terms     │  │            │  │ Footer     │ │
-│  │ Privacy   │  │ Admin/*    │  │            │ │
+│  │ Login     │  │ (role-based│  │ Hero       │ │
+│  │ Register  │  │  nav items)│  │ Features   │ │
+│  │ (5-step)  │  │ + Header   │  │ Portals    │ │
+│  │ Reset     │  │ + Breadcrumb│ │ Footer     │ │
+│  │ Terms     │  │ + CMD+K    │  │            │ │
+│  │ Privacy   │  │            │  │            │ │
+│  │ App Status│  │ Admin/*    │  │            │ │
+│  │           │  │ Chairman/* │  │            │ │
 │  │           │  │ Portal/*   │  │            │ │
 │  │           │  │ Profile/*  │  │            │ │
 │  └───────────┘  └────────────┘  └────────────┘ │

@@ -33,7 +33,7 @@ No auth required.
 
 ---
 
-## Authentication (6 endpoints)
+## Authentication (7 endpoints)
 
 | Method | Path | Auth | Description |
 |--------|------|------|-------------|
@@ -162,8 +162,8 @@ Where P = principal, r = monthly rate, n = term in months.
 | GET | `/expenses/:id` | Any | Get expense |
 | POST | `/expenses` | admin, staff | Create expense |
 | PUT | `/expenses/:id` | admin, staff | Update expense |
-| PATCH | `/expenses/:id/approve` | admin | Approve expense |
-| PATCH | `/expenses/:id/reject` | admin | Reject expense |
+| PATCH | `/expenses/:id/approve` | admin, chairman | Approve expense |
+| PATCH | `/expenses/:id/reject` | admin, chairman | Reject expense |
 | DELETE | `/expenses/:id` | admin | Delete expense |
 
 ---
@@ -206,13 +206,58 @@ Where P = principal, r = monthly rate, n = term in months.
 
 ---
 
-## Dashboard (3 endpoints)
+## Applications (8 endpoints)
 
-| Method | Path | Description |
-|--------|------|-------------|
-| GET | `/dashboard/stats` | Aggregated KPIs: members, deposits, withdrawals, loans, expenses, savings |
-| GET | `/dashboard/recent-transactions?limit=10` | Latest transactions with member info |
-| GET | `/dashboard/upcoming-payments?days=7` | Loans with payment due within N days |
+| Method | Path | Auth | Description |
+|--------|------|------|-------------|
+| POST | `/applications` | No | Submit membership application (IBDA Bio Data form) |
+| POST | `/applications/authenticated` | Yes | Submit application linked to user account |
+| GET | `/applications/mine` | Yes | Check own application status |
+| GET | `/applications` | admin, staff | List all applications (paginated, filterable) |
+| GET | `/applications/stats` | admin, staff | Application statistics (pending/approved/rejected counts) |
+| GET | `/applications/:id` | admin, staff | View full application detail |
+| PUT | `/applications/:id/approve` | admin | Approve application (auto-creates Member record) |
+| PUT | `/applications/:id/reject` | admin | Reject application with reason |
+
+### POST `/applications`
+```json
+{
+  "surname": "Nakamya",
+  "firstName": "Grace",
+  "sex": "Female",
+  "dateOfBirth": "1990-05-15",
+  "phone": "+256700000000",
+  "email": "grace@example.com",
+  "birthPlace": "Jinja",
+  "birthDistrict": "Jinja",
+  "occupation": "Teacher",
+  "fatherName": "John Nakamya",
+  "motherName": "Mary Nakamya",
+  "clan": "Lugave",
+  "totem": "Pangolin"
+}
+```
+
+### PUT `/applications/:id/reject`
+```json
+{ "reason": "Incomplete documentation - missing national ID copy" }
+```
+
+### Business Logic
+- **Approval**: Creates a Member record with data from the application, assigns a SACCO member ID, and optionally links to a User account
+- **Rejection**: Records rejection reason and reviewer; applicant can see reason via `/applications/mine`
+- **Status tracking**: Applicants can check their application status without admin access
+
+---
+
+## Dashboard (4 endpoints)
+
+| Method | Path | Role | Description |
+|--------|------|------|-------------|
+| GET | `/dashboard/stats` | Any | Aggregated KPIs: members, deposits, withdrawals, loans, expenses, savings |
+| GET | `/dashboard/recent-transactions?limit=10` | Any | Latest transactions with member info |
+| GET | `/dashboard/upcoming-payments?days=7` | Any | Loans with payment due within N days |
+| GET | `/dashboard/chairman` | chairman, admin | Chairman overview data (summary stats, pending expenses) |
 
 ---
 
@@ -301,7 +346,7 @@ Where P = principal, r = monthly rate, n = term in months.
 
 ---
 
-## Total Endpoint Count: **75+**
+## Total Endpoint Count: **95+**
 
 | Category | Endpoints |
 |----------|-----------|
@@ -315,7 +360,8 @@ Where P = principal, r = monthly rate, n = term in months.
 | Deposit Requests | 4 |
 | Withdraw Requests | 4 |
 | Welfare | 9 |
-| Dashboard | 3 |
+| Applications | 8 |
+| Dashboard | 4 |
 | Bank Accounts | 6 |
 | Users | 5 |
 | Settings | 4 |
@@ -323,7 +369,7 @@ Where P = principal, r = monthly rate, n = term in months.
 | Reports | 2 |
 | Payment Gateways | 5 |
 | Audit Logs | 2 |
-| **Total** | **87** |
+| **Total** | **95+** |
 
 ---
 
