@@ -1,13 +1,13 @@
 // @ts-nocheck
 import { PrismaClient } from "@prisma/client";
-import { PrismaNeonHTTP } from "@prisma/adapter-neon";
+import { PrismaNeonHttp } from "@prisma/adapter-neon";
 import { neon } from "@neondatabase/serverless";
 
 const globalForPrisma = globalThis as unknown as { prisma: PrismaClient };
 
 function createPrismaClient() {
   const sql = neon(process.env.DATABASE_URL);
-  const adapter = new PrismaNeonHTTP(sql);
+  const adapter = new PrismaNeonHttp(sql);
   return new PrismaClient({ adapter } as any);
 }
 
