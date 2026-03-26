@@ -9,9 +9,6 @@ import type { Role } from "@iffe/shared";
 import {
   LayoutDashboard,
   Users,
-  Calendar,
-  Landmark,
-  Coins,
   Banknote,
   Wallet,
   Receipt,
@@ -20,12 +17,17 @@ import {
   Building2,
   Heart,
   UserCog,
-  BarChart3,
   Settings,
   HelpCircle,
   ChevronDown,
   LogOut,
   X,
+  PiggyBank,
+  ArrowLeftRight,
+  ArrowDownToLine,
+  ArrowUpFromLine,
+  FileBarChart,
+  Percent,
 } from "lucide-react";
 
 interface SidebarProps {
@@ -86,11 +88,11 @@ const navItems: NavItem[] = [
       { label: "Add Member", href: "/admin/members/create" },
     ],
   },
-  { label: "Loans", href: "/admin/loans", icon: Calendar, roles: ["admin", "staff", "chairman"] },
-  { label: "Savings Accounts", href: "/admin/savings-accounts", icon: Landmark, roles: ["admin", "staff", "chairman"] },
+  { label: "Loans", href: "/admin/loans", icon: Banknote, roles: ["admin", "staff", "chairman"] },
+  { label: "Savings Accounts", href: "/admin/savings-accounts", icon: PiggyBank, roles: ["admin", "staff", "chairman"] },
   {
     label: "Transactions",
-    icon: Wallet,
+    icon: ArrowLeftRight,
     roles: ["admin", "staff", "chairman"],
     children: [
       { label: "New Transaction", href: "/admin/transactions/create" },
@@ -99,7 +101,7 @@ const navItems: NavItem[] = [
   },
   {
     label: "Deposit Requests",
-    icon: Coins,
+    icon: ArrowDownToLine,
     roles: ["admin", "staff"],
     children: [
       { label: "Deposit Money", href: "/admin/transactions/create?type=deposit" },
@@ -108,7 +110,7 @@ const navItems: NavItem[] = [
   },
   {
     label: "Withdraw Requests",
-    icon: Banknote,
+    icon: ArrowUpFromLine,
     roles: ["admin", "staff"],
     children: [
       { label: "Withdraw Money", href: "/admin/transactions/create?type=withdraw" },
@@ -122,7 +124,7 @@ const navItems: NavItem[] = [
   { label: "User Management", href: "/admin/users", icon: UserCog, roles: ["admin"] },
   {
     label: "Reports",
-    icon: BarChart3,
+    icon: FileBarChart,
     roles: ["admin", "staff", "chairman"],
     children: [
       { label: "Account Statement", href: "/admin/reports?type=statement" },
@@ -136,7 +138,7 @@ const navItems: NavItem[] = [
   {
     label: "Interest",
     href: "/admin/interest",
-    icon: Landmark,
+    icon: Percent,
     roles: ["admin"],
   },
   { label: "Settings", href: "/admin/settings", icon: Settings, roles: ["admin"] },

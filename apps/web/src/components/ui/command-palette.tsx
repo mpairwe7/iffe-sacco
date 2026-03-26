@@ -2,13 +2,14 @@
 
 import { Command } from "cmdk";
 import { useRouter } from "next/navigation";
-import { useEffect, useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useUIStore } from "@/stores/ui-store";
 import { useAuthStore } from "@/stores/auth-store";
+import { apiClient } from "@/lib/api-client";
 import {
   LayoutDashboard, Users, Wallet, CreditCard, BarChart3, Settings, HelpCircle,
   Landmark, Receipt, Heart, UserCog, Calculator, ArrowDownToLine, ArrowUpFromLine,
-  Search, Building2, Moon, Sun,
+  Search, Building2, Moon, Sun, Loader2,
 } from "lucide-react";
 import { useTheme } from "next-themes";
 import type { Role } from "@iffe/shared";
@@ -41,6 +42,9 @@ export function CommandPalette() {
   const router = useRouter();
   const { theme, setTheme } = useTheme();
   const userRole = useAuthStore((s) => s.user?.role ?? "member");
+  const [query, setQuery] = useState("");
+  const [searchResults, setSearchResults] = useState<any[]>([]);
+  const [searching, setSearching] = useState(false);
 
   const pages = useMemo(
     () => allPages.filter((p) => p.roles.includes(userRole as Role)),
@@ -55,6 +59,34 @@ export function CommandPalette() {
     return () => document.removeEventListener("keydown", onKeyDown);
   }, [setOpen]);
 
+  // Debounced member search
+  useEffect(() => {
+    if (query.length < 3) {
+      setSearchResults([]);
+      return;
+    }
+    const timer = setTimeout(async () => {
+      setSearching(true);
+      try {
+        const data = await apiClient.get<any>("/members", { search: query, limit: 5 });
+        setSearchResults(data?.data || []);
+      } catch {
+        setSearchResults([]);
+      }
+      setSearching(false);
+    }, 300);
+    return () => clearTimeout(timer);
+  }, [query]);
+
+  // Reset state when palette closes
+  useEffect(() => {
+    if (!open) {
+      setQuery("");
+      setSearchResults([]);
+      setSearching(false);
+    }
+  }, [open]);
+
   if (!open) return null;
 
   return (
@@ -65,13 +97,38 @@ export function CommandPalette() {
           <div className="flex items-center gap-3 px-4 border-b border-border/50">
             <Search className="w-5 h-5 text-text-light shrink-0" />
             <Command.Input
-              placeholder="Search pages, actions..."
+              placeholder="Search members, transactions, pages..."
               className="w-full py-4 bg-transparent text-text placeholder:text-text-light focus:outline-none text-base"
               autoFocus
+              value={query}
+              onValueChange={setQuery}
             />
           </div>
           <Command.List className="max-h-72 overflow-y-auto p-2">
             <Command.Empty className="py-8 text-center text-sm text-text-muted">No results found.</Command.Empty>
+
+            {searching && (
+              <div className="flex items-center justify-center gap-2 py-4 text-sm text-text-muted">
+                <Loader2 className="w-4 h-4 animate-spin" />
+                Searching members...
+              </div>
+            )}
+
+            {searchResults.length > 0 && (
+              <Command.Group heading="Members" className="text-xs font-semibold text-text-light uppercase tracking-wider px-2 pt-3 pb-1">
+                {searchResults.map((m) => (
+                  <Command.Item
+                    key={m.id}
+                    value={`${m.firstName} ${m.lastName} ${m.memberId}`}
+                    onSelect={() => { router.push(`/admin/members/${m.id}`); setOpen(false); }}
+                    className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm text-text-muted hover:text-text hover:bg-surface-hover cursor-pointer data-[selected=true]:bg-primary/10 data-[selected=true]:text-primary"
+                  >
+                    <Users className="w-4 h-4 shrink-0" />
+                    {m.firstName} {m.lastName} — {m.memberId}
+                  </Command.Item>
+                ))}
+              </Command.Group>
+            )}
 
             {["Pages", "Member"].map((group) => (
               <Command.Group key={group} heading={group} className="text-xs font-semibold text-text-light uppercase tracking-wider px-2 pt-3 pb-1">

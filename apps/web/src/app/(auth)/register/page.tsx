@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect } from "react";
 import { useForm, useFieldArray, type UseFormReturn } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod/v4";
@@ -307,7 +307,17 @@ export default function RegisterPage() {
     mode: "onTouched",
   });
 
-  const { register, handleSubmit, trigger, formState: { errors } } = form;
+  const { register, handleSubmit, trigger, formState: { errors, isDirty } } = form;
+
+  useEffect(() => {
+    if (!isDirty) return;
+    const handler = (e: BeforeUnloadEvent) => {
+      e.preventDefault();
+      e.returnValue = "";
+    };
+    window.addEventListener("beforeunload", handler);
+    return () => window.removeEventListener("beforeunload", handler);
+  }, [isDirty]);
 
   const spousesField = useFieldArray({ control: form.control, name: "spouses" });
   const childrenField = useFieldArray({ control: form.control, name: "children" });
@@ -373,8 +383,8 @@ export default function RegisterPage() {
 
       toast.success("Application submitted successfully!");
       router.push("/application-status");
-    } catch (err: any) {
-      toast.error(err.message || "Something went wrong. Please try again.");
+    } catch (err) {
+      toast.error((err as Error).message || "Something went wrong. Please try again.");
     }
   }
 

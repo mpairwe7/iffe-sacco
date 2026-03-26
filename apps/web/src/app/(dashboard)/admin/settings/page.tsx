@@ -47,6 +47,21 @@ export default function SettingsPage() {
   const [original, setOriginal] = useState<SettingsState>(defaultSettings);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
+
+  const isDirty = Object.keys(settings).some(
+    (k) => settings[k as keyof SettingsState] !== original[k as keyof SettingsState]
+  );
+
+  useEffect(() => {
+    if (!isDirty) return;
+    const handler = (e: BeforeUnloadEvent) => {
+      e.preventDefault();
+      e.returnValue = "";
+    };
+    window.addEventListener("beforeunload", handler);
+    return () => window.removeEventListener("beforeunload", handler);
+  }, [isDirty]);
+
   useEffect(() => {
     async function loadSettings() {
       try {
@@ -73,8 +88,8 @@ export default function SettingsPage() {
     loadSettings();
   }, []);
 
-  async function handleSave(e: React.FormEvent) {
-    e.preventDefault();
+  async function handleSave(e?: React.FormEvent) {
+    e?.preventDefault();
     setSaving(true);
     try {
       const promises: Promise<unknown>[] = [];
@@ -245,6 +260,27 @@ export default function SettingsPage() {
               </button>
             </div>
       </form>
+
+      {isDirty && (
+        <div className="fixed bottom-0 left-0 right-0 lg:left-72 bg-surface/95 backdrop-blur-sm border-t border-border/50 p-4 flex items-center justify-between z-40">
+          <p className="text-sm text-text-muted">You have unsaved changes</p>
+          <div className="flex gap-3">
+            <button
+              onClick={() => setSettings({ ...original })}
+              className="px-4 py-2 text-sm text-text-muted border border-border rounded-xl hover:bg-surface-hover"
+            >
+              Discard
+            </button>
+            <button
+              onClick={handleSave}
+              disabled={saving}
+              className="px-4 py-2 text-sm font-medium text-white bg-primary rounded-xl hover:bg-primary-dark disabled:opacity-50"
+            >
+              {saving ? "Saving..." : "Save Changes"}
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
