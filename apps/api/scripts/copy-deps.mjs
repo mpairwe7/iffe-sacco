@@ -13,14 +13,40 @@ mkdirSync(targetNodeModules, { recursive: true });
 
 // Packages the bundle externalizes
 const deps = [
-  "@prisma/client",
-  "@prisma/client-runtime-utils",
-  "@prisma/adapter-neon",
-  "@prisma/driver-adapter-utils",
   "@neondatabase/serverless",
   "bcryptjs",
   "jose",
 ];
+
+// Copy ALL @prisma/* packages from Bun cache
+const bunDir = join(rootDir, "node_modules", ".bun");
+if (existsSync(bunDir)) {
+  for (const entry of readdirSync(bunDir)) {
+    if (!entry.startsWith("@prisma+")) continue;
+    const nmDir = join(bunDir, entry, "node_modules");
+    if (!existsSync(nmDir)) continue;
+    for (const pkg of readdirSync(nmDir)) {
+      const src = join(nmDir, pkg);
+      if (pkg.startsWith("@")) {
+        // Scoped package - go one level deeper
+        for (const sub of readdirSync(src)) {
+          const subSrc = join(src, sub);
+          const subDest = join(targetNodeModules, pkg, sub);
+          if (!existsSync(subDest)) {
+            mkdirSync(dirname(subDest), { recursive: true });
+            cpSync(subSrc, subDest, { recursive: true, dereference: true, force: true });
+          }
+        }
+      } else if (pkg !== ".bin") {
+        const dest = join(targetNodeModules, pkg);
+        if (!existsSync(dest)) {
+          cpSync(src, dest, { recursive: true, dereference: true, force: true });
+        }
+      }
+    }
+  }
+  console.log("  OK @prisma/* (all packages from .bun/ cache)");
+}
 
 function findAndCopy(dep) {
   // Check symlinks first
