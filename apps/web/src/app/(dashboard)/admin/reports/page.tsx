@@ -27,11 +27,10 @@ const colorMap: Record<string, string> = {
 };
 
 interface ReportResult {
-  title: string;
+  type: string;
   generatedAt: string;
-  summary?: Record<string, number>;
-  downloadUrl?: string;
-  rows?: Record<string, unknown>[];
+  dateRange: { from: string; to: string };
+  records: Record<string, unknown>[];
 }
 
 export default function ReportsPage() {
@@ -47,8 +46,8 @@ export default function ReportsPage() {
     try {
       const data = await apiClient.post<ReportResult>("/reports/generate", {
         type: reportType,
-        startDate: dateFrom,
-        endDate: dateTo,
+        dateFrom,
+        dateTo,
       });
       setResult(data);
       toast.success("Report generated successfully");
@@ -139,64 +138,51 @@ export default function ReportsPage() {
         <div className="glass-card rounded-2xl">
           <div className="p-6 border-b border-border/50 flex items-center justify-between">
             <div>
-              <h3 className="text-base font-semibold text-text">{result.title || "Generated Report"}</h3>
-              {result.generatedAt && (
-                <p className="text-xs text-text-muted mt-1">Generated: {new Date(result.generatedAt).toLocaleString()}</p>
-              )}
+              <h3 className="text-base font-semibold text-text capitalize">{result.type?.replace(/-/g, " ")} Report</h3>
+              <p className="text-xs text-text-muted mt-1">
+                Generated: {new Date(result.generatedAt).toLocaleString()}
+                {result.dateRange && ` | ${new Date(result.dateRange.from).toLocaleDateString()} — ${new Date(result.dateRange.to).toLocaleDateString()}`}
+              </p>
             </div>
-            {result.downloadUrl && (
-              <a
-                href={result.downloadUrl}
-                download
-                className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-primary border border-primary/30 rounded-xl hover:bg-primary/10"
-              >
-                <Download className="w-4 h-4" /> Download
-              </a>
-            )}
+            <p className="text-sm text-text-muted">{result.records?.length ?? 0} records</p>
           </div>
 
-          {result.summary && (
-            <div className="p-6 grid grid-cols-2 sm:grid-cols-4 gap-4">
-              {Object.entries(result.summary).map(([key, value]) => (
-                <div key={key} className="text-center">
-                  <p className="text-xs text-text-muted uppercase tracking-wider">
-                    {key.replace(/([A-Z])/g, " $1").replace(/_/g, " ").trim()}
-                  </p>
-                  <p className="text-lg font-bold text-text mt-1">
-                    {typeof value === "number" && value > 999
-                      ? formatCurrency(value)
-                      : String(value)}
-                  </p>
-                </div>
-              ))}
-            </div>
-          )}
-
-          {result.rows && result.rows.length > 0 && (
+          {result.records && result.records.length > 0 && (
             <div className="overflow-x-auto">
               <table className="w-full">
-                <thead>
+                <thead className="sticky top-0 bg-surface">
                   <tr className="border-b border-border/50">
-                    {Object.keys(result.rows[0]).map((key) => (
-                      <th key={key} className="text-xs font-semibold text-text-muted uppercase tracking-wider px-4 py-3 text-left">
+                    {Object.keys(result.records[0]).filter(k => !["account", "member"].includes(k)).slice(0, 8).map((key) => (
+                      <th key={key} scope="col" className="text-xs font-semibold text-text-muted uppercase tracking-wider px-4 py-3 text-left">
                         {key.replace(/([A-Z])/g, " $1").replace(/_/g, " ").trim()}
                       </th>
                     ))}
                   </tr>
                 </thead>
                 <tbody>
-                  {result.rows.map((row, i) => (
-                    <tr key={i} className="border-b border-border/30">
-                      {Object.values(row).map((val, j) => (
+                  {result.records.slice(0, 50).map((row, i) => (
+                    <tr key={i} className="border-b border-border/30 hover:bg-surface-hover/50">
+                      {Object.entries(row).filter(([k]) => !["account", "member"].includes(k)).slice(0, 8).map(([k, val], j) => (
                         <td key={j} className="px-4 py-3 text-sm text-text">
-                          {String(val ?? "")}
+                          {val === null || val === undefined ? "—" :
+                           typeof val === "object" ? JSON.stringify(val).slice(0, 50) :
+                           typeof val === "number" && Number(val) > 999 ? formatCurrency(Number(val)) :
+                           String(val).length > 50 ? String(val).slice(0, 50) + "..." :
+                           String(val)}
                         </td>
                       ))}
                     </tr>
                   ))}
                 </tbody>
               </table>
+              {result.records.length > 50 && (
+                <p className="text-xs text-text-muted text-center py-3">Showing 50 of {result.records.length} records</p>
+              )}
             </div>
+          )}
+
+          {result.records && result.records.length === 0 && (
+            <div className="p-12 text-center text-text-muted">No records found for the selected period.</div>
           )}
         </div>
       )}

@@ -10,5 +10,5 @@
       "@iffe/shared/*": ["../shared/src/*"]
     }
   },
-  "include": ["src/**/*", "prisma/**/*"]
+  "include": ["src/**/*"]
 }

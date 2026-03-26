@@ -6,7 +6,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod/v4";
 import { toast } from "sonner";
 import { useAccounts } from "@/hooks/use-accounts";
-import { useTransactions, useCreateTransaction } from "@/hooks/use-transactions";
+import { useWithdrawRequests, useCreateWithdrawRequest } from "@/hooks/use-withdraw-requests";
 import { formatCurrency, formatDate } from "@/lib/utils";
 
 const withdrawalSchema = z.object({
@@ -19,11 +19,11 @@ type WithdrawalInput = z.infer<typeof withdrawalSchema>;
 
 export default function MemberWithdrawalsPage() {
   const { data: accountsData } = useAccounts();
-  const { data: txData, isLoading: txLoading } = useTransactions({ sortBy: "createdAt", sortOrder: "desc", limit: 5 });
-  const createTransaction = useCreateTransaction();
+  const { data: reqData, isLoading: reqLoading } = useWithdrawRequests({ sortOrder: "desc", limit: 5 });
+  const createWithdrawRequest = useCreateWithdrawRequest();
 
   const accounts = accountsData?.data ?? [];
-  const recentWithdrawals = (txData?.data ?? []).filter((t) => t.type === "withdrawal");
+  const recentWithdrawals = reqData?.data ?? [];
 
   const {
     register,
@@ -39,12 +39,11 @@ export default function MemberWithdrawalsPage() {
 
   async function onSubmit(data: WithdrawalInput) {
     try {
-      await createTransaction.mutateAsync({
+      await createWithdrawRequest.mutateAsync({
         accountId: data.accountId,
-        type: "withdrawal",
         amount: data.amount,
         method: data.method,
-        description: data.description,
+        reason: data.description,
       });
       toast.success("Withdrawal request submitted successfully!");
       reset();
@@ -125,10 +124,10 @@ export default function MemberWithdrawalsPage() {
 
           <button
             type="submit"
-            disabled={isSubmitting || createTransaction.isPending}
+            disabled={isSubmitting || createWithdrawRequest.isPending}
             className="w-full inline-flex items-center justify-center gap-2 px-6 py-3 text-sm font-medium text-white bg-warning rounded-xl hover:bg-amber-600 transition-colors disabled:opacity-50"
           >
-            {isSubmitting || createTransaction.isPending ? (
+            {isSubmitting || createWithdrawRequest.isPending ? (
               <Loader2 className="w-4 h-4 animate-spin" />
             ) : (
               <Send className="w-4 h-4" />
@@ -141,7 +140,7 @@ export default function MemberWithdrawalsPage() {
           <div className="glass-card rounded-2xl p-6">
             <h3 className="font-semibold text-text mb-4">Recent Withdrawals</h3>
             <div className="space-y-3">
-              {txLoading ? (
+              {reqLoading ? (
                 Array.from({ length: 3 }).map((_, i) => (
                   <div key={i} className="flex items-center justify-between p-3 bg-white/50 rounded-xl animate-pulse">
                     <div className="space-y-2">
@@ -158,7 +157,7 @@ export default function MemberWithdrawalsPage() {
                   <div key={w.id} className="flex items-center justify-between p-3 bg-white/50 rounded-xl">
                     <div>
                       <p className="text-sm font-medium text-text">{formatCurrency(w.amount)}</p>
-                      <p className="text-xs text-text-muted">{w.method.replace("_", " ").replace(/\b\w/g, (c) => c.toUpperCase())} &middot; {formatDate(w.createdAt)}</p>
+                      <p className="text-xs text-text-muted">{(w.method || "cash").replace("_", " ").replace(/\b\w/g, (c: string) => c.toUpperCase())} &middot; {formatDate(w.createdAt)}</p>
                     </div>
                     <span className={`text-xs font-medium px-2.5 py-1 rounded-full ${
                       w.status === "completed" ? "text-success bg-success/10" :

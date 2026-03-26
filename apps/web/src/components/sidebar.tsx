@@ -84,19 +84,10 @@ const navItems: NavItem[] = [
     children: [
       { label: "View Members", href: "/admin/members" },
       { label: "Add Member", href: "/admin/members/create" },
-      { label: "Member Requests", href: "/admin/members/requests" },
     ],
   },
   { label: "Loans", href: "/admin/loans", icon: Calendar, roles: ["admin", "staff", "chairman"] },
-  {
-    label: "Savings Accounts",
-    icon: Landmark,
-    roles: ["admin", "staff", "chairman"],
-    children: [
-      { label: "Member Accounts", href: "/admin/savings-accounts" },
-      { label: "Account Types", href: "/admin/savings-products" },
-    ],
-  },
+  { label: "Savings Accounts", href: "/admin/savings-accounts", icon: Landmark, roles: ["admin", "staff", "chairman"] },
   {
     label: "Transactions",
     icon: Wallet,
@@ -124,53 +115,11 @@ const navItems: NavItem[] = [
       { label: "Withdraw Requests", href: "/admin/withdraw-requests" },
     ],
   },
-  {
-    label: "Expenses",
-    icon: Receipt,
-    roles: ["admin", "staff", "chairman"],
-    children: [
-      { label: "All Expenses", href: "/admin/expenses" },
-      { label: "Expense Categories", href: "/admin/expense-categories" },
-    ],
-  },
-  {
-    label: "Bank Accounts",
-    icon: Building2,
-    roles: ["admin"],
-    children: [
-      { label: "Bank Accounts", href: "/admin/bank-accounts" },
-      { label: "Bank Transactions", href: "/admin/bank-transactions" },
-    ],
-  },
-  {
-    label: "Social Welfare",
-    icon: Heart,
-    roles: ["admin", "staff"],
-    children: [
-      { label: "Welfare Programs", href: "/admin/welfare" },
-      { label: "Pledges", href: "/admin/pledges" },
-    ],
-  },
-  {
-    label: "Payment Gateways",
-    icon: CreditCard,
-    roles: ["admin"],
-    children: [
-      { label: "Payment Gateways", href: "/admin/payment-gateways" },
-      { label: "Deposit Methods", href: "/admin/deposit-methods" },
-      { label: "Withdraw Methods", href: "/admin/withdraw-methods" },
-    ],
-  },
-  {
-    label: "User Management",
-    icon: UserCog,
-    roles: ["admin"],
-    children: [
-      { label: "All Users", href: "/admin/users" },
-      { label: "User Roles", href: "/admin/roles" },
-      { label: "Access Control", href: "/admin/access-control" },
-    ],
-  },
+  { label: "Expenses", href: "/admin/expenses", icon: Receipt, roles: ["admin", "staff", "chairman"] },
+  { label: "Bank Accounts", href: "/admin/bank-accounts", icon: Building2, roles: ["admin"] },
+  { label: "Social Welfare", href: "/admin/welfare", icon: Heart, roles: ["admin", "staff"] },
+  { label: "Payment Gateways", href: "/admin/payment-gateways", icon: CreditCard, roles: ["admin"] },
+  { label: "User Management", href: "/admin/users", icon: UserCog, roles: ["admin"] },
   {
     label: "Reports",
     icon: BarChart3,
@@ -190,17 +139,7 @@ const navItems: NavItem[] = [
     icon: Landmark,
     roles: ["admin"],
   },
-  {
-    label: "Settings",
-    icon: Settings,
-    roles: ["admin"],
-    children: [
-      { label: "General Settings", href: "/admin/settings" },
-      { label: "Currency", href: "/admin/currency" },
-      { label: "Notifications", href: "/admin/notifications" },
-      { label: "Database Backup", href: "/admin/backup" },
-    ],
-  },
+  { label: "Settings", href: "/admin/settings", icon: Settings, roles: ["admin"] },
 ];
 
 export function Sidebar({ open, onClose }: SidebarProps) {

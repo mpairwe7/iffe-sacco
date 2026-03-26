@@ -24,21 +24,33 @@ export function AuthGuard({ children }: { children: React.ReactNode }) {
         setUser(user);
         setChecked(true);
 
-        // Redirect based on role if on a wrong dashboard
-        const pathname = window.location.pathname;
+        // Comprehensive role-based route protection
+        const p = window.location.pathname;
+        const role = user.role;
 
-        if (user.role === "chairman" && pathname.startsWith("/dashboard")) {
-          router.replace("/chairman");
-          return;
+        // Chairman: can only access /chairman and /admin/expenses
+        if (role === "chairman") {
+          if (p.startsWith("/dashboard")) { router.replace("/chairman"); return; }
+          if (p.startsWith("/admin") && !p.startsWith("/admin/expenses") && !p.startsWith("/admin/reports")) {
+            router.replace("/chairman"); return;
+          }
+          if (p.startsWith("/portal")) { router.replace("/chairman"); return; }
         }
-        if (user.role === "member" && pathname.startsWith("/admin")) {
-          router.replace("/portal/savings");
-          return;
+
+        // Member: can only access /portal/*
+        if (role === "member") {
+          if (p.startsWith("/admin")) { router.replace("/portal/savings"); return; }
+          if (p.startsWith("/chairman")) { router.replace("/portal/savings"); return; }
+          if (p === "/dashboard") { router.replace("/portal/savings"); return; }
         }
-        if (user.role === "member" && pathname === "/dashboard") {
-          router.replace("/portal/savings");
-          return;
+
+        // Staff: same as admin but no /chairman
+        if (role === "staff") {
+          if (p.startsWith("/chairman")) { router.replace("/dashboard"); return; }
+          if (p.startsWith("/portal")) { router.replace("/dashboard"); return; }
         }
+
+        // Admin: no restrictions (full access)
       })
       .catch(() => {
         logout();

@@ -19,9 +19,9 @@ export const errorHandler: ErrorHandler = (err, c) => {
     return c.json({ success: false, message: "Validation failed", errors }, 422);
   }
 
+  const isProduction = process.env.NODE_ENV === "production";
   return c.json({
     success: false,
-    message: err.message || "Internal server error",
-    detail: err.stack?.split("\n").slice(0, 3),
+    message: isProduction ? "Internal server error" : err.message,
   }, 500);
 };

@@ -22,12 +22,12 @@ const defaultSettings: SettingsState = {
   companyName: "IFFE SACCO",
   tagline: "Empowering Financial Freedom",
   email: "info@iffeds.org",
-  phone: "+254 700 000 000",
+  phone: "+256 700 000 000",
   currency: "USh",
   dateFormat: "Y-m-d",
   language: "English",
   timezone: "Africa/Kampala (UTC+3)",
-  address: "Nairobi, Kenya",
+  address: "Kampala, Uganda",
 };
 
 const settingKeyMap: Record<keyof SettingsState, string> = {
@@ -47,8 +47,6 @@ export default function SettingsPage() {
   const [original, setOriginal] = useState<SettingsState>(defaultSettings);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
-  const [activeTab, setActiveTab] = useState("General");
-
   useEffect(() => {
     async function loadSettings() {
       try {
@@ -108,8 +106,6 @@ export default function SettingsPage() {
     setSettings((prev) => ({ ...prev, [key]: value }));
   }
 
-  const tabs = ["General", "Currency", "Notifications", "Email", "SMS", "Security", "Backup"];
-
   return (
     <div className="space-y-6">
       <div className="flex items-center gap-3">
@@ -122,29 +118,7 @@ export default function SettingsPage() {
         </div>
       </div>
 
-      <div className="grid lg:grid-cols-3 gap-6">
-        {/* Sidebar Navigation */}
-        <div className="glass-card rounded-2xl p-4 lg:sticky lg:top-24 h-fit">
-          <nav className="space-y-1">
-            {tabs.map((item) => (
-              <button
-                key={item}
-                onClick={() => setActiveTab(item)}
-                className={`w-full text-left px-4 py-2.5 rounded-xl text-sm font-medium transition-colors ${
-                  activeTab === item
-                    ? "bg-primary/10 text-primary"
-                    : "text-text-muted hover:text-text hover:bg-surface-alt"
-                }`}
-              >
-                {item}
-              </button>
-            ))}
-          </nav>
-        </div>
-
-        {/* Settings Form */}
-        <div className="lg:col-span-2 space-y-6">
-          <form onSubmit={handleSave} className="glass-card rounded-2xl">
+      <form onSubmit={handleSave} className="glass-card rounded-2xl">
             <div className="p-6 border-b border-border">
               <h3 className="text-base font-semibold text-text">General Settings</h3>
               <p className="text-sm text-text-muted mt-1">Basic system configuration</p>
@@ -270,9 +244,7 @@ export default function SettingsPage() {
                 {saving ? "Saving..." : "Save Settings"}
               </button>
             </div>
-          </form>
-        </div>
-      </div>
+      </form>
     </div>
   );
 }

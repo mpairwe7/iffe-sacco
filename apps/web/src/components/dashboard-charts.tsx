@@ -1,5 +1,6 @@
 "use client";
 
+import { useMemo } from "react";
 import {
   AreaChart,
   Area,
@@ -15,7 +16,15 @@ import {
   Cell,
 } from "recharts";
 
-const monthlyData = [
+/* ===== Props ===== */
+interface ChartProps {
+  transactions?: any[];
+  expenses?: any[];
+  loans?: any[];
+}
+
+/* ===== Static fallback data ===== */
+const defaultMonthlyData = [
   { month: "Jan", deposits: 4200000, withdrawals: 2100000 },
   { month: "Feb", deposits: 5100000, withdrawals: 2800000 },
   { month: "Mar", deposits: 4800000, withdrawals: 2400000 },
@@ -30,7 +39,7 @@ const monthlyData = [
   { month: "Dec", deposits: 9500000, withdrawals: 4800000 },
 ];
 
-const expenseData = [
+const defaultExpenseData = [
   { name: "Salaries", value: 35 },
   { name: "Operations", value: 25 },
   { name: "Marketing", value: 15 },
@@ -40,7 +49,7 @@ const expenseData = [
 
 const COLORS = ["#006622", "#F1C40F", "#3b82f6", "#10b981", "#94a3b8"];
 
-const loanData = [
+const defaultLoanData = [
   { month: "Jan", disbursed: 3200000, repaid: 2800000 },
   { month: "Feb", disbursed: 2800000, repaid: 3100000 },
   { month: "Mar", disbursed: 4100000, repaid: 2900000 },
@@ -49,7 +58,74 @@ const loanData = [
   { month: "Jun", disbursed: 3900000, repaid: 4200000 },
 ];
 
-export function DepositsWithdrawalsChart() {
+/* ===== Helpers ===== */
+const MONTH_NAMES = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+
+function aggregateTransactionsByMonth(transactions: any[]) {
+  const map: Record<string, { deposits: number; withdrawals: number }> = {};
+  for (const txn of transactions) {
+    const d = new Date(txn.createdAt);
+    const key = `${d.getFullYear()}-${d.getMonth()}`;
+    if (!map[key]) map[key] = { deposits: 0, withdrawals: 0 };
+    const amount = Number(txn.amount) || 0;
+    if (txn.type === "deposit") map[key].deposits += amount;
+    else map[key].withdrawals += amount;
+  }
+  return Object.entries(map)
+    .sort(([a], [b]) => a.localeCompare(b))
+    .map(([key, val]) => ({
+      month: MONTH_NAMES[Number(key.split("-")[1])],
+      deposits: val.deposits,
+      withdrawals: val.withdrawals,
+    }));
+}
+
+function aggregateExpensesByCategory(expenses: any[]) {
+  const map: Record<string, number> = {};
+  let total = 0;
+  for (const exp of expenses) {
+    const amount = Number(exp.amount) || 0;
+    const cat = exp.category || "Others";
+    map[cat] = (map[cat] || 0) + amount;
+    total += amount;
+  }
+  if (total === 0) return [];
+  return Object.entries(map).map(([name, amount]) => ({
+    name,
+    value: Math.round((amount / total) * 100),
+  }));
+}
+
+function aggregateLoansByMonth(loans: any[]) {
+  const map: Record<string, { disbursed: number; repaid: number }> = {};
+  for (const loan of loans) {
+    const d = new Date(loan.disbursedAt || loan.createdAt);
+    const key = `${d.getFullYear()}-${d.getMonth()}`;
+    if (!map[key]) map[key] = { disbursed: 0, repaid: 0 };
+    const amount = Number(loan.amount) || 0;
+    const balance = Number(loan.balance) || 0;
+    if (loan.status === "active" || loan.status === "approved") {
+      map[key].disbursed += amount;
+      map[key].repaid += amount - balance;
+    } else if (loan.status === "paid") {
+      map[key].disbursed += amount;
+      map[key].repaid += amount;
+    }
+  }
+  return Object.entries(map)
+    .sort(([a], [b]) => a.localeCompare(b))
+    .map(([key, val]) => ({
+      month: MONTH_NAMES[Number(key.split("-")[1])],
+      disbursed: val.disbursed,
+      repaid: val.repaid,
+    }));
+}
+
+export function DepositsWithdrawalsChart({ transactions }: ChartProps) {
+  const monthlyData = useMemo(() => {
+    if (transactions && transactions.length > 0) return aggregateTransactionsByMonth(transactions);
+    return defaultMonthlyData;
+  }, [transactions]);
   return (
     <div className="glass-card rounded-2xl p-6">
       <h3 className="text-base font-semibold text-text mb-1">Deposits vs Withdrawals</h3>
@@ -78,7 +154,12 @@ export function DepositsWithdrawalsChart() {
   );
 }
 
-export function ExpenseChart() {
+export function ExpenseChart({ expenses }: ChartProps) {
+  const expenseData = useMemo(() => {
+    if (expenses && expenses.length > 0) return aggregateExpensesByCategory(expenses);
+    return defaultExpenseData;
+  }, [expenses]);
+
   return (
     <div className="glass-card rounded-2xl p-6">
       <h3 className="text-base font-semibold text-text mb-1">Expense Overview</h3>
@@ -97,7 +178,12 @@ export function ExpenseChart() {
   );
 }
 
-export function LoanChart() {
+export function LoanChart({ loans }: ChartProps) {
+  const loanData = useMemo(() => {
+    if (loans && loans.length > 0) return aggregateLoansByMonth(loans);
+    return defaultLoanData;
+  }, [loans]);
+
   return (
     <div className="glass-card rounded-2xl p-6">
       <h3 className="text-base font-semibold text-text mb-1">Loan Activity</h3>

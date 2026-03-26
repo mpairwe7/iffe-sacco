@@ -7,7 +7,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod/v4";
 import { toast } from "sonner";
 import { useAccounts } from "@/hooks/use-accounts";
-import { useTransactions, useCreateTransaction } from "@/hooks/use-transactions";
+import { useDepositRequests, useCreateDepositRequest } from "@/hooks/use-deposit-requests";
 import { formatCurrency, formatDate } from "@/lib/utils";
 
 const depositSchema = z.object({
@@ -20,11 +20,11 @@ type DepositInput = z.infer<typeof depositSchema>;
 
 export default function MemberDepositsPage() {
   const { data: accountsData } = useAccounts();
-  const { data: txData, isLoading: txLoading } = useTransactions({ sortBy: "createdAt", sortOrder: "desc", limit: 5 });
-  const createTransaction = useCreateTransaction();
+  const { data: reqData, isLoading: reqLoading } = useDepositRequests({ sortOrder: "desc", limit: 5 });
+  const createDepositRequest = useCreateDepositRequest();
 
   const accounts = accountsData?.data ?? [];
-  const recentDeposits = (txData?.data ?? []).filter((t) => t.type === "deposit");
+  const recentDeposits = reqData?.data ?? [];
 
   const {
     register,
@@ -40,9 +40,8 @@ export default function MemberDepositsPage() {
 
   async function onSubmit(data: DepositInput) {
     try {
-      await createTransaction.mutateAsync({
+      await createDepositRequest.mutateAsync({
         accountId: data.accountId,
-        type: "deposit",
         amount: data.amount,
         method: data.method,
         description: data.description,
@@ -120,10 +119,10 @@ export default function MemberDepositsPage() {
           </div>
           <button
             type="submit"
-            disabled={isSubmitting || createTransaction.isPending}
+            disabled={isSubmitting || createDepositRequest.isPending}
             className="w-full inline-flex items-center justify-center gap-2 px-6 py-3 text-sm font-medium text-white bg-primary rounded-xl hover:bg-primary-dark transition-colors disabled:opacity-50"
           >
-            {isSubmitting || createTransaction.isPending ? (
+            {isSubmitting || createDepositRequest.isPending ? (
               <Loader2 className="w-4 h-4 animate-spin" />
             ) : (
               <Send className="w-4 h-4" />
@@ -136,7 +135,7 @@ export default function MemberDepositsPage() {
           <div className="glass-card rounded-2xl p-6">
             <h3 className="font-semibold text-text mb-4">Recent Deposits</h3>
             <div className="space-y-3">
-              {txLoading ? (
+              {reqLoading ? (
                 Array.from({ length: 3 }).map((_, i) => (
                   <div key={i} className="flex items-center justify-between p-3 bg-white/50 rounded-xl animate-pulse">
                     <div className="space-y-2">
@@ -153,7 +152,7 @@ export default function MemberDepositsPage() {
                   <div key={dep.id} className="flex items-center justify-between p-3 bg-white/50 rounded-xl">
                     <div>
                       <p className="text-sm font-medium text-text">{formatCurrency(dep.amount)}</p>
-                      <p className="text-xs text-text-muted">{dep.method.replace("_", " ").replace(/\b\w/g, (c) => c.toUpperCase())} &middot; {formatDate(dep.createdAt)}</p>
+                      <p className="text-xs text-text-muted">{(dep.method || "cash").replace("_", " ").replace(/\b\w/g, (c: string) => c.toUpperCase())} &middot; {formatDate(dep.createdAt)}</p>
                     </div>
                     <span className={`text-xs font-medium px-2.5 py-1 rounded-full ${
                       dep.status === "completed" ? "text-success bg-success/10" :
