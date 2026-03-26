@@ -17,9 +17,31 @@ import {
 import { MobileNav } from "@/components/mobile-nav";
 import { LoginDropdown } from "@/components/login-dropdown";
 
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@type": "FinancialService",
+  name: "IFFE Bhenhe SACCO",
+  alternateName: "IFFE SACCO",
+  description: "A modern savings and credit cooperative organization in Jinja City, Uganda empowering financial freedom through community.",
+  url: "https://iffe-sacco.vercel.app",
+  logo: "https://iffe-sacco.vercel.app/logo.png",
+  telephone: "+256782894875",
+  email: "bdfsocial.selfhelp@gmail.com",
+  address: {
+    "@type": "PostalAddress",
+    addressLocality: "Jinja City",
+    addressCountry: "UG",
+  },
+  areaServed: { "@type": "Country", name: "Uganda" },
+  serviceType: ["Savings Accounts", "Loans", "Welfare Programs", "Financial Advisory"],
+};
+
 export default function HomePage() {
   return (
     <div className="flex flex-col min-h-screen">
+      {/* JSON-LD Structured Data */}
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
+
       {/* Floating Blobs - Global Ambient */}
       <div className="fixed inset-0 overflow-hidden pointer-events-none z-0">
         <div className="blob blob-1 w-[600px] h-[600px] bg-primary/15 -top-40 -left-40" />
