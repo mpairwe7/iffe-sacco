@@ -1,23 +1,16 @@
 #!/bin/bash
 set -e
-
 echo "=== IFFE SACCO API — Vercel Build ==="
 
-# Bundle the entire app into a single JS file using bun
-# This resolves all workspace imports (@iffe/shared), Prisma, etc at build time
+# Bundle app + all deps except node builtins into a single JS file
 cd ../..
 bun build apps/api/src/app.ts \
   --outfile apps/api/dist/app.js \
   --target node \
-  --external hono \
-  --external "hono/*" \
   --external "@prisma/client" \
   --external "@prisma/adapter-neon" \
   --external "@neondatabase/serverless" \
   --external "bcryptjs" \
-  --external "jose" \
-  --external "zod" \
-  --external "zod/*"
+  --external "jose"
 
-echo "Bundle created: apps/api/dist/app.js"
-ls -lh apps/api/dist/app.js
+echo "Bundle: $(ls -lh apps/api/dist/app.js | awk '{print $5}')"
