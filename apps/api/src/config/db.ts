@@ -1,5 +1,5 @@
 // @ts-nocheck
-import { PrismaClient } from "../../generated/prisma";
+import { PrismaClient } from "@prisma/client";
 import { PrismaNeon } from "@prisma/adapter-neon";
 import { neon } from "@neondatabase/serverless";
 
