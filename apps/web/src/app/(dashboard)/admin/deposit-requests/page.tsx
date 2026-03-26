@@ -1,6 +1,8 @@
 "use client";
 
+import { useState } from "react";
 import { DataTable } from "@/components/data-table";
+import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { useTransactions, useApproveTransaction, useRejectTransaction } from "@/hooks/use-transactions";
 import { formatCurrency, formatDate } from "@/lib/utils";
 import { ArrowDownToLine, Check, X } from "lucide-react";
@@ -15,20 +17,28 @@ export default function DepositRequestsPage() {
   const approveMutation = useApproveTransaction();
   const rejectMutation = useRejectTransaction();
 
+  const [confirmAction, setConfirmAction] = useState<{ type: "approve" | "reject"; id: string } | null>(null);
+
   const requests = (query.data?.data || []) as DepositRow[];
 
-  function handleApprove(id: string) {
-    approveMutation.mutate(id, {
-      onSuccess: () => toast.success("Deposit approved"),
-      onError: (err) => toast.error(err.message || "Failed to approve deposit"),
-    });
+  async function handleApprove(id: string) {
+    try {
+      await approveMutation.mutateAsync(id);
+      toast.success("Deposit approved");
+      setConfirmAction(null);
+    } catch {
+      toast.error("Failed to approve deposit");
+    }
   }
 
-  function handleReject(id: string) {
-    rejectMutation.mutate(id, {
-      onSuccess: () => toast.success("Deposit rejected"),
-      onError: (err) => toast.error(err.message || "Failed to reject deposit"),
-    });
+  async function handleReject(id: string) {
+    try {
+      await rejectMutation.mutateAsync(id);
+      toast.success("Deposit rejected");
+      setConfirmAction(null);
+    } catch {
+      toast.error("Failed to reject deposit");
+    }
   }
 
   const columns = [
@@ -76,21 +86,18 @@ export default function DepositRequestsPage() {
       sortable: false,
       render: (row: DepositRow) => {
         if (row.status !== "pending") return null;
-        const busy = approveMutation.isPending || rejectMutation.isPending;
         return (
           <div className="flex items-center gap-1">
             <button
-              onClick={() => handleApprove(row.id)}
-              disabled={busy}
-              className="p-1.5 text-text-muted hover:text-success rounded-lg hover:bg-success/10 disabled:opacity-50"
+              onClick={() => setConfirmAction({ type: "approve", id: row.id })}
+              className="p-1.5 text-text-muted hover:text-success rounded-lg hover:bg-success/10"
               title="Approve"
             >
               <Check className="w-4 h-4" />
             </button>
             <button
-              onClick={() => handleReject(row.id)}
-              disabled={busy}
-              className="p-1.5 text-text-muted hover:text-danger rounded-lg hover:bg-danger/10 disabled:opacity-50"
+              onClick={() => setConfirmAction({ type: "reject", id: row.id })}
+              className="p-1.5 text-text-muted hover:text-danger rounded-lg hover:bg-danger/10"
               title="Reject"
             >
               <X className="w-4 h-4" />
@@ -121,6 +128,27 @@ export default function DepositRequestsPage() {
         isLoading={query.isLoading}
         error={query.error}
         onRetry={() => query.refetch()}
+      />
+
+      <ConfirmDialog
+        open={confirmAction?.type === "approve"}
+        onOpenChange={(open) => !open && setConfirmAction(null)}
+        title="Approve Deposit"
+        description="Are you sure you want to approve this deposit request? The funds will be credited to the member's account."
+        confirmLabel="Approve"
+        onConfirm={() => confirmAction && handleApprove(confirmAction.id)}
+        loading={approveMutation.isPending}
+      />
+
+      <ConfirmDialog
+        open={confirmAction?.type === "reject"}
+        onOpenChange={(open) => !open && setConfirmAction(null)}
+        title="Reject Deposit"
+        description="Are you sure you want to reject this deposit request?"
+        confirmLabel="Reject"
+        onConfirm={() => confirmAction && handleReject(confirmAction.id)}
+        variant="destructive"
+        loading={rejectMutation.isPending}
       />
     </div>
   );

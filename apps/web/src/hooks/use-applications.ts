@@ -38,7 +38,7 @@ export function useMyApplication() {
 export function useSubmitApplication() {
   const qc = useQueryClient();
   return useMutation({
-    mutationFn: (data: any) => applicationsApi.submitAuth(data),
+    mutationFn: (data: Record<string, unknown>) => applicationsApi.submitAuth(data),
     onSuccess: () => qc.invalidateQueries({ queryKey: ["applications"] }),
   });
 }

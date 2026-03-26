@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { useSearchParams } from "next/navigation";
 import Link from "next/link";
-import { BarChart3, FileText, TrendingUp, Wallet, Receipt, Building2, Coins, PieChart, Download, Loader2 } from "lucide-react";
+import { BarChart3, FileText, TrendingUp, Wallet, Receipt, Building2, Coins, PieChart, Loader2 } from "lucide-react";
 import { apiClient } from "@/lib/api-client";
 import { toast } from "sonner";
 import { formatCurrency } from "@/lib/utils";

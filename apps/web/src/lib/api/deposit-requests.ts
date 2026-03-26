@@ -1,13 +1,13 @@
 import { apiClient } from "@/lib/api-client";
-import type { PaginatedResponse, PaginationParams } from "@iffe/shared";
+import type { PaginatedResponse, PaginationParams, Transaction } from "@iffe/shared";
 
 export const depositRequestsApi = {
   getAll: (params?: PaginationParams) =>
-    apiClient.get<PaginatedResponse<any>>("/deposit-requests", params as any),
+    apiClient.get<PaginatedResponse<Transaction>>("/deposit-requests", params as Record<string, unknown>),
   create: (data: { accountId: string; amount: number; method?: string; description?: string }) =>
-    apiClient.post<any>("/deposit-requests", data),
+    apiClient.post<Transaction>("/deposit-requests", data),
   approve: (id: string) =>
-    apiClient.patch<any>(`/deposit-requests/${id}/approve`),
+    apiClient.patch<Transaction>(`/deposit-requests/${id}/approve`),
   reject: (id: string) =>
-    apiClient.patch<any>(`/deposit-requests/${id}/reject`),
+    apiClient.patch<Transaction>(`/deposit-requests/${id}/reject`),
 };

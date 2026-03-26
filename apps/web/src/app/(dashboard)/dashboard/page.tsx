@@ -5,6 +5,9 @@ import { StatCard } from "@/components/stat-card";
 import { DepositsWithdrawalsChart, ExpenseChart, LoanChart } from "@/components/dashboard-charts";
 import Link from "next/link";
 import { useDashboardStats, useRecentTransactions, useUpcomingPayments } from "@/hooks/use-dashboard";
+import { useExpenses } from "@/hooks/use-expenses";
+import { useLoans } from "@/hooks/use-loans";
+import { useAuthStore } from "@/stores/auth-store";
 import { formatCurrency, formatDate } from "@/lib/utils";
 import { Skeleton } from "@/components/ui/skeleton";
 import type { Transaction, Loan, DashboardStats } from "@iffe/shared";
@@ -13,6 +16,9 @@ export default function DashboardPage() {
   const statsQuery = useDashboardStats();
   const recentQuery = useRecentTransactions(5);
   const upcomingQuery = useUpcomingPayments(7);
+  const { data: expenseData } = useExpenses({ limit: 50 });
+  const { data: loanData } = useLoans({ limit: 50 });
+  const user = useAuthStore((s) => s.user);
 
   const stats = statsQuery.data as DashboardStats | undefined;
   const recentTransactions = (recentQuery.data || []) as Transaction[];
@@ -22,7 +28,7 @@ export default function DashboardPage() {
     <div className="space-y-8">
       <div>
         <h1 className="text-2xl font-bold text-text">Dashboard</h1>
-        <p className="text-text-muted mt-1">Welcome back, Admin. Here&apos;s your overview.</p>
+        <p className="text-text-muted mt-1">Welcome back, {user?.name?.split(" ")[0] || "User"}. Here&apos;s your overview.</p>
       </div>
 
       {/* Stats Grid */}
@@ -76,12 +82,12 @@ export default function DashboardPage() {
         <div className="lg:col-span-2">
           <DepositsWithdrawalsChart transactions={recentTransactions || []} />
         </div>
-        <ExpenseChart expenses={[]} />
+        <ExpenseChart expenses={expenseData?.data || []} />
       </div>
 
       <div className="grid lg:grid-cols-3 gap-6">
         <div className="lg:col-span-2">
-          <LoanChart loans={[]} />
+          <LoanChart loans={loanData?.data || []} />
         </div>
 
         {/* Upcoming Payments */}

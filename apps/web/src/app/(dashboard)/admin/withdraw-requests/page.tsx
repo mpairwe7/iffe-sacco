@@ -14,7 +14,8 @@ export default function WithdrawRequestsPage() {
 
   const [confirmAction, setConfirmAction] = useState<{ type: "approve" | "reject"; id: string } | null>(null);
 
-  const requests = (data?.data || []) as any[];
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const requests = (data?.data || []) as Record<string, any>[];
 
   async function handleApprove(id: string) {
     try {
@@ -38,14 +39,16 @@ export default function WithdrawRequestsPage() {
     {
       key: "id",
       label: "ID",
-      render: (row: any) => (
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      render: (row: Record<string, any>) => (
         <span className="font-mono text-xs text-text-muted">{row.reference || row.id.slice(0, 8)}</span>
       ),
     },
     {
       key: "member",
       label: "Member",
-      render: (row: any) => (
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      render: (row: Record<string, any>) => (
         <span className="font-medium text-text">
           {row.account?.member ? `${row.account.member.firstName} ${row.account.member.lastName}` : "—"}
         </span>
@@ -55,7 +58,8 @@ export default function WithdrawRequestsPage() {
       key: "amount",
       label: "Amount",
       align: "right" as const,
-      render: (row: any) => (
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      render: (row: Record<string, any>) => (
         <span className="font-semibold text-text">{formatCurrency(Number(row.amount))}</span>
       ),
     },
@@ -63,12 +67,14 @@ export default function WithdrawRequestsPage() {
     {
       key: "createdAt",
       label: "Date",
-      render: (row: any) => <span className="text-text-muted">{formatDate(row.createdAt)}</span>,
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      render: (row: Record<string, any>) => <span className="text-text-muted">{formatDate(row.createdAt)}</span>,
     },
     {
       key: "status",
       label: "Status",
-      render: (row: any) => (
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      render: (row: Record<string, any>) => (
         <span
           className={`inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium ${
             row.status === "completed"
@@ -86,7 +92,8 @@ export default function WithdrawRequestsPage() {
       key: "actions",
       label: "Actions",
       sortable: false,
-      render: (row: any) =>
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      render: (row: Record<string, any>) =>
         row.status === "pending" ? (
           <div className="flex items-center gap-1">
             <button

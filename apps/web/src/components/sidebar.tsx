@@ -1,8 +1,8 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { cn } from "@/lib/utils";
 import { useAuthStore } from "@/stores/auth-store";
 import type { Role } from "@iffe/shared";
@@ -146,14 +146,29 @@ const navItems: NavItem[] = [
 
 export function Sidebar({ open, onClose }: SidebarProps) {
   const pathname = usePathname();
+  const router = useRouter();
   const [expanded, setExpanded] = useState<string | null>(null);
   const user = useAuthStore((s) => s.user);
+  const logout = useAuthStore((s) => s.logout);
   const role: Role = (user?.role as Role) || "member";
+
+  function handleLogout() {
+    logout();
+    router.push("/login");
+  }
 
   const filteredNavItems = useMemo(
     () => navItems.filter((item) => item.roles.includes(role)),
     [role]
   );
+
+  // Auto-expand the section containing the active route
+  useEffect(() => {
+    const activeGroup = filteredNavItems.find((item) =>
+      item.children?.some((child) => pathname.startsWith(child.href.split("?")[0]))
+    );
+    if (activeGroup) setExpanded(activeGroup.label);
+  }, [pathname, filteredNavItems]);
 
   const toggleExpand = (label: string) => {
     setExpanded(expanded === label ? null : label);
@@ -298,13 +313,13 @@ export function Sidebar({ open, onClose }: SidebarProps) {
 
         {/* Logout */}
         <div className="px-3 py-4 border-t border-white/10">
-          <Link
-            href="/login"
-            className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-white/60 hover:text-danger hover:bg-danger/10 transition-colors"
+          <button
+            onClick={handleLogout}
+            className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-white/60 hover:text-danger hover:bg-danger/10 transition-colors"
           >
             <LogOut className="w-5 h-5" />
             <span>Logout</span>
-          </Link>
+          </button>
         </div>
       </aside>
     </>

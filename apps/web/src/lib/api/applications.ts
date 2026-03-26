@@ -7,9 +7,9 @@ import type {
 
 export const applicationsApi = {
   // Public submit (no auth)
-  submit: (data: any) => apiClient.post<Application>("/applications", data),
+  submit: (data: Record<string, unknown>) => apiClient.post<Application>("/applications", data),
   // Authenticated submit
-  submitAuth: (data: any) =>
+  submitAuth: (data: Record<string, unknown>) =>
     apiClient.post<Application>("/applications/authenticated", data),
   // Check own status
   getMine: () => apiClient.get<Application | null>("/applications/mine"),
@@ -17,7 +17,7 @@ export const applicationsApi = {
   getAll: (params?: PaginationParams & { status?: string }) =>
     apiClient.get<PaginatedResponse<Application>>(
       "/applications",
-      params as any,
+      params as Record<string, unknown>,
     ),
   // Admin stats
   getStats: () =>
@@ -30,7 +30,7 @@ export const applicationsApi = {
   // Admin view detail
   getById: (id: string) => apiClient.get<Application>(`/applications/${id}`),
   // Admin approve
-  approve: (id: string) => apiClient.put<any>(`/applications/${id}/approve`),
+  approve: (id: string) => apiClient.put<Application>(`/applications/${id}/approve`),
   // Admin reject
   reject: (id: string, data: { status: string; rejectionReason?: string }) =>
     apiClient.put<Application>(`/applications/${id}/reject`, data),

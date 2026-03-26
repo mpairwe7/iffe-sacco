@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { Menu, Bell, Search, Globe, User, Settings, LogOut, HelpCircle, Sun, Moon, Command } from "lucide-react";
 import { useState, useRef, useEffect } from "react";
 import { useTheme } from "next-themes";
@@ -18,6 +19,13 @@ export function DashboardHeader({ onToggleSidebar }: DashboardHeaderProps) {
   const { theme, setTheme } = useTheme();
   const setCommandPaletteOpen = useUIStore((s) => s.setCommandPaletteOpen);
   const user = useAuthStore((s) => s.user);
+  const logout = useAuthStore((s) => s.logout);
+  const router = useRouter();
+
+  function handleLogout() {
+    logout();
+    router.push("/login");
+  }
 
   useEffect(() => { setMounted(true); }, []);
 
@@ -127,9 +135,9 @@ export function DashboardHeader({ onToggleSidebar }: DashboardHeaderProps) {
                 <HelpCircle className="w-4 h-4" /> Help & Support
               </Link>
               <div className="border-t border-border/50 mt-1 pt-1 mx-1">
-                <Link href="/login" className="flex items-center gap-3 px-4 py-2.5 text-sm text-danger hover:bg-danger/5 rounded-lg">
+                <button onClick={handleLogout} className="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-danger hover:bg-danger/5 rounded-lg">
                   <LogOut className="w-4 h-4" /> Logout
-                </Link>
+                </button>
               </div>
             </div>
           )}
