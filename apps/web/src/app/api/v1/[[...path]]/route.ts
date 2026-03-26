@@ -1,28 +1,28 @@
 /**
- * Next.js catch-all API route that proxies to the Hono API app.
+ * Next.js catch-all API route → Hono API app
  * All requests to /api/v1/* are handled by the bundled Hono app.
- *
- * Inspired by The Drop's apps/web/app/api/[...path]/route.ts pattern.
  */
 
-// @ts-nocheck
-import { app } from "@/lib/api-server/app.mjs";
+export const runtime = "nodejs";
+export const dynamic = "force-dynamic";
+export const maxDuration = 30;
 
-async function initApp() {
-  // Lazy-init Prisma on first request (uses dynamic import to avoid bundler collision)
-  const { initPrisma } = await import("@/lib/api-server/app.mjs");
-  if (typeof initPrisma === "function") {
-    await initPrisma();
+let _app: any = null;
+
+async function getApp() {
+  if (_app) return _app;
+  // Dynamic import - only runs at request time, not build time
+  const mod = await import("@/lib/api-server/app.mjs");
+  _app = mod.app;
+  // Initialize Prisma if available
+  if (typeof mod.initPrisma === "function") {
+    await mod.initPrisma();
   }
+  return _app;
 }
 
-let initialized = false;
-
 async function handler(req: Request) {
-  if (!initialized) {
-    await initApp();
-    initialized = true;
-  }
+  const app = await getApp();
   return app.fetch(req);
 }
 
@@ -32,6 +32,3 @@ export const PUT = handler;
 export const PATCH = handler;
 export const DELETE = handler;
 export const OPTIONS = handler;
-
-export const runtime = "nodejs";
-export const maxDuration = 30;
