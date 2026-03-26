@@ -50,4 +50,31 @@ dashboard.get("/chairman", requireRole("chairman", "admin"), async (c) => {
   });
 });
 
+// Notifications — recent audit logs as notifications for any authenticated user
+dashboard.get("/notifications", async (c) => {
+  const user = c.get("user") as { id: string; role: string };
+  const limit = Number(c.req.query("limit") || 10);
+
+  // Admin/staff/chairman see all recent activity, members see only their own
+  const where = user.role === "member" ? { userId: user.id } : {};
+
+  const notifications = await prisma.auditLog.findMany({
+    where,
+    orderBy: { createdAt: "desc" },
+    take: limit,
+    include: { user: { select: { name: true } } },
+  });
+
+  // Count unread (last 24 hours)
+  const oneDayAgo = new Date(Date.now() - 24 * 60 * 60 * 1000);
+  const unreadCount = await prisma.auditLog.count({
+    where: { ...where, createdAt: { gte: oneDayAgo } },
+  });
+
+  return c.json({
+    success: true,
+    data: { notifications, unreadCount },
+  });
+});
+
 export { dashboard as dashboardRoutes };
