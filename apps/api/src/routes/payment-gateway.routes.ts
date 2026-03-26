@@ -36,7 +36,7 @@ paymentGateways.get("/:id", async (c) => {
 // POST / — create (admin only)
 paymentGateways.post("/", requireRole("admin"), zValidator("json", createSchema), async (c) => {
   const data = c.req.valid("json");
-  const gateway = await prisma.paymentGateway.create({ data });
+  const gateway = await prisma.paymentGateway.create({ data: data as any });
   return c.json({ success: true, data: gateway }, 201);
 });
 
@@ -46,7 +46,7 @@ paymentGateways.put("/:id", requireRole("admin"), zValidator("json", updateSchem
   const data = c.req.valid("json");
   const existing = await prisma.paymentGateway.findUnique({ where: { id } });
   if (!existing) return c.json({ success: false, message: "Payment gateway not found" }, 404);
-  const gateway = await prisma.paymentGateway.update({ where: { id }, data });
+  const gateway = await prisma.paymentGateway.update({ where: { id }, data: data as any });
   return c.json({ success: true, data: gateway });
 });
 

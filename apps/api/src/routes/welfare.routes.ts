@@ -27,8 +27,8 @@ welfare.get("/stats", async (c) => {
 });
 
 welfare.get("/pledges/mine", async (c) => {
-  const user = c.get("user");
-  const params = { page: 1, limit: 50 };
+  const user = c.get("user" as any) as { id: string; role: string };
+  const params = { page: 1, limit: 50, sortOrder: "desc" as const };
   const result = await service.getMemberPledges(user.id, params);
   return c.json({ success: true, data: result });
 });
@@ -64,7 +64,7 @@ welfare.get("/:id/pledges", zValidator("query", paginationSchema), async (c) => 
 
 welfare.post("/pledges", zValidator("json", pledgeSchema), async (c) => {
   const data = c.req.valid("json");
-  const user = c.get("user");
+  const user = c.get("user" as any) as { id: string; role: string };
   const pledge = await service.createPledge({ ...data, memberId: user.id });
   return c.json({ success: true, data: pledge }, 201);
 });

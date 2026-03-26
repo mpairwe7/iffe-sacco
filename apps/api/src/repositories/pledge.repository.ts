@@ -33,7 +33,7 @@ export class PledgeRepository {
   }
 
   async create(data: { programId: string; memberId: string; amount: number }) {
-    return prisma.$transaction(async (tx) => {
+    return prisma.$transaction(async (tx: any) => {
       const pledge = await tx.pledge.create({ data: { ...data, status: "pledged" } });
       await tx.welfareProgram.update({
         where: { id: data.programId },
@@ -47,7 +47,7 @@ export class PledgeRepository {
   }
 
   async updateStatus(id: string, status: string) {
-    return prisma.$transaction(async (tx) => {
+    return prisma.$transaction(async (tx: any) => {
       const pledge = await tx.pledge.findUniqueOrThrow({ where: { id } });
       const updated = await tx.pledge.update({ where: { id }, data: { status } });
 

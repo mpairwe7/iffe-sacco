@@ -18,7 +18,7 @@ const createSchema = z.object({
 
 withdrawRequests.get("/", zValidator("query", paginationSchema), async (c) => {
   const { page = 1, limit = 20, search, sortOrder = "desc" } = c.req.valid("query");
-  const user = c.get("user");
+  const user = c.get("user" as any) as { id: string; role: string };
   const where: any = {};
   // Members see only their own requests
   if (user.role === "member") {
@@ -36,7 +36,7 @@ withdrawRequests.get("/", zValidator("query", paginationSchema), async (c) => {
 
 withdrawRequests.post("/", zValidator("json", createSchema), async (c) => {
   const data = c.req.valid("json");
-  const user = c.get("user");
+  const user = c.get("user" as any) as { id: string; role: string };
 
   // Validate sufficient balance before creating request
   const account = await prisma.account.findUnique({ where: { id: data.accountId } });
@@ -52,9 +52,9 @@ withdrawRequests.post("/", zValidator("json", createSchema), async (c) => {
 
 withdrawRequests.patch("/:id/approve", requireRole("admin", "staff"), async (c) => {
   const id = c.req.param("id");
-  const user = c.get("user");
+  const user = c.get("user" as any) as { id: string; role: string };
 
-  const result = await prisma.$transaction(async (tx) => {
+  const result = await prisma.$transaction(async (tx: any) => {
     const req = await tx.withdrawRequest.update({
       where: { id },
       data: { status: "approved", processedBy: user.id },
@@ -93,7 +93,7 @@ withdrawRequests.patch("/:id/approve", requireRole("admin", "staff"), async (c) 
 
 withdrawRequests.patch("/:id/reject", requireRole("admin", "staff"), async (c) => {
   const id = c.req.param("id");
-  const user = c.get("user");
+  const user = c.get("user" as any) as { id: string; role: string };
   const req = await prisma.withdrawRequest.update({ where: { id }, data: { status: "rejected", processedBy: user.id } });
   return c.json({ success: true, data: req });
 });

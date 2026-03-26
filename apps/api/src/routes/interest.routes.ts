@@ -18,7 +18,7 @@ interest.post("/preview", zValidator("json", calculateInterestSchema), async (c)
 
 interest.post("/calculate", zValidator("json", calculateInterestSchema), async (c) => {
   const data = c.req.valid("json");
-  const user = c.get("user");
+  const user = c.get("user" as any) as { id: string; role: string };
   const result = await service.calculateAndPost(data, user.id);
   return c.json({ success: true, data: result });
 });

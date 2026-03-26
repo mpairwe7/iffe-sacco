@@ -13,7 +13,7 @@ export class InterestService {
     const endDate = new Date(input.endDate);
     const days = Math.ceil((endDate.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24));
 
-    const details = accounts.map((account) => {
+    const details = accounts.map((account: any) => {
       const rate = Number(account.interestRate) || INTEREST_RATES[input.accountType as keyof typeof INTEREST_RATES] || 12;
       const balance = Number(account.balance);
       const interest = (balance * rate / 100) * (days / 365);
@@ -27,7 +27,7 @@ export class InterestService {
       };
     });
 
-    const totalInterest = details.reduce((sum, d) => sum + d.interest, 0);
+    const totalInterest = details.reduce((sum: any, d: any) => sum + d.interest, 0);
 
     return { accountsProcessed: details.length, totalInterest, days, details };
   }
@@ -36,7 +36,7 @@ export class InterestService {
     const preview = await this.preview(input);
     const postingDate = input.postingDate ? new Date(input.postingDate) : new Date();
 
-    await prisma.$transaction(async (tx) => {
+    await prisma.$transaction(async (tx: any) => {
       for (const detail of preview.details) {
         if (detail.interest <= 0) continue;
 
