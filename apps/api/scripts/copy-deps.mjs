@@ -23,16 +23,14 @@ const deps = [
 ];
 
 function findAndCopy(dep) {
-  // Check local node_modules first, then monorepo root
+  // Check symlinks first
   for (const base of [join(apiDir, "node_modules"), join(rootDir, "node_modules")]) {
     const src = join(base, dep);
     if (!existsSync(src)) continue;
-
     const real = realpathSync(src);
     const dest = join(targetNodeModules, dep);
     cpSync(real, dest, { recursive: true, dereference: true, force: true });
-
-    // Copy sibling deps from the resolved parent
+    // Copy sibling deps
     const parent = dirname(real);
     for (const entry of readdirSync(parent, { withFileTypes: true })) {
       if (entry.name === ".bin") continue;
@@ -43,6 +41,21 @@ function findAndCopy(dep) {
       }
     }
     return true;
+  }
+
+  // Search Bun .bun/ cache (for scoped packages like @prisma/client-runtime-utils)
+  const bunDir = join(rootDir, "node_modules", ".bun");
+  if (existsSync(bunDir)) {
+    const depKey = dep.replace("/", "+");
+    for (const entry of readdirSync(bunDir)) {
+      if (!entry.startsWith(depKey + "@")) continue;
+      const src = join(bunDir, entry, "node_modules", dep);
+      if (existsSync(src)) {
+        const dest = join(targetNodeModules, dep);
+        cpSync(src, dest, { recursive: true, dereference: true, force: true });
+        return true;
+      }
+    }
   }
   return false;
 }
