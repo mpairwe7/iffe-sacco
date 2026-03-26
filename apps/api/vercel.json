@@ -1,6 +1,6 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
-  "installCommand": "cd ../.. && bun install && cd apps/api && npx prisma generate",
+  "installCommand": "cd ../.. && bun install && cd apps/api && npx prisma generate && mkdir -p node_modules/@iffe/shared/src && cp -r ../../packages/shared/src/* node_modules/@iffe/shared/src/ && echo '{\"main\":\"src/index.ts\"}' > node_modules/@iffe/shared/package.json",
   "buildCommand": "true",
   "rewrites": [
     { "source": "/api/v1/(.*)", "destination": "/api" },
