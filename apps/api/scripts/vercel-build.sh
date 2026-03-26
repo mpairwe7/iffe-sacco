@@ -2,10 +2,9 @@
 set -e
 echo "=== IFFE SACCO API — Vercel Build ==="
 
-# Bundle app + all deps except node builtins into a single JS file
 cd ../..
 bun build apps/api/src/app.ts \
-  --outfile apps/api/dist/app.js \
+  --outfile apps/api/api/_app.js \
   --target node \
   --external "@prisma/client" \
   --external "@prisma/adapter-neon" \
@@ -13,4 +12,4 @@ bun build apps/api/src/app.ts \
   --external "bcryptjs" \
   --external "jose"
 
-echo "Bundle: $(ls -lh apps/api/dist/app.js | awk '{print $5}')"
+echo "Bundle: $(ls -lh apps/api/api/_app.js | awk '{print $5}')"

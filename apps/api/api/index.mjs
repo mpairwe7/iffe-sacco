@@ -1,8 +1,4 @@
-/**
- * Vercel Serverless Entry Point
- * Imports the pre-bundled Hono app and adapts it to Node.js handler
- */
-import { app } from "../dist/app.js";
+import { app } from "./_app.js";
 
 export default async function handler(req, res) {
   const proto = req.headers["x-forwarded-proto"] || "https";
