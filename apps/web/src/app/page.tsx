@@ -27,30 +27,42 @@ export default function HomePage() {
         <div className="blob blob-3 w-[400px] h-[400px] bg-secondary/10 -bottom-20 left-1/3" />
       </div>
 
-      {/* Header - Glass Navbar */}
-      <header className="fixed top-0 left-0 right-0 z-50 glass-strong shadow-sm">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between h-16 lg:h-20">
-            <Link href="/" className="flex items-center gap-3">
-              <img src="/logo.png" alt="IFFE SACCO" className="w-10 h-10 object-contain" />
-              <span className="text-xl font-bold text-text">
-                IFFE <span className="text-primary">SACCO</span>
-              </span>
+      {/* Header - Navbar */}
+      <header className="fixed top-0 left-0 right-0 z-50 bg-white/85 dark:bg-gray-950/85 backdrop-blur-xl shadow-sm border-b border-black/5 dark:border-white/10">
+        <div className="max-w-7xl mx-auto px-5 sm:px-8 lg:px-10">
+          <div className="flex items-center justify-between h-20 lg:h-24">
+            {/* Logo — larger image + bigger text + tagline */}
+            <Link href="/" className="flex items-center gap-3.5 sm:gap-4 shrink-0">
+              <img
+                src="/logo.png"
+                alt="IFFE SACCO Logo"
+                className="w-12 h-12 sm:w-14 sm:h-14 lg:w-16 lg:h-16 object-contain drop-shadow-sm"
+              />
+              <div className="leading-tight">
+                <span className="text-xl sm:text-2xl lg:text-[1.7rem] font-extrabold tracking-tight text-text">
+                  IFFE <span className="text-primary">SACCO</span>
+                </span>
+                <p className="hidden sm:block text-[10px] sm:text-[11px] lg:text-xs font-medium text-text-muted tracking-widest uppercase mt-0.5">
+                  Empowering Financial Freedom
+                </p>
+              </div>
             </Link>
 
-            <nav className="hidden lg:flex items-center gap-1">
+            {/* Nav links — larger text + more spacing */}
+            <nav className="hidden lg:flex items-center gap-1.5">
               {["Home", "About Us", "Services", "Contact"].map((item) => (
                 <a
                   key={item}
                   href={`#${item === "About Us" ? "about" : item === "Services" ? "services" : item.toLowerCase()}`}
-                  className="px-4 py-2 text-sm font-medium text-text-muted hover:text-primary hover:bg-primary/5 rounded-xl transition-all"
+                  className="px-5 py-2.5 text-[15px] font-medium text-text-muted hover:text-primary hover:bg-primary/5 rounded-xl transition-colors"
                 >
                   {item}
                 </a>
               ))}
             </nav>
 
-            <div className="hidden lg:flex items-center gap-3">
+            {/* CTA — larger button */}
+            <div className="hidden lg:flex items-center gap-4">
               <LoginDropdown />
             </div>
 
@@ -60,7 +72,7 @@ export default function HomePage() {
       </header>
 
       {/* Hero Section */}
-      <section id="home" className="pt-32 lg:pt-44 pb-20 lg:pb-36 relative overflow-hidden mesh-gradient">
+      <section id="home" className="pt-36 lg:pt-48 pb-20 lg:pb-36 relative overflow-hidden mesh-gradient">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           <div className="grid lg:grid-cols-2 gap-12 lg:gap-20 items-center">
             <div>
