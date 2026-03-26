@@ -29,18 +29,20 @@ async function main() {
   await prisma.user.deleteMany();
 
   console.log("Seeding...\n");
-  const pw = await bcrypt.hash("password123", 12);
+  const adminPw = await bcrypt.hash("admin123", 12);
+  const staffPw = await bcrypt.hash("staff123", 12);
+  const memberPw = await bcrypt.hash("member123", 12);
 
   // ===== USERS (8) =====
   const users = await Promise.all([
-    prisma.user.create({ data: { name: "Admin User", email: "admin@iffeds.org", phone: "+256700000001", password: pw, role: "admin", isActive: true, lastLogin: daysAgo(0) } }),
-    prisma.user.create({ data: { name: "Super Admin", email: "superadmin@iffeds.org", phone: "+256700000002", password: pw, role: "admin", isActive: true, lastLogin: daysAgo(1) } }),
-    prisma.user.create({ data: { name: "Jane Teller", email: "staff@iffeds.org", phone: "+256700000003", password: pw, role: "staff", isActive: true, lastLogin: daysAgo(0) } }),
-    prisma.user.create({ data: { name: "Mike Cashier", email: "mike@iffeds.org", phone: "+256700000004", password: pw, role: "staff", isActive: true, lastLogin: daysAgo(2) } }),
-    prisma.user.create({ data: { name: "Sarah Support", email: "sarah@iffeds.org", phone: "+256700000005", password: pw, role: "staff", isActive: false } }),
-    prisma.user.create({ data: { name: "John Mukasa", email: "john@example.com", phone: "+256700100001", password: pw, role: "member", isActive: true, lastLogin: daysAgo(0) } }),
-    prisma.user.create({ data: { name: "Grace Nambi", email: "grace@example.com", phone: "+256700100002", password: pw, role: "member", isActive: true, lastLogin: daysAgo(3) } }),
-    prisma.user.create({ data: { name: "Tom Inactive", email: "tom@iffeds.org", phone: "+256700000006", password: pw, role: "staff", isActive: false } }),
+    prisma.user.create({ data: { name: "Admin User", email: "admin@iffeds.org", phone: "+256700000001", password: adminPw, role: "admin", isActive: true, lastLogin: daysAgo(0) } }),
+    prisma.user.create({ data: { name: "Super Admin", email: "superadmin@iffeds.org", phone: "+256700000002", password: adminPw, role: "admin", isActive: true, lastLogin: daysAgo(1) } }),
+    prisma.user.create({ data: { name: "Jane Teller", email: "staff@iffeds.org", phone: "+256700000003", password: staffPw, role: "staff", isActive: true, lastLogin: daysAgo(0) } }),
+    prisma.user.create({ data: { name: "Mike Cashier", email: "mike@iffeds.org", phone: "+256700000004", password: staffPw, role: "staff", isActive: true, lastLogin: daysAgo(2) } }),
+    prisma.user.create({ data: { name: "Sarah Support", email: "sarah@iffeds.org", phone: "+256700000005", password: staffPw, role: "staff", isActive: false } }),
+    prisma.user.create({ data: { name: "John Mukasa", email: "john@example.com", phone: "+256700100001", password: memberPw, role: "member", isActive: true, lastLogin: daysAgo(0) } }),
+    prisma.user.create({ data: { name: "Grace Nambi", email: "grace@example.com", phone: "+256700100002", password: memberPw, role: "member", isActive: true, lastLogin: daysAgo(3) } }),
+    prisma.user.create({ data: { name: "Tom Inactive", email: "tom@iffeds.org", phone: "+256700000006", password: staffPw, role: "staff", isActive: false } }),
   ]);
   console.log(`  ${users.length} users created`);
 
@@ -264,10 +266,11 @@ async function main() {
   console.log("  15 audit logs created");
 
   console.log("\n=== SEED COMPLETE ===");
-  console.log("  Login credentials (all password: password123):");
-  console.log("  Admin:  admin@iffeds.org");
-  console.log("  Staff:  staff@iffeds.org");
-  console.log("  Member: john@example.com / grace@example.com");
+  console.log("  Login credentials:");
+  console.log("  Admin:  admin@iffeds.org / admin123");
+  console.log("  Staff:  staff@iffeds.org / staff123");
+  console.log("  Member: john@example.com / member123");
+  console.log("  Member: grace@example.com / member123");
   console.log("\n  Data summary:");
   console.log("  8 users | 16 members | 20 accounts | 40 transactions");
   console.log("  16 loans | 20 expenses | 10 deposit reqs | 10 withdraw reqs");
