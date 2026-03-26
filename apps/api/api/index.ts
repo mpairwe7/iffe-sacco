@@ -1,71 +1,39 @@
 // @ts-nocheck
-import { Hono } from "hono";
-import { cors } from "hono/cors";
-import { secureHeaders } from "hono/secure-headers";
-import { errorHandler } from "../src/middleware/error-handler";
-import { authRoutes } from "../src/routes/auth.routes";
-import { memberRoutes } from "../src/routes/member.routes";
-import { transactionRoutes } from "../src/routes/transaction.routes";
-import { loanRoutes } from "../src/routes/loan.routes";
-import { dashboardRoutes } from "../src/routes/dashboard.routes";
-import { expenseRoutes } from "../src/routes/expense.routes";
-import { welfareRoutes } from "../src/routes/welfare.routes";
-import { accountRoutes } from "../src/routes/account.routes";
-import { bankAccountRoutes } from "../src/routes/bank-account.routes";
-import { userRoutes } from "../src/routes/user.routes";
-import { settingRoutes } from "../src/routes/setting.routes";
-import { interestRoutes } from "../src/routes/interest.routes";
-import { reportRoutes } from "../src/routes/report.routes";
-import { depositRequestRoutes } from "../src/routes/deposit-request.routes";
-import { withdrawRequestRoutes } from "../src/routes/withdraw-request.routes";
-import { paymentGatewayRoutes } from "../src/routes/payment-gateway.routes";
-import { auditLogRoutes } from "../src/routes/audit-log.routes";
 
-const app = new Hono().basePath("/api/v1");
+let app;
+let initError = null;
 
-// Middleware
-app.use("*", secureHeaders());
-app.use("*", cors({
-  origin: (origin) => origin || "*",
-  credentials: true,
-  allowMethods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
-  allowHeaders: ["Content-Type", "Authorization"],
-}));
+try {
+  const { Hono } = require("hono");
+  const { cors } = require("hono/cors");
 
-// Routes
-app.route("/auth", authRoutes);
-app.route("/members", memberRoutes);
-app.route("/transactions", transactionRoutes);
-app.route("/loans", loanRoutes);
-app.route("/dashboard", dashboardRoutes);
-app.route("/expenses", expenseRoutes);
-app.route("/welfare", welfareRoutes);
-app.route("/accounts", accountRoutes);
-app.route("/bank-accounts", bankAccountRoutes);
-app.route("/users", userRoutes);
-app.route("/settings", settingRoutes);
-app.route("/interest", interestRoutes);
-app.route("/reports", reportRoutes);
-app.route("/deposit-requests", depositRequestRoutes);
-app.route("/withdraw-requests", withdrawRequestRoutes);
-app.route("/payment-gateways", paymentGatewayRoutes);
-app.route("/audit-logs", auditLogRoutes);
+  app = new Hono().basePath("/api/v1");
+  app.use("*", cors({ origin: (origin) => origin || "*", credentials: true, allowMethods: ["GET","POST","PUT","PATCH","DELETE","OPTIONS"], allowHeaders: ["Content-Type","Authorization"] }));
 
-// Health
-app.get("/health", (c) => c.json({ status: "ok", time: new Date().toISOString(), version: "1.0.0" }));
+  // Try loading routes
+  try {
+    const { authRoutes } = require("../src/routes/auth.routes");
+    app.route("/auth", authRoutes);
+  } catch (e) {
+    initError = `auth routes: ${e.message}`;
+  }
 
-// Error handling
-app.onError(errorHandler);
-app.notFound((c) => c.json({ success: false, message: "Route not found" }, 404));
+  app.get("/health", (c) => c.json({ status: initError ? "partial" : "ok", error: initError, time: new Date().toISOString() }));
+  app.notFound((c) => c.json({ success: false, message: "Route not found" }, 404));
+} catch (e) {
+  initError = `hono init: ${e.message}`;
+}
 
-// Vercel serverless handler (manual adapter - hono/vercel hangs)
 export default async function handler(req, res) {
+  if (!app) {
+    return res.status(500).json({ error: initError || "App failed to initialize" });
+  }
+
   const proto = req.headers["x-forwarded-proto"] || "https";
-  const host = req.headers.host;
-  const url = `${proto}://${host}${req.url}`;
+  const url = `${proto}://${req.headers.host}${req.url}`;
   const headers = new Headers();
-  for (const [key, value] of Object.entries(req.headers)) {
-    if (typeof value === "string") headers.set(key, value);
+  for (const [k, v] of Object.entries(req.headers)) {
+    if (typeof v === "string") headers.set(k, v);
   }
 
   let body = null;
@@ -75,12 +43,14 @@ export default async function handler(req, res) {
     body = Buffer.concat(chunks);
   }
 
-  const request = new Request(url, { method: req.method, headers, body });
-  const response = await app.fetch(request);
-
-  const resHeaders = {};
-  response.headers.forEach((v, k) => { resHeaders[k] = v; });
-  res.writeHead(response.status, resHeaders);
-  const text = await response.text();
-  res.end(text);
+  try {
+    const request = new Request(url, { method: req.method, headers, body });
+    const response = await app.fetch(request);
+    const resHeaders = {};
+    response.headers.forEach((v, k) => { resHeaders[k] = v; });
+    res.writeHead(response.status, resHeaders);
+    res.end(await response.text());
+  } catch (e) {
+    res.status(500).json({ error: e.message, stack: e.stack?.split("\n").slice(0,3) });
+  }
 }
