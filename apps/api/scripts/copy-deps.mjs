@@ -14,7 +14,9 @@ mkdirSync(targetNodeModules, { recursive: true });
 // Packages the bundle externalizes
 const deps = [
   "@prisma/client",
+  "@prisma/client-runtime-utils",
   "@prisma/adapter-neon",
+  "@prisma/driver-adapter-utils",
   "@neondatabase/serverless",
   "bcryptjs",
   "jose",
