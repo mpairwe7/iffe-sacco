@@ -272,49 +272,55 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* Footer - Glass Dark */}
-      <footer id="contact" className="glass-dark text-white pt-16 pb-8 relative">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-          <div className="grid md:grid-cols-3 gap-12 lg:gap-20 pb-12 border-b border-white/10">
+      {/* Footer — solid dark, high contrast */}
+      <footer id="contact" className="bg-gray-950 text-white pt-16 pb-8 relative">
+        <div className="max-w-7xl mx-auto px-5 sm:px-8 lg:px-10 relative z-10">
+          <div className="grid md:grid-cols-3 gap-12 lg:gap-20 pb-12 border-b border-gray-800">
             <div>
-              <div className="flex items-center gap-3 mb-4">
-                <div className="w-12 h-12 rounded-full bg-white/10 ring-1 ring-white/20 flex items-center justify-center shrink-0 overflow-hidden">
-                  <img src="/logo.png" alt="IFFE SACCO" className="w-9 h-9 object-contain" />
+              <div className="flex items-center gap-3.5 mb-5">
+                <div className="w-14 h-14 rounded-full bg-primary/10 ring-2 ring-primary/30 shadow-lg flex items-center justify-center shrink-0 overflow-hidden">
+                  <img src="/logo.png" alt="IFFE SACCO" className="w-14 h-14 object-cover rounded-full" />
                 </div>
-                <span className="text-xl font-bold">IFFE SACCO</span>
+                <div className="leading-tight">
+                  <span className="text-2xl font-extrabold">
+                    <span className="text-primary font-black">IFFE</span>{" "}
+                    <span className="text-white font-extrabold">SACCO</span>
+                  </span>
+                  <p className="text-[10px] font-semibold text-gray-400 tracking-widest uppercase mt-0.5">Empowering Financial Freedom</p>
+                </div>
               </div>
-              <p className="text-white/60 leading-relaxed">Empowering financial freedom through community and innovation. Building a better future, one member at a time.</p>
+              <p className="text-gray-400 leading-relaxed text-sm">Empowering financial freedom through community and innovation. Building a better future, one member at a time.</p>
             </div>
             <div>
-              <h4 className="text-sm font-semibold uppercase tracking-wider text-white/40 mb-6">Quick Links</h4>
+              <h4 className="text-sm font-bold uppercase tracking-wider text-gray-500 mb-6">Quick Links</h4>
               <ul className="space-y-3">
                 {["Home", "About", "Services", "Login"].map((link) => (
                   <li key={link}>
-                    <a href={link === "Login" ? "/login" : `#${link.toLowerCase()}`} className="text-white/60 hover:text-white transition-colors">{link}</a>
+                    <a href={link === "Login" ? "/login" : `#${link.toLowerCase()}`} className="text-gray-300 hover:text-white font-medium transition-colors">{link}</a>
                   </li>
                 ))}
               </ul>
             </div>
             <div>
-              <h4 className="text-sm font-semibold uppercase tracking-wider text-white/40 mb-6">Contact Us</h4>
+              <h4 className="text-sm font-bold uppercase tracking-wider text-gray-500 mb-6">Contact Us</h4>
               <ul className="space-y-4">
                 <li className="flex items-center gap-3">
-                  <div className="w-8 h-8 rounded-lg bg-white/10 flex items-center justify-center"><MapPin className="w-4 h-4 text-primary" /></div>
-                  <span className="text-white/60">Jinja City, Uganda</span>
+                  <div className="w-9 h-9 rounded-full bg-primary/10 ring-1 ring-primary/20 flex items-center justify-center"><MapPin className="w-4 h-4 text-primary" /></div>
+                  <span className="text-gray-300 font-medium">Jinja City, Uganda</span>
                 </li>
                 <li className="flex items-center gap-3">
-                  <div className="w-8 h-8 rounded-lg bg-white/10 flex items-center justify-center"><Phone className="w-4 h-4 text-primary" /></div>
-                  <a href="tel:+256782894875" className="text-white/60 hover:text-white">+256 782 894 875</a>
+                  <div className="w-9 h-9 rounded-full bg-primary/10 ring-1 ring-primary/20 flex items-center justify-center"><Phone className="w-4 h-4 text-primary" /></div>
+                  <a href="tel:+256782894875" className="text-gray-300 hover:text-white font-medium">+256 782 894 875</a>
                 </li>
                 <li className="flex items-center gap-3">
-                  <div className="w-8 h-8 rounded-lg bg-white/10 flex items-center justify-center"><Mail className="w-4 h-4 text-primary" /></div>
-                  <a href="mailto:bdfsocial.selfhelp@gmail.com" className="text-white/60 hover:text-white">bdfsocial.selfhelp@gmail.com</a>
+                  <div className="w-9 h-9 rounded-full bg-primary/10 ring-1 ring-primary/20 flex items-center justify-center"><Mail className="w-4 h-4 text-primary" /></div>
+                  <a href="mailto:bdfsocial.selfhelp@gmail.com" className="text-gray-300 hover:text-white font-medium">bdfsocial.selfhelp@gmail.com</a>
                 </li>
               </ul>
             </div>
           </div>
           <div className="pt-8 text-center">
-            <p className="text-sm text-white/30">&copy; 2026 IFFE SACCO. All rights reserved.</p>
+            <p className="text-sm text-gray-500">&copy; 2026 IFFE SACCO. All rights reserved.</p>
           </div>
         </div>
       </footer>

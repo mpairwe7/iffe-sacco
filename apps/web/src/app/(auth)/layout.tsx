@@ -11,15 +11,16 @@ export default function AuthLayout({ children }: { children: React.ReactNode }) 
 
       <div className="relative z-10 w-full max-w-2xl">
         <div className="text-center mb-10">
-          <Link href="/" className="inline-flex flex-col items-center gap-4 group">
-            <div className="w-28 h-28 sm:w-32 sm:h-32 rounded-full shadow-xl group-hover:scale-105 transition-transform ring-2 ring-primary/20 flex items-center justify-center overflow-hidden bg-white dark:bg-white/10">
+          <Link href="/" className="inline-flex flex-col items-center gap-5 group">
+            <div className="w-28 h-28 sm:w-32 sm:h-32 rounded-full shadow-xl group-hover:scale-105 transition-transform ring-2 ring-primary/30 bg-primary/10 flex items-center justify-center overflow-hidden">
               <img src="/logo.png" alt="IFFE SACCO Logo" className="w-28 h-28 sm:w-32 sm:h-32 object-cover rounded-full" />
             </div>
             <div className="leading-tight">
-              <span className="text-3xl sm:text-4xl font-extrabold tracking-tight text-text">
-                IFFE <span className="text-primary">SACCO</span>
+              <span className="text-3xl sm:text-4xl font-extrabold tracking-tight">
+                <span className="text-primary text-4xl sm:text-5xl font-black drop-shadow-sm">IFFE</span>{" "}
+                <span className="text-gray-900 dark:text-white font-extrabold">SACCO</span>
               </span>
-              <p className="text-xs sm:text-sm font-medium text-text-muted tracking-widest uppercase mt-1.5">
+              <p className="text-xs sm:text-sm font-semibold text-gray-500 dark:text-gray-400 tracking-widest uppercase mt-2">
                 Empowering Financial Freedom
               </p>
             </div>
