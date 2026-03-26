@@ -1,9 +1,11 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
+import { useAuthStore } from "@/stores/auth-store";
+import type { Role } from "@iffe/shared";
 import {
   LayoutDashboard,
   Users,
@@ -18,7 +20,6 @@ import {
   Building2,
   Heart,
   UserCog,
-  Globe,
   BarChart3,
   Settings,
   HelpCircle,
@@ -39,15 +40,21 @@ interface NavItem {
   children?: { label: string; href: string }[];
   divider?: boolean;
   section?: string;
+  roles: Role[];
 }
 
 const navItems: NavItem[] = [
-  { label: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
+  // Dashboard Section - role-specific dashboards
+  { label: "Admin Dashboard", href: "/dashboard", icon: LayoutDashboard, roles: ["admin", "staff"] },
+  { label: "Chairman Dashboard", href: "/chairman", icon: LayoutDashboard, roles: ["chairman"] },
+  { label: "My Dashboard", href: "/portal/savings", icon: LayoutDashboard, roles: ["member"] },
+
   // Member Portal Section
-  { label: "", href: undefined, icon: LayoutDashboard, divider: true, section: "Member Portal" },
+  { label: "", href: undefined, icon: LayoutDashboard, divider: true, section: "Member Portal", roles: ["member"] },
   {
     label: "My Savings",
     icon: Wallet,
+    roles: ["member"],
     children: [
       { label: "My Accounts", href: "/portal/savings" },
       { label: "Deposit Funds", href: "/portal/deposits" },
@@ -57,78 +64,79 @@ const navItems: NavItem[] = [
   {
     label: "My Loans",
     icon: CreditCard,
+    roles: ["member"],
     children: [
       { label: "Loan Overview", href: "/portal/loans" },
       { label: "Apply for Loan", href: "/portal/loans#apply" },
     ],
   },
-  { label: "My Transactions", href: "/portal/transactions", icon: Wallet },
-  { label: "Social Welfare", href: "/portal/welfare", icon: Heart },
-  // Admin Section
-  { label: "", href: undefined, icon: LayoutDashboard, divider: true, section: "Administration" },
+  { label: "My Transactions", href: "/portal/transactions", icon: Wallet, roles: ["member"] },
+  { label: "Social Welfare", href: "/portal/welfare", icon: Heart, roles: ["member"] },
+  { label: "Help & Support", href: "/portal/help", icon: HelpCircle, roles: ["member"] },
+
+  // Administration Section
+  { label: "", href: undefined, icon: LayoutDashboard, divider: true, section: "Administration", roles: ["admin", "staff", "chairman"] },
+  { label: "Applications", href: "/admin/applications", icon: ClipboardList, roles: ["admin", "staff"] },
   {
     label: "Members",
     icon: Users,
+    roles: ["admin", "staff", "chairman"],
     children: [
       { label: "View Members", href: "/admin/members" },
       { label: "Add Member", href: "/admin/members/create" },
       { label: "Member Requests", href: "/admin/members/requests" },
     ],
   },
-  { label: "Upcoming Payments", href: "/admin/loans", icon: Calendar },
+  { label: "Loans", href: "/admin/loans", icon: Calendar, roles: ["admin", "staff", "chairman"] },
   {
-    label: "Accounts",
+    label: "Savings Accounts",
     icon: Landmark,
+    roles: ["admin", "staff", "chairman"],
     children: [
       { label: "Member Accounts", href: "/admin/savings-accounts" },
-      { label: "Interest Calculation", href: "/admin/interest" },
       { label: "Account Types", href: "/admin/savings-products" },
-    ],
-  },
-  {
-    label: "Deposit",
-    icon: Coins,
-    children: [
-      { label: "Deposit Money", href: "/admin/transactions/create?type=deposit" },
-      { label: "Deposit Requests", href: "/admin/deposit-requests" },
-    ],
-  },
-  {
-    label: "Withdraw",
-    icon: Banknote,
-    children: [
-      { label: "Withdraw Money", href: "/admin/transactions/create?type=withdraw" },
-      { label: "Withdraw Requests", href: "/admin/withdraw-requests" },
     ],
   },
   {
     label: "Transactions",
     icon: Wallet,
+    roles: ["admin", "staff", "chairman"],
     children: [
       { label: "New Transaction", href: "/admin/transactions/create" },
       { label: "Transaction History", href: "/admin/transactions" },
     ],
   },
   {
+    label: "Deposit Requests",
+    icon: Coins,
+    roles: ["admin", "staff"],
+    children: [
+      { label: "Deposit Money", href: "/admin/transactions/create?type=deposit" },
+      { label: "Deposit Requests", href: "/admin/deposit-requests" },
+    ],
+  },
+  {
+    label: "Withdraw Requests",
+    icon: Banknote,
+    roles: ["admin", "staff"],
+    children: [
+      { label: "Withdraw Money", href: "/admin/transactions/create?type=withdraw" },
+      { label: "Withdraw Requests", href: "/admin/withdraw-requests" },
+    ],
+  },
+  {
     label: "Expenses",
     icon: Receipt,
+    roles: ["admin", "staff", "chairman"],
     children: [
       { label: "All Expenses", href: "/admin/expenses" },
       { label: "Expense Categories", href: "/admin/expense-categories" },
     ],
   },
   {
-    label: "Payment Methods",
-    icon: CreditCard,
-    children: [
-      { label: "Payment Gateways", href: "/admin/payment-gateways" },
-      { label: "Deposit Methods", href: "/admin/deposit-methods" },
-      { label: "Withdraw Methods", href: "/admin/withdraw-methods" },
-    ],
-  },
-  {
     label: "Bank Accounts",
     icon: Building2,
+    roles: ["admin"],
     children: [
       { label: "Bank Accounts", href: "/admin/bank-accounts" },
       { label: "Bank Transactions", href: "/admin/bank-transactions" },
@@ -137,24 +145,36 @@ const navItems: NavItem[] = [
   {
     label: "Social Welfare",
     icon: Heart,
+    roles: ["admin", "staff"],
     children: [
       { label: "Welfare Programs", href: "/admin/welfare" },
       { label: "Pledges", href: "/admin/pledges" },
     ],
   },
   {
+    label: "Payment Gateways",
+    icon: CreditCard,
+    roles: ["admin"],
+    children: [
+      { label: "Payment Gateways", href: "/admin/payment-gateways" },
+      { label: "Deposit Methods", href: "/admin/deposit-methods" },
+      { label: "Withdraw Methods", href: "/admin/withdraw-methods" },
+    ],
+  },
+  {
     label: "User Management",
     icon: UserCog,
+    roles: ["admin"],
     children: [
       { label: "All Users", href: "/admin/users" },
       { label: "User Roles", href: "/admin/roles" },
       { label: "Access Control", href: "/admin/access-control" },
     ],
   },
-  { label: "Languages", href: "/admin/languages", icon: Globe },
   {
     label: "Reports",
     icon: BarChart3,
+    roles: ["admin", "staff", "chairman"],
     children: [
       { label: "Account Statement", href: "/admin/reports?type=statement" },
       { label: "Account Balances", href: "/admin/reports?type=balances" },
@@ -164,10 +184,16 @@ const navItems: NavItem[] = [
       { label: "Revenue Report", href: "/admin/reports?type=revenue" },
     ],
   },
-  { label: "Help & Support", href: "/portal/help", icon: HelpCircle },
+  {
+    label: "Interest",
+    href: "/admin/interest",
+    icon: Landmark,
+    roles: ["admin"],
+  },
   {
     label: "Settings",
     icon: Settings,
+    roles: ["admin"],
     children: [
       { label: "General Settings", href: "/admin/settings" },
       { label: "Currency", href: "/admin/currency" },
@@ -180,12 +206,37 @@ const navItems: NavItem[] = [
 export function Sidebar({ open, onClose }: SidebarProps) {
   const pathname = usePathname();
   const [expanded, setExpanded] = useState<string | null>(null);
+  const user = useAuthStore((s) => s.user);
+  const role: Role = (user?.role as Role) || "member";
+
+  const filteredNavItems = useMemo(
+    () => navItems.filter((item) => item.roles.includes(role)),
+    [role]
+  );
 
   const toggleExpand = (label: string) => {
     setExpanded(expanded === label ? null : label);
   };
 
   const isActive = (href: string) => pathname === href || pathname.startsWith(href + "/");
+
+  const userInitials = user?.name
+    ? user.name
+        .split(" ")
+        .map((n) => n[0])
+        .join("")
+        .toUpperCase()
+        .slice(0, 2)
+    : "??";
+
+  const roleLabel =
+    role === "admin"
+      ? "Administrator"
+      : role === "chairman"
+        ? "Chairman"
+        : role === "staff"
+          ? "Staff"
+          : "Member";
 
   return (
     <>
@@ -205,7 +256,7 @@ export function Sidebar({ open, onClose }: SidebarProps) {
       >
         {/* Logo */}
         <div className="flex items-center justify-between px-6 h-20 border-b border-white/10">
-          <Link href="/dashboard" className="flex items-center gap-3">
+          <Link href={role === "chairman" ? "/chairman" : role === "member" ? "/portal/savings" : "/dashboard"} className="flex items-center gap-3">
             { /* eslint-disable-next-line @next/next/no-img-element */ }
             <img src="/logo.png" alt="IFFE SACCO" className="w-9 h-9 object-contain" />
             <span className="text-lg font-bold text-white">IFFE SACCO</span>
@@ -219,18 +270,18 @@ export function Sidebar({ open, onClose }: SidebarProps) {
         <div className="px-6 py-4 border-b border-white/10">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-full bg-primary/20 flex items-center justify-center">
-              <span className="text-sm font-bold text-primary">AD</span>
+              <span className="text-sm font-bold text-primary">{userInitials}</span>
             </div>
             <div>
-              <div className="text-sm font-semibold text-white">Admin</div>
-              <div className="text-xs text-white/50">Administrator</div>
+              <div className="text-sm font-semibold text-white">{user?.name || "User"}</div>
+              <div className="text-xs text-white/50">{roleLabel}</div>
             </div>
           </div>
         </div>
 
         {/* Navigation */}
         <nav className="flex-1 overflow-y-auto px-3 py-4 space-y-1">
-          {navItems.map((item, idx) => {
+          {filteredNavItems.map((item, idx) => {
             if (item.divider) {
               return (
                 <div key={`divider-${idx}`} className="pt-4 pb-2">

@@ -13,7 +13,7 @@ model User {
   email     String   @unique
   phone     String?
   password  String
-  role      String   @default("member") // admin | member | staff
+  role      String   @default("member") // admin | chairman | member | staff
   avatar    String?
   isActive  Boolean  @default(true)
   lastLogin DateTime?
@@ -47,13 +47,33 @@ model Member {
   status      String   @default("pending") // active | pending | inactive | suspended
   joinDate    DateTime @default(now())
   userId      String?  @unique
+
+  // Extended bio data (from IBDA Bio Data form)
+  clan              String?
+  totem             String?
+  birthDistrict     String?
+  birthVillage      String?
+  ancestralDistrict String?
+  ancestralVillage  String?
+  residenceDistrict String?
+  residenceVillage  String?
+  placeOfWork       String?
+  qualifications    String?
+  fatherInfo        Json?
+  motherInfo        Json?
+  spouses           Json?
+  children          Json?
+  otherRelatives    Json?
+  applicationId     String?  @unique
+
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
-  user     User?     @relation(fields: [userId], references: [id])
-  accounts Account[]
-  loans    Loan[]
-  pledges  Pledge[]
+  user        User?        @relation(fields: [userId], references: [id])
+  application Application? @relation(fields: [applicationId], references: [id])
+  accounts    Account[]
+  loans       Loan[]
+  pledges     Pledge[]
 
   @@index([status])
   @@index([email])
@@ -264,6 +284,74 @@ model PaymentGateway {
   config   Json?
 
   @@map("payment_gateways")
+}
+
+// ===== APPLICATION (Membership Application) =====
+model Application {
+  id                String   @id @default(uuid())
+
+  // General Information
+  fullName          String
+  dateOfBirth       DateTime?
+  sex               String?
+  phone             String
+  email             String?
+  clan              String?
+  totem             String?
+
+  // Place of birth
+  birthDistrict     String?
+  birthCounty       String?
+  birthSubCounty    String?
+  birthParish       String?
+  birthVillage      String?
+
+  // Place of ancestral origin
+  ancestralDistrict String?
+  ancestralCounty   String?
+  ancestralSubCounty String?
+  ancestralParish   String?
+  ancestralVillage  String?
+
+  // Place of residence
+  residenceDistrict String?
+  residenceCounty   String?
+  residenceSubCounty String?
+  residenceParish   String?
+  residenceVillage  String?
+
+  // Work
+  occupation        String?
+  placeOfWork       String?
+  qualifications    String?
+
+  // Family (JSON)
+  fatherInfo        Json?
+  motherInfo        Json?
+  spouses           Json?
+  children          Json?
+  otherRelatives    Json?
+
+  // Document
+  applicationLetterUrl  String?
+  applicationLetterName String?
+
+  // Workflow
+  status            String   @default("pending") // pending | approved | rejected
+  rejectionReason   String?
+  reviewedBy        String?
+  reviewedAt        DateTime?
+  userId            String?  @unique
+  memberId          String?
+
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  member            Member?
+
+  @@index([status])
+  @@index([email])
+  @@map("applications")
 }
 
 // ===== SYSTEM SETTING =====

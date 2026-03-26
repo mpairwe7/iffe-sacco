@@ -126,6 +126,7 @@ export function EditUserModal({ open, onOpenChange, user }: Props) {
               >
                 <option value="member">Member</option>
                 <option value="staff">Staff</option>
+                <option value="chairman">Chairman</option>
                 <option value="admin">Admin</option>
               </select>
               {errors.role && (

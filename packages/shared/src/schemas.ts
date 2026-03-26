@@ -11,7 +11,7 @@ export const registerSchema = z.object({
   email: z.email("Valid email required"),
   phone: z.string().min(10, "Valid phone number required"),
   password: z.string().min(8, "Password must be at least 8 characters"),
-  role: z.enum(["admin", "member", "staff"]).default("member"),
+  role: z.enum(["admin", "chairman", "member", "staff"]).default("member"),
 });
 
 export const refreshTokenSchema = z.object({
@@ -126,7 +126,7 @@ export const updateUserSchema = z.object({
   name: z.string().min(2).optional(),
   email: z.email().optional(),
   phone: z.string().optional(),
-  role: z.enum(["admin", "member", "staff"]).optional(),
+  role: z.enum(["admin", "chairman", "member", "staff"]).optional(),
   isActive: z.boolean().optional(),
 });
 
@@ -183,6 +183,88 @@ export const createPaymentGatewaySchema = z.object({
 
 export const updatePaymentGatewaySchema = createPaymentGatewaySchema.partial();
 
+// ===== Application (Membership) =====
+const placeSchema = z.object({
+  district: z.string().optional(),
+  county: z.string().optional(),
+  subCounty: z.string().optional(),
+  parish: z.string().optional(),
+  village: z.string().optional(),
+});
+
+const parentInfoSchema = z.object({
+  name: z.string().optional(),
+  district: z.string().optional(),
+  village: z.string().optional(),
+  phone: z.string().optional(),
+  email: z.string().optional(),
+  alive: z.boolean().optional(),
+  diedBeforeOrAfterJoining: z.string().optional(),
+});
+
+const spouseSchema = z.object({
+  name: z.string().optional(),
+  fatherName: z.string().optional(),
+  fatherAlive: z.boolean().optional(),
+  motherName: z.string().optional(),
+  motherAlive: z.boolean().optional(),
+  contact: z.string().optional(),
+  address: z.string().optional(),
+});
+
+const childSchema = z.object({
+  name: z.string().optional(),
+  sex: z.string().optional(),
+  contact: z.string().optional(),
+});
+
+const relativeSchema = z.object({
+  fullName: z.string().optional(),
+  relationship: z.string().optional(),
+  location: z.string().optional(),
+  contact: z.string().optional(),
+});
+
+export const createApplicationSchema = z.object({
+  // General info
+  fullName: z.string().min(2, "Full name required"),
+  dateOfBirth: z.string().optional(),
+  sex: z.enum(["male", "female"]).optional(),
+  phone: z.string().min(10, "Valid phone required"),
+  email: z.email("Valid email required").optional(),
+  clan: z.string().optional(),
+  totem: z.string().optional(),
+
+  // Places
+  birthPlace: placeSchema.optional(),
+  ancestralPlace: placeSchema.optional(),
+  residencePlace: placeSchema.optional(),
+
+  // Work
+  occupation: z.string().optional(),
+  placeOfWork: z.string().optional(),
+  qualifications: z.string().optional(),
+
+  // Family
+  fatherInfo: parentInfoSchema.optional(),
+  motherInfo: parentInfoSchema.optional(),
+  spouses: z.array(spouseSchema).optional(),
+  children: z.array(childSchema).optional(),
+  otherRelatives: z.array(relativeSchema).optional(),
+
+  // Document
+  applicationLetterUrl: z.string().optional(),
+  applicationLetterName: z.string().optional(),
+
+  // Account credentials
+  password: z.string().min(8, "Password must be at least 8 characters").optional(),
+});
+
+export const reviewApplicationSchema = z.object({
+  status: z.enum(["approved", "rejected"]),
+  rejectionReason: z.string().optional(),
+});
+
 // ===== Export types =====
 export type LoginInput = z.infer<typeof loginSchema>;
 export type RegisterInput = z.infer<typeof registerSchema>;
@@ -205,3 +287,5 @@ export type CreateDepositRequestInput = z.infer<typeof createDepositRequestSchem
 export type CreateWithdrawRequestInput = z.infer<typeof createWithdrawRequestSchema>;
 export type CreatePaymentGatewayInput = z.infer<typeof createPaymentGatewaySchema>;
 export type UpdatePaymentGatewayInput = z.infer<typeof updatePaymentGatewaySchema>;
+export type CreateApplicationInput = z.infer<typeof createApplicationSchema>;
+export type ReviewApplicationInput = z.infer<typeof reviewApplicationSchema>;

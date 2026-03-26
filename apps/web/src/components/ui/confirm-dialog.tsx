@@ -14,6 +14,7 @@ interface ConfirmDialogProps {
   onConfirm: () => void;
   variant?: "default" | "destructive";
   loading?: boolean;
+  children?: React.ReactNode;
 }
 
 export function ConfirmDialog({
@@ -26,6 +27,7 @@ export function ConfirmDialog({
   onConfirm,
   variant = "default",
   loading = false,
+  children,
 }: ConfirmDialogProps) {
   return (
     <Dialog.Root open={open} onOpenChange={onOpenChange}>
@@ -42,6 +44,7 @@ export function ConfirmDialog({
             <div className="flex-1">
               <Dialog.Title className="text-lg font-semibold text-text">{title}</Dialog.Title>
               <Dialog.Description className="text-sm text-text-muted mt-1">{description}</Dialog.Description>
+              {children}
             </div>
             <Dialog.Close asChild>
               <button className="p-1.5 text-text-light hover:text-text rounded-lg" aria-label="Close">

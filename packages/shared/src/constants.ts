@@ -39,6 +39,9 @@ export const PLEDGE_STATUS = ["pledged", "paid", "cancelled"] as const;
 export const BANK_ACCOUNT_STATUS = ["active", "inactive"] as const;
 export const ACCOUNT_STATUS = ["active", "dormant", "frozen", "closed"] as const;
 export const MEMBER_STATUS = ["active", "pending", "inactive", "suspended"] as const;
+export const ROLES = ["admin", "chairman", "member", "staff"] as const;
+export const APPLICATION_STATUS = ["pending", "approved", "rejected"] as const;
+export const SEX_OPTIONS = ["male", "female"] as const;
 
 // ===== Derived types from constants =====
 export type LoanType = typeof LOAN_TYPES[number];

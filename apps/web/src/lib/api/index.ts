@@ -12,3 +12,4 @@ export { settingsApi } from "./settings";
 export { depositRequestsApi } from "./deposit-requests";
 export { withdrawRequestsApi } from "./withdraw-requests";
 export { paymentGatewaysApi } from "./payment-gateways";
+export { applicationsApi } from "./applications";

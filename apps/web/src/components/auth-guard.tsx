@@ -23,6 +23,22 @@ export function AuthGuard({ children }: { children: React.ReactNode }) {
       .then((user) => {
         setUser(user);
         setChecked(true);
+
+        // Redirect based on role if on a wrong dashboard
+        const pathname = window.location.pathname;
+
+        if (user.role === "chairman" && pathname.startsWith("/dashboard")) {
+          router.replace("/chairman");
+          return;
+        }
+        if (user.role === "member" && pathname.startsWith("/admin")) {
+          router.replace("/portal/savings");
+          return;
+        }
+        if (user.role === "member" && pathname === "/dashboard") {
+          router.replace("/portal/savings");
+          return;
+        }
       })
       .catch(() => {
         logout();

@@ -39,13 +39,13 @@ expenses.put("/:id", requireRole("admin", "staff"), zValidator("json", updateExp
   return c.json({ success: true, data: expense });
 });
 
-expenses.patch("/:id/approve", requireRole("admin"), async (c) => {
+expenses.patch("/:id/approve", requireRole("admin", "chairman"), async (c) => {
   const user = c.get("user");
   const expense = await service.approve(c.req.param("id"), user.id);
   return c.json({ success: true, data: expense });
 });
 
-expenses.patch("/:id/reject", requireRole("admin"), async (c) => {
+expenses.patch("/:id/reject", requireRole("admin", "chairman"), async (c) => {
   const expense = await service.reject(c.req.param("id"));
   return c.json({ success: true, data: expense });
 });

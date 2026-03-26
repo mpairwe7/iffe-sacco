@@ -12,3 +12,4 @@ export * from "./use-deposit-requests";
 export * from "./use-withdraw-requests";
 export * from "./use-payment-gateways";
 export * from "./use-settings";
+export * from "./use-applications";

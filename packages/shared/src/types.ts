@@ -1,5 +1,5 @@
 // ===== User & Auth =====
-export type Role = "admin" | "member" | "staff";
+export type Role = "admin" | "chairman" | "member" | "staff";
 
 export interface User {
   id: string;
@@ -235,6 +235,68 @@ export interface PaymentGateway {
   fee: string;
   isActive: boolean;
   config?: Record<string, unknown> | null;
+}
+
+// ===== Application (Membership Application) =====
+export type ApplicationStatus = "pending" | "approved" | "rejected";
+
+export interface Application {
+  id: string;
+  fullName: string;
+  dateOfBirth?: string | null;
+  sex?: string | null;
+  phone: string;
+  email?: string | null;
+  clan?: string | null;
+  totem?: string | null;
+
+  // Place of birth
+  birthDistrict?: string | null;
+  birthCounty?: string | null;
+  birthSubCounty?: string | null;
+  birthParish?: string | null;
+  birthVillage?: string | null;
+
+  // Ancestral origin
+  ancestralDistrict?: string | null;
+  ancestralCounty?: string | null;
+  ancestralSubCounty?: string | null;
+  ancestralParish?: string | null;
+  ancestralVillage?: string | null;
+
+  // Residence
+  residenceDistrict?: string | null;
+  residenceCounty?: string | null;
+  residenceSubCounty?: string | null;
+  residenceParish?: string | null;
+  residenceVillage?: string | null;
+
+  // Work
+  occupation?: string | null;
+  placeOfWork?: string | null;
+  qualifications?: string | null;
+
+  // Family (JSON)
+  fatherInfo?: Record<string, unknown> | null;
+  motherInfo?: Record<string, unknown> | null;
+  spouses?: Record<string, unknown>[] | null;
+  children?: Record<string, unknown>[] | null;
+  otherRelatives?: Record<string, unknown>[] | null;
+
+  // Document
+  applicationLetterUrl?: string | null;
+  applicationLetterName?: string | null;
+
+  // Workflow
+  status: ApplicationStatus;
+  rejectionReason?: string | null;
+  reviewedBy?: string | null;
+  reviewedAt?: string | null;
+  userId?: string | null;
+  memberId?: string | null;
+
+  createdAt: string;
+  updatedAt: string;
 }
 
 // ===== API Response =====

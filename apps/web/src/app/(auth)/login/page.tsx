@@ -34,7 +34,7 @@ export default function LoginPage() {
   }
 
   return (
-    <>
+    <div className="max-w-md mx-auto w-full">
       <div className="glass-card rounded-3xl p-8 shadow-xl">
         <h2 className="text-2xl font-bold text-text text-center">Welcome Back</h2>
         <p className="text-text-muted text-center mt-2 mb-8">Sign in to your account</p>
@@ -111,6 +111,6 @@ export default function LoginPage() {
         </p>
       </div>
       <SecurityBadge />
-    </>
+    </div>
   );
 }
