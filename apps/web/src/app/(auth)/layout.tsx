@@ -12,7 +12,7 @@ export default function AuthLayout({ children }: { children: React.ReactNode }) 
       <div className="relative z-10 w-full max-w-2xl">
         <div className="text-center mb-10">
           <Link href="/" className="inline-flex flex-col items-center gap-4 group">
-            <div className="glass rounded-3xl p-4 shadow-xl group-hover:scale-105 transition-transform ring-1 ring-white/30">
+            <div className="w-28 h-28 sm:w-32 sm:h-32 rounded-full glass shadow-xl group-hover:scale-105 transition-transform ring-1 ring-white/30 flex items-center justify-center overflow-hidden">
               <img src="/logo.png" alt="IFFE SACCO Logo" className="w-20 h-20 sm:w-24 sm:h-24 object-contain drop-shadow-md" />
             </div>
             <div className="leading-tight">

@@ -33,11 +33,13 @@ export default function HomePage() {
           <div className="flex items-center justify-between h-20 lg:h-24">
             {/* Logo — larger image + bigger text + tagline */}
             <Link href="/" className="flex items-center gap-3.5 sm:gap-4 shrink-0">
-              <img
-                src="/logo.png"
-                alt="IFFE SACCO Logo"
-                className="w-12 h-12 sm:w-14 sm:h-14 lg:w-16 lg:h-16 object-contain drop-shadow-sm"
-              />
+              <div className="w-12 h-12 sm:w-14 sm:h-14 lg:w-16 lg:h-16 rounded-full bg-white dark:bg-white/10 shadow-md ring-1 ring-black/5 dark:ring-white/10 flex items-center justify-center shrink-0 overflow-hidden">
+                <img
+                  src="/logo.png"
+                  alt="IFFE SACCO Logo"
+                  className="w-10 h-10 sm:w-11 sm:h-11 lg:w-12 lg:h-12 object-contain"
+                />
+              </div>
               <div className="leading-tight">
                 <span className="text-xl sm:text-2xl lg:text-[1.7rem] font-extrabold tracking-tight text-text">
                   IFFE <span className="text-primary">SACCO</span>
@@ -275,7 +277,9 @@ export default function HomePage() {
           <div className="grid md:grid-cols-3 gap-12 lg:gap-20 pb-12 border-b border-white/10">
             <div>
               <div className="flex items-center gap-3 mb-4">
-                <img src="/logo.png" alt="IFFE SACCO" className="w-10 h-10 object-contain" />
+                <div className="w-12 h-12 rounded-full bg-white/10 ring-1 ring-white/20 flex items-center justify-center shrink-0 overflow-hidden">
+                  <img src="/logo.png" alt="IFFE SACCO" className="w-9 h-9 object-contain" />
+                </div>
                 <span className="text-xl font-bold">IFFE SACCO</span>
               </div>
               <p className="text-white/60 leading-relaxed">Empowering financial freedom through community and innovation. Building a better future, one member at a time.</p>
