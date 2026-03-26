@@ -51,16 +51,43 @@ for (const dep of deps) {
 }
 
 // CRITICAL: Copy the generated Prisma client (.prisma/client/)
-// @prisma/client requires this at runtime
+// @prisma/client requires this at runtime via require('.prisma/client/default')
+// Bun stores it inside .bun/@prisma+client@xxx/node_modules/.prisma/client/
+import { globSync } from "node:fs";
+let prismaFound = false;
+
+// Search standard locations
 for (const base of [join(apiDir, "node_modules"), join(rootDir, "node_modules")]) {
   const prismaGen = join(base, ".prisma", "client");
   if (existsSync(prismaGen)) {
     const dest = join(targetNodeModules, ".prisma", "client");
     mkdirSync(dirname(dest), { recursive: true });
     cpSync(realpathSync(prismaGen), dest, { recursive: true, dereference: true, force: true });
-    console.log("  OK .prisma/client (generated)");
+    console.log("  OK .prisma/client (standard)");
+    prismaFound = true;
     break;
   }
 }
+
+// Search Bun's .bun/ cache directory
+if (!prismaFound) {
+  const bunDir = join(rootDir, "node_modules", ".bun");
+  if (existsSync(bunDir)) {
+    for (const entry of readdirSync(bunDir)) {
+      if (!entry.startsWith("@prisma+client@")) continue;
+      const prismaGen = join(bunDir, entry, "node_modules", ".prisma", "client");
+      if (existsSync(prismaGen)) {
+        const dest = join(targetNodeModules, ".prisma", "client");
+        mkdirSync(dirname(dest), { recursive: true });
+        cpSync(prismaGen, dest, { recursive: true, dereference: true, force: true });
+        console.log(`  OK .prisma/client (from .bun/${entry})`);
+        prismaFound = true;
+        break;
+      }
+    }
+  }
+}
+
+if (!prismaFound) console.log("  WARN .prisma/client NOT FOUND");
 
 console.log("Deps copied to api/node_modules/");
