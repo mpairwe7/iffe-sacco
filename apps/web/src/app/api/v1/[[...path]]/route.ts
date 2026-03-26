@@ -12,9 +12,9 @@ let _app: any = null;
 async function getApp() {
   if (_app) return _app;
   // Dynamic import - only runs at request time, not build time
-  const mod = await import("@/lib/api-server/app.mjs");
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const mod: any = await import("@/lib/api-server/app.mjs");
   _app = mod.app;
-  // Initialize Prisma if available
   if (typeof mod.initPrisma === "function") {
     await mod.initPrisma();
   }
