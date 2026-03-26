@@ -12,10 +12,8 @@ const targetNodeModules = join(apiDir, "api", "node_modules");
 mkdirSync(targetNodeModules, { recursive: true });
 
 // Packages the bundle externalizes
-// Only packages that are externalized from the bundle
-const deps = [
-  "@neondatabase/serverless",
-];
+// No non-prisma deps to copy (all bundled into _app.js)
+const deps = [];
 
 // Copy ALL @prisma/* packages from Bun cache
 const bunDir = join(rootDir, "node_modules", ".bun");
