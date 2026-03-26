@@ -1,0 +1,277 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// ===== USER & AUTH =====
+model User {
+  id        String    @id @default(uuid())
+  name      String
+  email     String    @unique
+  phone     String?
+  password  String
+  role      String    @default("member") // admin | member | staff
+  avatar    String?
+  isActive  Boolean   @default(true)
+  lastLogin DateTime?
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+
+  member    Member?
+  auditLogs AuditLog[]
+
+  @@index([email])
+  @@index([role])
+  @@map("users")
+}
+
+// ===== MEMBER =====
+model Member {
+  id          String    @id @default(uuid())
+  memberId    String    @unique
+  firstName   String
+  lastName    String
+  email       String
+  phone       String
+  gender      String?
+  dateOfBirth DateTime?
+  nationalId  String?
+  occupation  String?
+  address     String?
+  city        String?
+  district    String?
+  country     String    @default("UG")
+  status      String    @default("pending") // active | pending | inactive | suspended
+  joinDate    DateTime  @default(now())
+  userId      String?   @unique
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  user     User?     @relation(fields: [userId], references: [id])
+  accounts Account[]
+  loans    Loan[]
+  pledges  Pledge[]
+
+  @@index([status])
+  @@index([email])
+  @@index([memberId])
+  @@map("members")
+}
+
+// ===== ACCOUNT =====
+model Account {
+  id           String    @id @default(uuid())
+  accountNo    String    @unique
+  memberId     String
+  type         String    @default("savings") // savings | current | fixed_deposit
+  balance      Decimal   @default(0) @db.Decimal(15, 2)
+  interestRate Decimal   @default(12) @db.Decimal(5, 2)
+  status       String    @default("active") // active | dormant | frozen | closed
+  lastActivity DateTime?
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+
+  member       Member        @relation(fields: [memberId], references: [id], onDelete: Cascade)
+  transactions Transaction[]
+
+  @@index([memberId])
+  @@index([status])
+  @@index([accountNo])
+  @@map("accounts")
+}
+
+// ===== TRANSACTION =====
+model Transaction {
+  id          String   @id @default(uuid())
+  accountId   String
+  type        String // deposit | withdrawal | transfer | loan_repayment | loan_disbursement | interest_credit | fee
+  amount      Decimal  @db.Decimal(15, 2)
+  description String?
+  method      String   @default("cash") // cash | mobile_money | bank_transfer | cheque | internal
+  reference   String?
+  status      String   @default("pending") // pending | completed | rejected | reversed
+  processedBy String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  account Account @relation(fields: [accountId], references: [id], onDelete: Cascade)
+
+  @@index([accountId])
+  @@index([type])
+  @@index([status])
+  @@index([createdAt])
+  @@map("transactions")
+}
+
+// ===== LOAN =====
+model Loan {
+  id              String    @id @default(uuid())
+  memberId        String
+  type            String // business | personal | emergency | education | housing
+  amount          Decimal   @db.Decimal(15, 2)
+  balance         Decimal   @default(0) @db.Decimal(15, 2)
+  interestRate    Decimal   @db.Decimal(5, 2)
+  term            Int // months
+  monthlyPayment  Decimal   @default(0) @db.Decimal(15, 2)
+  nextPaymentDate DateTime?
+  status          String    @default("pending") // pending | approved | active | paid | overdue | defaulted | rejected
+  approvedBy      String?
+  disbursedAt     DateTime?
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+
+  member Member @relation(fields: [memberId], references: [id], onDelete: Cascade)
+
+  @@index([memberId])
+  @@index([status])
+  @@index([nextPaymentDate])
+  @@map("loans")
+}
+
+// ===== EXPENSE =====
+model Expense {
+  id          String   @id @default(uuid())
+  description String
+  category    String
+  amount      Decimal  @db.Decimal(15, 2)
+  date        DateTime
+  approvedBy  String?
+  status      String   @default("pending") // pending | approved | rejected
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([category])
+  @@index([status])
+  @@index([date])
+  @@map("expenses")
+}
+
+// ===== WELFARE PROGRAM =====
+model WelfareProgram {
+  id               String   @id @default(uuid())
+  name             String
+  description      String
+  targetAmount     Decimal  @db.Decimal(15, 2)
+  raisedAmount     Decimal  @default(0) @db.Decimal(15, 2)
+  contributorCount Int      @default(0)
+  status           String   @default("active") // active | completed | paused
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+  pledges Pledge[]
+
+  @@map("welfare_programs")
+}
+
+// ===== PLEDGE =====
+model Pledge {
+  id        String   @id @default(uuid())
+  programId String
+  memberId  String
+  amount    Decimal  @db.Decimal(15, 2)
+  status    String   @default("pledged") // pledged | paid | cancelled
+  createdAt DateTime @default(now())
+
+  program WelfareProgram @relation(fields: [programId], references: [id], onDelete: Cascade)
+  member  Member         @relation(fields: [memberId], references: [id], onDelete: Cascade)
+
+  @@index([programId])
+  @@index([memberId])
+  @@map("pledges")
+}
+
+// ===== AUDIT LOG =====
+model AuditLog {
+  id        String   @id @default(uuid())
+  userId    String
+  action    String
+  entity    String
+  entityId  String?
+  details   Json?
+  ipAddress String?
+  createdAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id])
+
+  @@index([userId])
+  @@index([entity])
+  @@index([createdAt])
+  @@map("audit_logs")
+}
+
+// ===== BANK ACCOUNT =====
+model BankAccount {
+  id          String   @id @default(uuid())
+  bankName    String
+  accountName String
+  accountNo   String
+  branch      String?
+  balance     Decimal  @default(0) @db.Decimal(15, 2)
+  status      String   @default("active")
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@map("bank_accounts")
+}
+
+// ===== DEPOSIT REQUEST =====
+model DepositRequest {
+  id          String   @id @default(uuid())
+  memberId    String
+  accountId   String
+  amount      Decimal  @db.Decimal(15, 2)
+  method      String   @default("cash")
+  description String?
+  status      String   @default("pending") // pending | approved | rejected
+  processedBy String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([memberId])
+  @@index([status])
+  @@map("deposit_requests")
+}
+
+// ===== WITHDRAW REQUEST =====
+model WithdrawRequest {
+  id          String   @id @default(uuid())
+  memberId    String
+  accountId   String
+  amount      Decimal  @db.Decimal(15, 2)
+  method      String   @default("cash")
+  reason      String?
+  status      String   @default("pending") // pending | approved | rejected
+  processedBy String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([memberId])
+  @@index([status])
+  @@map("withdraw_requests")
+}
+
+// ===== PAYMENT GATEWAY =====
+model PaymentGateway {
+  id       String  @id @default(uuid())
+  name     String
+  type     String // mobile_money | bank | card | online
+  currency String  @default("UGX")
+  fee      String  @default("0%")
+  isActive Boolean @default(false)
+  config   Json?
+
+  @@map("payment_gateways")
+}
+
+// ===== SYSTEM SETTING =====
+model Setting {
+  id    String @id @default(uuid())
+  key   String @unique
+  value String
+
+  @@map("settings")
+}
