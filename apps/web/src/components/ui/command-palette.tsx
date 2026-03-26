@@ -91,53 +91,53 @@ export function CommandPalette() {
 
   return (
     <div className="fixed inset-0 z-[100]">
-      <div className="fixed inset-0 bg-black/40 backdrop-blur-sm" onClick={() => setOpen(false)} />
-      <div className="fixed left-1/2 top-[15%] -translate-x-1/2 w-full max-w-lg">
-        <Command className="glass-card rounded-2xl overflow-hidden shadow-2xl" label="Command palette">
-          <div className="flex items-center gap-3 px-4 border-b border-border/50">
-            <Search className="w-5 h-5 text-text-light shrink-0" />
+      <div className="fixed inset-0 bg-black/50 backdrop-blur-sm" onClick={() => setOpen(false)} />
+      <div className="fixed left-1/2 top-[12%] -translate-x-1/2 w-full max-w-xl px-4">
+        <Command className="bg-white dark:bg-gray-950 border border-gray-200 dark:border-gray-800 rounded-2xl overflow-hidden shadow-2xl" label="Command palette">
+          <div className="flex items-center gap-3 px-5 border-b border-gray-200 dark:border-gray-800">
+            <Search className="w-5 h-5 text-gray-400 shrink-0" />
             <Command.Input
               placeholder="Search members, transactions, pages..."
-              className="w-full py-4 bg-transparent text-text placeholder:text-text-light focus:outline-none text-base"
+              className="w-full py-4 bg-transparent text-gray-900 dark:text-white placeholder:text-gray-400 focus:outline-none text-base font-medium"
               autoFocus
               value={query}
               onValueChange={setQuery}
             />
           </div>
-          <Command.List className="max-h-72 overflow-y-auto p-2">
-            <Command.Empty className="py-8 text-center text-sm text-text-muted">No results found.</Command.Empty>
+          <Command.List className="max-h-80 overflow-y-auto p-2">
+            <Command.Empty className="py-8 text-center text-sm text-gray-500">No results found.</Command.Empty>
 
             {searching && (
-              <div className="flex items-center justify-center gap-2 py-4 text-sm text-text-muted">
+              <div className="flex items-center justify-center gap-2 py-4 text-sm text-gray-500">
                 <Loader2 className="w-4 h-4 animate-spin" />
                 Searching members...
               </div>
             )}
 
             {searchResults.length > 0 && (
-              <Command.Group heading="Members" className="text-xs font-semibold text-text-light uppercase tracking-wider px-2 pt-3 pb-1">
-                {searchResults.map((m) => (
+              <Command.Group heading="Members" className="text-[10px] font-bold text-gray-400 uppercase tracking-widest px-2 pt-3 pb-1">
+                {searchResults.map((m: Record<string, string>) => (
                   <Command.Item
                     key={m.id}
                     value={`${m.firstName} ${m.lastName} ${m.memberId}`}
                     onSelect={() => { router.push(`/admin/members/${m.id}`); setOpen(false); }}
-                    className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm text-text-muted hover:text-text hover:bg-surface-hover cursor-pointer data-[selected=true]:bg-primary/10 data-[selected=true]:text-primary"
+                    className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-800 cursor-pointer data-[selected=true]:bg-primary/10 data-[selected=true]:text-primary"
                   >
                     <Users className="w-4 h-4 shrink-0" />
-                    {m.firstName} {m.lastName} — {m.memberId}
+                    {m.firstName} {m.lastName} — <span className="text-gray-400 font-mono text-xs">{m.memberId}</span>
                   </Command.Item>
                 ))}
               </Command.Group>
             )}
 
             {["Pages", "Member"].map((group) => (
-              <Command.Group key={group} heading={group} className="text-xs font-semibold text-text-light uppercase tracking-wider px-2 pt-3 pb-1">
+              <Command.Group key={group} heading={group} className="text-[10px] font-bold text-gray-400 uppercase tracking-widest px-2 pt-3 pb-1">
                 {pages.filter((p) => p.group === group).map((page) => (
                   <Command.Item
                     key={page.href}
                     value={page.label}
                     onSelect={() => { router.push(page.href); setOpen(false); }}
-                    className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm text-text-muted hover:text-text hover:bg-surface-hover cursor-pointer data-[selected=true]:bg-primary/10 data-[selected=true]:text-primary"
+                    className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-800 cursor-pointer data-[selected=true]:bg-primary/10 data-[selected=true]:text-primary"
                   >
                     <page.icon className="w-4 h-4 shrink-0" />
                     {page.label}
@@ -146,21 +146,21 @@ export function CommandPalette() {
               </Command.Group>
             ))}
 
-            <Command.Group heading="Actions" className="text-xs font-semibold text-text-light uppercase tracking-wider px-2 pt-3 pb-1">
+            <Command.Group heading="Actions" className="text-[10px] font-bold text-gray-400 uppercase tracking-widest px-2 pt-3 pb-1">
               <Command.Item
                 value="Toggle dark mode"
                 onSelect={() => { setTheme(theme === "dark" ? "light" : "dark"); setOpen(false); }}
-                className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm text-text-muted hover:text-text hover:bg-surface-hover cursor-pointer data-[selected=true]:bg-primary/10 data-[selected=true]:text-primary"
+                className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-800 cursor-pointer data-[selected=true]:bg-primary/10 data-[selected=true]:text-primary"
               >
                 {theme === "dark" ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
                 Toggle {theme === "dark" ? "Light" : "Dark"} Mode
               </Command.Item>
             </Command.Group>
           </Command.List>
-          <div className="border-t border-border/50 px-4 py-2 flex items-center gap-4 text-[11px] text-text-light">
-            <span><kbd className="font-mono px-1 py-0.5 bg-surface-alt rounded">&#8593;&#8595;</kbd> Navigate</span>
-            <span><kbd className="font-mono px-1 py-0.5 bg-surface-alt rounded">&#9166;</kbd> Select</span>
-            <span><kbd className="font-mono px-1 py-0.5 bg-surface-alt rounded">Esc</kbd> Close</span>
+          <div className="border-t border-gray-200 dark:border-gray-800 px-5 py-2.5 flex items-center gap-5 text-[11px] text-gray-400">
+            <span><kbd className="font-mono px-1.5 py-0.5 bg-gray-100 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded text-[10px]">&#8593;&#8595;</kbd> Navigate</span>
+            <span><kbd className="font-mono px-1.5 py-0.5 bg-gray-100 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded text-[10px]">&#9166;</kbd> Select</span>
+            <span><kbd className="font-mono px-1.5 py-0.5 bg-gray-100 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded text-[10px]">Esc</kbd> Close</span>
           </div>
         </Command>
       </div>
