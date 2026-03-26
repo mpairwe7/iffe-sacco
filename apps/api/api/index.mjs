@@ -1,18 +1,9 @@
 /**
  * Vercel Serverless Entry Point
- * Imports pre-bundled Hono app and adapts to Node.js handler
  */
-let app;
-let initError = null;
+import { app } from "./_app.mjs";
 
-try {
-  const mod = await import("./_app.js");
-  app = mod.app;
-} catch (e) {
-  initError = { message: e.message, stack: e.stack?.split("\n").slice(0, 5) };
-}
-
-const CORS_HEADERS = {
+const CORS = {
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Methods": "GET,POST,PUT,PATCH,DELETE,OPTIONS",
   "Access-Control-Allow-Headers": "Content-Type,Authorization",
@@ -21,15 +12,15 @@ const CORS_HEADERS = {
 };
 
 export default async function handler(req, res) {
-  // Handle CORS preflight immediately
+  // CORS preflight
   if (req.method === "OPTIONS") {
-    res.writeHead(204, CORS_HEADERS);
+    res.writeHead(204, CORS);
     return res.end();
   }
 
   if (!app) {
-    res.writeHead(500, { "Content-Type": "application/json", ...CORS_HEADERS });
-    return res.end(JSON.stringify({ ok: false, initError }));
+    res.writeHead(500, { "Content-Type": "application/json", ...CORS });
+    return res.end(JSON.stringify({ error: "App failed to initialize" }));
   }
 
   const proto = req.headers["x-forwarded-proto"] || "https";
@@ -49,14 +40,12 @@ export default async function handler(req, res) {
   try {
     const request = new Request(url, { method: req.method, headers, body });
     const response = await app.fetch(request);
-
-    // Merge CORS headers with response headers
-    const resHeaders = { ...CORS_HEADERS };
+    const resHeaders = { ...CORS };
     response.headers.forEach((v, k) => { resHeaders[k] = v; });
     res.writeHead(response.status, resHeaders);
     res.end(await response.text());
   } catch (e) {
-    res.writeHead(500, { "Content-Type": "application/json", ...CORS_HEADERS });
+    res.writeHead(500, { "Content-Type": "application/json", ...CORS });
     res.end(JSON.stringify({ success: false, message: e.message }));
   }
 }
