@@ -12,10 +12,9 @@ const targetNodeModules = join(apiDir, "api", "node_modules");
 mkdirSync(targetNodeModules, { recursive: true });
 
 // Packages the bundle externalizes
+// Only packages that are externalized from the bundle
 const deps = [
   "@neondatabase/serverless",
-  "bcryptjs",
-  "jose",
 ];
 
 // Copy ALL @prisma/* packages from Bun cache
@@ -94,7 +93,6 @@ for (const dep of deps) {
 // CRITICAL: Copy the generated Prisma client (.prisma/client/)
 // @prisma/client requires this at runtime via require('.prisma/client/default')
 // Bun stores it inside .bun/@prisma+client@xxx/node_modules/.prisma/client/
-import { globSync } from "node:fs";
 let prismaFound = false;
 
 // Search standard locations

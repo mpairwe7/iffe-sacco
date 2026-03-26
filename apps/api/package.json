@@ -1,23 +1,25 @@
 {
-  "name": "api",
+  "name": "@iffe/api",
   "version": "1.0.0",
   "type": "module",
   "private": true,
+  "exports": {
+    "./app": "./src/app.ts",
+    "./dist/app": "./dist/app.js"
+  },
   "scripts": {
-    "dev": "bun run --hot src/index.ts",
-    "build": "bun build src/index.ts --outdir dist --target bun",
-    "start": "bun run dist/index.js",
+    "dev": "bun --bun run --watch src/index.ts",
+    "start": "bun --bun run src/index.ts",
+    "build": "bun build src/index.ts --outdir dist --target bun && bun build src/app.ts --outdir dist --target node --external @prisma/client --external @prisma/adapter-neon --external @neondatabase/serverless && node scripts/copy-deps.mjs",
     "db:generate": "bunx prisma generate",
     "db:migrate": "bunx prisma migrate dev",
     "db:push": "bunx prisma db push",
     "db:studio": "bunx prisma studio",
     "db:seed": "bun run prisma/seed.ts",
-    "db:seed:sql": "bunx prisma db execute --stdin < prisma/seed.sql",
-    "typecheck": "tsc --noEmit",
-    "lint": "tsc --noEmit"
+    "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "@hono/node-server": "1.19.11",
+    "@hono/node-server": "^1.19.11",
     "@hono/zod-validator": "^0.5",
     "@iffe/shared": "workspace:*",
     "@neondatabase/serverless": "^1.0.2",
@@ -32,7 +34,7 @@
   },
   "devDependencies": {
     "@types/bcryptjs": "^2",
-    "@types/node": "25.5.0",
+    "@types/node": "^25",
     "@types/pg": "^8.20.0",
     "prisma": "^7.4",
     "typescript": "^5"
