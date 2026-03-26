@@ -27,44 +27,44 @@ export default function HomePage() {
         <div className="blob blob-3 w-[400px] h-[400px] bg-secondary/10 -bottom-20 left-1/3" />
       </div>
 
-      {/* Header - Navbar */}
-      <header className="fixed top-0 left-0 right-0 z-50 bg-white/85 dark:bg-gray-950/85 backdrop-blur-xl shadow-sm border-b border-black/5 dark:border-white/10">
+      {/* Header - Navbar — solid opaque background for maximum contrast */}
+      <header className="fixed top-0 left-0 right-0 z-50 bg-white dark:bg-gray-950 shadow-md border-b border-gray-200 dark:border-gray-800">
         <div className="max-w-7xl mx-auto px-5 sm:px-8 lg:px-10">
           <div className="flex items-center justify-between h-20 lg:h-24">
-            {/* Logo — larger image + bigger text + tagline */}
+            {/* Logo — circular container + bold brand */}
             <Link href="/" className="flex items-center gap-3.5 sm:gap-4 shrink-0">
-              <div className="w-12 h-12 sm:w-14 sm:h-14 lg:w-16 lg:h-16 rounded-full bg-white dark:bg-white/10 shadow-md ring-1 ring-black/5 dark:ring-white/10 flex items-center justify-center shrink-0 overflow-hidden">
+              <div className="w-12 h-12 sm:w-14 sm:h-14 lg:w-16 lg:h-16 rounded-full bg-primary/10 shadow-lg ring-2 ring-primary/30 flex items-center justify-center shrink-0 overflow-hidden">
                 <img
                   src="/logo.png"
                   alt="IFFE SACCO Logo"
-                  className="w-10 h-10 sm:w-11 sm:h-11 lg:w-12 lg:h-12 object-contain"
+                  className="w-12 h-12 sm:w-14 sm:h-14 lg:w-16 lg:h-16 object-cover rounded-full"
                 />
               </div>
               <div className="leading-tight">
-                <span className="text-xl sm:text-2xl lg:text-[1.7rem] font-extrabold tracking-tight">
-                  <span className="text-primary text-2xl sm:text-3xl lg:text-[2rem] font-black">IFFE</span>{" "}
-                  <span className="text-text font-bold">SACCO</span>
+                <span className="text-xl sm:text-2xl lg:text-[1.75rem] font-extrabold tracking-tight">
+                  <span className="text-primary text-2xl sm:text-3xl lg:text-[2.1rem] font-black drop-shadow-sm">IFFE</span>{" "}
+                  <span className="text-gray-900 dark:text-white font-extrabold">SACCO</span>
                 </span>
-                <p className="hidden sm:block text-[10px] sm:text-[11px] lg:text-xs font-medium text-text-muted tracking-widest uppercase mt-0.5">
+                <p className="hidden sm:block text-[10px] sm:text-[11px] lg:text-xs font-semibold text-gray-500 dark:text-gray-400 tracking-widest uppercase mt-0.5">
                   Empowering Financial Freedom
                 </p>
               </div>
             </Link>
 
-            {/* Nav links — larger text + more spacing */}
-            <nav className="hidden lg:flex items-center gap-1.5">
+            {/* Nav links — dark text for strong contrast */}
+            <nav className="hidden lg:flex items-center gap-1">
               {["Home", "About Us", "Services", "Contact"].map((item) => (
                 <a
                   key={item}
                   href={`#${item === "About Us" ? "about" : item === "Services" ? "services" : item.toLowerCase()}`}
-                  className="px-5 py-2.5 text-[15px] font-medium text-text-muted hover:text-primary hover:bg-primary/5 rounded-xl transition-colors"
+                  className="px-5 py-2.5 text-[15px] font-semibold text-gray-700 dark:text-gray-200 hover:text-primary hover:bg-primary/5 rounded-xl transition-colors"
                 >
                   {item}
                 </a>
               ))}
             </nav>
 
-            {/* CTA — larger button */}
+            {/* CTA */}
             <div className="hidden lg:flex items-center gap-4">
               <LoginDropdown />
             </div>
