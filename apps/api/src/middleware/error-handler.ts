@@ -19,5 +19,5 @@ export const errorHandler: ErrorHandler = (err, c) => {
     return c.json({ success: false, message: "Validation failed", errors }, 422);
   }
 
-  return c.json({ success: false, message: "Internal server error" }, 500);
+  return c.json({ success: false, message: "Internal server error", error: err.message, detail: err.stack?.split("\n").slice(0, 3) }, 500);
 };
