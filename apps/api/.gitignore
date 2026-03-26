@@ -1,1 +1,3 @@
 .vercel
+api/_app.js
+api/node_modules/
