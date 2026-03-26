@@ -2,19 +2,12 @@
 import { handle } from "hono/vercel";
 import { Hono } from "hono";
 import { cors } from "hono/cors";
-import { PrismaClient } from "../generated/prisma/edge.js";
-import { Pool, neonConfig } from "@neondatabase/serverless";
-import { PrismaNeon } from "@prisma/adapter-neon";
+import { neon } from "@neondatabase/serverless";
 
-export const config = { runtime: "edge" };
-
-neonConfig.useSecureWebSocket = true;
-
-function getPrisma() {
-  const pool = new Pool({ connectionString: process.env.DATABASE_URL });
-  const adapter = new PrismaNeon(pool);
-  return new PrismaClient({ adapter });
-}
+export const config = {
+  runtime: "nodejs",
+  maxDuration: 30,
+};
 
 const app = new Hono().basePath("/api/v1");
 
@@ -27,9 +20,9 @@ app.use("*", cors({
 
 app.get("/health", async (c) => {
   try {
-    const prisma = getPrisma();
-    const count = await prisma.user.count();
-    return c.json({ status: "ok", users: count, time: new Date().toISOString() });
+    const sql = neon(process.env.DATABASE_URL);
+    const result = await sql`SELECT count(*) FROM users`;
+    return c.json({ status: "ok", users: result[0].count, time: new Date().toISOString() });
   } catch (e) {
     return c.json({ status: "error", message: e.message }, 500);
   }
