@@ -28,7 +28,14 @@ const app = new Hono().basePath("/api/v1");
 app.use("*", logger());
 app.use("*", secureHeaders());
 app.use("*", cors({
-  origin: env.CORS_ORIGIN,
+  origin: (origin) => {
+    // Allow configured origin, Vercel deployments, and localhost
+    const allowed = [env.CORS_ORIGIN, "https://iffe-sacco.vercel.app"];
+    if (!origin || allowed.includes(origin) || origin.includes("vercel.app") || origin.includes("localhost")) {
+      return origin || "*";
+    }
+    return env.CORS_ORIGIN;
+  },
   credentials: true,
   allowMethods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
   allowHeaders: ["Content-Type", "Authorization"],

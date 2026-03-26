@@ -16,6 +16,7 @@
     "lint": "tsc --noEmit"
   },
   "dependencies": {
+    "@hono/node-server": "1.19.11",
     "@hono/zod-validator": "^0.5",
     "@iffe/shared": "workspace:*",
     "@neondatabase/serverless": "^1.0.2",
@@ -30,6 +31,7 @@
   },
   "devDependencies": {
     "@types/bcryptjs": "^2",
+    "@types/node": "25.5.0",
     "@types/pg": "^8.20.0",
     "prisma": "^7.4",
     "typescript": "^5"

@@ -1,0 +1,9 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "installCommand": "cd ../.. && bun install && cd apps/api && npx prisma generate",
+  "buildCommand": "true",
+  "rewrites": [
+    { "source": "/api/v1/(.*)", "destination": "/api" },
+    { "source": "/api/v1", "destination": "/api" }
+  ]
+}
