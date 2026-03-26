@@ -10,7 +10,10 @@ async function getApp() {
   if (_app) return _app;
   if (_initError) throw new Error(_initError);
   try {
-    const mod: any = await import("@/lib/api-server/app.mjs");
+    // Use require() to prevent Turbopack from re-bundling the pre-bundled app
+    const path = require("path");
+    const appPath = path.join(process.cwd(), "api-bundle", "app.mjs");
+    const mod = await import(/* webpackIgnore: true */ appPath);
     _app = mod.app;
     if (typeof mod.initPrisma === "function") {
       await mod.initPrisma();
@@ -28,7 +31,7 @@ async function handler(req: Request) {
     return app.fetch(req);
   } catch (e: any) {
     return new Response(
-      JSON.stringify({ success: false, message: e.message, stack: e.stack?.split("\n").slice(0, 5) }),
+      JSON.stringify({ success: false, message: e.message }),
       { status: 500, headers: { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*" } }
     );
   }
