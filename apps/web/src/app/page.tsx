@@ -41,8 +41,9 @@ export default function HomePage() {
                 />
               </div>
               <div className="leading-tight">
-                <span className="text-xl sm:text-2xl lg:text-[1.7rem] font-extrabold tracking-tight text-text">
-                  IFFE <span className="text-primary">SACCO</span>
+                <span className="text-xl sm:text-2xl lg:text-[1.7rem] font-extrabold tracking-tight">
+                  <span className="text-primary text-2xl sm:text-3xl lg:text-[2rem] font-black">IFFE</span>{" "}
+                  <span className="text-text font-bold">SACCO</span>
                 </span>
                 <p className="hidden sm:block text-[10px] sm:text-[11px] lg:text-xs font-medium text-text-muted tracking-widest uppercase mt-0.5">
                   Empowering Financial Freedom
