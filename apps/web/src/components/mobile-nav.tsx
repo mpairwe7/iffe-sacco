@@ -3,23 +3,25 @@
 import { useState } from "react";
 import Link from "next/link";
 import { Menu, X, Shield, Users, Briefcase, ChevronDown } from "lucide-react";
+import { ThemeToggle } from "@/components/theme-toggle";
 
 export function MobileNav() {
   const [open, setOpen] = useState(false);
   const [loginOpen, setLoginOpen] = useState(false);
 
   return (
-    <div className="lg:hidden">
+    <div className="lg:hidden flex items-center gap-1">
+      <ThemeToggle className="text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-800" />
       <button
         onClick={() => setOpen(!open)}
-        className="p-2 text-text-muted hover:text-text"
+        className="p-2 text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white"
         aria-label="Toggle navigation"
       >
         {open ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
       </button>
 
       {open && (
-        <div className="absolute top-full left-0 right-0 bg-white border-b border-border shadow-xl">
+        <div className="absolute top-full left-0 right-0 bg-white dark:bg-gray-950 border-b border-gray-200 dark:border-gray-800 shadow-xl">
           <div className="px-4 py-6 space-y-4">
             <a href="#home" onClick={() => setOpen(false)} className="block text-base font-medium text-text-muted hover:text-primary">Home</a>
             <a href="#about" onClick={() => setOpen(false)} className="block text-base font-medium text-text-muted hover:text-primary">About Us</a>

@@ -1,5 +1,6 @@
 /* eslint-disable @next/next/no-img-element */
 import Link from "next/link";
+import { ThemeToggle } from "@/components/theme-toggle";
 import {
   Shield,
   Wallet,
@@ -86,8 +87,9 @@ export default function HomePage() {
               ))}
             </nav>
 
-            {/* CTA */}
-            <div className="hidden lg:flex items-center gap-4">
+            {/* Theme + CTA */}
+            <div className="hidden lg:flex items-center gap-3">
+              <ThemeToggle className="text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-800" />
               <LoginDropdown />
             </div>
 
@@ -96,8 +98,19 @@ export default function HomePage() {
         </div>
       </header>
 
-      {/* Hero Section */}
-      <section id="home" className="pt-36 lg:pt-48 pb-20 lg:pb-36 relative overflow-hidden mesh-gradient">
+      {/* Hero Section — with background image */}
+      <section id="home" className="pt-36 lg:pt-48 pb-20 lg:pb-36 relative overflow-hidden">
+        {/* Background image — African community/finance themed */}
+        <div className="absolute inset-0 z-0">
+          <img
+            src="https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?auto=format&fit=crop&w=2000&q=80"
+            alt=""
+            className="w-full h-full object-cover"
+            loading="eager"
+          />
+          {/* Overlay for readability */}
+          <div className="absolute inset-0 bg-gradient-to-r from-white/95 via-white/85 to-white/60 dark:from-gray-950/95 dark:via-gray-950/85 dark:to-gray-950/60" />
+        </div>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           <div className="grid lg:grid-cols-2 gap-12 lg:gap-20 items-center">
             <div>
