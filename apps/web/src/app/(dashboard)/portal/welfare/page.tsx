@@ -57,7 +57,7 @@ export default function WelfarePage() {
           <Heart className="w-5 h-5 text-danger" />
         </div>
         <div>
-          <h1 className="text-2xl font-bold text-text">Social Welfare Programs</h1>
+          <h1 className="text-xl font-bold text-gray-900 dark:text-white">Social Welfare Programs</h1>
           <p className="text-text-muted text-sm">Support your community through welfare contributions</p>
         </div>
       </div>
@@ -70,16 +70,16 @@ export default function WelfarePage() {
         </div>
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-          <div className="glass-card rounded-xl p-5">
-            <p className="text-sm text-text-muted">Active Programs</p>
-            <p className="text-2xl font-bold text-text mt-1">{programs.filter((p) => p.status === "active").length}</p>
+          <div className="bg-white dark:bg-gray-950 border border-gray-200 dark:border-gray-800 shadow-sm rounded-xl p-5">
+            <p className="text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Active Programs</p>
+            <p className="text-xl font-bold text-gray-900 dark:text-white mt-1">{programs.filter((p) => p.status === "active").length}</p>
           </div>
-          <div className="glass-card rounded-xl p-5">
-            <p className="text-sm text-text-muted">My Total Pledges</p>
+          <div className="bg-white dark:bg-gray-950 border border-gray-200 dark:border-gray-800 shadow-sm rounded-xl p-5">
+            <p className="text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider">My Total Pledges</p>
             <p className="text-2xl font-bold text-primary mt-1">{formatCurrency(totalPledged)}</p>
           </div>
-          <div className="glass-card rounded-xl p-5">
-            <p className="text-sm text-text-muted">Total Raised</p>
+          <div className="bg-white dark:bg-gray-950 border border-gray-200 dark:border-gray-800 shadow-sm rounded-xl p-5">
+            <p className="text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Total Raised</p>
             <p className="text-2xl font-bold text-success mt-1">{formatCurrency(totalRaised)}</p>
           </div>
         </div>
@@ -95,16 +95,16 @@ export default function WelfarePage() {
       ) : (
         <div className="grid md:grid-cols-2 gap-6">
           {programs.length === 0 ? (
-            <div className="glass-card rounded-xl p-8 text-center col-span-full">
+            <div className="bg-white dark:bg-gray-950 border border-gray-200 dark:border-gray-800 shadow-sm rounded-xl p-8 text-center col-span-full">
               <p className="text-text-muted">No welfare programs available at this time.</p>
             </div>
           ) : (
             programs.map((program) => {
               const progress = program.targetAmount > 0 ? (program.raisedAmount / program.targetAmount) * 100 : 0;
               return (
-                <div key={program.id} className="glass-card rounded-xl p-6">
+                <div key={program.id} className="bg-white dark:bg-gray-950 border border-gray-200 dark:border-gray-800 shadow-sm rounded-xl p-6">
                   <div className="flex items-center justify-between mb-3">
-                    <h3 className="font-semibold text-text">{program.name}</h3>
+                    <h3 className="font-bold text-gray-900 dark:text-white">{program.name}</h3>
                     <span className={`text-xs font-medium px-2.5 py-1 rounded-full ${
                       program.status === "active" ? "text-success bg-success/15" :
                       program.status === "completed" ? "text-info bg-info/10" :
@@ -145,12 +145,12 @@ export default function WelfarePage() {
           <div className="absolute inset-0 bg-black/50" onClick={() => setPledgeDialogOpen(false)} />
           <div className="relative glass-card rounded-xl p-6 w-full max-w-md mx-4 space-y-4">
             <div className="flex items-center justify-between">
-              <h3 className="text-lg font-semibold text-text">Make a Pledge</h3>
+              <h3 className="text-lg font-bold text-gray-900 dark:text-white">Make a Pledge</h3>
               <button onClick={() => setPledgeDialogOpen(false)} className="p-1 hover:bg-surface-alt rounded-lg">
                 <X className="w-5 h-5 text-text-muted" />
               </button>
             </div>
-            <p className="text-sm text-text-muted">
+            <p className="text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider">
               {programs.find((p) => p.id === selectedProgramId)?.name}
             </p>
             <div>

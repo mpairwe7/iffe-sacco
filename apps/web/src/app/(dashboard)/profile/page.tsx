@@ -84,13 +84,13 @@ export default function ProfilePage() {
           <User className="w-5 h-5 text-primary" />
         </div>
         <div>
-          <h1 className="text-2xl font-bold text-text">Profile Settings</h1>
+          <h1 className="text-xl font-bold text-gray-900 dark:text-white">Profile Settings</h1>
           <p className="text-text-muted text-sm">Update your account information</p>
         </div>
       </div>
 
       <div className="max-w-2xl">
-        <form onSubmit={handleSubmit(onSubmit)} className="glass-card rounded-xl">
+        <form onSubmit={handleSubmit(onSubmit)} className="bg-white dark:bg-gray-950 border border-gray-200 dark:border-gray-800 shadow-sm rounded-xl">
           <div className="p-6 border-b border-border">
             <div className="flex items-center gap-6">
               <div className="relative">
@@ -102,7 +102,7 @@ export default function ProfilePage() {
                 </button>
               </div>
               <div>
-                <h3 className="text-lg font-semibold text-text">{displayName}</h3>
+                <h3 className="text-lg font-bold text-gray-900 dark:text-white">{displayName}</h3>
                 <p className="text-sm text-text-muted capitalize">{displayRole}</p>
               </div>
             </div>

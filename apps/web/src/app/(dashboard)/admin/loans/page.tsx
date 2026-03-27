@@ -73,7 +73,7 @@ export default function LoansPage() {
       key: "balance",
       label: "Outstanding",
       align: "right" as const,
-      render: (row: LoanRow) => <span className="font-semibold text-text">{formatCurrency(Number(row.balance))}</span>,
+      render: (row: LoanRow) => <span className="font-bold text-gray-900 dark:text-white">{formatCurrency(Number(row.balance))}</span>,
     },
     {
       key: "interestRate",
@@ -136,7 +136,7 @@ export default function LoansPage() {
             <Calendar className="w-5 h-5 text-warning" />
           </div>
           <div>
-            <h1 className="text-2xl font-bold text-text">Loans & Upcoming Payments</h1>
+            <h1 className="text-xl font-bold text-gray-900 dark:text-white">Loans & Upcoming Payments</h1>
             <p className="text-text-muted text-sm">Track loan disbursements and repayments</p>
           </div>
         </div>
@@ -149,20 +149,20 @@ export default function LoansPage() {
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-4 gap-4">
-        <div className="glass-card rounded-xl p-5">
-          <p className="text-sm text-text-muted">Active Loans</p>
-          <p className="text-2xl font-bold text-text mt-1">{stats?.active?.toLocaleString() ?? "\u2014"}</p>
+        <div className="bg-white dark:bg-gray-950 border border-gray-200 dark:border-gray-800 shadow-sm rounded-xl p-5">
+          <p className="text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Active Loans</p>
+          <p className="text-xl font-bold text-gray-900 dark:text-white mt-1">{stats?.active?.toLocaleString() ?? "\u2014"}</p>
         </div>
-        <div className="glass-card rounded-xl p-5">
-          <p className="text-sm text-text-muted">Total Disbursed</p>
+        <div className="bg-white dark:bg-gray-950 border border-gray-200 dark:border-gray-800 shadow-sm rounded-xl p-5">
+          <p className="text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Total Disbursed</p>
           <p className="text-2xl font-bold text-primary mt-1">{stats?.totalDisbursed != null ? formatCurrency(stats.totalDisbursed) : "\u2014"}</p>
         </div>
-        <div className="glass-card rounded-xl p-5">
-          <p className="text-sm text-text-muted">Outstanding</p>
+        <div className="bg-white dark:bg-gray-950 border border-gray-200 dark:border-gray-800 shadow-sm rounded-xl p-5">
+          <p className="text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Outstanding</p>
           <p className="text-2xl font-bold text-warning mt-1">{stats?.outstanding != null ? formatCurrency(stats.outstanding) : "\u2014"}</p>
         </div>
-        <div className="glass-card rounded-xl p-5">
-          <p className="text-sm text-text-muted">Overdue</p>
+        <div className="bg-white dark:bg-gray-950 border border-gray-200 dark:border-gray-800 shadow-sm rounded-xl p-5">
+          <p className="text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Overdue</p>
           <p className="text-2xl font-bold text-danger mt-1">{stats?.overdue?.toLocaleString() ?? "\u2014"}</p>
         </div>
       </div>

@@ -40,13 +40,13 @@ export default function ChangePasswordPage() {
           <Lock className="w-5 h-5 text-warning" />
         </div>
         <div>
-          <h1 className="text-2xl font-bold text-text">Change Password</h1>
+          <h1 className="text-xl font-bold text-gray-900 dark:text-white">Change Password</h1>
           <p className="text-text-muted text-sm">Update your account password</p>
         </div>
       </div>
 
       <div className="max-w-lg">
-        <form onSubmit={handleSubmit(onSubmit)} className="glass-card rounded-xl p-6 space-y-5">
+        <form onSubmit={handleSubmit(onSubmit)} className="bg-white dark:bg-gray-950 border border-gray-200 dark:border-gray-800 shadow-sm rounded-xl p-6 space-y-5">
           <div>
             <label className="block text-sm font-medium text-text mb-2">Current Password</label>
             <input

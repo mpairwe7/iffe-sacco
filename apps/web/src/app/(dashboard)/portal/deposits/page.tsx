@@ -61,14 +61,14 @@ export default function MemberDepositsPage() {
           <ArrowDownToLine className="w-5 h-5 text-success" />
         </div>
         <div>
-          <h1 className="text-2xl font-bold text-text">Deposit Funds</h1>
+          <h1 className="text-xl font-bold text-gray-900 dark:text-white">Deposit Funds</h1>
           <p className="text-text-muted text-sm">Make a deposit to your savings account</p>
         </div>
       </div>
 
       <div className="grid lg:grid-cols-2 gap-6">
-        <form onSubmit={handleSubmit(onSubmit)} className="glass-card rounded-xl p-6 space-y-5">
-          <h3 className="font-semibold text-text">Deposit Details</h3>
+        <form onSubmit={handleSubmit(onSubmit)} className="bg-white dark:bg-gray-950 border border-gray-200 dark:border-gray-800 shadow-sm rounded-xl p-6 space-y-5">
+          <h3 className="font-bold text-gray-900 dark:text-white">Deposit Details</h3>
           <div>
             <label className="block text-sm font-medium text-text mb-2">Account</label>
             <select
@@ -132,7 +132,7 @@ export default function MemberDepositsPage() {
         </form>
 
         <div className="space-y-4">
-          <div className="glass-card rounded-xl p-6">
+          <div className="bg-white dark:bg-gray-950 border border-gray-200 dark:border-gray-800 shadow-sm rounded-xl p-6">
             <h3 className="font-semibold text-text mb-4">Recent Deposits</h3>
             <div className="space-y-3">
               {reqLoading ? (

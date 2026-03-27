@@ -128,14 +128,14 @@ export default function SettingsPage() {
           <Settings className="w-5 h-5 text-text" />
         </div>
         <div>
-          <h1 className="text-2xl font-bold text-text">System Settings</h1>
+          <h1 className="text-xl font-bold text-gray-900 dark:text-white">System Settings</h1>
           <p className="text-text-muted text-sm">Configure your SACCO system</p>
         </div>
       </div>
 
-      <form onSubmit={handleSave} className="glass-card rounded-xl">
+      <form onSubmit={handleSave} className="bg-white dark:bg-gray-950 border border-gray-200 dark:border-gray-800 shadow-sm rounded-xl">
             <div className="p-6 border-b border-border">
-              <h3 className="text-base font-semibold text-text">General Settings</h3>
+              <h3 className="text-base font-bold text-gray-900 dark:text-white">General Settings</h3>
               <p className="text-sm text-text-muted mt-1">Basic system configuration</p>
             </div>
             <div className="p-6 space-y-5">
@@ -263,7 +263,7 @@ export default function SettingsPage() {
 
       {isDirty && (
         <div className="fixed bottom-0 left-0 right-0 lg:left-72 bg-surface/95 backdrop-blur-sm border-t border-border/50 p-4 flex items-center justify-between z-40">
-          <p className="text-sm text-text-muted">You have unsaved changes</p>
+          <p className="text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider">You have unsaved changes</p>
           <div className="flex gap-3">
             <button
               onClick={() => setSettings({ ...original })}

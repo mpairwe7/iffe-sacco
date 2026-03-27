@@ -38,7 +38,7 @@ export default function MemberLoansPage() {
             <CreditCard className="w-5 h-5 text-warning" />
           </div>
           <div>
-            <h1 className="text-2xl font-bold text-text">My Loans</h1>
+            <h1 className="text-xl font-bold text-gray-900 dark:text-white">My Loans</h1>
             <p className="text-text-muted text-sm">Track your loan balances and repayments</p>
           </div>
         </div>
@@ -70,7 +70,7 @@ export default function MemberLoansPage() {
       ) : (
         <div className="space-y-4">
           {loans.length === 0 ? (
-            <div className="glass-card rounded-xl p-8 text-center">
+            <div className="bg-white dark:bg-gray-950 border border-gray-200 dark:border-gray-800 shadow-sm rounded-xl p-8 text-center">
               <p className="text-text-muted">No loans found. Apply for your first loan to get started.</p>
             </div>
           ) : (
@@ -86,11 +86,11 @@ export default function MemberLoansPage() {
               };
               const progress = loan.amount > 0 ? ((loan.amount - loan.balance) / loan.amount) * 100 : 0;
               return (
-                <div key={loan.id} className="glass-card rounded-xl p-6">
+                <div key={loan.id} className="bg-white dark:bg-gray-950 border border-gray-200 dark:border-gray-800 shadow-sm rounded-xl p-6">
                   <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                     <div>
                       <div className="flex items-center gap-3 mb-2">
-                        <h3 className="font-semibold text-text">{loan.type}</h3>
+                        <h3 className="font-bold text-gray-900 dark:text-white">{loan.type}</h3>
                         <span className={`inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium ${statusColors[loan.status] ?? "bg-surface-alt text-text-muted"}`}>
                           {loan.status.charAt(0).toUpperCase() + loan.status.slice(1)}
                         </span>
@@ -117,7 +117,7 @@ export default function MemberLoansPage() {
                   {loan.balance > 0 && (
                     <div className="mt-4 pt-4 border-t border-border">
                       <div className="flex items-center justify-between mb-2">
-                        <span className="text-sm text-text-muted">Repayment Progress</span>
+                        <span className="text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Repayment Progress</span>
                         <span className="text-sm font-medium text-text">{Math.round(progress)}%</span>
                       </div>
                       <div className="h-2 bg-surface-alt rounded-full">
@@ -141,10 +141,10 @@ export default function MemberLoansPage() {
       )}
 
       {/* Loan Calculator */}
-      <div className="glass-card rounded-xl p-6">
+      <div className="bg-white dark:bg-gray-950 border border-gray-200 dark:border-gray-800 shadow-sm rounded-xl p-6">
         <div className="flex items-center gap-3 mb-6">
           <Calculator className="w-5 h-5 text-primary" />
-          <h3 className="text-base font-semibold text-text">Loan Calculator</h3>
+          <h3 className="text-base font-bold text-gray-900 dark:text-white">Loan Calculator</h3>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
           <div>
@@ -185,7 +185,7 @@ export default function MemberLoansPage() {
         </div>
         {calcResult !== null && (
           <div className="mt-4 p-4 bg-primary/5 border border-primary/20 rounded-lg">
-            <p className="text-sm text-text-muted">Estimated Monthly Payment</p>
+            <p className="text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Estimated Monthly Payment</p>
             <p className="text-2xl font-bold text-primary">{formatCurrency(calcResult)}</p>
           </div>
         )}

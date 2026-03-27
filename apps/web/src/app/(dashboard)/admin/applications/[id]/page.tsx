@@ -47,12 +47,12 @@ function SectionCard({
 }) {
   const id = title.toLowerCase().replace(/\s+/g, "-");
   return (
-    <section aria-labelledby={id} className="glass-card rounded-xl p-6">
+    <section aria-labelledby={id} className="bg-white dark:bg-gray-950 border border-gray-200 dark:border-gray-800 shadow-sm rounded-xl p-6">
       <div className="flex items-center gap-2 mb-4">
         <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center">
           <Icon className="w-4 h-4 text-primary" />
         </div>
-        <h3 id={id} className="text-base font-semibold text-text">{title}</h3>
+        <h3 id={id} className="text-base font-bold text-gray-900 dark:text-white">{title}</h3>
       </div>
       {children}
     </section>
@@ -67,7 +67,7 @@ function JsonTable({
   columns: { key: string; label: string }[];
 }) {
   if (!data || data.length === 0) {
-    return <p className="text-sm text-text-muted">None recorded</p>;
+    return <p className="text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider">None recorded</p>;
   }
   return (
     <div className="overflow-x-auto">
@@ -152,7 +152,7 @@ export default function ApplicationDetailPage() {
         <Skeleton className="h-8 w-48" />
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           {Array.from({ length: 4 }).map((_, i) => (
-            <div key={i} className="glass-card rounded-xl p-6">
+            <div key={i} className="bg-white dark:bg-gray-950 border border-gray-200 dark:border-gray-800 shadow-sm rounded-xl p-6">
               <Skeleton className="h-5 w-32 mb-4" />
               <div className="space-y-3">
                 <Skeleton className="h-4 w-full" />
@@ -168,7 +168,7 @@ export default function ApplicationDetailPage() {
 
   if (!app) {
     return (
-      <div className="glass-card rounded-xl p-12 text-center">
+      <div className="bg-white dark:bg-gray-950 border border-gray-200 dark:border-gray-800 shadow-sm rounded-xl p-12 text-center">
         <p className="text-text-muted">Application not found.</p>
         <Link
           href="/admin/applications"
@@ -198,7 +198,7 @@ export default function ApplicationDetailPage() {
             <FileText className="w-5 h-5 text-primary" />
           </div>
           <div>
-            <h1 className="text-2xl font-bold text-text">{app.fullName}</h1>
+            <h1 className="text-xl font-bold text-gray-900 dark:text-white">{app.fullName}</h1>
             <p className="text-text-muted text-sm">
               Application submitted {formatDate(app.createdAt)}
             </p>
@@ -302,7 +302,7 @@ export default function ApplicationDetailPage() {
               />
             </div>
           ) : (
-            <p className="text-sm text-text-muted">No information provided</p>
+            <p className="text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider">No information provided</p>
           )}
         </SectionCard>
 
@@ -328,7 +328,7 @@ export default function ApplicationDetailPage() {
               />
             </div>
           ) : (
-            <p className="text-sm text-text-muted">No information provided</p>
+            <p className="text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider">No information provided</p>
           )}
         </SectionCard>
 
@@ -345,7 +345,7 @@ export default function ApplicationDetailPage() {
               {app.applicationLetterName || "View Application Letter"}
             </a>
           ) : (
-            <p className="text-sm text-text-muted">
+            <p className="text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider">
               No application letter uploaded
             </p>
           )}
@@ -397,7 +397,7 @@ export default function ApplicationDetailPage() {
 
       {/* Rejection Reason (if rejected) */}
       {app.status === "rejected" && app.rejectionReason && (
-        <div className="glass-card rounded-xl p-6 border-l-4 border-danger">
+        <div className="bg-white dark:bg-gray-950 border border-gray-200 dark:border-gray-800 shadow-sm rounded-xl p-6 border-l-4 border-danger">
           <h3 className="text-base font-semibold text-danger mb-2">
             Rejection Reason
           </h3>
@@ -460,7 +460,7 @@ export default function ApplicationDetailPage() {
         loading={rejectMutation.isPending}
       >
         <div className="mt-2 space-y-3">
-          <p className="text-sm text-text-muted">
+          <p className="text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider">
             Are you sure you want to reject this application? Please provide a
             reason below.
           </p>

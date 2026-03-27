@@ -17,9 +17,9 @@ export function DepositsWithdrawalsChart({ monthlyData }: { monthlyData: Monthly
   return (
     <div className="bg-white dark:bg-gray-950 border border-gray-200 dark:border-gray-800 shadow-sm rounded-xl p-6">
       <h3 className="text-base font-bold text-gray-900 dark:text-white mb-0.5">Deposits vs Withdrawals</h3>
-      <p className="text-sm text-gray-500 mb-5">Monthly comparison — last 12 months</p>
+      <p className="text-sm text-gray-600 dark:text-gray-400 mb-5">Monthly comparison — last 12 months</p>
       {monthlyData.length === 0 ? (
-        <div className="flex items-center justify-center h-[280px] text-sm text-gray-400">No transaction data available</div>
+        <div className="flex items-center justify-center h-[280px] text-sm text-gray-500 dark:text-gray-400">No transaction data available</div>
       ) : (
         <figure role="figure" aria-label="Monthly deposits vs withdrawals chart">
           <div className="sr-only" role="img" aria-label="Deposits and Withdrawals area chart">
@@ -38,8 +38,8 @@ export function DepositsWithdrawalsChart({ monthlyData }: { monthlyData: Monthly
                 </linearGradient>
               </defs>
               <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
-              <XAxis dataKey="label" tick={{ fontSize: 11, fill: "#6b7280" }} axisLine={false} tickLine={false} />
-              <YAxis tick={{ fontSize: 11, fill: "#6b7280" }} axisLine={false} tickLine={false} tickFormatter={(v) => v >= 1000000 ? `${(v / 1000000).toFixed(1)}M` : v >= 1000 ? `${(v / 1000).toFixed(0)}K` : String(v)} />
+              <XAxis dataKey="label" tick={{ fontSize: 11, fill: "#374151" }} axisLine={false} tickLine={false} />
+              <YAxis tick={{ fontSize: 11, fill: "#374151" }} axisLine={false} tickLine={false} tickFormatter={(v) => v >= 1000000 ? `${(v / 1000000).toFixed(1)}M` : v >= 1000 ? `${(v / 1000).toFixed(0)}K` : String(v)} />
               <Tooltip formatter={(value) => `USh ${Number(value || 0).toLocaleString()}`} contentStyle={{ borderRadius: 8, border: "1px solid #e5e7eb", boxShadow: "0 4px 12px rgba(0,0,0,0.08)" }} />
               <Area type="monotone" dataKey="deposits" stroke="#006622" strokeWidth={2} fill="url(#depositGrad)" name="Deposits" />
               <Area type="monotone" dataKey="withdrawals" stroke="#F1C40F" strokeWidth={2} fill="url(#withdrawGrad)" name="Withdrawals" />
@@ -56,9 +56,9 @@ export function ExpenseChart({ breakdownData }: { breakdownData: ExpenseSlice[] 
   return (
     <div className="bg-white dark:bg-gray-950 border border-gray-200 dark:border-gray-800 shadow-sm rounded-xl p-6">
       <h3 className="text-base font-bold text-gray-900 dark:text-white mb-0.5">Expense Overview</h3>
-      <p className="text-sm text-gray-500 mb-5">Distribution by category — this year</p>
+      <p className="text-sm text-gray-600 dark:text-gray-400 mb-5">Distribution by category — this year</p>
       {breakdownData.length === 0 ? (
-        <div className="flex items-center justify-center h-[280px] text-sm text-gray-400">No expense data available</div>
+        <div className="flex items-center justify-center h-[280px] text-sm text-gray-500 dark:text-gray-400">No expense data available</div>
       ) : (
         <figure role="figure" aria-label="Expense distribution by category chart">
           <div className="sr-only" role="img" aria-label="Expense pie chart">
@@ -83,9 +83,9 @@ export function LoanChart({ trendsData }: { trendsData: LoanPoint[] }) {
   return (
     <div className="bg-white dark:bg-gray-950 border border-gray-200 dark:border-gray-800 shadow-sm rounded-xl p-6">
       <h3 className="text-base font-bold text-gray-900 dark:text-white mb-0.5">Loan Activity</h3>
-      <p className="text-sm text-gray-500 mb-5">Disbursements vs Repayments — last 12 months</p>
+      <p className="text-sm text-gray-600 dark:text-gray-400 mb-5">Disbursements vs Repayments — last 12 months</p>
       {trendsData.length === 0 ? (
-        <div className="flex items-center justify-center h-[280px] text-sm text-gray-400">No loan data available</div>
+        <div className="flex items-center justify-center h-[280px] text-sm text-gray-500 dark:text-gray-400">No loan data available</div>
       ) : (
         <figure role="figure" aria-label="Loan disbursements vs repayments chart">
           <div className="sr-only" role="img" aria-label="Loan bar chart">
@@ -94,8 +94,8 @@ export function LoanChart({ trendsData }: { trendsData: LoanPoint[] }) {
           <ResponsiveContainer width="100%" height={280}>
             <BarChart data={trendsData}>
               <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
-              <XAxis dataKey="label" tick={{ fontSize: 11, fill: "#6b7280" }} axisLine={false} tickLine={false} />
-              <YAxis tick={{ fontSize: 11, fill: "#6b7280" }} axisLine={false} tickLine={false} tickFormatter={(v) => v >= 1000000 ? `${(v / 1000000).toFixed(1)}M` : v >= 1000 ? `${(v / 1000).toFixed(0)}K` : String(v)} />
+              <XAxis dataKey="label" tick={{ fontSize: 11, fill: "#374151" }} axisLine={false} tickLine={false} />
+              <YAxis tick={{ fontSize: 11, fill: "#374151" }} axisLine={false} tickLine={false} tickFormatter={(v) => v >= 1000000 ? `${(v / 1000000).toFixed(1)}M` : v >= 1000 ? `${(v / 1000).toFixed(0)}K` : String(v)} />
               <Tooltip formatter={(value) => `USh ${Number(value || 0).toLocaleString()}`} contentStyle={{ borderRadius: 8, border: "1px solid #e5e7eb", boxShadow: "0 4px 12px rgba(0,0,0,0.08)" }} />
               <Bar dataKey="disbursed" fill="#006622" name="Disbursed" radius={[4, 4, 0, 0]} />
               <Bar dataKey="repaid" fill="#3b82f6" name="Repaid" radius={[4, 4, 0, 0]} />

@@ -85,7 +85,7 @@ export default function ReportsPage() {
           <BarChart3 className="w-5 h-5 text-info" />
         </div>
         <div>
-          <h1 className="text-2xl font-bold text-text">Reports</h1>
+          <h1 className="text-xl font-bold text-gray-900 dark:text-white">Reports</h1>
           <p className="text-text-muted text-sm">Generate and view financial reports</p>
         </div>
       </div>
@@ -97,13 +97,13 @@ export default function ReportsPage() {
               <report.icon className="w-6 h-6" />
             </div>
             <h3 className="font-semibold text-text mb-1 group-hover:text-primary transition-colors">{report.title}</h3>
-            <p className="text-sm text-text-muted">{report.desc}</p>
+            <p className="text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider">{report.desc}</p>
           </Link>
         ))}
       </div>
 
       {/* Quick Report Generator */}
-      <div className="glass-card rounded-xl p-6">
+      <div className="bg-white dark:bg-gray-950 border border-gray-200 dark:border-gray-800 shadow-sm rounded-xl p-6">
         <h3 className="text-base font-semibold text-text mb-4">Quick Report Generator</h3>
         <div className="flex flex-wrap gap-2 mb-4">
           {datePresets.map((preset) => (
@@ -177,7 +177,7 @@ export default function ReportsPage() {
 
       {/* Report Results */}
       {result && (
-        <div className="glass-card rounded-xl">
+        <div className="bg-white dark:bg-gray-950 border border-gray-200 dark:border-gray-800 shadow-sm rounded-xl">
           <div className="p-6 border-b border-border/50 flex items-center justify-between">
             <div>
               <h3 className="text-base font-semibold text-text capitalize">{result.type?.replace(/-/g, " ")} Report</h3>
@@ -186,7 +186,7 @@ export default function ReportsPage() {
                 {result.dateRange && ` | ${new Date(result.dateRange.from).toLocaleDateString()} — ${new Date(result.dateRange.to).toLocaleDateString()}`}
               </p>
             </div>
-            <p className="text-sm text-text-muted">{result.records?.length ?? 0} records</p>
+            <p className="text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider">{result.records?.length ?? 0} records</p>
           </div>
 
           {result.records && result.records.length > 0 && (

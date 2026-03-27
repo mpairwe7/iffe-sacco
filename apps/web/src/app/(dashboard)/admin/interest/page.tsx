@@ -88,19 +88,19 @@ export default function InterestCalculationPage() {
           <Calculator className="w-5 h-5 text-info" />
         </div>
         <div>
-          <h1 className="text-2xl font-bold text-text">Interest Calculation</h1>
+          <h1 className="text-xl font-bold text-gray-900 dark:text-white">Interest Calculation</h1>
           <p className="text-text-muted text-sm">Calculate and post interest for member accounts</p>
         </div>
       </div>
 
       <div className="bg-info/5 border border-info/20 rounded-xl p-4 flex items-center gap-3">
         <Calculator className="w-5 h-5 text-info shrink-0" />
-        <p className="text-sm text-text-muted">Calculation process may take longer depending on member count.</p>
+        <p className="text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Calculation process may take longer depending on member count.</p>
       </div>
 
       <div className="max-w-2xl">
-        <form onSubmit={handlePreview} className="glass-card rounded-xl p-6 space-y-5">
-          <h3 className="font-semibold text-text">Calculate Interest</h3>
+        <form onSubmit={handlePreview} className="bg-white dark:bg-gray-950 border border-gray-200 dark:border-gray-800 shadow-sm rounded-xl p-6 space-y-5">
+          <h3 className="font-bold text-gray-900 dark:text-white">Calculate Interest</h3>
           <div>
             <label className="block text-sm font-medium text-text mb-2">Account Type</label>
             <select
@@ -176,20 +176,20 @@ export default function InterestCalculationPage() {
       {preview && (
         <div className="max-w-2xl space-y-4">
           <div className="grid grid-cols-2 gap-4">
-            <div className="glass-card rounded-xl p-5">
-              <p className="text-sm text-text-muted">Accounts Affected</p>
-              <p className="text-2xl font-bold text-text mt-1">{preview.accountsAffected}</p>
+            <div className="bg-white dark:bg-gray-950 border border-gray-200 dark:border-gray-800 shadow-sm rounded-xl p-5">
+              <p className="text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Accounts Affected</p>
+              <p className="text-xl font-bold text-gray-900 dark:text-white mt-1">{preview.accountsAffected}</p>
             </div>
-            <div className="glass-card rounded-xl p-5">
-              <p className="text-sm text-text-muted">Total Interest</p>
+            <div className="bg-white dark:bg-gray-950 border border-gray-200 dark:border-gray-800 shadow-sm rounded-xl p-5">
+              <p className="text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Total Interest</p>
               <p className="text-2xl font-bold text-primary mt-1">{formatCurrency(preview.totalInterest)}</p>
             </div>
           </div>
 
           {preview.entries && preview.entries.length > 0 && (
-            <div className="glass-card rounded-xl overflow-hidden">
+            <div className="bg-white dark:bg-gray-950 border border-gray-200 dark:border-gray-800 shadow-sm rounded-xl overflow-hidden">
               <div className="p-4 border-b border-border/50">
-                <h3 className="font-semibold text-text">Preview Breakdown</h3>
+                <h3 className="font-bold text-gray-900 dark:text-white">Preview Breakdown</h3>
               </div>
               <div className="overflow-x-auto">
                 <table className="w-full">

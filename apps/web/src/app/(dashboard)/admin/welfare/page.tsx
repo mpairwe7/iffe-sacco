@@ -106,25 +106,25 @@ export default function WelfareAdminPage() {
           <Heart className="w-5 h-5 text-danger" />
         </div>
         <div>
-          <h1 className="text-2xl font-bold text-text">Social Welfare Programs</h1>
+          <h1 className="text-xl font-bold text-gray-900 dark:text-white">Social Welfare Programs</h1>
           <p className="text-text-muted text-sm">Manage welfare programs and pledges</p>
         </div>
       </div>
 
       {stats && (
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-          <div className="glass-card rounded-xl p-5">
-            <p className="text-sm text-text-muted">Total Programs</p>
-            <p className="text-2xl font-bold text-text mt-1">{String(stats.totalPrograms ?? 0)}</p>
+          <div className="bg-white dark:bg-gray-950 border border-gray-200 dark:border-gray-800 shadow-sm rounded-xl p-5">
+            <p className="text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Total Programs</p>
+            <p className="text-xl font-bold text-gray-900 dark:text-white mt-1">{String(stats.totalPrograms ?? 0)}</p>
           </div>
-          <div className="glass-card rounded-xl p-5">
-            <p className="text-sm text-text-muted">Total Raised</p>
+          <div className="bg-white dark:bg-gray-950 border border-gray-200 dark:border-gray-800 shadow-sm rounded-xl p-5">
+            <p className="text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Total Raised</p>
             <p className="text-2xl font-bold text-success mt-1">
               {formatCurrency(Number(stats.totalRaised ?? 0))}
             </p>
           </div>
-          <div className="glass-card rounded-xl p-5">
-            <p className="text-sm text-text-muted">Total Contributors</p>
+          <div className="bg-white dark:bg-gray-950 border border-gray-200 dark:border-gray-800 shadow-sm rounded-xl p-5">
+            <p className="text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Total Contributors</p>
             <p className="text-2xl font-bold text-primary mt-1">{String(stats.totalContributors ?? 0)}</p>
           </div>
         </div>

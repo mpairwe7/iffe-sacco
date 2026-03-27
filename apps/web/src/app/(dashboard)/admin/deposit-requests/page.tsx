@@ -60,7 +60,7 @@ export default function DepositRequestsPage() {
       key: "amount",
       label: "Amount",
       align: "right" as const,
-      render: (row: DepositRow) => <span className="font-semibold text-text">{formatCurrency(Number(row.amount))}</span>,
+      render: (row: DepositRow) => <span className="font-bold text-gray-900 dark:text-white">{formatCurrency(Number(row.amount))}</span>,
     },
     { key: "method", label: "Method" },
     {
@@ -115,7 +115,7 @@ export default function DepositRequestsPage() {
           <ArrowDownToLine className="w-5 h-5 text-success" />
         </div>
         <div>
-          <h1 className="text-2xl font-bold text-text">Deposit Requests</h1>
+          <h1 className="text-xl font-bold text-gray-900 dark:text-white">Deposit Requests</h1>
           <p className="text-text-muted text-sm">Review and approve member deposit requests</p>
         </div>
       </div>

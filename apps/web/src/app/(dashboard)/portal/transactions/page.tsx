@@ -82,7 +82,7 @@ export default function MemberTransactionsPage() {
           <Wallet className="w-5 h-5 text-primary" />
         </div>
         <div>
-          <h1 className="text-2xl font-bold text-text">My Transactions</h1>
+          <h1 className="text-xl font-bold text-gray-900 dark:text-white">My Transactions</h1>
           <p className="text-text-muted text-sm">View your complete transaction history</p>
         </div>
       </div>

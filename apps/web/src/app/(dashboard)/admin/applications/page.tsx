@@ -24,7 +24,7 @@ const columns = [
     key: "createdAt",
     label: "Date",
     render: (row: ApplicationRow) => (
-      <span className="text-sm text-text-muted">{formatDate(row.createdAt)}</span>
+      <span className="text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider">{formatDate(row.createdAt)}</span>
     ),
   },
   {
@@ -58,7 +58,7 @@ const columns = [
     label: "Email",
     hiddenOnMobile: true,
     render: (row: ApplicationRow) => (
-      <span className="text-sm text-text-muted">{row.email || "—"}</span>
+      <span className="text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider">{row.email || "—"}</span>
     ),
   },
   {
@@ -188,7 +188,7 @@ export default function ApplicationsPage() {
           <FileText className="w-5 h-5 text-primary" />
         </div>
         <div>
-          <h1 className="text-2xl font-bold text-text">Applications</h1>
+          <h1 className="text-xl font-bold text-gray-900 dark:text-white">Applications</h1>
           <p className="text-text-muted text-sm">
             Manage membership applications
           </p>
@@ -197,26 +197,26 @@ export default function ApplicationsPage() {
 
       {/* Stat Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
-        <div className="glass-card rounded-xl p-5">
-          <p className="text-sm text-text-muted">Total Applications</p>
-          <p className="text-2xl font-bold text-text mt-1">
+        <div className="bg-white dark:bg-gray-950 border border-gray-200 dark:border-gray-800 shadow-sm rounded-xl p-5">
+          <p className="text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Total Applications</p>
+          <p className="text-xl font-bold text-gray-900 dark:text-white mt-1">
             {stats?.total?.toLocaleString() ?? "\u2014"}
           </p>
         </div>
-        <div className="glass-card rounded-xl p-5">
-          <p className="text-sm text-text-muted">Pending</p>
+        <div className="bg-white dark:bg-gray-950 border border-gray-200 dark:border-gray-800 shadow-sm rounded-xl p-5">
+          <p className="text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Pending</p>
           <p className="text-2xl font-bold text-warning mt-1">
             {stats?.pending?.toLocaleString() ?? "\u2014"}
           </p>
         </div>
-        <div className="glass-card rounded-xl p-5">
-          <p className="text-sm text-text-muted">Approved</p>
+        <div className="bg-white dark:bg-gray-950 border border-gray-200 dark:border-gray-800 shadow-sm rounded-xl p-5">
+          <p className="text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Approved</p>
           <p className="text-2xl font-bold text-success mt-1">
             {stats?.approved?.toLocaleString() ?? "\u2014"}
           </p>
         </div>
-        <div className="glass-card rounded-xl p-5">
-          <p className="text-sm text-text-muted">Rejected</p>
+        <div className="bg-white dark:bg-gray-950 border border-gray-200 dark:border-gray-800 shadow-sm rounded-xl p-5">
+          <p className="text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Rejected</p>
           <p className="text-2xl font-bold text-danger mt-1">
             {stats?.rejected?.toLocaleString() ?? "\u2014"}
           </p>
@@ -280,7 +280,7 @@ export default function ApplicationsPage() {
         loading={rejectMutation.isPending}
       >
         <div className="mt-2 space-y-3">
-          <p className="text-sm text-text-muted">
+          <p className="text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider">
             Are you sure you want to reject this application? Please provide a
             reason below.
           </p>

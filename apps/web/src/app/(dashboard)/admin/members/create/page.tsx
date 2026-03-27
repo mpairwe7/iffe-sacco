@@ -44,13 +44,13 @@ export default function CreateMemberPage() {
             <UserPlus className="w-5 h-5 text-primary" />
           </div>
           <div>
-            <h1 className="text-2xl font-bold text-text">Add New Member</h1>
+            <h1 className="text-xl font-bold text-gray-900 dark:text-white">Add New Member</h1>
             <p className="text-text-muted text-sm">Register a new SACCO member</p>
           </div>
         </div>
       </div>
 
-      <form onSubmit={handleSubmit(onSubmit)} className="glass-card rounded-xl">
+      <form onSubmit={handleSubmit(onSubmit)} className="bg-white dark:bg-gray-950 border border-gray-200 dark:border-gray-800 shadow-sm rounded-xl">
         {/* Personal Information */}
         <div className="p-6 border-b border-border">
           <h3 className="text-base font-semibold text-text mb-4">Personal Information</h3>

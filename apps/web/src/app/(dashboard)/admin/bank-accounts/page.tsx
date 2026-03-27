@@ -54,7 +54,7 @@ export default function BankAccountsPage() {
       label: "Balance",
       align: "right" as const,
       render: (row: BankAccount) => (
-        <span className="font-semibold text-text">{formatCurrency(Number(row.balance))}</span>
+        <span className="font-bold text-gray-900 dark:text-white">{formatCurrency(Number(row.balance))}</span>
       ),
     },
     {
@@ -98,26 +98,26 @@ export default function BankAccountsPage() {
           <Building2 className="w-5 h-5 text-info" />
         </div>
         <div>
-          <h1 className="text-2xl font-bold text-text">Bank Accounts</h1>
+          <h1 className="text-xl font-bold text-gray-900 dark:text-white">Bank Accounts</h1>
           <p className="text-text-muted text-sm">Manage SACCO bank accounts</p>
         </div>
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-        <div className="glass-card rounded-xl p-5">
-          <p className="text-sm text-text-muted">Total Bank Balance</p>
+        <div className="bg-white dark:bg-gray-950 border border-gray-200 dark:border-gray-800 shadow-sm rounded-xl p-5">
+          <p className="text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Total Bank Balance</p>
           <p className="text-2xl font-bold text-primary mt-1">
             {stats ? formatCurrency(Number(stats.totalBalance ?? 0)) : "\u2014"}
           </p>
         </div>
-        <div className="glass-card rounded-xl p-5">
-          <p className="text-sm text-text-muted">Bank Accounts</p>
-          <p className="text-2xl font-bold text-text mt-1">
+        <div className="bg-white dark:bg-gray-950 border border-gray-200 dark:border-gray-800 shadow-sm rounded-xl p-5">
+          <p className="text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Bank Accounts</p>
+          <p className="text-xl font-bold text-gray-900 dark:text-white mt-1">
             {stats ? String(stats.totalAccounts ?? 0) : "\u2014"}
           </p>
         </div>
-        <div className="glass-card rounded-xl p-5">
-          <p className="text-sm text-text-muted">This Month Inflow</p>
+        <div className="bg-white dark:bg-gray-950 border border-gray-200 dark:border-gray-800 shadow-sm rounded-xl p-5">
+          <p className="text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider">This Month Inflow</p>
           <p className="text-2xl font-bold text-success mt-1">
             {stats ? formatCurrency(Number(stats.monthlyInflow ?? 0)) : "\u2014"}
           </p>

@@ -124,7 +124,7 @@ export default function UsersPage() {
           <UserCog className="w-5 h-5 text-primary" />
         </div>
         <div>
-          <h1 className="text-2xl font-bold text-text">User Management</h1>
+          <h1 className="text-xl font-bold text-gray-900 dark:text-white">User Management</h1>
           <p className="text-text-muted text-sm">Manage system users and roles</p>
         </div>
       </div>

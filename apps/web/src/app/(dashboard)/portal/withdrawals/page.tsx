@@ -60,14 +60,14 @@ export default function MemberWithdrawalsPage() {
           <ArrowUpFromLine className="w-5 h-5 text-warning" />
         </div>
         <div>
-          <h1 className="text-2xl font-bold text-text">Withdraw Funds</h1>
+          <h1 className="text-xl font-bold text-gray-900 dark:text-white">Withdraw Funds</h1>
           <p className="text-text-muted text-sm">Request a withdrawal from your account</p>
         </div>
       </div>
 
       <div className="grid lg:grid-cols-2 gap-6">
-        <form onSubmit={handleSubmit(onSubmit)} className="glass-card rounded-xl p-6 space-y-5">
-          <h3 className="font-semibold text-text">Withdrawal Details</h3>
+        <form onSubmit={handleSubmit(onSubmit)} className="bg-white dark:bg-gray-950 border border-gray-200 dark:border-gray-800 shadow-sm rounded-xl p-6 space-y-5">
+          <h3 className="font-bold text-gray-900 dark:text-white">Withdrawal Details</h3>
           <div>
             <label className="block text-sm font-medium text-text mb-2">From Account</label>
             <select
@@ -119,7 +119,7 @@ export default function MemberWithdrawalsPage() {
 
           <div className="flex items-start gap-3 p-4 bg-warning/5 border border-warning/20 rounded-lg">
             <AlertTriangle className="w-5 h-5 text-warning shrink-0 mt-0.5" />
-            <p className="text-sm text-text-muted">Withdrawal requests are subject to admin approval and may take up to 24 hours to process.</p>
+            <p className="text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Withdrawal requests are subject to admin approval and may take up to 24 hours to process.</p>
           </div>
 
           <button
@@ -137,7 +137,7 @@ export default function MemberWithdrawalsPage() {
         </form>
 
         <div className="space-y-4">
-          <div className="glass-card rounded-xl p-6">
+          <div className="bg-white dark:bg-gray-950 border border-gray-200 dark:border-gray-800 shadow-sm rounded-xl p-6">
             <h3 className="font-semibold text-text mb-4">Recent Withdrawals</h3>
             <div className="space-y-3">
               {reqLoading ? (

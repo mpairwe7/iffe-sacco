@@ -59,7 +59,7 @@ function TransactionForm() {
   }
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="glass-card rounded-xl">
+    <form onSubmit={handleSubmit(onSubmit)} className="bg-white dark:bg-gray-950 border border-gray-200 dark:border-gray-800 shadow-sm rounded-xl">
       <div className="p-6 border-b border-border">
         <h3 className="text-base font-semibold text-text mb-4">Transaction Details</h3>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
@@ -178,11 +178,11 @@ export default function CreateTransactionPage() {
           <ArrowLeft className="w-5 h-5 text-text-muted" />
         </Link>
         <div>
-          <h1 className="text-2xl font-bold text-text">New Transaction</h1>
+          <h1 className="text-xl font-bold text-gray-900 dark:text-white">New Transaction</h1>
           <p className="text-text-muted text-sm">Create a new deposit, withdrawal, or transfer</p>
         </div>
       </div>
-      <Suspense fallback={<div className="glass-card rounded-xl p-12 text-center text-text-muted">Loading...</div>}>
+      <Suspense fallback={<div className="bg-white dark:bg-gray-950 border border-gray-200 dark:border-gray-800 shadow-sm rounded-xl p-12 text-center text-text-muted">Loading...</div>}>
         <TransactionForm />
       </Suspense>
     </div>

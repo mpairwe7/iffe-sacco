@@ -25,7 +25,7 @@ export default function PaymentGatewaysPage() {
           <CreditCard className="w-5 h-5 text-primary" />
         </div>
         <div>
-          <h1 className="text-2xl font-bold text-text">Payment Gateways</h1>
+          <h1 className="text-xl font-bold text-gray-900 dark:text-white">Payment Gateways</h1>
           <p className="text-text-muted text-sm">Configure automatic payment gateways</p>
         </div>
       </div>
@@ -33,7 +33,7 @@ export default function PaymentGatewaysPage() {
       <div className="grid gap-4">
         {isLoading ? (
           Array.from({ length: 3 }).map((_, i) => (
-            <div key={i} className="glass-card rounded-xl p-6 flex items-center justify-between animate-pulse">
+            <div key={i} className="bg-white dark:bg-gray-950 border border-gray-200 dark:border-gray-800 shadow-sm rounded-xl p-6 flex items-center justify-between animate-pulse">
               <div className="flex items-center gap-4">
                 <div className="w-12 h-12 rounded-xl bg-surface-alt" />
                 <div className="space-y-2">
@@ -48,20 +48,20 @@ export default function PaymentGatewaysPage() {
             </div>
           ))
         ) : gateways.length === 0 ? (
-          <div className="glass-card rounded-xl p-12 text-center">
+          <div className="bg-white dark:bg-gray-950 border border-gray-200 dark:border-gray-800 shadow-sm rounded-xl p-12 text-center">
             <CreditCard className="w-10 h-10 text-text-muted mx-auto mb-3" />
             <p className="text-text-muted">No payment gateways configured</p>
           </div>
         ) : (
           gateways.map((gw) => (
-            <div key={gw.id} className="glass-card rounded-xl p-6 flex items-center justify-between">
+            <div key={gw.id} className="bg-white dark:bg-gray-950 border border-gray-200 dark:border-gray-800 shadow-sm rounded-xl p-6 flex items-center justify-between">
               <div className="flex items-center gap-4">
                 <div className="w-12 h-12 rounded-xl bg-surface-alt flex items-center justify-center">
                   <CreditCard className="w-6 h-6 text-text-muted" />
                 </div>
                 <div>
-                  <h3 className="font-semibold text-text">{gw.name}</h3>
-                  <p className="text-sm text-text-muted">{gw.type} &middot; {gw.currency} &middot; Fee: {gw.fee}</p>
+                  <h3 className="font-bold text-gray-900 dark:text-white">{gw.name}</h3>
+                  <p className="text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider">{gw.type} &middot; {gw.currency} &middot; Fee: {gw.fee}</p>
                 </div>
               </div>
               <div className="flex items-center gap-4">

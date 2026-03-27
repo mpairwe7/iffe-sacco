@@ -84,7 +84,7 @@ export default function EditMemberPage() {
             <Skeleton className="h-4 w-64" />
           </div>
         </div>
-        <div className="glass-card rounded-xl p-6 space-y-6">
+        <div className="bg-white dark:bg-gray-950 border border-gray-200 dark:border-gray-800 shadow-sm rounded-xl p-6 space-y-6">
           {Array.from({ length: 9 }).map((_, i) => (
             <Skeleton key={i} className="h-10 w-full" />
           ))}
@@ -104,7 +104,7 @@ export default function EditMemberPage() {
             <UserCog className="w-5 h-5 text-primary" />
           </div>
           <div>
-            <h1 className="text-2xl font-bold text-text">Edit Member</h1>
+            <h1 className="text-xl font-bold text-gray-900 dark:text-white">Edit Member</h1>
             <p className="text-text-muted text-sm">
               Update details for {member?.firstName} {member?.lastName}
             </p>
@@ -112,7 +112,7 @@ export default function EditMemberPage() {
         </div>
       </div>
 
-      <form onSubmit={handleSubmit(onSubmit)} className="glass-card rounded-xl">
+      <form onSubmit={handleSubmit(onSubmit)} className="bg-white dark:bg-gray-950 border border-gray-200 dark:border-gray-800 shadow-sm rounded-xl">
         {/* Personal Information */}
         <div className="p-6 border-b border-border">
           <h3 className="text-base font-semibold text-text mb-4">Personal Information</h3>

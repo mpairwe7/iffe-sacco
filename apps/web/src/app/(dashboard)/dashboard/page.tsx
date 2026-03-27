@@ -26,7 +26,7 @@ export default function DashboardPage() {
   return (
     <div className="space-y-8">
       <div>
-        <h1 className="text-2xl font-bold text-text">Dashboard</h1>
+        <h1 className="text-xl font-bold text-gray-900 dark:text-white">Dashboard</h1>
         <p className="text-text-muted mt-1">Welcome back, {user?.name?.split(" ")[0] || "User"}. Here&apos;s your overview.</p>
       </div>
 
@@ -35,7 +35,7 @@ export default function DashboardPage() {
         {statsQuery.isLoading ? (
           <>
             {Array.from({ length: 4 }).map((_, i) => (
-              <div key={i} className="glass-card rounded-xl p-6">
+              <div key={i} className="bg-white dark:bg-gray-950 border border-gray-200 dark:border-gray-800 shadow-sm rounded-xl p-6">
                 <Skeleton className="h-4 w-24 mb-2" />
                 <Skeleton className="h-8 w-32" />
               </div>
@@ -90,11 +90,11 @@ export default function DashboardPage() {
         </div>
 
         {/* Upcoming Payments */}
-        <div className="glass-card rounded-xl p-6">
+        <div className="bg-white dark:bg-gray-950 border border-gray-200 dark:border-gray-800 shadow-sm rounded-xl p-6">
           <div className="flex items-center justify-between mb-6">
             <div>
-              <h3 className="text-base font-semibold text-text">Upcoming Payments</h3>
-              <p className="text-sm text-text-muted">Due in the next 7 days</p>
+              <h3 className="text-base font-bold text-gray-900 dark:text-white">Upcoming Payments</h3>
+              <p className="text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Due in the next 7 days</p>
             </div>
             <Link href="/admin/loans" className="text-sm text-primary font-medium hover:underline">View All</Link>
           </div>
@@ -137,11 +137,11 @@ export default function DashboardPage() {
       </div>
 
       {/* Recent Transactions */}
-      <div className="glass-card rounded-xl">
+      <div className="bg-white dark:bg-gray-950 border border-gray-200 dark:border-gray-800 shadow-sm rounded-xl">
         <div className="flex items-center justify-between p-6 border-b border-border">
           <div>
-            <h3 className="text-base font-semibold text-text">Recent Transactions</h3>
-            <p className="text-sm text-text-muted">Latest activity across all accounts</p>
+            <h3 className="text-base font-bold text-gray-900 dark:text-white">Recent Transactions</h3>
+            <p className="text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Latest activity across all accounts</p>
           </div>
           <Link href="/admin/transactions" className="text-sm text-primary font-medium hover:underline">View All</Link>
         </div>
@@ -195,10 +195,10 @@ export default function DashboardPage() {
                       </span>
                     </td>
                     <td className="px-6 py-4 text-right">
-                      <span className="text-sm font-semibold text-text">{formatCurrency(Number(txn.amount))}</span>
+                      <span className="text-sm font-bold text-gray-900 dark:text-white">{formatCurrency(Number(txn.amount))}</span>
                     </td>
                     <td className="px-6 py-4">
-                      <span className="text-sm text-text-muted">{formatDate(txn.createdAt)}</span>
+                      <span className="text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider">{formatDate(txn.createdAt)}</span>
                     </td>
                     <td className="px-6 py-4">
                       <span className={`inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium ${

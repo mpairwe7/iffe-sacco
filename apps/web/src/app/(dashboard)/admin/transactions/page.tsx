@@ -131,26 +131,26 @@ export default function TransactionsPage() {
           <Wallet className="w-5 h-5 text-primary" />
         </div>
         <div>
-          <h1 className="text-2xl font-bold text-text">Transactions</h1>
+          <h1 className="text-xl font-bold text-gray-900 dark:text-white">Transactions</h1>
           <p className="text-text-muted text-sm">View and manage all transactions</p>
         </div>
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-4 gap-4">
-        <div className="glass-card rounded-xl p-5">
-          <p className="text-sm text-text-muted">Total Transactions</p>
-          <p className="text-2xl font-bold text-text mt-1">{stats?.total?.toLocaleString() ?? "—"}</p>
+        <div className="bg-white dark:bg-gray-950 border border-gray-200 dark:border-gray-800 shadow-sm rounded-xl p-5">
+          <p className="text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Total Transactions</p>
+          <p className="text-xl font-bold text-gray-900 dark:text-white mt-1">{stats?.total?.toLocaleString() ?? "—"}</p>
         </div>
-        <div className="glass-card rounded-xl p-5">
-          <p className="text-sm text-text-muted">Total Deposits</p>
+        <div className="bg-white dark:bg-gray-950 border border-gray-200 dark:border-gray-800 shadow-sm rounded-xl p-5">
+          <p className="text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Total Deposits</p>
           <p className="text-2xl font-bold text-success mt-1">{stats?.totalDeposits != null ? formatCurrency(stats.totalDeposits) : "—"}</p>
         </div>
-        <div className="glass-card rounded-xl p-5">
-          <p className="text-sm text-text-muted">Total Withdrawals</p>
+        <div className="bg-white dark:bg-gray-950 border border-gray-200 dark:border-gray-800 shadow-sm rounded-xl p-5">
+          <p className="text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Total Withdrawals</p>
           <p className="text-2xl font-bold text-warning mt-1">{stats?.totalWithdrawals != null ? formatCurrency(stats.totalWithdrawals) : "—"}</p>
         </div>
-        <div className="glass-card rounded-xl p-5">
-          <p className="text-sm text-text-muted">Pending</p>
+        <div className="bg-white dark:bg-gray-950 border border-gray-200 dark:border-gray-800 shadow-sm rounded-xl p-5">
+          <p className="text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Pending</p>
           <p className="text-2xl font-bold text-info mt-1">{stats?.pending?.toLocaleString() ?? "—"}</p>
         </div>
       </div>

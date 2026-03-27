@@ -54,7 +54,7 @@ const columns = [
     align: "right" as const,
     render: (row: MemberRow) => {
       const balance = Number(row.accounts?.[0]?.balance || 0);
-      return <span className="font-semibold text-text">{formatCurrency(balance)}</span>;
+      return <span className="font-bold text-gray-900 dark:text-white">{formatCurrency(balance)}</span>;
     },
   },
   {
@@ -128,22 +128,22 @@ export default function MembersPage() {
           <Users className="w-5 h-5 text-primary" />
         </div>
         <div>
-          <h1 className="text-2xl font-bold text-text">Members</h1>
+          <h1 className="text-xl font-bold text-gray-900 dark:text-white">Members</h1>
           <p className="text-text-muted text-sm">Manage all SACCO members</p>
         </div>
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-        <div className="glass-card rounded-xl p-5">
-          <p className="text-sm text-text-muted">Total Members</p>
-          <p className="text-2xl font-bold text-text mt-1">{stats?.total?.toLocaleString() ?? "—"}</p>
+        <div className="bg-white dark:bg-gray-950 border border-gray-200 dark:border-gray-800 shadow-sm rounded-xl p-5">
+          <p className="text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Total Members</p>
+          <p className="text-xl font-bold text-gray-900 dark:text-white mt-1">{stats?.total?.toLocaleString() ?? "—"}</p>
         </div>
-        <div className="glass-card rounded-xl p-5">
-          <p className="text-sm text-text-muted">Active</p>
+        <div className="bg-white dark:bg-gray-950 border border-gray-200 dark:border-gray-800 shadow-sm rounded-xl p-5">
+          <p className="text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Active</p>
           <p className="text-2xl font-bold text-success mt-1">{stats?.active?.toLocaleString() ?? "—"}</p>
         </div>
-        <div className="glass-card rounded-xl p-5">
-          <p className="text-sm text-text-muted">Pending Requests</p>
+        <div className="bg-white dark:bg-gray-950 border border-gray-200 dark:border-gray-800 shadow-sm rounded-xl p-5">
+          <p className="text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Pending Requests</p>
           <p className="text-2xl font-bold text-warning mt-1">{stats?.pending?.toLocaleString() ?? "—"}</p>
         </div>
       </div>

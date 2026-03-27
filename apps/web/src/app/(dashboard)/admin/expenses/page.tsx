@@ -77,7 +77,7 @@ export default function ExpensesPage() {
       key: "amount",
       label: "Amount",
       align: "right" as const,
-      render: (row: ExpenseRow) => <span className="font-semibold text-text">{formatCurrency(Number(row.amount))}</span>,
+      render: (row: ExpenseRow) => <span className="font-bold text-gray-900 dark:text-white">{formatCurrency(Number(row.amount))}</span>,
     },
     {
       key: "date",
@@ -137,7 +137,7 @@ export default function ExpensesPage() {
             <Receipt className="w-5 h-5 text-danger" />
           </div>
           <div>
-            <h1 className="text-2xl font-bold text-text">Expenses</h1>
+            <h1 className="text-xl font-bold text-gray-900 dark:text-white">Expenses</h1>
             <p className="text-text-muted text-sm">Track and manage SACCO expenses</p>
           </div>
         </div>
@@ -150,16 +150,16 @@ export default function ExpensesPage() {
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-        <div className="glass-card rounded-xl p-5">
-          <p className="text-sm text-text-muted">Total This Month</p>
-          <p className="text-2xl font-bold text-text mt-1">{stats?.totalThisMonth != null ? formatCurrency(stats.totalThisMonth) : "\u2014"}</p>
+        <div className="bg-white dark:bg-gray-950 border border-gray-200 dark:border-gray-800 shadow-sm rounded-xl p-5">
+          <p className="text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Total This Month</p>
+          <p className="text-xl font-bold text-gray-900 dark:text-white mt-1">{stats?.totalThisMonth != null ? formatCurrency(stats.totalThisMonth) : "\u2014"}</p>
         </div>
-        <div className="glass-card rounded-xl p-5">
-          <p className="text-sm text-text-muted">Approved</p>
+        <div className="bg-white dark:bg-gray-950 border border-gray-200 dark:border-gray-800 shadow-sm rounded-xl p-5">
+          <p className="text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Approved</p>
           <p className="text-2xl font-bold text-success mt-1">{stats?.approved != null ? formatCurrency(stats.approved) : "\u2014"}</p>
         </div>
-        <div className="glass-card rounded-xl p-5">
-          <p className="text-sm text-text-muted">Pending Approval</p>
+        <div className="bg-white dark:bg-gray-950 border border-gray-200 dark:border-gray-800 shadow-sm rounded-xl p-5">
+          <p className="text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Pending Approval</p>
           <p className="text-2xl font-bold text-warning mt-1">{stats?.pending != null ? formatCurrency(stats.pending) : "\u2014"}</p>
         </div>
       </div>

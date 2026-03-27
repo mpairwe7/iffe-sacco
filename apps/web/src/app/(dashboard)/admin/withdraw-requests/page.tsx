@@ -60,7 +60,7 @@ export default function WithdrawRequestsPage() {
       align: "right" as const,
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       render: (row: Record<string, any>) => (
-        <span className="font-semibold text-text">{formatCurrency(Number(row.amount))}</span>
+        <span className="font-bold text-gray-900 dark:text-white">{formatCurrency(Number(row.amount))}</span>
       ),
     },
     { key: "method", label: "Method" },
@@ -122,7 +122,7 @@ export default function WithdrawRequestsPage() {
           <ArrowUpFromLine className="w-5 h-5 text-warning" />
         </div>
         <div>
-          <h1 className="text-2xl font-bold text-text">Withdraw Requests</h1>
+          <h1 className="text-xl font-bold text-gray-900 dark:text-white">Withdraw Requests</h1>
           <p className="text-text-muted text-sm">Review and approve member withdrawal requests</p>
         </div>
       </div>
