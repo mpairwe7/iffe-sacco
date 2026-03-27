@@ -78,10 +78,10 @@ export default function WithdrawRequestsPage() {
         <span
           className={`inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium ${
             row.status === "completed"
-              ? "bg-success/10 text-success"
+              ? "bg-success/15 text-success"
               : row.status === "pending"
-                ? "bg-warning/10 text-warning"
-                : "bg-danger/10 text-danger"
+                ? "bg-warning/15 text-warning"
+                : "bg-danger/15 text-danger"
           }`}
         >
           {row.status.charAt(0).toUpperCase() + row.status.slice(1)}
@@ -98,14 +98,14 @@ export default function WithdrawRequestsPage() {
           <div className="flex items-center gap-1">
             <button
               onClick={() => setConfirmAction({ type: "approve", id: row.id })}
-              className="p-1.5 text-success hover:bg-success/10 rounded-lg"
+              className="p-2.5 text-success hover:bg-success/15 rounded-lg"
               title="Approve"
             >
               <CheckCircle className="w-4 h-4" />
             </button>
             <button
               onClick={() => setConfirmAction({ type: "reject", id: row.id })}
-              className="p-1.5 text-danger hover:bg-danger/10 rounded-lg"
+              className="p-2.5 text-danger hover:bg-danger/15 rounded-lg"
               title="Reject"
             >
               <XCircle className="w-4 h-4" />
@@ -118,7 +118,7 @@ export default function WithdrawRequestsPage() {
   return (
     <div className="space-y-6">
       <div className="flex items-center gap-3">
-        <div className="w-10 h-10 rounded-lg bg-warning/10 flex items-center justify-center">
+        <div className="w-10 h-10 rounded-lg bg-warning/15 flex items-center justify-center">
           <ArrowUpFromLine className="w-5 h-5 text-warning" />
         </div>
         <div>

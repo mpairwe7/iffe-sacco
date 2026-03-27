@@ -12,20 +12,20 @@ interface StatCardProps {
 }
 
 const colorMap = {
-  primary: "bg-primary/10 text-primary",
-  success: "bg-success/10 text-success",
-  warning: "bg-warning/10 text-warning",
-  info: "bg-info/10 text-info",
-  danger: "bg-danger/10 text-danger",
+  primary: "bg-primary/15 text-primary",
+  success: "bg-success/15 text-success",
+  warning: "bg-warning/15 text-warning",
+  info: "bg-info/15 text-info",
+  danger: "bg-danger/15 text-danger",
 };
 
 export function StatCard({ title, value, change, changeType = "positive", icon: Icon, color }: StatCardProps) {
   return (
-    <div role="status" aria-label={`${title}: ${value}`} className="glass-card rounded-xl p-6 hover:-translate-y-0.5">
+    <div role="status" aria-label={`${title}: ${value}`} className="bg-white dark:bg-gray-950 border border-gray-200 dark:border-gray-800 shadow-sm rounded-xl px-6 py-5 min-h-[110px] hover:-translate-y-0.5">
       <div className="flex items-start justify-between">
         <div>
-          <p className="text-sm text-text-muted font-medium">{title}</p>
-          <p className="text-2xl font-bold text-text mt-1">{value}</p>
+          <p className="text-xs font-semibold text-text-muted uppercase tracking-wider">{title}</p>
+          <p className="text-3xl font-bold text-text mt-1">{value}</p>
           {change && (
             <p className={cn(
               "text-xs font-medium mt-2",

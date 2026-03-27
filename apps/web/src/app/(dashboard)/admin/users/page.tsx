@@ -81,7 +81,7 @@ export default function UsersPage() {
       render: (row: User) => (
         <span
           className={`inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium ${
-            row.isActive ? "bg-success/10 text-success" : "bg-text-light/10 text-text-light"
+            row.isActive ? "bg-success/15 text-success" : "bg-text-light/10 text-text-light"
           }`}
         >
           {row.isActive ? "Active" : "Inactive"}
@@ -96,7 +96,7 @@ export default function UsersPage() {
         <div className="flex items-center gap-2">
           <button
             onClick={() => openEdit(row)}
-            className="p-1.5 text-text-muted hover:text-primary rounded-lg hover:bg-primary/10"
+            className="p-2.5 text-text-muted hover:text-primary rounded-lg hover:bg-primary/10"
             title="Edit"
           >
             <Pencil className="w-4 h-4" />
@@ -106,8 +106,8 @@ export default function UsersPage() {
             disabled={activateUser.isPending || deactivateUser.isPending}
             className={`px-3 py-1.5 text-xs font-medium rounded-lg transition-colors disabled:opacity-50 ${
               row.isActive
-                ? "text-danger border border-danger/30 hover:bg-danger/10"
-                : "text-success border border-success/30 hover:bg-success/10"
+                ? "text-danger border border-danger/30 hover:bg-danger/15"
+                : "text-success border border-success/30 hover:bg-success/15"
             }`}
           >
             {row.isActive ? "Deactivate" : "Activate"}

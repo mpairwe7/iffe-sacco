@@ -56,9 +56,9 @@ const columns = [
     label: "Status",
     render: (row: Transaction) => {
       const colors: Record<string, string> = {
-        completed: "bg-success/10 text-success",
-        pending: "bg-warning/10 text-warning",
-        rejected: "bg-danger/10 text-danger",
+        completed: "bg-success/15 text-success",
+        pending: "bg-warning/15 text-warning",
+        rejected: "bg-danger/15 text-danger",
         reversed: "bg-info/10 text-info",
       };
       return (

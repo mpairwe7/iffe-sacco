@@ -64,7 +64,7 @@ const columns = [
       const statusLabel = row.status.charAt(0).toUpperCase() + row.status.slice(1);
       return (
         <span className={`inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium ${
-          row.status === "active" ? "bg-success/10 text-success" : row.status === "pending" ? "bg-warning/10 text-warning" : "bg-text-light/10 text-text-light"
+          row.status === "active" ? "bg-success/15 text-success" : row.status === "pending" ? "bg-warning/15 text-warning" : "bg-text-light/10 text-text-light"
         }`}>
           {statusLabel}
         </span>
@@ -91,14 +91,14 @@ export default function MembersPage() {
       <div className="flex items-center gap-1">
         <Link
           href={`/admin/members/${row.id}/edit`}
-          className="p-1.5 text-text-muted hover:text-primary rounded-lg hover:bg-primary/10"
+          className="p-2.5 text-text-muted hover:text-primary rounded-lg hover:bg-primary/10"
           title="Edit"
         >
           <Pencil className="w-4 h-4" />
         </Link>
         <button
           onClick={() => { setDeleteId(row.id); setDeleteOpen(true); }}
-          className="p-1.5 text-text-muted hover:text-danger rounded-lg hover:bg-danger/10"
+          className="p-2.5 text-text-muted hover:text-danger rounded-lg hover:bg-danger/15"
           title="Delete"
         >
           <Trash2 className="w-4 h-4" />

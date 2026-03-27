@@ -11,11 +11,11 @@
   --color-surface: #ffffff;
   --color-surface-alt: #f8fafc;
   --color-surface-hover: #f1f5f9;
-  --color-border: #e2e8f0;
+  --color-border: #d1d5db;
   --color-border-light: #f1f5f9;
   --color-text: #1e293b;
-  --color-text-muted: #64748b;
-  --color-text-light: #94a3b8;
+  --color-text-muted: #475569;
+  --color-text-light: #64748b;
   --color-success: #10b981;
   --color-warning: #f59e0b;
   --color-danger: #ef4444;
@@ -99,8 +99,8 @@ body {
 
 .glass-card {
   background: rgba(255, 255, 255, 0.6);
-  backdrop-filter: blur(20px) saturate(180%);
-  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  backdrop-filter: blur(8px) saturate(180%);
+  -webkit-backdrop-filter: blur(8px) saturate(180%);
   border: 1px solid rgba(255, 255, 255, 0.4);
   box-shadow:
     0 8px 32px rgba(0, 0, 0, 0.06),
@@ -164,7 +164,7 @@ body {
 .skeleton-shimmer {
   background: linear-gradient(90deg, var(--color-surface-alt) 25%, var(--color-surface-hover) 50%, var(--color-surface-alt) 75%);
   background-size: 200% 100%;
-  animation: shimmer 1.5s infinite;
+  animation: shimmer 2s infinite;
 }
 
 /* ===== TRANSITIONS (interactive elements only) ===== */

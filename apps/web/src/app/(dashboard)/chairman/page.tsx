@@ -150,7 +150,7 @@ export default function ChairmanPage() {
                 Expenses requiring your approval
               </p>
             </div>
-            <div className="w-10 h-10 rounded-lg bg-warning/10 flex items-center justify-center">
+            <div className="w-10 h-10 rounded-lg bg-warning/15 flex items-center justify-center">
               <Receipt className="w-5 h-5 text-warning" />
             </div>
           </div>
@@ -169,7 +169,7 @@ export default function ChairmanPage() {
               ))
             ) : expenses.length === 0 ? (
               <div className="p-12 text-center">
-                <div className="w-14 h-14 rounded-xl bg-success/10 flex items-center justify-center mx-auto mb-3">
+                <div className="w-14 h-14 rounded-xl bg-success/15 flex items-center justify-center mx-auto mb-3">
                   <Check className="w-7 h-7 text-success" />
                 </div>
                 <p className="text-text-muted font-medium">
@@ -185,7 +185,7 @@ export default function ChairmanPage() {
                   key={expense.id}
                   className="flex items-center gap-4 p-4 lg:p-6 hover:bg-surface-hover/30 transition-colors"
                 >
-                  <div className="w-10 h-10 rounded-full bg-warning/10 flex items-center justify-center shrink-0">
+                  <div className="w-10 h-10 rounded-full bg-warning/15 flex items-center justify-center shrink-0">
                     <Banknote className="w-5 h-5 text-warning" />
                   </div>
                   <div className="flex-1 min-w-0">
@@ -206,7 +206,7 @@ export default function ChairmanPage() {
                         setApproveId(expense.id);
                         setApproveOpen(true);
                       }}
-                      className="p-2 text-text-muted hover:text-success rounded-lg hover:bg-success/10 transition-colors"
+                      className="p-2.5 text-text-muted hover:text-success rounded-lg hover:bg-success/15 transition-colors"
                       title="Approve"
                     >
                       <Check className="w-4 h-4" />
@@ -216,7 +216,7 @@ export default function ChairmanPage() {
                         setRejectId(expense.id);
                         setRejectOpen(true);
                       }}
-                      className="p-2 text-text-muted hover:text-danger rounded-lg hover:bg-danger/10 transition-colors"
+                      className="p-2.5 text-text-muted hover:text-danger rounded-lg hover:bg-danger/15 transition-colors"
                       title="Reject"
                     >
                       <X className="w-4 h-4" />
@@ -231,7 +231,7 @@ export default function ChairmanPage() {
         {/* Financial Summary */}
         <div className="glass-card rounded-xl p-6">
           <div className="flex items-center gap-2 mb-6">
-            <div className="w-8 h-8 rounded-lg bg-success/10 flex items-center justify-center">
+            <div className="w-8 h-8 rounded-lg bg-success/15 flex items-center justify-center">
               <Coins className="w-4 h-4 text-success" />
             </div>
             <h3 className="text-base font-semibold text-text">
@@ -400,9 +400,9 @@ export default function ChairmanPage() {
                         <span
                           className={`inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium ${
                             member.status === "active"
-                              ? "bg-success/10 text-success"
+                              ? "bg-success/15 text-success"
                               : member.status === "pending"
-                                ? "bg-warning/10 text-warning"
+                                ? "bg-warning/15 text-warning"
                                 : "bg-text-light/10 text-text-light"
                           }`}
                         >

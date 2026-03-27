@@ -70,10 +70,10 @@ const columns = [
         <span
           className={`inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium ${
             row.status === "approved"
-              ? "bg-success/10 text-success"
+              ? "bg-success/15 text-success"
               : row.status === "rejected"
-                ? "bg-danger/10 text-danger"
-                : "bg-warning/10 text-warning"
+                ? "bg-danger/15 text-danger"
+                : "bg-warning/15 text-warning"
           }`}
         >
           {label}
@@ -111,7 +111,7 @@ export default function ApplicationsPage() {
       <div className="flex items-center gap-1">
         <Link
           href={`/admin/applications/${row.id}`}
-          className="p-2 text-text-muted hover:text-primary rounded-lg hover:bg-primary/10"
+          className="p-2.5 text-text-muted hover:text-primary rounded-lg hover:bg-primary/10"
           title="View"
           aria-label="View application"
         >
@@ -124,7 +124,7 @@ export default function ApplicationsPage() {
                 setApproveId(row.id);
                 setApproveOpen(true);
               }}
-              className="p-2 text-text-muted hover:text-success rounded-lg hover:bg-success/10"
+              className="p-2.5 text-text-muted hover:text-success rounded-lg hover:bg-success/15"
               title="Approve"
               aria-label="Approve application"
             >
@@ -136,7 +136,7 @@ export default function ApplicationsPage() {
                 setRejectReason("");
                 setRejectOpen(true);
               }}
-              className="p-2 text-text-muted hover:text-danger rounded-lg hover:bg-danger/10"
+              className="p-2.5 text-text-muted hover:text-danger rounded-lg hover:bg-danger/15"
               title="Reject"
               aria-label="Reject application"
             >

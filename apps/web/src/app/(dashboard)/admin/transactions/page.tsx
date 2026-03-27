@@ -88,7 +88,7 @@ export default function TransactionsPage() {
         const statusLabel = row.status.charAt(0).toUpperCase() + row.status.slice(1);
         return (
           <span className={`inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium ${
-            row.status === "completed" ? "bg-success/10 text-success" : row.status === "pending" ? "bg-warning/10 text-warning" : "bg-danger/10 text-danger"
+            row.status === "completed" ? "bg-success/15 text-success" : row.status === "pending" ? "bg-warning/15 text-warning" : "bg-danger/15 text-danger"
           }`}>{statusLabel}</span>
         );
       },
@@ -105,7 +105,7 @@ export default function TransactionsPage() {
             <button
               onClick={() => handleApprove(row.id)}
               disabled={busy}
-              className="p-1.5 text-text-muted hover:text-success rounded-lg hover:bg-success/10 disabled:opacity-50"
+              className="p-2.5 text-text-muted hover:text-success rounded-lg hover:bg-success/15 disabled:opacity-50"
               title="Approve"
             >
               <Check className="w-4 h-4" />
@@ -113,7 +113,7 @@ export default function TransactionsPage() {
             <button
               onClick={() => handleReject(row.id)}
               disabled={busy}
-              className="p-1.5 text-text-muted hover:text-danger rounded-lg hover:bg-danger/10 disabled:opacity-50"
+              className="p-2.5 text-text-muted hover:text-danger rounded-lg hover:bg-danger/15 disabled:opacity-50"
               title="Reject"
             >
               <X className="w-4 h-4" />

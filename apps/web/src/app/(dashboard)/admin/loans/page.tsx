@@ -58,7 +58,7 @@ export default function LoansPage() {
         const label = formatLoanType(row.type);
         return (
           <span className={`inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium ${
-            row.type.includes("business") ? "bg-primary/10 text-primary" : row.type.includes("personal") ? "bg-info/10 text-info" : row.type.includes("emergency") ? "bg-danger/10 text-danger" : "bg-secondary/10 text-secondary"
+            row.type.includes("business") ? "bg-primary/10 text-primary" : row.type.includes("personal") ? "bg-info/10 text-info" : row.type.includes("emergency") ? "bg-danger/15 text-danger" : "bg-secondary/10 text-secondary"
           }`}>{label}</span>
         );
       },
@@ -92,7 +92,7 @@ export default function LoansPage() {
         const statusLabel = row.status.charAt(0).toUpperCase() + row.status.slice(1);
         return (
           <span className={`inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium ${
-            row.status === "active" ? "bg-success/10 text-success" : row.status === "pending" ? "bg-warning/10 text-warning" : row.status === "paid" ? "bg-info/10 text-info" : "bg-danger/10 text-danger"
+            row.status === "active" ? "bg-success/15 text-success" : row.status === "pending" ? "bg-warning/15 text-warning" : row.status === "paid" ? "bg-info/10 text-info" : "bg-danger/15 text-danger"
           }`}>{statusLabel}</span>
         );
       },
@@ -109,7 +109,7 @@ export default function LoansPage() {
             <button
               onClick={() => handleApprove(row.id)}
               disabled={busy}
-              className="p-1.5 text-text-muted hover:text-success rounded-lg hover:bg-success/10 disabled:opacity-50"
+              className="p-2.5 text-text-muted hover:text-success rounded-lg hover:bg-success/15 disabled:opacity-50"
               title="Approve"
             >
               <Check className="w-4 h-4" />
@@ -117,7 +117,7 @@ export default function LoansPage() {
             <button
               onClick={() => handleReject(row.id)}
               disabled={busy}
-              className="p-1.5 text-text-muted hover:text-danger rounded-lg hover:bg-danger/10 disabled:opacity-50"
+              className="p-2.5 text-text-muted hover:text-danger rounded-lg hover:bg-danger/15 disabled:opacity-50"
               title="Reject"
             >
               <X className="w-4 h-4" />
@@ -132,7 +132,7 @@ export default function LoansPage() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-lg bg-warning/10 flex items-center justify-center">
+          <div className="w-10 h-10 rounded-lg bg-warning/15 flex items-center justify-center">
             <Calendar className="w-5 h-5 text-warning" />
           </div>
           <div>

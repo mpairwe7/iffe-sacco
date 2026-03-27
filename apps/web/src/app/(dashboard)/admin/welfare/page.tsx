@@ -73,10 +73,10 @@ export default function WelfareAdminPage() {
         <span
           className={`inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium ${
             row.status === "active"
-              ? "bg-success/10 text-success"
+              ? "bg-success/15 text-success"
               : row.status === "completed"
                 ? "bg-info/10 text-info"
-                : "bg-warning/10 text-warning"
+                : "bg-warning/15 text-warning"
           }`}
         >
           {row.status.charAt(0).toUpperCase() + row.status.slice(1)}
@@ -90,7 +90,7 @@ export default function WelfareAdminPage() {
       render: (row: WelfareProgram) => (
         <button
           onClick={() => openEdit(row)}
-          className="p-1.5 text-text-muted hover:text-primary rounded-lg hover:bg-primary/10"
+          className="p-2.5 text-text-muted hover:text-primary rounded-lg hover:bg-primary/10"
           title="Edit"
         >
           <Pencil className="w-4 h-4" />
@@ -102,7 +102,7 @@ export default function WelfareAdminPage() {
   return (
     <div className="space-y-6">
       <div className="flex items-center gap-3">
-        <div className="w-10 h-10 rounded-lg bg-danger/10 flex items-center justify-center">
+        <div className="w-10 h-10 rounded-lg bg-danger/15 flex items-center justify-center">
           <Heart className="w-5 h-5 text-danger" />
         </div>
         <div>

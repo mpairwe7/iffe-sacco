@@ -61,7 +61,7 @@ export default function BankAccountsPage() {
       key: "status",
       label: "Status",
       render: (row: BankAccount) => (
-        <span className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-success/10 text-success">
+        <span className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-success/15 text-success">
           {row.status}
         </span>
       ),
@@ -74,14 +74,14 @@ export default function BankAccountsPage() {
         <div className="flex items-center gap-1">
           <button
             onClick={() => openEdit(row)}
-            className="p-1.5 text-text-muted hover:text-primary rounded-lg hover:bg-primary/10"
+            className="p-2.5 text-text-muted hover:text-primary rounded-lg hover:bg-primary/10"
             title="Edit"
           >
             <Pencil className="w-4 h-4" />
           </button>
           <button
             onClick={() => setDeleteId(row.id)}
-            className="p-1.5 text-danger hover:bg-danger/10 rounded-lg"
+            className="p-2.5 text-danger hover:bg-danger/15 rounded-lg"
             title="Delete"
           >
             <Trash2 className="w-4 h-4" />

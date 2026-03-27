@@ -90,7 +90,7 @@ export default function ExpensesPage() {
       render: (row: ExpenseRow) => {
         const statusLabel = row.status.charAt(0).toUpperCase() + row.status.slice(1);
         return (
-          <span className={`inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium ${row.status === "approved" ? "bg-success/10 text-success" : "bg-warning/10 text-warning"}`}>{statusLabel}</span>
+          <span className={`inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium ${row.status === "approved" ? "bg-success/15 text-success" : "bg-warning/15 text-warning"}`}>{statusLabel}</span>
         );
       },
     },
@@ -104,7 +104,7 @@ export default function ExpensesPage() {
             <button
               onClick={() => handleApprove(row.id)}
               disabled={approveMutation.isPending}
-              className="p-1.5 text-text-muted hover:text-success rounded-lg hover:bg-success/10 disabled:opacity-50"
+              className="p-2.5 text-text-muted hover:text-success rounded-lg hover:bg-success/15 disabled:opacity-50"
               title="Approve"
             >
               <Check className="w-4 h-4" />
@@ -112,14 +112,14 @@ export default function ExpensesPage() {
           )}
           <button
             onClick={() => openEdit(row)}
-            className="p-1.5 text-text-muted hover:text-primary rounded-lg hover:bg-primary/10"
+            className="p-2.5 text-text-muted hover:text-primary rounded-lg hover:bg-primary/10"
             title="Edit"
           >
             <Pencil className="w-4 h-4" />
           </button>
           <button
             onClick={() => { setDeleteId(row.id); setDeleteOpen(true); }}
-            className="p-1.5 text-text-muted hover:text-danger rounded-lg hover:bg-danger/10"
+            className="p-2.5 text-text-muted hover:text-danger rounded-lg hover:bg-danger/15"
             title="Delete"
           >
             <Trash2 className="w-4 h-4" />
@@ -133,7 +133,7 @@ export default function ExpensesPage() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-lg bg-danger/10 flex items-center justify-center">
+          <div className="w-10 h-10 rounded-lg bg-danger/15 flex items-center justify-center">
             <Receipt className="w-5 h-5 text-danger" />
           </div>
           <div>

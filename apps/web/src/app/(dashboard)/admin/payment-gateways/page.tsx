@@ -65,7 +65,7 @@ export default function PaymentGatewaysPage() {
                 </div>
               </div>
               <div className="flex items-center gap-4">
-                <span className={`text-xs font-medium px-2.5 py-1 rounded-full ${gw.isActive ? "bg-success/10 text-success" : "bg-text-light/10 text-text-light"}`}>
+                <span className={`text-xs font-medium px-2.5 py-1 rounded-full ${gw.isActive ? "bg-success/15 text-success" : "bg-text-light/10 text-text-light"}`}>
                   {gw.isActive ? "Active" : "Inactive"}
                 </span>
                 <button

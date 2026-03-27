@@ -57,7 +57,7 @@ export default function MemberDepositsPage() {
   return (
     <div className="space-y-6">
       <div className="flex items-center gap-3">
-        <div className="w-10 h-10 rounded-lg bg-success/10 flex items-center justify-center">
+        <div className="w-10 h-10 rounded-lg bg-success/15 flex items-center justify-center">
           <ArrowDownToLine className="w-5 h-5 text-success" />
         </div>
         <div>
@@ -155,9 +155,9 @@ export default function MemberDepositsPage() {
                       <p className="text-xs text-text-muted">{(dep.method || "cash").replace("_", " ").replace(/\b\w/g, (c: string) => c.toUpperCase())} &middot; {formatDate(dep.createdAt)}</p>
                     </div>
                     <span className={`text-xs font-medium px-2.5 py-1 rounded-full ${
-                      dep.status === "completed" ? "text-success bg-success/10" :
-                      dep.status === "pending" ? "text-warning bg-warning/10" :
-                      "text-danger bg-danger/10"
+                      dep.status === "completed" ? "text-success bg-success/15" :
+                      dep.status === "pending" ? "text-warning bg-warning/15" :
+                      "text-danger bg-danger/15"
                     }`}>
                       {dep.status.charAt(0).toUpperCase() + dep.status.slice(1)}
                     </span>

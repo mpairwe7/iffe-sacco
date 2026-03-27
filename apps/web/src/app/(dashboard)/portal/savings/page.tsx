@@ -59,7 +59,7 @@ export default function MemberSavingsPage() {
                   <p className="text-xs text-text-muted font-mono">{acc.accountNo}</p>
                 </div>
                 <span className={`inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium ${
-                  acc.status === "active" ? "bg-success/10 text-success" : "bg-warning/10 text-warning"
+                  acc.status === "active" ? "bg-success/15 text-success" : "bg-warning/15 text-warning"
                 }`}>{acc.status.charAt(0).toUpperCase() + acc.status.slice(1)}</span>
               </div>
               <div className="text-3xl font-bold text-text mb-2">{formatCurrency(acc.balance)}</div>
@@ -110,7 +110,7 @@ export default function MemberSavingsPage() {
                 const typeLabel = item.type.replace("_", " ").replace(/\b\w/g, (c) => c.toUpperCase());
                 return (
                   <div key={item.id} className="flex items-center gap-4 px-6 py-4">
-                    <div className={`w-10 h-10 rounded-full flex items-center justify-center ${isOutflow ? "bg-warning/10" : "bg-success/10"}`}>
+                    <div className={`w-10 h-10 rounded-full flex items-center justify-center ${isOutflow ? "bg-warning/15" : "bg-success/15"}`}>
                       {isOutflow ? <ArrowUpFromLine className="w-5 h-5 text-warning" /> : <ArrowDownToLine className="w-5 h-5 text-success" />}
                     </div>
                     <div className="flex-1">

@@ -53,7 +53,7 @@ export default function WelfarePage() {
   return (
     <div className="space-y-6">
       <div className="flex items-center gap-3">
-        <div className="w-10 h-10 rounded-lg bg-danger/10 flex items-center justify-center">
+        <div className="w-10 h-10 rounded-lg bg-danger/15 flex items-center justify-center">
           <Heart className="w-5 h-5 text-danger" />
         </div>
         <div>
@@ -106,9 +106,9 @@ export default function WelfarePage() {
                   <div className="flex items-center justify-between mb-3">
                     <h3 className="font-semibold text-text">{program.name}</h3>
                     <span className={`text-xs font-medium px-2.5 py-1 rounded-full ${
-                      program.status === "active" ? "text-success bg-success/10" :
+                      program.status === "active" ? "text-success bg-success/15" :
                       program.status === "completed" ? "text-info bg-info/10" :
-                      "text-warning bg-warning/10"
+                      "text-warning bg-warning/15"
                     }`}>
                       {program.status.charAt(0).toUpperCase() + program.status.slice(1)}
                     </span>

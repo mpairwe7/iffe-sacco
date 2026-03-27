@@ -56,7 +56,7 @@ export default function MemberWithdrawalsPage() {
   return (
     <div className="space-y-6">
       <div className="flex items-center gap-3">
-        <div className="w-10 h-10 rounded-lg bg-warning/10 flex items-center justify-center">
+        <div className="w-10 h-10 rounded-lg bg-warning/15 flex items-center justify-center">
           <ArrowUpFromLine className="w-5 h-5 text-warning" />
         </div>
         <div>
@@ -160,9 +160,9 @@ export default function MemberWithdrawalsPage() {
                       <p className="text-xs text-text-muted">{(w.method || "cash").replace("_", " ").replace(/\b\w/g, (c: string) => c.toUpperCase())} &middot; {formatDate(w.createdAt)}</p>
                     </div>
                     <span className={`text-xs font-medium px-2.5 py-1 rounded-full ${
-                      w.status === "completed" ? "text-success bg-success/10" :
-                      w.status === "pending" ? "text-warning bg-warning/10" :
-                      "text-danger bg-danger/10"
+                      w.status === "completed" ? "text-success bg-success/15" :
+                      w.status === "pending" ? "text-warning bg-warning/15" :
+                      "text-danger bg-danger/15"
                     }`}>
                       {w.status.charAt(0).toUpperCase() + w.status.slice(1)}
                     </span>

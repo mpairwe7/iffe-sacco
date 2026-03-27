@@ -53,9 +53,9 @@ export function ConfirmDialog({
             </Dialog.Close>
           </div>
 
-          <div className="flex items-center justify-end gap-3 mt-6">
+          <div className="flex items-center justify-end gap-4 mt-6">
             <Dialog.Close asChild>
-              <button disabled={loading} className="px-5 py-2.5 text-sm font-medium text-text-muted border border-border rounded-lg hover:bg-surface-hover disabled:opacity-50">
+              <button disabled={loading} className="px-6 py-3 text-sm font-medium text-gray-700 dark:text-gray-300 border border-border rounded-lg hover:bg-surface-hover disabled:opacity-50">
                 {cancelLabel}
               </button>
             </Dialog.Close>
@@ -63,7 +63,7 @@ export function ConfirmDialog({
               onClick={onConfirm}
               disabled={loading}
               className={cn(
-                "px-5 py-2.5 text-sm font-semibold text-white rounded-lg disabled:opacity-50",
+                "px-6 py-3 text-sm font-semibold text-white rounded-lg disabled:opacity-50",
                 variant === "destructive"
                   ? "bg-danger hover:bg-red-600"
                   : "bg-primary hover:bg-primary-dark"

@@ -190,7 +190,7 @@ export default function ApplicationDetailPage() {
         <div className="flex items-center gap-3">
           <Link
             href="/admin/applications"
-            className="p-2 text-text-muted hover:text-text rounded-lg hover:bg-surface-hover"
+            className="p-2.5 text-text-muted hover:text-text rounded-lg hover:bg-surface-hover"
           >
             <ArrowLeft className="w-5 h-5" />
           </Link>
@@ -207,10 +207,10 @@ export default function ApplicationDetailPage() {
         <span
           className={`inline-flex items-center px-4 py-2 rounded-full text-sm font-semibold ${
             app.status === "approved"
-              ? "bg-success/10 text-success"
+              ? "bg-success/15 text-success"
               : app.status === "rejected"
-                ? "bg-danger/10 text-danger"
-                : "bg-warning/10 text-warning"
+                ? "bg-danger/15 text-danger"
+                : "bg-warning/15 text-warning"
           }`}
         >
           {statusLabel}
@@ -418,7 +418,7 @@ export default function ApplicationDetailPage() {
               setRejectReason("");
               setRejectOpen(true);
             }}
-            className="inline-flex items-center gap-2 px-6 py-3 text-sm font-semibold text-danger border border-danger/30 rounded-lg hover:bg-danger/10 transition-colors"
+            className="inline-flex items-center gap-2 px-6 py-3 text-sm font-semibold text-danger border border-danger/30 rounded-lg hover:bg-danger/15 transition-colors"
           >
             <X className="w-4 h-4" />
             Reject

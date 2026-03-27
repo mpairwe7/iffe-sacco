@@ -6,7 +6,7 @@ export default function DashboardError({ error, reset }: { error: Error; reset: 
   return (
     <div className="flex items-center justify-center py-20">
       <div className="glass-card rounded-xl p-10 text-center max-w-md">
-        <div className="w-14 h-14 rounded-xl bg-danger/10 flex items-center justify-center mx-auto mb-4">
+        <div className="w-14 h-14 rounded-xl bg-danger/15 flex items-center justify-center mx-auto mb-4">
           <AlertTriangle className="w-7 h-7 text-danger" />
         </div>
         <h2 className="text-xl font-bold text-text mb-2">Something went wrong</h2>

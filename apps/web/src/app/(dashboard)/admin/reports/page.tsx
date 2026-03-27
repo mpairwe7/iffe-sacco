@@ -22,9 +22,9 @@ const reports = [
 const colorMap: Record<string, string> = {
   primary: "bg-primary/10 text-primary",
   info: "bg-info/10 text-info",
-  warning: "bg-warning/10 text-warning",
-  danger: "bg-danger/10 text-danger",
-  success: "bg-success/10 text-success",
+  warning: "bg-warning/15 text-warning",
+  danger: "bg-danger/15 text-danger",
+  success: "bg-success/15 text-success",
 };
 
 interface ReportResult {

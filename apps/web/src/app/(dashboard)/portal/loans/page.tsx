@@ -34,7 +34,7 @@ export default function MemberLoansPage() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-lg bg-warning/10 flex items-center justify-center">
+          <div className="w-10 h-10 rounded-lg bg-warning/15 flex items-center justify-center">
             <CreditCard className="w-5 h-5 text-warning" />
           </div>
           <div>
@@ -76,13 +76,13 @@ export default function MemberLoansPage() {
           ) : (
             loans.map((loan) => {
               const statusColors: Record<string, string> = {
-                active: "bg-success/10 text-success",
+                active: "bg-success/15 text-success",
                 approved: "bg-info/10 text-info",
                 paid: "bg-info/10 text-info",
-                pending: "bg-warning/10 text-warning",
-                overdue: "bg-danger/10 text-danger",
-                defaulted: "bg-danger/10 text-danger",
-                rejected: "bg-danger/10 text-danger",
+                pending: "bg-warning/15 text-warning",
+                overdue: "bg-danger/15 text-danger",
+                defaulted: "bg-danger/15 text-danger",
+                rejected: "bg-danger/15 text-danger",
               };
               const progress = loan.amount > 0 ? ((loan.amount - loan.balance) / loan.amount) * 100 : 0;
               return (

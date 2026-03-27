@@ -15,9 +15,9 @@ const helpArticles = [
 const colorMap: Record<string, string> = {
   primary: "text-primary bg-primary/10",
   info: "text-info bg-info/10",
-  success: "text-success bg-success/10",
-  warning: "text-warning bg-warning/10",
-  danger: "text-danger bg-danger/10",
+  success: "text-success bg-success/15",
+  warning: "text-warning bg-warning/15",
+  danger: "text-danger bg-danger/15",
 };
 
 export default function HelpPage() {

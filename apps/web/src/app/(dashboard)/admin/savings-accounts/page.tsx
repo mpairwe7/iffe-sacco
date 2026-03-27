@@ -61,7 +61,7 @@ export default function SavingsAccountsPage() {
         const statusLabel = row.status.charAt(0).toUpperCase() + row.status.slice(1);
         return (
           <span className={`inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium ${
-            row.status === "active" ? "bg-success/10 text-success" : row.status === "dormant" ? "bg-warning/10 text-warning" : "bg-danger/10 text-danger"
+            row.status === "active" ? "bg-success/15 text-success" : row.status === "dormant" ? "bg-warning/15 text-warning" : "bg-danger/15 text-danger"
           }`}>{statusLabel}</span>
         );
       },
