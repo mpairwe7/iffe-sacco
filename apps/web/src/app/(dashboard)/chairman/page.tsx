@@ -140,7 +140,7 @@ export default function ChairmanPage() {
       {/* Main Content Grid */}
       <div className="grid lg:grid-cols-3 gap-6">
         {/* Expense Approval Section - Takes 2 columns */}
-        <div className="lg:col-span-2 glass-card rounded-xl">
+        <div className="lg:col-span-2 bg-white dark:bg-gray-950 border border-gray-200 dark:border-gray-800 shadow-sm rounded-xl">
           <div className="flex items-center justify-between p-6 border-b border-border/50">
             <div>
               <h3 className="text-base font-bold text-gray-900 dark:text-white">

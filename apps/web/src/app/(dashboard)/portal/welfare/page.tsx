@@ -143,7 +143,7 @@ export default function WelfarePage() {
       {pledgeDialogOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center">
           <div className="absolute inset-0 bg-black/50" onClick={() => setPledgeDialogOpen(false)} />
-          <div className="relative glass-card rounded-xl p-6 w-full max-w-md mx-4 space-y-4">
+          <div className="relative bg-white dark:bg-gray-950 border border-gray-200 dark:border-gray-800 shadow-sm rounded-xl p-6 w-full max-w-md mx-4 space-y-4">
             <div className="flex items-center justify-between">
               <h3 className="text-lg font-bold text-gray-900 dark:text-white">Make a Pledge</h3>
               <button onClick={() => setPledgeDialogOpen(false)} className="p-1 hover:bg-surface-alt rounded-lg">

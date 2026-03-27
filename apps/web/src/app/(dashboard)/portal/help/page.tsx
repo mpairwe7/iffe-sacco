@@ -33,7 +33,7 @@ export default function HelpPage() {
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {helpArticles.map((article) => (
-          <div key={article.title} className="group glass-card rounded-xl p-6 hover:shadow-xl hover:border-primary/20 transition-all">
+          <div key={article.title} className="group bg-white dark:bg-gray-950 border border-gray-200 dark:border-gray-800 shadow-sm rounded-xl p-6 hover:shadow-xl hover:border-primary/20 transition-all">
             <div className={`w-14 h-14 rounded-xl flex items-center justify-center mb-4 ${colorMap[article.color]}`}>
               <article.icon className="w-7 h-7" />
             </div>

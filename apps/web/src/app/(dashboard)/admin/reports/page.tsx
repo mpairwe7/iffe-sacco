@@ -92,7 +92,7 @@ export default function ReportsPage() {
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
         {reports.map((report) => (
-          <Link key={report.title} href={report.href} className="group glass-card rounded-xl p-6 hover:shadow-lg hover:border-primary/20 transition-all hover:-translate-y-0.5">
+          <Link key={report.title} href={report.href} className="group bg-white dark:bg-gray-950 border border-gray-200 dark:border-gray-800 shadow-sm rounded-xl p-6 hover:shadow-lg hover:border-primary/20 transition-all hover:-translate-y-0.5">
             <div className={`w-12 h-12 rounded-xl flex items-center justify-center mb-4 ${colorMap[report.color]}`}>
               <report.icon className="w-6 h-6" />
             </div>
