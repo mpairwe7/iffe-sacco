@@ -23,3 +23,25 @@ export function useUpcomingPayments(days?: number) {
     queryFn: () => dashboardApi.getUpcomingPayments(days),
   });
 }
+
+// Server-aggregated chart data — no raw records
+export function useMonthlyTransactions(months = 12) {
+  return useQuery({
+    queryKey: ["dashboard", "charts", "monthly-transactions", months],
+    queryFn: () => dashboardApi.getMonthlyTransactions(months),
+  });
+}
+
+export function useExpenseBreakdown() {
+  return useQuery({
+    queryKey: ["dashboard", "charts", "expense-breakdown"],
+    queryFn: dashboardApi.getExpenseBreakdown,
+  });
+}
+
+export function useLoanTrends(months = 12) {
+  return useQuery({
+    queryKey: ["dashboard", "charts", "loan-trends", months],
+    queryFn: () => dashboardApi.getLoanTrends(months),
+  });
+}

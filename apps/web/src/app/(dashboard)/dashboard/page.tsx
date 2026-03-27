@@ -4,9 +4,7 @@ import { Users, Coins, Banknote, TrendingUp, Calendar, ArrowUpRight, ArrowDownRi
 import { StatCard } from "@/components/stat-card";
 import { DepositsWithdrawalsChart, ExpenseChart, LoanChart } from "@/components/dashboard-charts";
 import Link from "next/link";
-import { useDashboardStats, useRecentTransactions, useUpcomingPayments } from "@/hooks/use-dashboard";
-import { useExpenses } from "@/hooks/use-expenses";
-import { useLoans } from "@/hooks/use-loans";
+import { useDashboardStats, useRecentTransactions, useUpcomingPayments, useMonthlyTransactions, useExpenseBreakdown, useLoanTrends } from "@/hooks/use-dashboard";
 import { useAuthStore } from "@/stores/auth-store";
 import { formatCurrency, formatDate } from "@/lib/utils";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -16,8 +14,9 @@ export default function DashboardPage() {
   const statsQuery = useDashboardStats();
   const recentQuery = useRecentTransactions(5);
   const upcomingQuery = useUpcomingPayments(7);
-  const { data: expenseData } = useExpenses({ limit: 50 });
-  const { data: loanData } = useLoans({ limit: 50 });
+  const { data: monthlyTxData } = useMonthlyTransactions(12);
+  const { data: expenseBreakdown } = useExpenseBreakdown();
+  const { data: loanTrends } = useLoanTrends(12);
   const user = useAuthStore((s) => s.user);
 
   const stats = statsQuery.data as DashboardStats | undefined;
@@ -80,14 +79,14 @@ export default function DashboardPage() {
       {/* Charts */}
       <div className="grid lg:grid-cols-3 gap-6">
         <div className="lg:col-span-2">
-          <DepositsWithdrawalsChart transactions={recentTransactions || []} />
+          <DepositsWithdrawalsChart monthlyData={monthlyTxData || []} />
         </div>
-        <ExpenseChart expenses={expenseData?.data || []} />
+        <ExpenseChart breakdownData={expenseBreakdown || []} />
       </div>
 
       <div className="grid lg:grid-cols-3 gap-6">
         <div className="lg:col-span-2">
-          <LoanChart loans={loanData?.data || []} />
+          <LoanChart trendsData={loanTrends || []} />
         </div>
 
         {/* Upcoming Payments */}

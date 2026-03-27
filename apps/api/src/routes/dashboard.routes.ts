@@ -37,6 +37,30 @@ dashboard.get("/upcoming-payments", async (c) => {
   return c.json({ success: true, data: payments });
 });
 
+// Chart data — server-aggregated, no raw records sent to client
+dashboard.get("/charts/monthly-transactions", async (c) => {
+  const user = c.get("user") as { role: string };
+  if (user.role === "member") return c.json({ success: false, message: "Insufficient permissions" }, 403);
+  const months = Number(c.req.query("months") || 12);
+  const data = await service.getMonthlyTransactions(months);
+  return c.json({ success: true, data });
+});
+
+dashboard.get("/charts/expense-breakdown", async (c) => {
+  const user = c.get("user") as { role: string };
+  if (user.role === "member") return c.json({ success: false, message: "Insufficient permissions" }, 403);
+  const data = await service.getExpenseBreakdown();
+  return c.json({ success: true, data });
+});
+
+dashboard.get("/charts/loan-trends", async (c) => {
+  const user = c.get("user") as { role: string };
+  if (user.role === "member") return c.json({ success: false, message: "Insufficient permissions" }, 403);
+  const months = Number(c.req.query("months") || 12);
+  const data = await service.getLoanTrends(months);
+  return c.json({ success: true, data });
+});
+
 // Chairman oversight dashboard
 dashboard.get("/chairman", requireRole("chairman", "admin"), async (c) => {
   const [stats, pendingExpenses, recentMembers] = await Promise.all([
