@@ -19,7 +19,7 @@ export default function PasswordResetPage() {
   }
 
   return (
-    <div className="bg-white rounded-3xl shadow-xl shadow-black/5 border border-border p-8">
+    <div className="bg-white rounded-xl shadow-xl shadow-black/5 border border-border p-8">
       <h2 className="text-2xl font-bold text-text text-center">Reset Password</h2>
       <p className="text-text-muted text-center mt-2 mb-8">Enter your email and we&apos;ll send you a reset link</p>
 
@@ -34,7 +34,7 @@ export default function PasswordResetPage() {
               placeholder="you@example.com"
               {...register("email")}
               aria-invalid={!!errors.email}
-              className={`w-full pl-12 pr-4 py-3 bg-surface-alt border rounded-xl text-text placeholder:text-text-light focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all ${errors.email ? "border-danger" : "border-border"}`}
+              className={`w-full pl-12 pr-4 py-3 bg-surface-alt border rounded-lg text-text placeholder:text-text-light focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all ${errors.email ? "border-danger" : "border-border"}`}
             />
           </div>
           {errors.email && <p className="text-xs text-danger mt-1.5" role="alert">{errors.email.message}</p>}
@@ -43,7 +43,7 @@ export default function PasswordResetPage() {
         <button
           type="submit"
           disabled={isSubmitting}
-          className="w-full flex items-center justify-center gap-2 px-6 py-3.5 text-base font-semibold text-white bg-primary rounded-xl hover:bg-primary-dark transition-all shadow-lg shadow-primary/25 disabled:opacity-50 disabled:cursor-not-allowed"
+          className="w-full flex items-center justify-center gap-2 px-6 py-3.5 text-base font-semibold text-white bg-primary rounded-lg hover:bg-primary-dark transition-all shadow-lg shadow-primary/25 disabled:opacity-50 disabled:cursor-not-allowed"
         >
           {isSubmitting ? (
             <><Loader2 className="w-5 h-5 animate-spin" /> Sending...</>

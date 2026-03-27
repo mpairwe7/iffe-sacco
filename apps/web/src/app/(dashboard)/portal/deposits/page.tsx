@@ -57,7 +57,7 @@ export default function MemberDepositsPage() {
   return (
     <div className="space-y-6">
       <div className="flex items-center gap-3">
-        <div className="w-10 h-10 rounded-xl bg-success/10 flex items-center justify-center">
+        <div className="w-10 h-10 rounded-lg bg-success/10 flex items-center justify-center">
           <ArrowDownToLine className="w-5 h-5 text-success" />
         </div>
         <div>
@@ -67,13 +67,13 @@ export default function MemberDepositsPage() {
       </div>
 
       <div className="grid lg:grid-cols-2 gap-6">
-        <form onSubmit={handleSubmit(onSubmit)} className="glass-card rounded-2xl p-6 space-y-5">
+        <form onSubmit={handleSubmit(onSubmit)} className="glass-card rounded-xl p-6 space-y-5">
           <h3 className="font-semibold text-text">Deposit Details</h3>
           <div>
             <label className="block text-sm font-medium text-text mb-2">Account</label>
             <select
               {...register("accountId")}
-              className="w-full px-4 py-2.5 bg-white/60 border border-white/40 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
+              className="w-full px-4 py-2.5 bg-white/60 border border-white/40 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
             >
               <option value="">Select an account</option>
               {accounts.map((acc) => (
@@ -92,7 +92,7 @@ export default function MemberDepositsPage() {
               step="1000"
               placeholder="Enter amount"
               {...register("amount", { valueAsNumber: true })}
-              className="w-full px-4 py-2.5 bg-white/60 border border-white/40 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
+              className="w-full px-4 py-2.5 bg-white/60 border border-white/40 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
             />
             {errors.amount && <p className="text-xs text-danger mt-1">{errors.amount.message}</p>}
           </div>
@@ -100,7 +100,7 @@ export default function MemberDepositsPage() {
             <label className="block text-sm font-medium text-text mb-2">Payment Method</label>
             <select
               {...register("method")}
-              className="w-full px-4 py-2.5 bg-white/60 border border-white/40 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
+              className="w-full px-4 py-2.5 bg-white/60 border border-white/40 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
             >
               <option value="mobile_money">Mobile Money</option>
               <option value="bank_transfer">Bank Transfer</option>
@@ -114,13 +114,13 @@ export default function MemberDepositsPage() {
               rows={2}
               placeholder="Purpose of deposit..."
               {...register("description")}
-              className="w-full px-4 py-2.5 bg-white/60 border border-white/40 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary resize-none"
+              className="w-full px-4 py-2.5 bg-white/60 border border-white/40 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary resize-none"
             />
           </div>
           <button
             type="submit"
             disabled={isSubmitting || createDepositRequest.isPending}
-            className="w-full inline-flex items-center justify-center gap-2 px-6 py-3 text-sm font-medium text-white bg-primary rounded-xl hover:bg-primary-dark transition-colors disabled:opacity-50"
+            className="w-full inline-flex items-center justify-center gap-2 px-6 py-3 text-sm font-medium text-white bg-primary rounded-lg hover:bg-primary-dark transition-colors disabled:opacity-50"
           >
             {isSubmitting || createDepositRequest.isPending ? (
               <Loader2 className="w-4 h-4 animate-spin" />
@@ -132,12 +132,12 @@ export default function MemberDepositsPage() {
         </form>
 
         <div className="space-y-4">
-          <div className="glass-card rounded-2xl p-6">
+          <div className="glass-card rounded-xl p-6">
             <h3 className="font-semibold text-text mb-4">Recent Deposits</h3>
             <div className="space-y-3">
               {reqLoading ? (
                 Array.from({ length: 3 }).map((_, i) => (
-                  <div key={i} className="flex items-center justify-between p-3 bg-white/50 rounded-xl animate-pulse">
+                  <div key={i} className="flex items-center justify-between p-3 bg-white/50 rounded-lg animate-pulse">
                     <div className="space-y-2">
                       <div className="h-4 bg-surface-alt rounded w-24" />
                       <div className="h-3 bg-surface-alt rounded w-32" />
@@ -149,7 +149,7 @@ export default function MemberDepositsPage() {
                 <p className="text-sm text-text-muted text-center py-4">No recent deposits.</p>
               ) : (
                 recentDeposits.map((dep) => (
-                  <div key={dep.id} className="flex items-center justify-between p-3 bg-white/50 rounded-xl">
+                  <div key={dep.id} className="flex items-center justify-between p-3 bg-white/50 rounded-lg">
                     <div>
                       <p className="text-sm font-medium text-text">{formatCurrency(dep.amount)}</p>
                       <p className="text-xs text-text-muted">{(dep.method || "cash").replace("_", " ").replace(/\b\w/g, (c: string) => c.toUpperCase())} &middot; {formatDate(dep.createdAt)}</p>
@@ -167,7 +167,7 @@ export default function MemberDepositsPage() {
             </div>
           </div>
 
-          <div className="bg-primary/5 border border-primary/20 rounded-2xl p-6">
+          <div className="bg-primary/5 border border-primary/20 rounded-xl p-6">
             <h3 className="font-semibold text-primary mb-2">Deposit Information</h3>
             <ul className="text-sm text-text-muted space-y-2">
               <li>&#8226; Minimum deposit: USh 1,000</li>

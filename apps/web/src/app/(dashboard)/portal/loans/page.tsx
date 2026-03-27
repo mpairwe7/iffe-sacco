@@ -34,7 +34,7 @@ export default function MemberLoansPage() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-xl bg-warning/10 flex items-center justify-center">
+          <div className="w-10 h-10 rounded-lg bg-warning/10 flex items-center justify-center">
             <CreditCard className="w-5 h-5 text-warning" />
           </div>
           <div>
@@ -42,7 +42,7 @@ export default function MemberLoansPage() {
             <p className="text-text-muted text-sm">Track your loan balances and repayments</p>
           </div>
         </div>
-        <button className="inline-flex items-center gap-2 px-5 py-2.5 text-sm font-medium text-white bg-primary rounded-xl hover:bg-primary-dark">
+        <button className="inline-flex items-center gap-2 px-5 py-2.5 text-sm font-medium text-white bg-primary rounded-lg hover:bg-primary-dark">
           Apply for Loan
         </button>
       </div>
@@ -70,7 +70,7 @@ export default function MemberLoansPage() {
       ) : (
         <div className="space-y-4">
           {loans.length === 0 ? (
-            <div className="glass-card rounded-2xl p-8 text-center">
+            <div className="glass-card rounded-xl p-8 text-center">
               <p className="text-text-muted">No loans found. Apply for your first loan to get started.</p>
             </div>
           ) : (
@@ -86,7 +86,7 @@ export default function MemberLoansPage() {
               };
               const progress = loan.amount > 0 ? ((loan.amount - loan.balance) / loan.amount) * 100 : 0;
               return (
-                <div key={loan.id} className="glass-card rounded-2xl p-6">
+                <div key={loan.id} className="glass-card rounded-xl p-6">
                   <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                     <div>
                       <div className="flex items-center gap-3 mb-2">
@@ -141,7 +141,7 @@ export default function MemberLoansPage() {
       )}
 
       {/* Loan Calculator */}
-      <div className="glass-card rounded-2xl p-6">
+      <div className="glass-card rounded-xl p-6">
         <div className="flex items-center gap-3 mb-6">
           <Calculator className="w-5 h-5 text-primary" />
           <h3 className="text-base font-semibold text-text">Loan Calculator</h3>
@@ -154,7 +154,7 @@ export default function MemberLoansPage() {
               placeholder="5,000,000"
               value={calcAmount}
               onChange={(e) => setCalcAmount(e.target.value)}
-              className="w-full px-4 py-2.5 bg-white/60 border border-white/40 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
+              className="w-full px-4 py-2.5 bg-white/60 border border-white/40 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
             />
           </div>
           <div>
@@ -164,7 +164,7 @@ export default function MemberLoansPage() {
               placeholder="12"
               value={calcRate}
               onChange={(e) => setCalcRate(e.target.value)}
-              className="w-full px-4 py-2.5 bg-white/60 border border-white/40 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
+              className="w-full px-4 py-2.5 bg-white/60 border border-white/40 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
             />
           </div>
           <div>
@@ -174,17 +174,17 @@ export default function MemberLoansPage() {
               placeholder="24"
               value={calcTerm}
               onChange={(e) => setCalcTerm(e.target.value)}
-              className="w-full px-4 py-2.5 bg-white/60 border border-white/40 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
+              className="w-full px-4 py-2.5 bg-white/60 border border-white/40 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
             />
           </div>
           <div className="flex items-end">
-            <button onClick={handleCalculate} className="w-full px-6 py-2.5 text-sm font-medium text-white bg-primary rounded-xl hover:bg-primary-dark">
+            <button onClick={handleCalculate} className="w-full px-6 py-2.5 text-sm font-medium text-white bg-primary rounded-lg hover:bg-primary-dark">
               Calculate
             </button>
           </div>
         </div>
         {calcResult !== null && (
-          <div className="mt-4 p-4 bg-primary/5 border border-primary/20 rounded-xl">
+          <div className="mt-4 p-4 bg-primary/5 border border-primary/20 rounded-lg">
             <p className="text-sm text-text-muted">Estimated Monthly Payment</p>
             <p className="text-2xl font-bold text-primary">{formatCurrency(calcResult)}</p>
           </div>

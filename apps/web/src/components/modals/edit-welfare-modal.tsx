@@ -59,7 +59,7 @@ export function EditWelfareModal({ open, onOpenChange, program }: Props) {
     <Dialog.Root open={open} onOpenChange={onOpenChange}>
       <Dialog.Portal>
         <Dialog.Overlay className="fixed inset-0 bg-black/40 backdrop-blur-sm z-50 data-[state=open]:animate-in data-[state=open]:fade-in data-[state=closed]:animate-out data-[state=closed]:fade-out" />
-        <Dialog.Content className="fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-lg glass-card rounded-3xl p-6 z-50 data-[state=open]:animate-in data-[state=open]:fade-in data-[state=open]:zoom-in-95 data-[state=open]:slide-in-from-left-1/2 data-[state=open]:slide-in-from-top-[48%]">
+        <Dialog.Content className="fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-lg glass-card rounded-xl p-6 z-50 data-[state=open]:animate-in data-[state=open]:fade-in data-[state=open]:zoom-in-95 data-[state=open]:slide-in-from-left-1/2 data-[state=open]:slide-in-from-top-[48%]">
           <div className="flex items-center justify-between mb-6">
             <Dialog.Title className="text-lg font-semibold text-text">
               Edit Welfare Program
@@ -78,7 +78,7 @@ export function EditWelfareModal({ open, onOpenChange, program }: Props) {
                 type="text"
                 {...register("name")}
                 className={cn(
-                  "w-full px-4 py-2.5 bg-white/60 border border-white/40 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary",
+                  "w-full px-4 py-2.5 bg-white/60 border border-white/40 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary",
                   errors.name && "border-danger/50 focus:ring-danger/20 focus:border-danger"
                 )}
                 placeholder="Program name"
@@ -94,7 +94,7 @@ export function EditWelfareModal({ open, onOpenChange, program }: Props) {
                 {...register("description")}
                 rows={3}
                 className={cn(
-                  "w-full px-4 py-2.5 bg-white/60 border border-white/40 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary resize-none",
+                  "w-full px-4 py-2.5 bg-white/60 border border-white/40 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary resize-none",
                   errors.description && "border-danger/50 focus:ring-danger/20 focus:border-danger"
                 )}
                 placeholder="Describe the program..."
@@ -111,7 +111,7 @@ export function EditWelfareModal({ open, onOpenChange, program }: Props) {
                 step="1"
                 {...register("targetAmount", { valueAsNumber: true })}
                 className={cn(
-                  "w-full px-4 py-2.5 bg-white/60 border border-white/40 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary",
+                  "w-full px-4 py-2.5 bg-white/60 border border-white/40 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary",
                   errors.targetAmount && "border-danger/50 focus:ring-danger/20 focus:border-danger"
                 )}
                 placeholder="0"
@@ -125,7 +125,7 @@ export function EditWelfareModal({ open, onOpenChange, program }: Props) {
               <Dialog.Close asChild>
                 <button
                   type="button"
-                  className="px-5 py-2.5 text-sm font-medium text-text-muted border border-border rounded-xl hover:bg-surface-hover"
+                  className="px-5 py-2.5 text-sm font-medium text-text-muted border border-border rounded-lg hover:bg-surface-hover"
                 >
                   Cancel
                 </button>
@@ -133,7 +133,7 @@ export function EditWelfareModal({ open, onOpenChange, program }: Props) {
               <button
                 type="submit"
                 disabled={updateProgram.isPending}
-                className="px-5 py-2.5 text-sm font-semibold text-white bg-primary rounded-xl hover:bg-primary-dark disabled:opacity-50"
+                className="px-5 py-2.5 text-sm font-semibold text-white bg-primary rounded-lg hover:bg-primary-dark disabled:opacity-50"
               >
                 {updateProgram.isPending ? "Saving..." : "Save Changes"}
               </button>

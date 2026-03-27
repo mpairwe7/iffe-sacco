@@ -36,7 +36,7 @@ export default function DashboardPage() {
         {statsQuery.isLoading ? (
           <>
             {Array.from({ length: 4 }).map((_, i) => (
-              <div key={i} className="glass-card rounded-2xl p-6">
+              <div key={i} className="glass-card rounded-xl p-6">
                 <Skeleton className="h-4 w-24 mb-2" />
                 <Skeleton className="h-8 w-32" />
               </div>
@@ -91,7 +91,7 @@ export default function DashboardPage() {
         </div>
 
         {/* Upcoming Payments */}
-        <div className="glass-card rounded-2xl p-6">
+        <div className="glass-card rounded-xl p-6">
           <div className="flex items-center justify-between mb-6">
             <div>
               <h3 className="text-base font-semibold text-text">Upcoming Payments</h3>
@@ -102,7 +102,7 @@ export default function DashboardPage() {
           <div className="space-y-4">
             {upcomingQuery.isLoading ? (
               Array.from({ length: 3 }).map((_, i) => (
-                <div key={i} className="flex items-center gap-4 p-3 rounded-xl bg-surface-alt">
+                <div key={i} className="flex items-center gap-4 p-3 rounded-lg bg-surface-alt">
                   <Skeleton className="w-10 h-10 rounded-full" />
                   <div className="flex-1">
                     <Skeleton className="h-4 w-28 mb-1" />
@@ -115,7 +115,7 @@ export default function DashboardPage() {
               <p className="text-sm text-text-muted text-center py-4">No upcoming payments</p>
             ) : (
               upcomingPayments.map((payment) => (
-                <div key={payment.id} className="flex items-center gap-4 p-3 rounded-xl bg-surface-alt">
+                <div key={payment.id} className="flex items-center gap-4 p-3 rounded-lg bg-surface-alt">
                   <div className="w-10 h-10 rounded-full bg-warning/10 flex items-center justify-center">
                     <Calendar className="w-5 h-5 text-warning" />
                   </div>
@@ -138,7 +138,7 @@ export default function DashboardPage() {
       </div>
 
       {/* Recent Transactions */}
-      <div className="glass-card rounded-2xl">
+      <div className="glass-card rounded-xl">
         <div className="flex items-center justify-between p-6 border-b border-border">
           <div>
             <h3 className="text-base font-semibold text-text">Recent Transactions</h3>

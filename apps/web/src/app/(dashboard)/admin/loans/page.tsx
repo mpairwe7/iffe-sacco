@@ -132,7 +132,7 @@ export default function LoansPage() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-xl bg-warning/10 flex items-center justify-center">
+          <div className="w-10 h-10 rounded-lg bg-warning/10 flex items-center justify-center">
             <Calendar className="w-5 h-5 text-warning" />
           </div>
           <div>
@@ -142,26 +142,26 @@ export default function LoansPage() {
         </div>
         <button
           onClick={() => setCreateOpen(true)}
-          className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-white bg-gradient-to-r from-primary to-primary-dark rounded-xl hover:shadow-lg hover:shadow-primary/20"
+          className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-white bg-gradient-to-r from-primary to-primary-dark rounded-lg hover:shadow-lg hover:shadow-primary/20"
         >
           <Plus className="w-4 h-4" /> New Loan
         </button>
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-4 gap-4">
-        <div className="glass-card rounded-2xl p-5">
+        <div className="glass-card rounded-xl p-5">
           <p className="text-sm text-text-muted">Active Loans</p>
           <p className="text-2xl font-bold text-text mt-1">{stats?.active?.toLocaleString() ?? "\u2014"}</p>
         </div>
-        <div className="glass-card rounded-2xl p-5">
+        <div className="glass-card rounded-xl p-5">
           <p className="text-sm text-text-muted">Total Disbursed</p>
           <p className="text-2xl font-bold text-primary mt-1">{stats?.totalDisbursed != null ? formatCurrency(stats.totalDisbursed) : "\u2014"}</p>
         </div>
-        <div className="glass-card rounded-2xl p-5">
+        <div className="glass-card rounded-xl p-5">
           <p className="text-sm text-text-muted">Outstanding</p>
           <p className="text-2xl font-bold text-warning mt-1">{stats?.outstanding != null ? formatCurrency(stats.outstanding) : "\u2014"}</p>
         </div>
-        <div className="glass-card rounded-2xl p-5">
+        <div className="glass-card rounded-xl p-5">
           <p className="text-sm text-text-muted">Overdue</p>
           <p className="text-2xl font-bold text-danger mt-1">{stats?.overdue?.toLocaleString() ?? "\u2014"}</p>
         </div>

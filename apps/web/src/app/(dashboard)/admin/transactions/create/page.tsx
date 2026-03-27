@@ -59,7 +59,7 @@ function TransactionForm() {
   }
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="glass-card rounded-2xl">
+    <form onSubmit={handleSubmit(onSubmit)} className="glass-card rounded-xl">
       <div className="p-6 border-b border-border">
         <h3 className="text-base font-semibold text-text mb-4">Transaction Details</h3>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
@@ -67,7 +67,7 @@ function TransactionForm() {
             <label className="block text-sm font-medium text-text mb-2">Transaction Type *</label>
             <select
               {...register("type")}
-              className="w-full px-4 py-2.5 bg-white/60 border border-white/40 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
+              className="w-full px-4 py-2.5 bg-white/60 border border-white/40 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
             >
               <option value="deposit">Deposit</option>
               <option value="withdraw">Withdrawal</option>
@@ -80,7 +80,7 @@ function TransactionForm() {
             <label className="block text-sm font-medium text-text mb-2">Member *</label>
             <select
               {...register("member")}
-              className="w-full px-4 py-2.5 bg-white/60 border border-white/40 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
+              className="w-full px-4 py-2.5 bg-white/60 border border-white/40 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
             >
               <option value="">Select Member</option>
               {members.map((m) => (
@@ -96,7 +96,7 @@ function TransactionForm() {
             <select
               {...register("account")}
               disabled={!selectedMemberId}
-              className="w-full px-4 py-2.5 bg-white/60 border border-white/40 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary disabled:opacity-50"
+              className="w-full px-4 py-2.5 bg-white/60 border border-white/40 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary disabled:opacity-50"
             >
               <option value="">{selectedMemberId ? "Select Account" : "Select a member first"}</option>
               {accounts.map((a) => (
@@ -115,7 +115,7 @@ function TransactionForm() {
               step="1000"
               {...register("amount", { valueAsNumber: true })}
               placeholder="0"
-              className="w-full px-4 py-2.5 bg-white/60 border border-white/40 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
+              className="w-full px-4 py-2.5 bg-white/60 border border-white/40 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
             />
             {errors.amount && <p className="text-xs text-danger mt-1">{errors.amount.message}</p>}
           </div>
@@ -123,7 +123,7 @@ function TransactionForm() {
             <label className="block text-sm font-medium text-text mb-2">Payment Method</label>
             <select
               {...register("method")}
-              className="w-full px-4 py-2.5 bg-white/60 border border-white/40 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
+              className="w-full px-4 py-2.5 bg-white/60 border border-white/40 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
             >
               <option value="cash">Cash</option>
               <option value="mobile_money">Mobile Money</option>
@@ -136,7 +136,7 @@ function TransactionForm() {
             <input
               type="date"
               {...register("date")}
-              className="w-full px-4 py-2.5 bg-white/60 border border-white/40 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
+              className="w-full px-4 py-2.5 bg-white/60 border border-white/40 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
             />
           </div>
           <div className="md:col-span-2">
@@ -145,18 +145,18 @@ function TransactionForm() {
               rows={3}
               {...register("description")}
               placeholder="Optional description..."
-              className="w-full px-4 py-2.5 bg-white/60 border border-white/40 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary resize-none"
+              className="w-full px-4 py-2.5 bg-white/60 border border-white/40 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary resize-none"
             />
           </div>
         </div>
       </div>
 
       <div className="flex items-center justify-end gap-3 p-6">
-        <Link href="/admin/transactions" className="px-6 py-2.5 text-sm font-medium text-text-muted border border-border rounded-xl hover:bg-surface-alt">Cancel</Link>
+        <Link href="/admin/transactions" className="px-6 py-2.5 text-sm font-medium text-text-muted border border-border rounded-lg hover:bg-surface-alt">Cancel</Link>
         <button
           type="submit"
           disabled={isSubmitting || createTransaction.isPending}
-          className="inline-flex items-center gap-2 px-6 py-2.5 text-sm font-medium text-white bg-primary rounded-xl hover:bg-primary-dark transition-colors disabled:opacity-50"
+          className="inline-flex items-center gap-2 px-6 py-2.5 text-sm font-medium text-white bg-primary rounded-lg hover:bg-primary-dark transition-colors disabled:opacity-50"
         >
           {isSubmitting || createTransaction.isPending ? (
             <Loader2 className="w-4 h-4 animate-spin" />
@@ -174,7 +174,7 @@ export default function CreateTransactionPage() {
   return (
     <div className="space-y-6">
       <div className="flex items-center gap-4">
-        <Link href="/admin/transactions" className="p-2 hover:bg-white rounded-xl border border-border">
+        <Link href="/admin/transactions" className="p-2 hover:bg-white rounded-lg border border-border">
           <ArrowLeft className="w-5 h-5 text-text-muted" />
         </Link>
         <div>
@@ -182,7 +182,7 @@ export default function CreateTransactionPage() {
           <p className="text-text-muted text-sm">Create a new deposit, withdrawal, or transfer</p>
         </div>
       </div>
-      <Suspense fallback={<div className="glass-card rounded-2xl p-12 text-center text-text-muted">Loading...</div>}>
+      <Suspense fallback={<div className="glass-card rounded-xl p-12 text-center text-text-muted">Loading...</div>}>
         <TransactionForm />
       </Suspense>
     </div>

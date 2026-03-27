@@ -81,7 +81,7 @@ export default function ReportsPage() {
   return (
     <div className="space-y-6">
       <div className="flex items-center gap-3">
-        <div className="w-10 h-10 rounded-xl bg-info/10 flex items-center justify-center">
+        <div className="w-10 h-10 rounded-lg bg-info/10 flex items-center justify-center">
           <BarChart3 className="w-5 h-5 text-info" />
         </div>
         <div>
@@ -92,8 +92,8 @@ export default function ReportsPage() {
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
         {reports.map((report) => (
-          <Link key={report.title} href={report.href} className="group glass-card rounded-2xl p-6 hover:shadow-lg hover:border-primary/20 transition-all hover:-translate-y-0.5">
-            <div className={`w-12 h-12 rounded-2xl flex items-center justify-center mb-4 ${colorMap[report.color]}`}>
+          <Link key={report.title} href={report.href} className="group glass-card rounded-xl p-6 hover:shadow-lg hover:border-primary/20 transition-all hover:-translate-y-0.5">
+            <div className={`w-12 h-12 rounded-xl flex items-center justify-center mb-4 ${colorMap[report.color]}`}>
               <report.icon className="w-6 h-6" />
             </div>
             <h3 className="font-semibold text-text mb-1 group-hover:text-primary transition-colors">{report.title}</h3>
@@ -103,7 +103,7 @@ export default function ReportsPage() {
       </div>
 
       {/* Quick Report Generator */}
-      <div className="glass-card rounded-2xl p-6">
+      <div className="glass-card rounded-xl p-6">
         <h3 className="text-base font-semibold text-text mb-4">Quick Report Generator</h3>
         <div className="flex flex-wrap gap-2 mb-4">
           {datePresets.map((preset) => (
@@ -133,7 +133,7 @@ export default function ReportsPage() {
             <select
               value={reportType}
               onChange={(e) => setReportType(e.target.value)}
-              className="w-full px-4 py-2.5 bg-white/60 border border-white/40 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
+              className="w-full px-4 py-2.5 bg-white/60 border border-white/40 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
             >
               <option value="statement">Account Statement</option>
               <option value="transactions">Transaction Report</option>
@@ -148,7 +148,7 @@ export default function ReportsPage() {
               type="date"
               value={dateFrom}
               onChange={(e) => setDateFrom(e.target.value)}
-              className="w-full px-4 py-2.5 bg-white/60 border border-white/40 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
+              className="w-full px-4 py-2.5 bg-white/60 border border-white/40 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
             />
           </div>
           <div>
@@ -157,14 +157,14 @@ export default function ReportsPage() {
               type="date"
               value={dateTo}
               onChange={(e) => setDateTo(e.target.value)}
-              className="w-full px-4 py-2.5 bg-white/60 border border-white/40 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
+              className="w-full px-4 py-2.5 bg-white/60 border border-white/40 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
             />
           </div>
           <div className="flex items-end">
             <button
               onClick={handleGenerate}
               disabled={generating}
-              className="w-full px-6 py-2.5 text-sm font-medium text-white bg-primary rounded-xl hover:bg-primary-dark transition-colors disabled:opacity-50 inline-flex items-center justify-center gap-2"
+              className="w-full px-6 py-2.5 text-sm font-medium text-white bg-primary rounded-lg hover:bg-primary-dark transition-colors disabled:opacity-50 inline-flex items-center justify-center gap-2"
             >
               {generating ? (
                 <Loader2 className="w-4 h-4 animate-spin" />
@@ -177,7 +177,7 @@ export default function ReportsPage() {
 
       {/* Report Results */}
       {result && (
-        <div className="glass-card rounded-2xl">
+        <div className="glass-card rounded-xl">
           <div className="p-6 border-b border-border/50 flex items-center justify-between">
             <div>
               <h3 className="text-base font-semibold text-text capitalize">{result.type?.replace(/-/g, " ")} Report</h3>

@@ -17,7 +17,7 @@ export default function AuthLayout({ children }: { children: React.ReactNode }) 
             </div>
 
             {/* Brand text on a frosted pill for maximum readability */}
-            <div className="bg-white/90 dark:bg-gray-900/90 backdrop-blur-md rounded-2xl px-8 py-4 shadow-lg ring-1 ring-black/5 dark:ring-white/10">
+            <div className="bg-white/90 dark:bg-gray-900/90 backdrop-blur-md rounded-xl px-8 py-4 shadow-lg ring-1 ring-black/5 dark:ring-white/10">
               <span className="text-3xl sm:text-4xl font-extrabold tracking-tight block">
                 <span className="text-primary text-4xl sm:text-5xl font-black">IFFE</span>{" "}
                 <span className="text-gray-900 dark:text-white font-extrabold">SACCO</span>

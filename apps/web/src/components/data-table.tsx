@@ -110,7 +110,7 @@ export function DataTable<T extends Record<string, any>>({
   // Loading state
   if (isLoading) {
     return (
-      <div className="glass-card rounded-2xl">
+      <div className="glass-card rounded-xl">
         <div className="p-6 border-b border-border/50 flex items-center justify-between">
           <div className="space-y-2"><Skeleton className="h-5 w-32" /><Skeleton className="h-3 w-48" /></div>
           <Skeleton className="h-9 w-64" />
@@ -131,14 +131,14 @@ export function DataTable<T extends Record<string, any>>({
   // Error state
   if (error) {
     return (
-      <div className="glass-card rounded-2xl p-12 text-center">
-        <div className="w-14 h-14 rounded-2xl bg-danger/10 flex items-center justify-center mx-auto mb-4">
+      <div className="glass-card rounded-xl p-12 text-center">
+        <div className="w-14 h-14 rounded-xl bg-danger/10 flex items-center justify-center mx-auto mb-4">
           <AlertTriangle className="w-7 h-7 text-danger" />
         </div>
         <h3 className="text-lg font-semibold text-text mb-1">Failed to load data</h3>
         <p className="text-sm text-text-muted mb-4">{error.message}</p>
         {onRetry && (
-          <button onClick={onRetry} className="inline-flex items-center gap-2 px-5 py-2.5 text-sm font-medium text-white bg-primary rounded-xl hover:bg-primary-dark">
+          <button onClick={onRetry} className="inline-flex items-center gap-2 px-5 py-2.5 text-sm font-medium text-white bg-primary rounded-lg hover:bg-primary-dark">
             <RefreshCw className="w-4 h-4" /> Try Again
           </button>
         )}
@@ -147,7 +147,7 @@ export function DataTable<T extends Record<string, any>>({
   }
 
   return (
-    <div className="glass-card rounded-2xl">
+    <div className="glass-card rounded-xl">
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-4 lg:p-6 border-b border-border/50">
         <div>
@@ -162,18 +162,18 @@ export function DataTable<T extends Record<string, any>>({
               placeholder={searchPlaceholder}
               value={search}
               onChange={(e) => { setSearch(e.target.value); setPage(1); }}
-              className="pl-10 pr-4 py-2 bg-white/60 dark:bg-white/5 border border-white/40 dark:border-white/10 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary w-48 lg:w-64"
+              className="pl-10 pr-4 py-2 bg-white/60 dark:bg-white/5 border border-white/40 dark:border-white/10 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary w-48 lg:w-64"
             />
           </div>
           <button
             onClick={() => exportToCSV(filtered, columns, title.toLowerCase().replace(/\s+/g, "-"))}
-            className="p-2 text-text-muted hover:text-text border border-border/50 rounded-xl hover:bg-surface-hover"
+            className="p-2 text-text-muted hover:text-text border border-border/50 rounded-lg hover:bg-surface-hover"
             title="Export CSV"
           >
             <FileSpreadsheet className="w-4 h-4" />
           </button>
           {addHref && (
-            <Link href={addHref} className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-white bg-gradient-to-r from-primary to-primary-dark rounded-xl hover:shadow-lg hover:shadow-primary/20">
+            <Link href={addHref} className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-white bg-gradient-to-r from-primary to-primary-dark rounded-lg hover:shadow-lg hover:shadow-primary/20">
               <Plus className="w-4 h-4" /> {addLabel}
             </Link>
           )}
@@ -217,7 +217,7 @@ export function DataTable<T extends Record<string, any>>({
               <tr>
                 <td colSpan={columns.length} className="px-6 py-16 text-center">
                   <div className="flex flex-col items-center gap-3">
-                    <div className="w-14 h-14 rounded-2xl bg-surface-alt flex items-center justify-center">
+                    <div className="w-14 h-14 rounded-xl bg-surface-alt flex items-center justify-center">
                       <Inbox className="w-7 h-7 text-text-light" />
                     </div>
                     <p className="text-text-muted font-medium">{emptyMessage}</p>

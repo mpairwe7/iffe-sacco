@@ -80,7 +80,7 @@ export default function ProfilePage() {
   return (
     <div className="space-y-6">
       <div className="flex items-center gap-3">
-        <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center">
+        <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center">
           <User className="w-5 h-5 text-primary" />
         </div>
         <div>
@@ -90,7 +90,7 @@ export default function ProfilePage() {
       </div>
 
       <div className="max-w-2xl">
-        <form onSubmit={handleSubmit(onSubmit)} className="glass-card rounded-2xl">
+        <form onSubmit={handleSubmit(onSubmit)} className="glass-card rounded-xl">
           <div className="p-6 border-b border-border">
             <div className="flex items-center gap-6">
               <div className="relative">
@@ -114,7 +114,7 @@ export default function ProfilePage() {
               <input
                 type="text"
                 {...register("name")}
-                className="w-full px-4 py-2.5 bg-white/60 border border-white/40 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
+                className="w-full px-4 py-2.5 bg-white/60 border border-white/40 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
               />
               {errors.name && <p className="text-xs text-danger mt-1">{errors.name.message}</p>}
             </div>
@@ -123,7 +123,7 @@ export default function ProfilePage() {
               <input
                 type="email"
                 {...register("email")}
-                className="w-full px-4 py-2.5 bg-white/60 border border-white/40 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
+                className="w-full px-4 py-2.5 bg-white/60 border border-white/40 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
               />
               {errors.email && <p className="text-xs text-danger mt-1">{errors.email.message}</p>}
             </div>
@@ -132,7 +132,7 @@ export default function ProfilePage() {
               <input
                 type="tel"
                 {...register("phone")}
-                className="w-full px-4 py-2.5 bg-white/60 border border-white/40 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
+                className="w-full px-4 py-2.5 bg-white/60 border border-white/40 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
               />
               {errors.phone && <p className="text-xs text-danger mt-1">{errors.phone.message}</p>}
             </div>
@@ -142,7 +142,7 @@ export default function ProfilePage() {
             <button
               type="submit"
               disabled={isSubmitting || updateProfile.isPending}
-              className="inline-flex items-center gap-2 px-6 py-2.5 text-sm font-medium text-white bg-primary rounded-xl hover:bg-primary-dark transition-colors disabled:opacity-50"
+              className="inline-flex items-center gap-2 px-6 py-2.5 text-sm font-medium text-white bg-primary rounded-lg hover:bg-primary-dark transition-colors disabled:opacity-50"
             >
               {isSubmitting || updateProfile.isPending ? (
                 <Loader2 className="w-4 h-4 animate-spin" />

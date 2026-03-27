@@ -84,7 +84,7 @@ export default function InterestCalculationPage() {
   return (
     <div className="space-y-6">
       <div className="flex items-center gap-3">
-        <div className="w-10 h-10 rounded-xl bg-info/10 flex items-center justify-center">
+        <div className="w-10 h-10 rounded-lg bg-info/10 flex items-center justify-center">
           <Calculator className="w-5 h-5 text-info" />
         </div>
         <div>
@@ -93,20 +93,20 @@ export default function InterestCalculationPage() {
         </div>
       </div>
 
-      <div className="bg-info/5 border border-info/20 rounded-2xl p-4 flex items-center gap-3">
+      <div className="bg-info/5 border border-info/20 rounded-xl p-4 flex items-center gap-3">
         <Calculator className="w-5 h-5 text-info shrink-0" />
         <p className="text-sm text-text-muted">Calculation process may take longer depending on member count.</p>
       </div>
 
       <div className="max-w-2xl">
-        <form onSubmit={handlePreview} className="glass-card rounded-2xl p-6 space-y-5">
+        <form onSubmit={handlePreview} className="glass-card rounded-xl p-6 space-y-5">
           <h3 className="font-semibold text-text">Calculate Interest</h3>
           <div>
             <label className="block text-sm font-medium text-text mb-2">Account Type</label>
             <select
               value={accountType}
               onChange={(e) => handleAccountTypeChange(e.target.value)}
-              className="w-full px-4 py-2.5 bg-white/60 border border-white/40 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
+              className="w-full px-4 py-2.5 bg-white/60 border border-white/40 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
             >
               <option value="">Select Account Type</option>
               <option value="savings">Savings (UGX) - 12% p.a.</option>
@@ -121,7 +121,7 @@ export default function InterestCalculationPage() {
                 type="date"
                 value={startDate}
                 onChange={(e) => setStartDate(e.target.value)}
-                className="w-full px-4 py-2.5 bg-white/60 border border-white/40 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
+                className="w-full px-4 py-2.5 bg-white/60 border border-white/40 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
               />
             </div>
             <div>
@@ -130,7 +130,7 @@ export default function InterestCalculationPage() {
                 type="date"
                 value={endDate}
                 onChange={(e) => setEndDate(e.target.value)}
-                className="w-full px-4 py-2.5 bg-white/60 border border-white/40 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
+                className="w-full px-4 py-2.5 bg-white/60 border border-white/40 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
               />
             </div>
           </div>
@@ -140,7 +140,7 @@ export default function InterestCalculationPage() {
               type="datetime-local"
               value={postingDate}
               onChange={(e) => setPostingDate(e.target.value)}
-              className="w-full px-4 py-2.5 bg-white/60 border border-white/40 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
+              className="w-full px-4 py-2.5 bg-white/60 border border-white/40 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
             />
           </div>
           <div>
@@ -150,14 +150,14 @@ export default function InterestCalculationPage() {
               readOnly
               value={interestRate ? `${interestRate}%` : ""}
               placeholder="Auto-filled from account type"
-              className="w-full px-4 py-2.5 bg-white/60 border border-white/40 rounded-xl text-sm text-text-muted"
+              className="w-full px-4 py-2.5 bg-white/60 border border-white/40 rounded-lg text-sm text-text-muted"
             />
           </div>
           <div className="flex items-center gap-3">
             <button
               type="submit"
               disabled={previewLoading}
-              className="inline-flex items-center gap-2 px-6 py-2.5 text-sm font-medium text-text border border-border rounded-xl hover:bg-surface-hover transition-colors disabled:opacity-50"
+              className="inline-flex items-center gap-2 px-6 py-2.5 text-sm font-medium text-text border border-border rounded-lg hover:bg-surface-hover transition-colors disabled:opacity-50"
             >
               <Eye className="w-4 h-4" /> {previewLoading ? "Loading..." : "Preview"}
             </button>
@@ -165,7 +165,7 @@ export default function InterestCalculationPage() {
               type="button"
               onClick={handleCalculate}
               disabled={calculateLoading}
-              className="inline-flex items-center gap-2 px-6 py-2.5 text-sm font-medium text-white bg-primary rounded-xl hover:bg-primary-dark transition-colors disabled:opacity-50"
+              className="inline-flex items-center gap-2 px-6 py-2.5 text-sm font-medium text-white bg-primary rounded-lg hover:bg-primary-dark transition-colors disabled:opacity-50"
             >
               <Play className="w-4 h-4" /> {calculateLoading ? "Calculating..." : "Calculate Interest"}
             </button>
@@ -176,18 +176,18 @@ export default function InterestCalculationPage() {
       {preview && (
         <div className="max-w-2xl space-y-4">
           <div className="grid grid-cols-2 gap-4">
-            <div className="glass-card rounded-2xl p-5">
+            <div className="glass-card rounded-xl p-5">
               <p className="text-sm text-text-muted">Accounts Affected</p>
               <p className="text-2xl font-bold text-text mt-1">{preview.accountsAffected}</p>
             </div>
-            <div className="glass-card rounded-2xl p-5">
+            <div className="glass-card rounded-xl p-5">
               <p className="text-sm text-text-muted">Total Interest</p>
               <p className="text-2xl font-bold text-primary mt-1">{formatCurrency(preview.totalInterest)}</p>
             </div>
           </div>
 
           {preview.entries && preview.entries.length > 0 && (
-            <div className="glass-card rounded-2xl overflow-hidden">
+            <div className="glass-card rounded-xl overflow-hidden">
               <div className="p-4 border-b border-border/50">
                 <h3 className="font-semibold text-text">Preview Breakdown</h3>
               </div>

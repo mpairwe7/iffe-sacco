@@ -94,7 +94,7 @@ export default function BankAccountsPage() {
   return (
     <div className="space-y-6">
       <div className="flex items-center gap-3">
-        <div className="w-10 h-10 rounded-xl bg-info/10 flex items-center justify-center">
+        <div className="w-10 h-10 rounded-lg bg-info/10 flex items-center justify-center">
           <Building2 className="w-5 h-5 text-info" />
         </div>
         <div>
@@ -104,19 +104,19 @@ export default function BankAccountsPage() {
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-        <div className="glass-card rounded-2xl p-5">
+        <div className="glass-card rounded-xl p-5">
           <p className="text-sm text-text-muted">Total Bank Balance</p>
           <p className="text-2xl font-bold text-primary mt-1">
             {stats ? formatCurrency(Number(stats.totalBalance ?? 0)) : "\u2014"}
           </p>
         </div>
-        <div className="glass-card rounded-2xl p-5">
+        <div className="glass-card rounded-xl p-5">
           <p className="text-sm text-text-muted">Bank Accounts</p>
           <p className="text-2xl font-bold text-text mt-1">
             {stats ? String(stats.totalAccounts ?? 0) : "\u2014"}
           </p>
         </div>
-        <div className="glass-card rounded-2xl p-5">
+        <div className="glass-card rounded-xl p-5">
           <p className="text-sm text-text-muted">This Month Inflow</p>
           <p className="text-2xl font-bold text-success mt-1">
             {stats ? formatCurrency(Number(stats.monthlyInflow ?? 0)) : "\u2014"}

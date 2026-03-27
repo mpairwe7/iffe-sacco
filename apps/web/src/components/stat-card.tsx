@@ -21,7 +21,7 @@ const colorMap = {
 
 export function StatCard({ title, value, change, changeType = "positive", icon: Icon, color }: StatCardProps) {
   return (
-    <div role="status" aria-label={`${title}: ${value}`} className="glass-card rounded-2xl p-6 hover:-translate-y-0.5">
+    <div role="status" aria-label={`${title}: ${value}`} className="glass-card rounded-xl p-6 hover:-translate-y-0.5">
       <div className="flex items-start justify-between">
         <div>
           <p className="text-sm text-text-muted font-medium">{title}</p>
@@ -35,7 +35,7 @@ export function StatCard({ title, value, change, changeType = "positive", icon: 
             </p>
           )}
         </div>
-        <div className={cn("w-12 h-12 rounded-2xl flex items-center justify-center", colorMap[color])}>
+        <div className={cn("w-12 h-12 rounded-xl flex items-center justify-center", colorMap[color])}>
           <Icon className="w-6 h-6" />
         </div>
       </div>

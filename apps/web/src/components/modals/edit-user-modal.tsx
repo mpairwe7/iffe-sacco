@@ -60,7 +60,7 @@ export function EditUserModal({ open, onOpenChange, user }: Props) {
     <Dialog.Root open={open} onOpenChange={onOpenChange}>
       <Dialog.Portal>
         <Dialog.Overlay className="fixed inset-0 bg-black/40 backdrop-blur-sm z-50 data-[state=open]:animate-in data-[state=open]:fade-in data-[state=closed]:animate-out data-[state=closed]:fade-out" />
-        <Dialog.Content className="fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-lg glass-card rounded-3xl p-6 z-50 data-[state=open]:animate-in data-[state=open]:fade-in data-[state=open]:zoom-in-95 data-[state=open]:slide-in-from-left-1/2 data-[state=open]:slide-in-from-top-[48%]">
+        <Dialog.Content className="fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-lg glass-card rounded-xl p-6 z-50 data-[state=open]:animate-in data-[state=open]:fade-in data-[state=open]:zoom-in-95 data-[state=open]:slide-in-from-left-1/2 data-[state=open]:slide-in-from-top-[48%]">
           <div className="flex items-center justify-between mb-6">
             <Dialog.Title className="text-lg font-semibold text-text">
               Edit User
@@ -79,7 +79,7 @@ export function EditUserModal({ open, onOpenChange, user }: Props) {
                 type="text"
                 {...register("name")}
                 className={cn(
-                  "w-full px-4 py-2.5 bg-white/60 border border-white/40 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary",
+                  "w-full px-4 py-2.5 bg-white/60 border border-white/40 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary",
                   errors.name && "border-danger/50 focus:ring-danger/20 focus:border-danger"
                 )}
                 placeholder="Full name"
@@ -95,7 +95,7 @@ export function EditUserModal({ open, onOpenChange, user }: Props) {
                 type="email"
                 {...register("email")}
                 className={cn(
-                  "w-full px-4 py-2.5 bg-white/60 border border-white/40 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary",
+                  "w-full px-4 py-2.5 bg-white/60 border border-white/40 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary",
                   errors.email && "border-danger/50 focus:ring-danger/20 focus:border-danger"
                 )}
                 placeholder="user@example.com"
@@ -110,7 +110,7 @@ export function EditUserModal({ open, onOpenChange, user }: Props) {
               <input
                 type="tel"
                 {...register("phone")}
-                className="w-full px-4 py-2.5 bg-white/60 border border-white/40 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
+                className="w-full px-4 py-2.5 bg-white/60 border border-white/40 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
                 placeholder="+256 700 000 000"
               />
             </div>
@@ -120,7 +120,7 @@ export function EditUserModal({ open, onOpenChange, user }: Props) {
               <select
                 {...register("role")}
                 className={cn(
-                  "w-full px-4 py-2.5 bg-white/60 border border-white/40 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary",
+                  "w-full px-4 py-2.5 bg-white/60 border border-white/40 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary",
                   errors.role && "border-danger/50 focus:ring-danger/20 focus:border-danger"
                 )}
               >
@@ -138,7 +138,7 @@ export function EditUserModal({ open, onOpenChange, user }: Props) {
               <Dialog.Close asChild>
                 <button
                   type="button"
-                  className="px-5 py-2.5 text-sm font-medium text-text-muted border border-border rounded-xl hover:bg-surface-hover"
+                  className="px-5 py-2.5 text-sm font-medium text-text-muted border border-border rounded-lg hover:bg-surface-hover"
                 >
                   Cancel
                 </button>
@@ -146,7 +146,7 @@ export function EditUserModal({ open, onOpenChange, user }: Props) {
               <button
                 type="submit"
                 disabled={updateUser.isPending}
-                className="px-5 py-2.5 text-sm font-semibold text-white bg-primary rounded-xl hover:bg-primary-dark disabled:opacity-50"
+                className="px-5 py-2.5 text-sm font-semibold text-white bg-primary rounded-lg hover:bg-primary-dark disabled:opacity-50"
               >
                 {updateUser.isPending ? "Saving..." : "Save Changes"}
               </button>

@@ -20,7 +20,7 @@ export default function MemberSavingsPage() {
   return (
     <div className="space-y-6">
       <div className="flex items-center gap-3">
-        <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center">
+        <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center">
           <Wallet className="w-5 h-5 text-primary" />
         </div>
         <div>
@@ -52,7 +52,7 @@ export default function MemberSavingsPage() {
       ) : (
         <div className="grid md:grid-cols-2 gap-6">
           {accounts.map((acc) => (
-            <div key={acc.id} className="glass-card rounded-2xl p-6">
+            <div key={acc.id} className="glass-card rounded-xl p-6">
               <div className="flex items-center justify-between mb-4">
                 <div>
                   <h3 className="font-semibold text-text">{acc.type.replace("_", " ").replace(/\b\w/g, (c) => c.toUpperCase())}</h3>
@@ -65,17 +65,17 @@ export default function MemberSavingsPage() {
               <div className="text-3xl font-bold text-text mb-2">{formatCurrency(acc.balance)}</div>
               <p className="text-sm text-text-muted">Interest Rate: {acc.interestRate}% p.a.</p>
               <div className="flex gap-3 mt-4">
-                <Link href="/portal/deposits" className="flex-1 inline-flex items-center justify-center gap-2 px-4 py-2.5 text-sm font-medium text-white bg-primary rounded-xl hover:bg-primary-dark">
+                <Link href="/portal/deposits" className="flex-1 inline-flex items-center justify-center gap-2 px-4 py-2.5 text-sm font-medium text-white bg-primary rounded-lg hover:bg-primary-dark">
                   <ArrowDownToLine className="w-4 h-4" /> Deposit
                 </Link>
-                <Link href="/portal/withdrawals" className="flex-1 inline-flex items-center justify-center gap-2 px-4 py-2.5 text-sm font-medium text-text border border-border rounded-xl hover:bg-surface-alt">
+                <Link href="/portal/withdrawals" className="flex-1 inline-flex items-center justify-center gap-2 px-4 py-2.5 text-sm font-medium text-text border border-border rounded-lg hover:bg-surface-alt">
                   <ArrowUpFromLine className="w-4 h-4" /> Withdraw
                 </Link>
               </div>
             </div>
           ))}
           {accounts.length === 0 && (
-            <div className="glass-card rounded-2xl p-6 text-center col-span-full">
+            <div className="glass-card rounded-xl p-6 text-center col-span-full">
               <p className="text-text-muted">No savings accounts found.</p>
             </div>
           )}
@@ -83,7 +83,7 @@ export default function MemberSavingsPage() {
       )}
 
       {/* Recent Activity */}
-      <div className="glass-card rounded-2xl">
+      <div className="glass-card rounded-xl">
         <div className="p-6 border-b border-border">
           <h3 className="text-base font-semibold text-text">Recent Activity</h3>
         </div>

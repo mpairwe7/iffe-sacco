@@ -35,7 +35,7 @@ export default function LoginPage() {
 
   return (
     <div className="max-w-md mx-auto w-full">
-      <div className="glass-card rounded-3xl p-8 shadow-xl">
+      <div className="glass-card rounded-xl p-8 shadow-xl">
         <h2 className="text-2xl font-bold text-text text-center">Welcome Back</h2>
         <p className="text-text-muted text-center mt-2 mb-8">Sign in to your account</p>
 
@@ -51,7 +51,7 @@ export default function LoginPage() {
                 autoComplete="email"
                 {...register("email")}
                 aria-invalid={!!errors.email}
-                className={`w-full pl-12 pr-4 py-3.5 bg-white/60 dark:bg-white/5 border rounded-xl text-sm text-text placeholder:text-text-light focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary focus:bg-white/80 dark:focus:bg-white/10 ${errors.email ? "border-danger" : "border-white/40 dark:border-white/10"}`}
+                className={`w-full pl-12 pr-4 py-3.5 bg-white/60 dark:bg-white/5 border rounded-lg text-sm text-text placeholder:text-text-light focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary focus:bg-white/80 dark:focus:bg-white/10 ${errors.email ? "border-danger" : "border-white/40 dark:border-white/10"}`}
               />
             </div>
             {errors.email && <p className="text-xs text-danger mt-1.5" role="alert">{errors.email.message}</p>}
@@ -68,7 +68,7 @@ export default function LoginPage() {
                 autoComplete="current-password"
                 {...register("password")}
                 aria-invalid={!!errors.password}
-                className={`w-full pl-12 pr-12 py-3.5 bg-white/60 dark:bg-white/5 border rounded-xl text-sm text-text placeholder:text-text-light focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary focus:bg-white/80 dark:focus:bg-white/10 ${errors.password ? "border-danger" : "border-white/40 dark:border-white/10"}`}
+                className={`w-full pl-12 pr-12 py-3.5 bg-white/60 dark:bg-white/5 border rounded-lg text-sm text-text placeholder:text-text-light focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary focus:bg-white/80 dark:focus:bg-white/10 ${errors.password ? "border-danger" : "border-white/40 dark:border-white/10"}`}
               />
               <button
                 type="button"
@@ -95,7 +95,7 @@ export default function LoginPage() {
           <button
             type="submit"
             disabled={login.isPending}
-            className="w-full flex items-center justify-center gap-2 px-6 py-3.5 text-base font-semibold text-white bg-gradient-to-r from-primary to-primary-dark rounded-xl hover:shadow-xl hover:shadow-primary/30 hover:-translate-y-0.5 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:translate-y-0 disabled:hover:shadow-none"
+            className="w-full flex items-center justify-center gap-2 px-6 py-3.5 text-base font-semibold text-white bg-gradient-to-r from-primary to-primary-dark rounded-lg hover:shadow-xl hover:shadow-primary/30 hover:-translate-y-0.5 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:translate-y-0 disabled:hover:shadow-none"
           >
             {login.isPending ? (
               <><Loader2 className="w-5 h-5 animate-spin" /> Signing in...</>

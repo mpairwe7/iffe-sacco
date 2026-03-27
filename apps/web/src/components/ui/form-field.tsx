@@ -26,7 +26,7 @@ export const FormField = forwardRef<HTMLInputElement, FormFieldProps>(
             aria-invalid={!!error}
             aria-describedby={error ? `${props.name}-error` : undefined}
             className={cn(
-              "w-full py-3 bg-white/60 dark:bg-white/5 border rounded-xl text-sm text-text placeholder:text-text-light focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary focus:bg-white/80 dark:focus:bg-white/10",
+              "w-full py-3 bg-white/60 dark:bg-white/5 border rounded-lg text-sm text-text placeholder:text-text-light focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary focus:bg-white/80 dark:focus:bg-white/10",
               Icon ? "pl-12 pr-4" : "px-4",
               error ? "border-danger focus:ring-danger/20" : "border-white/40 dark:border-white/10",
               className

@@ -28,7 +28,7 @@ export function Providers({ children }: { children: React.ReactNode }) {
           <Toaster
             position="top-right"
             toastOptions={{
-              className: "glass-strong !rounded-xl !border-white/30 !shadow-xl",
+              className: "glass-strong !rounded-lg !border-white/30 !shadow-xl",
               duration: 4000,
             }}
             richColors

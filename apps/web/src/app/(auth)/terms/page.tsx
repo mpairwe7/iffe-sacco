@@ -5,7 +5,7 @@ export const metadata = { title: "Terms of Service" };
 
 export default function TermsPage() {
   return (
-    <div className="glass-card rounded-3xl p-8 shadow-xl max-h-[70vh] overflow-y-auto">
+    <div className="glass-card rounded-xl p-8 shadow-xl max-h-[70vh] overflow-y-auto">
       <Link href="/register" className="inline-flex items-center gap-2 text-sm text-text-muted hover:text-primary mb-4">
         <ArrowLeft className="w-4 h-4" /> Back to Register
       </Link>

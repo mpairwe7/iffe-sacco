@@ -99,7 +99,7 @@ export function DashboardHeader({ onToggleSidebar }: DashboardHeaderProps) {
       <div className="hidden md:flex flex-1 max-w-xl">
         <button
           onClick={() => setCommandPaletteOpen(true)}
-          className="w-full flex items-center gap-3 pl-4 pr-3 py-2.5 bg-gray-100 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl text-sm hover:border-primary/50 hover:bg-gray-50 dark:hover:bg-gray-800 hover:shadow-sm transition-all"
+          className="w-full flex items-center gap-3 pl-4 pr-3 py-2.5 bg-gray-100 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-lg text-sm hover:border-primary/50 hover:bg-gray-50 dark:hover:bg-gray-800 hover:shadow-sm transition-all"
         >
           <Search className="w-4 h-4 shrink-0 text-gray-400" />
           <span className="flex-1 text-left truncate text-gray-500 dark:text-gray-400 font-medium">Search members, transactions...</span>
@@ -166,7 +166,7 @@ export function DashboardHeader({ onToggleSidebar }: DashboardHeaderProps) {
 
           {/* Notification dropdown panel */}
           {notifOpen && (
-            <div className="absolute right-0 top-full mt-2 w-80 sm:w-96 bg-white dark:bg-gray-950 border border-gray-200 dark:border-gray-800 rounded-xl shadow-2xl z-50 overflow-hidden">
+            <div className="absolute right-0 top-full mt-2 w-80 sm:w-96 bg-white dark:bg-gray-950 border border-gray-200 dark:border-gray-800 rounded-lg shadow-2xl z-50 overflow-hidden">
               <div className="flex items-center justify-between px-4 py-3 border-b border-gray-200 dark:border-gray-800">
                 <h3 className="text-sm font-semibold text-text">Notifications</h3>
                 <div className="flex items-center gap-2">
@@ -252,7 +252,7 @@ export function DashboardHeader({ onToggleSidebar }: DashboardHeaderProps) {
 
           {/* Profile dropdown */}
           {profileOpen && (
-            <div className="absolute right-0 top-full mt-2 w-64 bg-white dark:bg-gray-950 border border-gray-200 dark:border-gray-800 rounded-xl shadow-2xl z-50 overflow-hidden">
+            <div className="absolute right-0 top-full mt-2 w-64 bg-white dark:bg-gray-950 border border-gray-200 dark:border-gray-800 rounded-lg shadow-2xl z-50 overflow-hidden">
               <div className="px-4 py-3 border-b border-gray-200 dark:border-gray-800">
                 <p className="text-sm font-bold text-gray-900 dark:text-white">{user?.name || "User"}</p>
                 <p className="text-xs text-gray-500 truncate">{user?.email || ""}</p>

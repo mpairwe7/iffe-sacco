@@ -6,7 +6,7 @@ export function Skeleton({ className = "" }: { className?: string }) {
 
 export function StatSkeleton() {
   return (
-    <div className="glass-card rounded-2xl p-6 space-y-3">
+    <div className="glass-card rounded-xl p-6 space-y-3">
       <Skeleton className="h-4 w-24" />
       <Skeleton className="h-8 w-32" />
       <Skeleton className="h-3 w-20" />
@@ -16,7 +16,7 @@ export function StatSkeleton() {
 
 export function TableSkeleton({ rows = 5, cols = 5 }: { rows?: number; cols?: number }) {
   return (
-    <div className="glass-card rounded-2xl">
+    <div className="glass-card rounded-xl">
       <div className="p-6 border-b border-border/50 flex items-center justify-between">
         <div className="space-y-2">
           <Skeleton className="h-5 w-32" />
@@ -48,9 +48,9 @@ export function TableSkeleton({ rows = 5, cols = 5 }: { rows?: number; cols?: nu
 
 export function CardSkeleton() {
   return (
-    <div className="glass-card rounded-2xl p-6 space-y-4">
+    <div className="glass-card rounded-xl p-6 space-y-4">
       <div className="flex items-center gap-4">
-        <Skeleton className="w-12 h-12 rounded-2xl" />
+        <Skeleton className="w-12 h-12 rounded-xl" />
         <div className="space-y-2 flex-1">
           <Skeleton className="h-4 w-32" />
           <Skeleton className="h-3 w-24" />

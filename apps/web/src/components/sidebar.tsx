@@ -232,7 +232,7 @@ export function Sidebar({ open, onClose }: SidebarProps) {
 
         {/* User profile card */}
         <div className="px-4 py-4 border-b border-gray-800">
-          <div className="flex items-center gap-3 bg-gray-900 rounded-xl px-3 py-3 ring-1 ring-gray-800">
+          <div className="flex items-center gap-3 bg-gray-900 rounded-lg px-3 py-3 ring-1 ring-gray-800">
             <div className="w-10 h-10 rounded-full bg-primary/20 ring-2 ring-primary/30 flex items-center justify-center shrink-0">
               <span className="text-sm font-black text-primary">{userInitials}</span>
             </div>
@@ -265,7 +265,7 @@ export function Sidebar({ open, onClose }: SidebarProps) {
                   <button
                     onClick={() => toggleExpand(item.label)}
                     className={cn(
-                      "w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-semibold transition-colors",
+                      "w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-semibold transition-colors",
                       hasActive
                         ? "text-white bg-gray-800"
                         : "text-gray-400 hover:text-white hover:bg-gray-800/60"
@@ -306,7 +306,7 @@ export function Sidebar({ open, onClose }: SidebarProps) {
                 href={item.href!}
                 onClick={onClose}
                 className={cn(
-                  "flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-semibold transition-colors",
+                  "flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-semibold transition-colors",
                   isActive(item.href!)
                     ? "text-white bg-primary shadow-md shadow-primary/20"
                     : "text-gray-400 hover:text-white hover:bg-gray-800/60"
@@ -321,7 +321,7 @@ export function Sidebar({ open, onClose }: SidebarProps) {
 
         {/* Help link */}
         <div className="px-3 pb-1">
-          <Link href="/portal/help" onClick={onClose} className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-gray-500 hover:text-white hover:bg-gray-800/60 transition-colors">
+          <Link href="/portal/help" onClick={onClose} className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-gray-500 hover:text-white hover:bg-gray-800/60 transition-colors">
             <HelpCircle className="w-5 h-5 shrink-0" />
             <span>Help & Support</span>
           </Link>
@@ -331,7 +331,7 @@ export function Sidebar({ open, onClose }: SidebarProps) {
         <div className="px-3 py-3 border-t border-gray-800">
           <button
             onClick={handleLogout}
-            className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-semibold text-gray-400 hover:text-danger hover:bg-danger/10 transition-colors"
+            className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-semibold text-gray-400 hover:text-danger hover:bg-danger/10 transition-colors"
           >
             <LogOut className="w-5 h-5" />
             <span>Sign out</span>

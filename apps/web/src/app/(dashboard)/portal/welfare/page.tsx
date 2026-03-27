@@ -53,7 +53,7 @@ export default function WelfarePage() {
   return (
     <div className="space-y-6">
       <div className="flex items-center gap-3">
-        <div className="w-10 h-10 rounded-xl bg-danger/10 flex items-center justify-center">
+        <div className="w-10 h-10 rounded-lg bg-danger/10 flex items-center justify-center">
           <Heart className="w-5 h-5 text-danger" />
         </div>
         <div>
@@ -70,15 +70,15 @@ export default function WelfarePage() {
         </div>
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-          <div className="glass-card rounded-2xl p-5">
+          <div className="glass-card rounded-xl p-5">
             <p className="text-sm text-text-muted">Active Programs</p>
             <p className="text-2xl font-bold text-text mt-1">{programs.filter((p) => p.status === "active").length}</p>
           </div>
-          <div className="glass-card rounded-2xl p-5">
+          <div className="glass-card rounded-xl p-5">
             <p className="text-sm text-text-muted">My Total Pledges</p>
             <p className="text-2xl font-bold text-primary mt-1">{formatCurrency(totalPledged)}</p>
           </div>
-          <div className="glass-card rounded-2xl p-5">
+          <div className="glass-card rounded-xl p-5">
             <p className="text-sm text-text-muted">Total Raised</p>
             <p className="text-2xl font-bold text-success mt-1">{formatCurrency(totalRaised)}</p>
           </div>
@@ -95,14 +95,14 @@ export default function WelfarePage() {
       ) : (
         <div className="grid md:grid-cols-2 gap-6">
           {programs.length === 0 ? (
-            <div className="glass-card rounded-2xl p-8 text-center col-span-full">
+            <div className="glass-card rounded-xl p-8 text-center col-span-full">
               <p className="text-text-muted">No welfare programs available at this time.</p>
             </div>
           ) : (
             programs.map((program) => {
               const progress = program.targetAmount > 0 ? (program.raisedAmount / program.targetAmount) * 100 : 0;
               return (
-                <div key={program.id} className="glass-card rounded-2xl p-6">
+                <div key={program.id} className="glass-card rounded-xl p-6">
                   <div className="flex items-center justify-between mb-3">
                     <h3 className="font-semibold text-text">{program.name}</h3>
                     <span className={`text-xs font-medium px-2.5 py-1 rounded-full ${
@@ -128,7 +128,7 @@ export default function WelfarePage() {
                   <button
                     onClick={() => openPledgeDialog(program.id)}
                     disabled={program.status !== "active"}
-                    className="w-full inline-flex items-center justify-center gap-2 px-4 py-2.5 text-sm font-medium text-white bg-primary rounded-xl hover:bg-primary-dark transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="w-full inline-flex items-center justify-center gap-2 px-4 py-2.5 text-sm font-medium text-white bg-primary rounded-lg hover:bg-primary-dark transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                   >
                     <Heart className="w-4 h-4" /> Make a Pledge
                   </button>
@@ -143,7 +143,7 @@ export default function WelfarePage() {
       {pledgeDialogOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center">
           <div className="absolute inset-0 bg-black/50" onClick={() => setPledgeDialogOpen(false)} />
-          <div className="relative glass-card rounded-2xl p-6 w-full max-w-md mx-4 space-y-4">
+          <div className="relative glass-card rounded-xl p-6 w-full max-w-md mx-4 space-y-4">
             <div className="flex items-center justify-between">
               <h3 className="text-lg font-semibold text-text">Make a Pledge</h3>
               <button onClick={() => setPledgeDialogOpen(false)} className="p-1 hover:bg-surface-alt rounded-lg">
@@ -162,20 +162,20 @@ export default function WelfarePage() {
                 placeholder="Enter amount (min 1,000)"
                 value={pledgeAmount}
                 onChange={(e) => setPledgeAmount(e.target.value)}
-                className="w-full px-4 py-2.5 bg-white/60 border border-white/40 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
+                className="w-full px-4 py-2.5 bg-white/60 border border-white/40 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
               />
             </div>
             <div className="flex gap-3">
               <button
                 onClick={() => setPledgeDialogOpen(false)}
-                className="flex-1 px-4 py-2.5 text-sm font-medium text-text border border-border rounded-xl hover:bg-surface-alt transition-colors"
+                className="flex-1 px-4 py-2.5 text-sm font-medium text-text border border-border rounded-lg hover:bg-surface-alt transition-colors"
               >
                 Cancel
               </button>
               <button
                 onClick={handlePledge}
                 disabled={pledging}
-                className="flex-1 inline-flex items-center justify-center gap-2 px-4 py-2.5 text-sm font-medium text-white bg-primary rounded-xl hover:bg-primary-dark transition-colors disabled:opacity-50"
+                className="flex-1 inline-flex items-center justify-center gap-2 px-4 py-2.5 text-sm font-medium text-white bg-primary rounded-lg hover:bg-primary-dark transition-colors disabled:opacity-50"
               >
                 {pledging ? <Loader2 className="w-4 h-4 animate-spin" /> : <Heart className="w-4 h-4" />}
                 Confirm Pledge

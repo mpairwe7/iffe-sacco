@@ -74,7 +74,7 @@ export default function ChairmanPage() {
     <div className="space-y-8">
       {/* Header */}
       <div className="flex items-center gap-3">
-        <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center">
+        <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center">
           <Shield className="w-5 h-5 text-primary" />
         </div>
         <div>
@@ -89,7 +89,7 @@ export default function ChairmanPage() {
       <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4 lg:gap-6">
         {statsQuery.isLoading ? (
           Array.from({ length: 4 }).map((_, i) => (
-            <div key={i} className="glass-card rounded-2xl p-6">
+            <div key={i} className="glass-card rounded-xl p-6">
               <Skeleton className="h-4 w-24 mb-2" />
               <Skeleton className="h-8 w-32" />
             </div>
@@ -140,7 +140,7 @@ export default function ChairmanPage() {
       {/* Main Content Grid */}
       <div className="grid lg:grid-cols-3 gap-6">
         {/* Expense Approval Section - Takes 2 columns */}
-        <div className="lg:col-span-2 glass-card rounded-2xl">
+        <div className="lg:col-span-2 glass-card rounded-xl">
           <div className="flex items-center justify-between p-6 border-b border-border/50">
             <div>
               <h3 className="text-base font-semibold text-text">
@@ -150,7 +150,7 @@ export default function ChairmanPage() {
                 Expenses requiring your approval
               </p>
             </div>
-            <div className="w-10 h-10 rounded-xl bg-warning/10 flex items-center justify-center">
+            <div className="w-10 h-10 rounded-lg bg-warning/10 flex items-center justify-center">
               <Receipt className="w-5 h-5 text-warning" />
             </div>
           </div>
@@ -169,7 +169,7 @@ export default function ChairmanPage() {
               ))
             ) : expenses.length === 0 ? (
               <div className="p-12 text-center">
-                <div className="w-14 h-14 rounded-2xl bg-success/10 flex items-center justify-center mx-auto mb-3">
+                <div className="w-14 h-14 rounded-xl bg-success/10 flex items-center justify-center mx-auto mb-3">
                   <Check className="w-7 h-7 text-success" />
                 </div>
                 <p className="text-text-muted font-medium">
@@ -229,7 +229,7 @@ export default function ChairmanPage() {
         </div>
 
         {/* Financial Summary */}
-        <div className="glass-card rounded-2xl p-6">
+        <div className="glass-card rounded-xl p-6">
           <div className="flex items-center gap-2 mb-6">
             <div className="w-8 h-8 rounded-lg bg-success/10 flex items-center justify-center">
               <Coins className="w-4 h-4 text-success" />
@@ -250,13 +250,13 @@ export default function ChairmanPage() {
             </div>
           ) : (
             <div className="space-y-4">
-              <div className="flex items-center justify-between p-3 rounded-xl bg-success/5">
+              <div className="flex items-center justify-between p-3 rounded-lg bg-success/5">
                 <span className="text-sm text-text-muted">Total Deposits</span>
                 <span className="text-sm font-semibold text-success">
                   {stats ? formatCurrency(Number(stats.totalDeposits)) : "\u2014"}
                 </span>
               </div>
-              <div className="flex items-center justify-between p-3 rounded-xl bg-warning/5">
+              <div className="flex items-center justify-between p-3 rounded-lg bg-warning/5">
                 <span className="text-sm text-text-muted">
                   Total Withdrawals
                 </span>
@@ -266,13 +266,13 @@ export default function ChairmanPage() {
                     : "\u2014"}
                 </span>
               </div>
-              <div className="flex items-center justify-between p-3 rounded-xl bg-info/5">
+              <div className="flex items-center justify-between p-3 rounded-lg bg-info/5">
                 <span className="text-sm text-text-muted">Total Savings</span>
                 <span className="text-sm font-semibold text-info">
                   {stats ? formatCurrency(Number(stats.totalSavings)) : "\u2014"}
                 </span>
               </div>
-              <div className="flex items-center justify-between p-3 rounded-xl bg-danger/5">
+              <div className="flex items-center justify-between p-3 rounded-lg bg-danger/5">
                 <span className="text-sm text-text-muted">Total Expenses</span>
                 <span className="text-sm font-semibold text-danger">
                   {stats
@@ -302,7 +302,7 @@ export default function ChairmanPage() {
       </div>
 
       {/* Recent Members */}
-      <div className="glass-card rounded-2xl">
+      <div className="glass-card rounded-xl">
         <div className="flex items-center justify-between p-6 border-b border-border/50">
           <div>
             <h3 className="text-base font-semibold text-text">
@@ -312,7 +312,7 @@ export default function ChairmanPage() {
               Newest SACCO members
             </p>
           </div>
-          <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center">
+          <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center">
             <Users className="w-5 h-5 text-primary" />
           </div>
         </div>

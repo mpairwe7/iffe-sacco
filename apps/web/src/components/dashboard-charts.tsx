@@ -101,7 +101,7 @@ export function DepositsWithdrawalsChart({ transactions }: ChartProps) {
     return [];
   }, [transactions]);
   return (
-    <div className="glass-card rounded-2xl p-6">
+    <div className="glass-card rounded-xl p-6">
       <h3 className="text-base font-semibold text-text mb-1">Deposits vs Withdrawals</h3>
       <p className="text-sm text-text-muted mb-6">Monthly comparison for the year</p>
       {monthlyData.length === 0 ? (
@@ -149,7 +149,7 @@ export function ExpenseChart({ expenses }: ChartProps) {
   }, [expenses]);
 
   return (
-    <div className="glass-card rounded-2xl p-6">
+    <div className="glass-card rounded-xl p-6">
       <h3 className="text-base font-semibold text-text mb-1">Expense Overview</h3>
       <p className="text-sm text-text-muted mb-6">Distribution by category</p>
       {expenseData.length === 0 ? (
@@ -187,7 +187,7 @@ export function LoanChart({ loans }: ChartProps) {
   }, [loans]);
 
   return (
-    <div className="glass-card rounded-2xl p-6">
+    <div className="glass-card rounded-xl p-6">
       <h3 className="text-base font-semibold text-text mb-1">Loan Activity</h3>
       <p className="text-sm text-text-muted mb-6">Disbursements vs Repayments</p>
       {loanData.length === 0 ? (

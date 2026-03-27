@@ -36,7 +36,7 @@ export default function ChangePasswordPage() {
   return (
     <div className="space-y-6">
       <div className="flex items-center gap-3">
-        <div className="w-10 h-10 rounded-xl bg-warning/10 flex items-center justify-center">
+        <div className="w-10 h-10 rounded-lg bg-warning/10 flex items-center justify-center">
           <Lock className="w-5 h-5 text-warning" />
         </div>
         <div>
@@ -46,14 +46,14 @@ export default function ChangePasswordPage() {
       </div>
 
       <div className="max-w-lg">
-        <form onSubmit={handleSubmit(onSubmit)} className="glass-card rounded-2xl p-6 space-y-5">
+        <form onSubmit={handleSubmit(onSubmit)} className="glass-card rounded-xl p-6 space-y-5">
           <div>
             <label className="block text-sm font-medium text-text mb-2">Current Password</label>
             <input
               type="password"
               placeholder="Enter current password"
               {...register("currentPassword")}
-              className="w-full px-4 py-2.5 bg-white/60 border border-white/40 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
+              className="w-full px-4 py-2.5 bg-white/60 border border-white/40 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
             />
             {errors.currentPassword && <p className="text-xs text-danger mt-1">{errors.currentPassword.message}</p>}
           </div>
@@ -63,7 +63,7 @@ export default function ChangePasswordPage() {
               type="password"
               placeholder="Enter new password"
               {...register("newPassword")}
-              className="w-full px-4 py-2.5 bg-white/60 border border-white/40 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
+              className="w-full px-4 py-2.5 bg-white/60 border border-white/40 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
             />
             {errors.newPassword && <p className="text-xs text-danger mt-1">{errors.newPassword.message}</p>}
           </div>
@@ -73,11 +73,11 @@ export default function ChangePasswordPage() {
               type="password"
               placeholder="Confirm new password"
               {...register("confirmPassword")}
-              className="w-full px-4 py-2.5 bg-white/60 border border-white/40 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
+              className="w-full px-4 py-2.5 bg-white/60 border border-white/40 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
             />
             {errors.confirmPassword && <p className="text-xs text-danger mt-1">{errors.confirmPassword.message}</p>}
           </div>
-          <div className="bg-white/50 rounded-xl p-4">
+          <div className="bg-white/50 rounded-lg p-4">
             <p className="text-sm font-medium text-text mb-2">Password Requirements:</p>
             <ul className="text-xs text-text-muted space-y-1">
               <li>&#8226; Minimum 8 characters</li>
@@ -89,7 +89,7 @@ export default function ChangePasswordPage() {
           <button
             type="submit"
             disabled={isSubmitting || changePassword.isPending}
-            className="w-full inline-flex items-center justify-center gap-2 px-6 py-3 text-sm font-medium text-white bg-primary rounded-xl hover:bg-primary-dark transition-colors disabled:opacity-50"
+            className="w-full inline-flex items-center justify-center gap-2 px-6 py-3 text-sm font-medium text-white bg-primary rounded-lg hover:bg-primary-dark transition-colors disabled:opacity-50"
           >
             {isSubmitting || changePassword.isPending ? (
               <Loader2 className="w-4 h-4 animate-spin" />

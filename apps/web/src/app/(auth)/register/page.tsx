@@ -150,7 +150,7 @@ function CollapsibleSection({
 }) {
   const [open, setOpen] = useState(defaultOpen);
   return (
-    <div className="rounded-xl border border-white/30 dark:border-white/10 overflow-hidden">
+    <div className="rounded-lg border border-white/30 dark:border-white/10 overflow-hidden">
       <button
         type="button"
         onClick={() => setOpen(!open)}
@@ -250,7 +250,7 @@ function ParentFields({
             <label className="block text-sm font-medium text-text mb-2">If dead, died before or after joining?</label>
             <select
               {...register(`${prefix}.diedBeforeOrAfterJoining`)}
-              className="w-full px-4 py-3 bg-white/60 dark:bg-white/5 border border-white/40 dark:border-white/10 rounded-xl text-sm text-text focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
+              className="w-full px-4 py-3 bg-white/60 dark:bg-white/5 border border-white/40 dark:border-white/10 rounded-lg text-sm text-text focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
             >
               <option value="">Select...</option>
               <option value="before">Before joining</option>
@@ -394,7 +394,7 @@ export default function RegisterPage() {
   // ── Render ──────────────────────────────────────────────────────
   // ═════════════════════════════════════════════════════════════════
   return (
-    <div className="glass-card rounded-3xl p-6 sm:p-8 shadow-xl w-full max-w-2xl mx-auto">
+    <div className="glass-card rounded-xl p-6 sm:p-8 shadow-xl w-full max-w-2xl mx-auto">
       {/* Header */}
       <h2 className="text-2xl font-bold text-text text-center">Membership Application</h2>
       <p className="text-text-muted text-center mt-1 mb-6 text-sm">IBDA Member Bio Data Form</p>
@@ -475,7 +475,7 @@ export default function RegisterPage() {
                       <label className="block text-sm font-medium text-text mb-2">Sex</label>
                       <select
                         {...register("sex")}
-                        className="w-full px-4 py-3 bg-white/60 dark:bg-white/5 border border-white/40 dark:border-white/10 rounded-xl text-sm text-text focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
+                        className="w-full px-4 py-3 bg-white/60 dark:bg-white/5 border border-white/40 dark:border-white/10 rounded-lg text-sm text-text focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
                       >
                         <option value="">Select...</option>
                         <option value="male">Male</option>
@@ -520,7 +520,7 @@ export default function RegisterPage() {
                       {...register("qualifications")}
                       rows={5}
                       placeholder="List your educational qualifications, certificates, etc."
-                      className="w-full px-4 py-3 bg-white/60 dark:bg-white/5 border border-white/40 dark:border-white/10 rounded-xl text-sm text-text placeholder:text-text-light focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary resize-none"
+                      className="w-full px-4 py-3 bg-white/60 dark:bg-white/5 border border-white/40 dark:border-white/10 rounded-lg text-sm text-text placeholder:text-text-light focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary resize-none"
                     />
                   </div>
                 </div>
@@ -662,7 +662,7 @@ export default function RegisterPage() {
                   <div>
                     <label className="block text-sm font-medium text-text mb-2">Application Letter</label>
                     <div className="relative">
-                      <label className="flex flex-col items-center justify-center gap-2 py-6 px-4 border-2 border-dashed border-white/40 dark:border-white/15 rounded-xl cursor-pointer hover:bg-white/20 dark:hover:bg-white/5 transition-colors">
+                      <label className="flex flex-col items-center justify-center gap-2 py-6 px-4 border-2 border-dashed border-white/40 dark:border-white/15 rounded-lg cursor-pointer hover:bg-white/20 dark:hover:bg-white/5 transition-colors">
                         <Upload className="w-8 h-8 text-text-light" />
                         {selectedFileName ? (
                           <span className="text-sm text-primary font-medium">{selectedFileName}</span>
@@ -692,7 +692,7 @@ export default function RegisterPage() {
                           type={showPassword ? "text" : "password"}
                           placeholder="Min 8 characters"
                           {...register("password")}
-                          className={`w-full pl-12 pr-12 py-3 bg-white/60 dark:bg-white/5 border rounded-xl text-sm text-text placeholder:text-text-light focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary ${errors.password ? "border-danger" : "border-white/40 dark:border-white/10"}`}
+                          className={`w-full pl-12 pr-12 py-3 bg-white/60 dark:bg-white/5 border rounded-lg text-sm text-text placeholder:text-text-light focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary ${errors.password ? "border-danger" : "border-white/40 dark:border-white/10"}`}
                         />
                         <button
                           type="button"
@@ -715,7 +715,7 @@ export default function RegisterPage() {
                           type={showPassword ? "text" : "password"}
                           placeholder="Re-enter password"
                           {...register("confirmPassword")}
-                          className={`w-full pl-12 pr-4 py-3 bg-white/60 dark:bg-white/5 border rounded-xl text-sm text-text placeholder:text-text-light focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary ${errors.confirmPassword ? "border-danger" : "border-white/40 dark:border-white/10"}`}
+                          className={`w-full pl-12 pr-4 py-3 bg-white/60 dark:bg-white/5 border rounded-lg text-sm text-text placeholder:text-text-light focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary ${errors.confirmPassword ? "border-danger" : "border-white/40 dark:border-white/10"}`}
                         />
                       </div>
                       {errors.confirmPassword && <p className="text-xs text-danger mt-1.5" role="alert">{errors.confirmPassword.message}</p>}
@@ -741,7 +741,7 @@ export default function RegisterPage() {
                   </div>
 
                   {/* Reaffirmation */}
-                  <div className="glass-subtle rounded-xl p-4">
+                  <div className="glass-subtle rounded-lg p-4">
                     <label className="flex items-start gap-2 cursor-pointer">
                       <input
                         type="checkbox"
@@ -766,7 +766,7 @@ export default function RegisterPage() {
             <button
               type="button"
               onClick={goPrev}
-              className="flex items-center gap-2 px-5 py-2.5 text-sm font-medium text-text bg-white/50 dark:bg-white/5 border border-white/40 dark:border-white/10 rounded-xl hover:bg-white/70 dark:hover:bg-white/10"
+              className="flex items-center gap-2 px-5 py-2.5 text-sm font-medium text-text bg-white/50 dark:bg-white/5 border border-white/40 dark:border-white/10 rounded-lg hover:bg-white/70 dark:hover:bg-white/10"
             >
               <ArrowLeft className="w-4 h-4" /> Previous
             </button>
@@ -778,7 +778,7 @@ export default function RegisterPage() {
             <button
               type="button"
               onClick={goNext}
-              className="flex items-center gap-2 px-6 py-2.5 text-sm font-semibold text-white bg-gradient-to-r from-primary to-primary-dark rounded-xl hover:shadow-lg hover:shadow-primary/30 hover:-translate-y-0.5"
+              className="flex items-center gap-2 px-6 py-2.5 text-sm font-semibold text-white bg-gradient-to-r from-primary to-primary-dark rounded-lg hover:shadow-lg hover:shadow-primary/30 hover:-translate-y-0.5"
             >
               Next <ArrowRight className="w-4 h-4" />
             </button>
@@ -786,7 +786,7 @@ export default function RegisterPage() {
             <button
               type="submit"
               disabled={isSubmitting}
-              className="flex items-center gap-2 px-6 py-2.5 text-sm font-semibold text-white bg-gradient-to-r from-primary to-primary-dark rounded-xl hover:shadow-lg hover:shadow-primary/30 hover:-translate-y-0.5 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:translate-y-0 disabled:hover:shadow-none"
+              className="flex items-center gap-2 px-6 py-2.5 text-sm font-semibold text-white bg-gradient-to-r from-primary to-primary-dark rounded-lg hover:shadow-lg hover:shadow-primary/30 hover:-translate-y-0.5 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:translate-y-0 disabled:hover:shadow-none"
             >
               {isSubmitting ? (
                 <><Loader2 className="w-4 h-4 animate-spin" /> Submitting...</>

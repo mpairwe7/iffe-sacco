@@ -21,7 +21,7 @@ export default function PaymentGatewaysPage() {
   return (
     <div className="space-y-6">
       <div className="flex items-center gap-3">
-        <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center">
+        <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center">
           <CreditCard className="w-5 h-5 text-primary" />
         </div>
         <div>
@@ -33,9 +33,9 @@ export default function PaymentGatewaysPage() {
       <div className="grid gap-4">
         {isLoading ? (
           Array.from({ length: 3 }).map((_, i) => (
-            <div key={i} className="glass-card rounded-2xl p-6 flex items-center justify-between animate-pulse">
+            <div key={i} className="glass-card rounded-xl p-6 flex items-center justify-between animate-pulse">
               <div className="flex items-center gap-4">
-                <div className="w-12 h-12 rounded-2xl bg-surface-alt" />
+                <div className="w-12 h-12 rounded-xl bg-surface-alt" />
                 <div className="space-y-2">
                   <div className="h-4 w-32 bg-surface-alt rounded" />
                   <div className="h-3 w-48 bg-surface-alt rounded" />
@@ -48,15 +48,15 @@ export default function PaymentGatewaysPage() {
             </div>
           ))
         ) : gateways.length === 0 ? (
-          <div className="glass-card rounded-2xl p-12 text-center">
+          <div className="glass-card rounded-xl p-12 text-center">
             <CreditCard className="w-10 h-10 text-text-muted mx-auto mb-3" />
             <p className="text-text-muted">No payment gateways configured</p>
           </div>
         ) : (
           gateways.map((gw) => (
-            <div key={gw.id} className="glass-card rounded-2xl p-6 flex items-center justify-between">
+            <div key={gw.id} className="glass-card rounded-xl p-6 flex items-center justify-between">
               <div className="flex items-center gap-4">
-                <div className="w-12 h-12 rounded-2xl bg-surface-alt flex items-center justify-center">
+                <div className="w-12 h-12 rounded-xl bg-surface-alt flex items-center justify-center">
                   <CreditCard className="w-6 h-6 text-text-muted" />
                 </div>
                 <div>

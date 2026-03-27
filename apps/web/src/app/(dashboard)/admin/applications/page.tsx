@@ -184,7 +184,7 @@ export default function ApplicationsPage() {
     <div className="space-y-6">
       {/* Header */}
       <div className="flex items-center gap-3">
-        <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center">
+        <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center">
           <FileText className="w-5 h-5 text-primary" />
         </div>
         <div>
@@ -197,25 +197,25 @@ export default function ApplicationsPage() {
 
       {/* Stat Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
-        <div className="glass-card rounded-2xl p-5">
+        <div className="glass-card rounded-xl p-5">
           <p className="text-sm text-text-muted">Total Applications</p>
           <p className="text-2xl font-bold text-text mt-1">
             {stats?.total?.toLocaleString() ?? "\u2014"}
           </p>
         </div>
-        <div className="glass-card rounded-2xl p-5">
+        <div className="glass-card rounded-xl p-5">
           <p className="text-sm text-text-muted">Pending</p>
           <p className="text-2xl font-bold text-warning mt-1">
             {stats?.pending?.toLocaleString() ?? "\u2014"}
           </p>
         </div>
-        <div className="glass-card rounded-2xl p-5">
+        <div className="glass-card rounded-xl p-5">
           <p className="text-sm text-text-muted">Approved</p>
           <p className="text-2xl font-bold text-success mt-1">
             {stats?.approved?.toLocaleString() ?? "\u2014"}
           </p>
         </div>
-        <div className="glass-card rounded-2xl p-5">
+        <div className="glass-card rounded-xl p-5">
           <p className="text-sm text-text-muted">Rejected</p>
           <p className="text-2xl font-bold text-danger mt-1">
             {stats?.rejected?.toLocaleString() ?? "\u2014"}
@@ -229,7 +229,7 @@ export default function ApplicationsPage() {
           <button
             key={s}
             onClick={() => setFilter(s)}
-            className={`px-4 py-2 text-sm font-medium rounded-xl transition-colors ${
+            className={`px-4 py-2 text-sm font-medium rounded-lg transition-colors ${
               filter === s
                 ? "bg-primary text-white"
                 : "bg-white/60 dark:bg-white/5 border border-white/40 dark:border-white/10 text-text-muted hover:bg-surface-hover"
@@ -289,7 +289,7 @@ export default function ApplicationsPage() {
             onChange={(e) => setRejectReason(e.target.value)}
             placeholder="Reason for rejection (optional)"
             rows={3}
-            className="w-full px-4 py-3 bg-white/60 dark:bg-white/5 border border-white/40 dark:border-white/10 rounded-xl text-sm text-text placeholder:text-text-light focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary resize-none"
+            className="w-full px-4 py-3 bg-white/60 dark:bg-white/5 border border-white/40 dark:border-white/10 rounded-lg text-sm text-text placeholder:text-text-light focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary resize-none"
           />
         </div>
       </ConfirmDialog>

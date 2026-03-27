@@ -56,7 +56,7 @@ export default function MemberWithdrawalsPage() {
   return (
     <div className="space-y-6">
       <div className="flex items-center gap-3">
-        <div className="w-10 h-10 rounded-xl bg-warning/10 flex items-center justify-center">
+        <div className="w-10 h-10 rounded-lg bg-warning/10 flex items-center justify-center">
           <ArrowUpFromLine className="w-5 h-5 text-warning" />
         </div>
         <div>
@@ -66,13 +66,13 @@ export default function MemberWithdrawalsPage() {
       </div>
 
       <div className="grid lg:grid-cols-2 gap-6">
-        <form onSubmit={handleSubmit(onSubmit)} className="glass-card rounded-2xl p-6 space-y-5">
+        <form onSubmit={handleSubmit(onSubmit)} className="glass-card rounded-xl p-6 space-y-5">
           <h3 className="font-semibold text-text">Withdrawal Details</h3>
           <div>
             <label className="block text-sm font-medium text-text mb-2">From Account</label>
             <select
               {...register("accountId")}
-              className="w-full px-4 py-2.5 bg-white/60 border border-white/40 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
+              className="w-full px-4 py-2.5 bg-white/60 border border-white/40 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
             >
               <option value="">Select an account</option>
               {accounts.map((acc) => (
@@ -91,7 +91,7 @@ export default function MemberWithdrawalsPage() {
               step="1000"
               placeholder="Enter amount"
               {...register("amount", { valueAsNumber: true })}
-              className="w-full px-4 py-2.5 bg-white/60 border border-white/40 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
+              className="w-full px-4 py-2.5 bg-white/60 border border-white/40 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
             />
             {errors.amount && <p className="text-xs text-danger mt-1">{errors.amount.message}</p>}
           </div>
@@ -99,7 +99,7 @@ export default function MemberWithdrawalsPage() {
             <label className="block text-sm font-medium text-text mb-2">Withdrawal Method</label>
             <select
               {...register("method")}
-              className="w-full px-4 py-2.5 bg-white/60 border border-white/40 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
+              className="w-full px-4 py-2.5 bg-white/60 border border-white/40 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
             >
               <option value="mobile_money">Mobile Money</option>
               <option value="bank_transfer">Bank Transfer</option>
@@ -113,11 +113,11 @@ export default function MemberWithdrawalsPage() {
               rows={2}
               placeholder="Reason for withdrawal..."
               {...register("description")}
-              className="w-full px-4 py-2.5 bg-white/60 border border-white/40 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary resize-none"
+              className="w-full px-4 py-2.5 bg-white/60 border border-white/40 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary resize-none"
             />
           </div>
 
-          <div className="flex items-start gap-3 p-4 bg-warning/5 border border-warning/20 rounded-xl">
+          <div className="flex items-start gap-3 p-4 bg-warning/5 border border-warning/20 rounded-lg">
             <AlertTriangle className="w-5 h-5 text-warning shrink-0 mt-0.5" />
             <p className="text-sm text-text-muted">Withdrawal requests are subject to admin approval and may take up to 24 hours to process.</p>
           </div>
@@ -125,7 +125,7 @@ export default function MemberWithdrawalsPage() {
           <button
             type="submit"
             disabled={isSubmitting || createWithdrawRequest.isPending}
-            className="w-full inline-flex items-center justify-center gap-2 px-6 py-3 text-sm font-medium text-white bg-warning rounded-xl hover:bg-amber-600 transition-colors disabled:opacity-50"
+            className="w-full inline-flex items-center justify-center gap-2 px-6 py-3 text-sm font-medium text-white bg-warning rounded-lg hover:bg-amber-600 transition-colors disabled:opacity-50"
           >
             {isSubmitting || createWithdrawRequest.isPending ? (
               <Loader2 className="w-4 h-4 animate-spin" />
@@ -137,12 +137,12 @@ export default function MemberWithdrawalsPage() {
         </form>
 
         <div className="space-y-4">
-          <div className="glass-card rounded-2xl p-6">
+          <div className="glass-card rounded-xl p-6">
             <h3 className="font-semibold text-text mb-4">Recent Withdrawals</h3>
             <div className="space-y-3">
               {reqLoading ? (
                 Array.from({ length: 3 }).map((_, i) => (
-                  <div key={i} className="flex items-center justify-between p-3 bg-white/50 rounded-xl animate-pulse">
+                  <div key={i} className="flex items-center justify-between p-3 bg-white/50 rounded-lg animate-pulse">
                     <div className="space-y-2">
                       <div className="h-4 bg-surface-alt rounded w-24" />
                       <div className="h-3 bg-surface-alt rounded w-32" />
@@ -154,7 +154,7 @@ export default function MemberWithdrawalsPage() {
                 <p className="text-sm text-text-muted text-center py-4">No recent withdrawals.</p>
               ) : (
                 recentWithdrawals.map((w) => (
-                  <div key={w.id} className="flex items-center justify-between p-3 bg-white/50 rounded-xl">
+                  <div key={w.id} className="flex items-center justify-between p-3 bg-white/50 rounded-lg">
                     <div>
                       <p className="text-sm font-medium text-text">{formatCurrency(w.amount)}</p>
                       <p className="text-xs text-text-muted">{(w.method || "cash").replace("_", " ").replace(/\b\w/g, (c: string) => c.toUpperCase())} &middot; {formatDate(w.createdAt)}</p>
@@ -172,7 +172,7 @@ export default function MemberWithdrawalsPage() {
             </div>
           </div>
 
-          <div className="bg-warning/5 border border-warning/20 rounded-2xl p-6">
+          <div className="bg-warning/5 border border-warning/20 rounded-xl p-6">
             <h3 className="font-semibold text-warning mb-2">Withdrawal Policy</h3>
             <ul className="text-sm text-text-muted space-y-2">
               <li>&#8226; Minimum withdrawal: USh 5,000</li>

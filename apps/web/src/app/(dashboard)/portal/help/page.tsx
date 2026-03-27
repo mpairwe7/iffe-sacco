@@ -24,7 +24,7 @@ export default function HelpPage() {
   return (
     <div className="space-y-8">
       <div className="text-center py-8">
-        <div className="w-16 h-16 rounded-2xl bg-primary/10 flex items-center justify-center mx-auto mb-4">
+        <div className="w-16 h-16 rounded-xl bg-primary/10 flex items-center justify-center mx-auto mb-4">
           <HelpCircle className="w-8 h-8 text-primary" />
         </div>
         <h1 className="text-3xl font-bold text-text">Help & Support</h1>
@@ -33,8 +33,8 @@ export default function HelpPage() {
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {helpArticles.map((article) => (
-          <div key={article.title} className="group glass-card rounded-2xl p-6 hover:shadow-xl hover:border-primary/20 transition-all">
-            <div className={`w-14 h-14 rounded-2xl flex items-center justify-center mb-4 ${colorMap[article.color]}`}>
+          <div key={article.title} className="group glass-card rounded-xl p-6 hover:shadow-xl hover:border-primary/20 transition-all">
+            <div className={`w-14 h-14 rounded-xl flex items-center justify-center mb-4 ${colorMap[article.color]}`}>
               <article.icon className="w-7 h-7" />
             </div>
             <h3 className="text-base font-semibold text-text mb-2 group-hover:text-primary transition-colors">{article.title}</h3>

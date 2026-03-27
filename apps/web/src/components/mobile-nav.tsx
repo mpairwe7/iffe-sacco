@@ -28,13 +28,13 @@ export function MobileNav() {
             <div className="pt-4 border-t border-border space-y-2">
               <button
                 onClick={() => setLoginOpen(!loginOpen)}
-                className="w-full flex items-center justify-between px-5 py-2.5 text-sm font-semibold text-white bg-primary rounded-xl"
+                className="w-full flex items-center justify-between px-5 py-2.5 text-sm font-semibold text-white bg-primary rounded-lg"
               >
                 Login
                 <ChevronDown className={`w-4 h-4 transition-transform ${loginOpen ? "rotate-180" : ""}`} />
               </button>
               {loginOpen && (
-                <div className="bg-surface-alt rounded-xl overflow-hidden border border-border">
+                <div className="bg-surface-alt rounded-lg overflow-hidden border border-border">
                   <Link href="/login?portal=admin" onClick={() => setOpen(false)} className="flex items-center gap-3 px-5 py-3 text-sm font-medium text-text hover:bg-white border-b border-border">
                     <Shield className="w-4 h-4 text-primary" /> Admin Portal
                   </Link>

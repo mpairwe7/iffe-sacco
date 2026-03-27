@@ -124,7 +124,7 @@ export default function SettingsPage() {
   return (
     <div className="space-y-6">
       <div className="flex items-center gap-3">
-        <div className="w-10 h-10 rounded-xl bg-text/10 flex items-center justify-center">
+        <div className="w-10 h-10 rounded-lg bg-text/10 flex items-center justify-center">
           <Settings className="w-5 h-5 text-text" />
         </div>
         <div>
@@ -133,7 +133,7 @@ export default function SettingsPage() {
         </div>
       </div>
 
-      <form onSubmit={handleSave} className="glass-card rounded-2xl">
+      <form onSubmit={handleSave} className="glass-card rounded-xl">
             <div className="p-6 border-b border-border">
               <h3 className="text-base font-semibold text-text">General Settings</h3>
               <p className="text-sm text-text-muted mt-1">Basic system configuration</p>
@@ -152,7 +152,7 @@ export default function SettingsPage() {
                         type="text"
                         value={settings.companyName}
                         onChange={(e) => update("companyName", e.target.value)}
-                        className="w-full px-4 py-2.5 bg-white/60 border border-white/40 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
+                        className="w-full px-4 py-2.5 bg-white/60 border border-white/40 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
                       />
                     </div>
                     <div>
@@ -161,7 +161,7 @@ export default function SettingsPage() {
                         type="text"
                         value={settings.tagline}
                         onChange={(e) => update("tagline", e.target.value)}
-                        className="w-full px-4 py-2.5 bg-white/60 border border-white/40 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
+                        className="w-full px-4 py-2.5 bg-white/60 border border-white/40 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
                       />
                     </div>
                     <div>
@@ -170,7 +170,7 @@ export default function SettingsPage() {
                         type="email"
                         value={settings.email}
                         onChange={(e) => update("email", e.target.value)}
-                        className="w-full px-4 py-2.5 bg-white/60 border border-white/40 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
+                        className="w-full px-4 py-2.5 bg-white/60 border border-white/40 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
                       />
                     </div>
                     <div>
@@ -179,7 +179,7 @@ export default function SettingsPage() {
                         type="tel"
                         value={settings.phone}
                         onChange={(e) => update("phone", e.target.value)}
-                        className="w-full px-4 py-2.5 bg-white/60 border border-white/40 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
+                        className="w-full px-4 py-2.5 bg-white/60 border border-white/40 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
                       />
                     </div>
                     <div>
@@ -187,7 +187,7 @@ export default function SettingsPage() {
                       <select
                         value={settings.currency}
                         onChange={(e) => update("currency", e.target.value)}
-                        className="w-full px-4 py-2.5 bg-white/60 border border-white/40 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
+                        className="w-full px-4 py-2.5 bg-white/60 border border-white/40 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
                       >
                         <option value="USh">Uganda Shilling (USh)</option>
                         <option value="KES">Kenya Shilling (KES)</option>
@@ -200,7 +200,7 @@ export default function SettingsPage() {
                       <select
                         value={settings.dateFormat}
                         onChange={(e) => update("dateFormat", e.target.value)}
-                        className="w-full px-4 py-2.5 bg-white/60 border border-white/40 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
+                        className="w-full px-4 py-2.5 bg-white/60 border border-white/40 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
                       >
                         <option value="Y-m-d">YYYY-MM-DD</option>
                         <option value="d/m/Y">DD/MM/YYYY</option>
@@ -212,7 +212,7 @@ export default function SettingsPage() {
                       <select
                         value={settings.language}
                         onChange={(e) => update("language", e.target.value)}
-                        className="w-full px-4 py-2.5 bg-white/60 border border-white/40 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
+                        className="w-full px-4 py-2.5 bg-white/60 border border-white/40 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
                       >
                         <option>English</option>
                         <option>Kiswahili</option>
@@ -225,7 +225,7 @@ export default function SettingsPage() {
                       <select
                         value={settings.timezone}
                         onChange={(e) => update("timezone", e.target.value)}
-                        className="w-full px-4 py-2.5 bg-white/60 border border-white/40 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
+                        className="w-full px-4 py-2.5 bg-white/60 border border-white/40 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
                       >
                         <option>Africa/Kampala (UTC+3)</option>
                         <option>Africa/Nairobi (UTC+3)</option>
@@ -239,7 +239,7 @@ export default function SettingsPage() {
                       rows={2}
                       value={settings.address}
                       onChange={(e) => update("address", e.target.value)}
-                      className="w-full px-4 py-2.5 bg-white/60 border border-white/40 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary resize-none"
+                      className="w-full px-4 py-2.5 bg-white/60 border border-white/40 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary resize-none"
                     />
                   </div>
                 </>
@@ -249,7 +249,7 @@ export default function SettingsPage() {
               <button
                 type="submit"
                 disabled={saving || loading}
-                className="inline-flex items-center gap-2 px-6 py-2.5 text-sm font-medium text-white bg-primary rounded-xl hover:bg-primary-dark transition-colors disabled:opacity-50"
+                className="inline-flex items-center gap-2 px-6 py-2.5 text-sm font-medium text-white bg-primary rounded-lg hover:bg-primary-dark transition-colors disabled:opacity-50"
               >
                 {saving ? (
                   <Loader2 className="w-4 h-4 animate-spin" />
@@ -267,14 +267,14 @@ export default function SettingsPage() {
           <div className="flex gap-3">
             <button
               onClick={() => setSettings({ ...original })}
-              className="px-4 py-2 text-sm text-text-muted border border-border rounded-xl hover:bg-surface-hover"
+              className="px-4 py-2 text-sm text-text-muted border border-border rounded-lg hover:bg-surface-hover"
             >
               Discard
             </button>
             <button
               onClick={handleSave}
               disabled={saving}
-              className="px-4 py-2 text-sm font-medium text-white bg-primary rounded-xl hover:bg-primary-dark disabled:opacity-50"
+              className="px-4 py-2 text-sm font-medium text-white bg-primary rounded-lg hover:bg-primary-dark disabled:opacity-50"
             >
               {saving ? "Saving..." : "Save Changes"}
             </button>

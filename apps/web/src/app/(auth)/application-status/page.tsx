@@ -21,7 +21,7 @@ export default function ApplicationStatusPage() {
 
   if (isLoading) {
     return (
-      <div className="glass-card rounded-3xl p-8 shadow-xl">
+      <div className="glass-card rounded-xl p-8 shadow-xl">
         <div className="text-center space-y-4">
           <Skeleton className="h-8 w-48 mx-auto" />
           <Skeleton className="h-4 w-64 mx-auto" />
@@ -34,7 +34,7 @@ export default function ApplicationStatusPage() {
 
   if (error) {
     return (
-      <div className="glass-card rounded-3xl p-8 shadow-xl text-center">
+      <div className="glass-card rounded-xl p-8 shadow-xl text-center">
         <div className="w-16 h-16 rounded-full bg-danger/10 flex items-center justify-center mx-auto mb-4">
           <XCircle className="w-8 h-8 text-danger" />
         </div>
@@ -44,7 +44,7 @@ export default function ApplicationStatusPage() {
         <p className="text-sm text-text-muted mb-6">{error.message}</p>
         <button
           onClick={() => refetch()}
-          className="inline-flex items-center gap-2 px-5 py-2.5 text-sm font-medium text-white bg-primary rounded-xl hover:bg-primary-dark"
+          className="inline-flex items-center gap-2 px-5 py-2.5 text-sm font-medium text-white bg-primary rounded-lg hover:bg-primary-dark"
         >
           <RefreshCw className="w-4 h-4" /> Try Again
         </button>
@@ -55,7 +55,7 @@ export default function ApplicationStatusPage() {
   // No application found
   if (!application) {
     return (
-      <div className="glass-card rounded-3xl p-8 shadow-xl text-center">
+      <div className="glass-card rounded-xl p-8 shadow-xl text-center">
         <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center mx-auto mb-4">
           <FileText className="w-8 h-8 text-primary" />
         </div>
@@ -68,7 +68,7 @@ export default function ApplicationStatusPage() {
         </p>
         <Link
           href="/register"
-          className="inline-flex items-center gap-2 px-6 py-3 text-sm font-semibold text-white bg-gradient-to-r from-primary to-primary-dark rounded-xl hover:shadow-xl hover:shadow-primary/30 hover:-translate-y-0.5 transition-all"
+          className="inline-flex items-center gap-2 px-6 py-3 text-sm font-semibold text-white bg-gradient-to-r from-primary to-primary-dark rounded-lg hover:shadow-xl hover:shadow-primary/30 hover:-translate-y-0.5 transition-all"
         >
           Apply Now <ArrowRight className="w-4 h-4" />
         </Link>
@@ -77,7 +77,7 @@ export default function ApplicationStatusPage() {
   }
 
   return (
-    <div className="glass-card rounded-3xl p-8 shadow-xl">
+    <div className="glass-card rounded-xl p-8 shadow-xl">
       <h2 className="text-2xl font-bold text-text text-center mb-2">
         Application Status
       </h2>
@@ -136,7 +136,7 @@ export default function ApplicationStatusPage() {
 
       {/* Status-specific content */}
       {application.status === "pending" && (
-        <div className="bg-warning/5 border border-warning/20 rounded-2xl p-6 text-center">
+        <div className="bg-warning/5 border border-warning/20 rounded-xl p-6 text-center">
           <p className="text-sm text-text">
             Your application is currently being reviewed by the IFFE SACCO
             committee. You will be notified once a decision has been made.
@@ -149,7 +149,7 @@ export default function ApplicationStatusPage() {
 
       {application.status === "approved" && (
         <div className="space-y-4">
-          <div className="bg-success/5 border border-success/20 rounded-2xl p-6 text-center">
+          <div className="bg-success/5 border border-success/20 rounded-xl p-6 text-center">
             <p className="text-sm text-text font-medium">
               Welcome to IFFE SACCO! Your membership is now active.
             </p>
@@ -160,7 +160,7 @@ export default function ApplicationStatusPage() {
           <div className="text-center">
             <Link
               href="/dashboard"
-              className="inline-flex items-center gap-2 px-6 py-3 text-sm font-semibold text-white bg-gradient-to-r from-primary to-primary-dark rounded-xl hover:shadow-xl hover:shadow-primary/30 hover:-translate-y-0.5 transition-all"
+              className="inline-flex items-center gap-2 px-6 py-3 text-sm font-semibold text-white bg-gradient-to-r from-primary to-primary-dark rounded-lg hover:shadow-xl hover:shadow-primary/30 hover:-translate-y-0.5 transition-all"
             >
               Go to Dashboard <ArrowRight className="w-4 h-4" />
             </Link>
@@ -171,7 +171,7 @@ export default function ApplicationStatusPage() {
       {application.status === "rejected" && (
         <div className="space-y-4">
           {application.rejectionReason && (
-            <div className="bg-danger/5 border border-danger/20 rounded-2xl p-6">
+            <div className="bg-danger/5 border border-danger/20 rounded-xl p-6">
               <p className="text-xs text-danger font-semibold uppercase tracking-wider mb-2">
                 Reason for Rejection
               </p>
@@ -185,7 +185,7 @@ export default function ApplicationStatusPage() {
             </p>
             <Link
               href="/register"
-              className="inline-flex items-center gap-2 px-6 py-3 text-sm font-semibold text-white bg-gradient-to-r from-primary to-primary-dark rounded-xl hover:shadow-xl hover:shadow-primary/30 hover:-translate-y-0.5 transition-all"
+              className="inline-flex items-center gap-2 px-6 py-3 text-sm font-semibold text-white bg-gradient-to-r from-primary to-primary-dark rounded-lg hover:shadow-xl hover:shadow-primary/30 hover:-translate-y-0.5 transition-all"
             >
               Reapply <ArrowRight className="w-4 h-4" />
             </Link>

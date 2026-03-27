@@ -47,7 +47,7 @@ function SectionCard({
 }) {
   const id = title.toLowerCase().replace(/\s+/g, "-");
   return (
-    <section aria-labelledby={id} className="glass-card rounded-2xl p-6">
+    <section aria-labelledby={id} className="glass-card rounded-xl p-6">
       <div className="flex items-center gap-2 mb-4">
         <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center">
           <Icon className="w-4 h-4 text-primary" />
@@ -152,7 +152,7 @@ export default function ApplicationDetailPage() {
         <Skeleton className="h-8 w-48" />
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           {Array.from({ length: 4 }).map((_, i) => (
-            <div key={i} className="glass-card rounded-2xl p-6">
+            <div key={i} className="glass-card rounded-xl p-6">
               <Skeleton className="h-5 w-32 mb-4" />
               <div className="space-y-3">
                 <Skeleton className="h-4 w-full" />
@@ -168,7 +168,7 @@ export default function ApplicationDetailPage() {
 
   if (!app) {
     return (
-      <div className="glass-card rounded-2xl p-12 text-center">
+      <div className="glass-card rounded-xl p-12 text-center">
         <p className="text-text-muted">Application not found.</p>
         <Link
           href="/admin/applications"
@@ -190,11 +190,11 @@ export default function ApplicationDetailPage() {
         <div className="flex items-center gap-3">
           <Link
             href="/admin/applications"
-            className="p-2 text-text-muted hover:text-text rounded-xl hover:bg-surface-hover"
+            className="p-2 text-text-muted hover:text-text rounded-lg hover:bg-surface-hover"
           >
             <ArrowLeft className="w-5 h-5" />
           </Link>
-          <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center">
+          <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center">
             <FileText className="w-5 h-5 text-primary" />
           </div>
           <div>
@@ -339,7 +339,7 @@ export default function ApplicationDetailPage() {
               href={app.applicationLetterUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 px-4 py-2.5 text-sm font-medium text-primary bg-primary/10 rounded-xl hover:bg-primary/20 transition-colors"
+              className="inline-flex items-center gap-2 px-4 py-2.5 text-sm font-medium text-primary bg-primary/10 rounded-lg hover:bg-primary/20 transition-colors"
             >
               <ExternalLink className="w-4 h-4" />
               {app.applicationLetterName || "View Application Letter"}
@@ -397,7 +397,7 @@ export default function ApplicationDetailPage() {
 
       {/* Rejection Reason (if rejected) */}
       {app.status === "rejected" && app.rejectionReason && (
-        <div className="glass-card rounded-2xl p-6 border-l-4 border-danger">
+        <div className="glass-card rounded-xl p-6 border-l-4 border-danger">
           <h3 className="text-base font-semibold text-danger mb-2">
             Rejection Reason
           </h3>
@@ -418,14 +418,14 @@ export default function ApplicationDetailPage() {
               setRejectReason("");
               setRejectOpen(true);
             }}
-            className="inline-flex items-center gap-2 px-6 py-3 text-sm font-semibold text-danger border border-danger/30 rounded-xl hover:bg-danger/10 transition-colors"
+            className="inline-flex items-center gap-2 px-6 py-3 text-sm font-semibold text-danger border border-danger/30 rounded-lg hover:bg-danger/10 transition-colors"
           >
             <X className="w-4 h-4" />
             Reject
           </button>
           <button
             onClick={() => setApproveOpen(true)}
-            className="inline-flex items-center gap-2 px-6 py-3 text-sm font-semibold text-white bg-gradient-to-r from-success to-emerald-600 rounded-xl hover:shadow-lg hover:shadow-success/20 transition-all"
+            className="inline-flex items-center gap-2 px-6 py-3 text-sm font-semibold text-white bg-gradient-to-r from-success to-emerald-600 rounded-lg hover:shadow-lg hover:shadow-success/20 transition-all"
           >
             <Check className="w-4 h-4" />
             Approve
@@ -469,7 +469,7 @@ export default function ApplicationDetailPage() {
             onChange={(e) => setRejectReason(e.target.value)}
             placeholder="Reason for rejection (optional)"
             rows={3}
-            className="w-full px-4 py-3 bg-white/60 dark:bg-white/5 border border-white/40 dark:border-white/10 rounded-xl text-sm text-text placeholder:text-text-light focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary resize-none"
+            className="w-full px-4 py-3 bg-white/60 dark:bg-white/5 border border-white/40 dark:border-white/10 rounded-lg text-sm text-text placeholder:text-text-light focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary resize-none"
           />
         </div>
       </ConfirmDialog>

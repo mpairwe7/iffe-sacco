@@ -79,7 +79,7 @@ export default function HomePage() {
                 <a
                   key={item}
                   href={`#${item === "About Us" ? "about" : item === "Services" ? "services" : item.toLowerCase()}`}
-                  className="px-5 py-2.5 text-[15px] font-semibold text-gray-700 dark:text-gray-200 hover:text-primary hover:bg-primary/5 rounded-xl transition-colors"
+                  className="px-5 py-2.5 text-[15px] font-semibold text-gray-700 dark:text-gray-200 hover:text-primary hover:bg-primary/5 rounded-lg transition-colors"
                 >
                   {item}
                 </a>
@@ -118,16 +118,16 @@ export default function HomePage() {
                 Experience the power of a modern SACCO. Secure savings, affordable loans, and a community dedicated to your growth.
               </p>
               <div className="flex flex-wrap gap-4 mt-10">
-                <Link href="/register" className="group inline-flex items-center gap-2 px-8 py-4 text-base font-semibold text-white bg-gradient-to-r from-primary to-primary-dark rounded-2xl shadow-xl shadow-primary/30 hover:shadow-2xl hover:shadow-primary/40 hover:-translate-y-1">
+                <Link href="/register" className="group inline-flex items-center gap-2 px-8 py-4 text-base font-semibold text-white bg-gradient-to-r from-primary to-primary-dark rounded-xl shadow-xl shadow-primary/30 hover:shadow-2xl hover:shadow-primary/40 hover:-translate-y-1">
                   Open Account <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
                 </Link>
-                <a href="#about" className="inline-flex items-center gap-2 px-8 py-4 text-base font-semibold text-text glass rounded-2xl hover:bg-white/80 hover:-translate-y-0.5">
+                <a href="#about" className="inline-flex items-center gap-2 px-8 py-4 text-base font-semibold text-text glass rounded-xl hover:bg-white/80 hover:-translate-y-0.5">
                   Learn More
                 </a>
               </div>
 
               {/* Stats Row - Glass */}
-              <div className="glass-card flex items-center gap-6 sm:gap-8 mt-14 p-6 rounded-2xl max-w-lg">
+              <div className="glass-card flex items-center gap-6 sm:gap-8 mt-14 p-6 rounded-xl max-w-lg">
                 {[
                   { value: "USh 2.5B+", label: "Total Savings" },
                   { value: "1,000+", label: "Members" },
@@ -146,7 +146,7 @@ export default function HomePage() {
 
             {/* Hero Card - Glass Dashboard Preview */}
             <div className="hidden lg:block relative">
-              <div className="glass-card rounded-3xl p-6 relative">
+              <div className="glass-card rounded-xl p-6 relative">
                 <div className="flex items-center gap-2 mb-6">
                   <div className="w-3 h-3 rounded-full bg-danger/80" />
                   <div className="w-3 h-3 rounded-full bg-warning/80" />
@@ -155,7 +155,7 @@ export default function HomePage() {
                 </div>
                 <div className="space-y-4">
                   <div className="flex items-center gap-4">
-                    <div className="w-12 h-12 bg-gradient-to-br from-primary/20 to-primary/5 rounded-2xl flex items-center justify-center">
+                    <div className="w-12 h-12 bg-gradient-to-br from-primary/20 to-primary/5 rounded-xl flex items-center justify-center">
                       <Wallet className="w-6 h-6 text-primary" />
                     </div>
                     <div className="flex-1">
@@ -166,14 +166,14 @@ export default function HomePage() {
                   </div>
                   <div className="h-px bg-white/40" />
                   <div className="grid grid-cols-2 gap-4">
-                    <div className="glass-subtle rounded-2xl p-4">
+                    <div className="glass-subtle rounded-xl p-4">
                       <div className="text-xs text-text-muted mb-1">Savings</div>
                       <div className="text-lg font-bold text-primary">USh 2.8M</div>
                       <div className="mt-3 h-2 bg-primary/15 rounded-full overflow-hidden">
                         <div className="h-full w-3/4 bg-gradient-to-r from-primary to-primary-light rounded-full" />
                       </div>
                     </div>
-                    <div className="glass-subtle rounded-2xl p-4">
+                    <div className="glass-subtle rounded-xl p-4">
                       <div className="text-xs text-text-muted mb-1">Loan Balance</div>
                       <div className="text-lg font-bold text-secondary">USh 1.4M</div>
                       <div className="mt-3 h-2 bg-secondary/15 rounded-full overflow-hidden">
@@ -181,16 +181,16 @@ export default function HomePage() {
                       </div>
                     </div>
                   </div>
-                  <div className="glass-subtle flex items-center gap-3 rounded-2xl p-4">
+                  <div className="glass-subtle flex items-center gap-3 rounded-xl p-4">
                     <Lock className="w-5 h-5 text-success" />
                     <span className="text-sm text-success font-medium">Your account is secured with 2FA</span>
                   </div>
                 </div>
               </div>
-              <div className="absolute -top-5 -right-5 w-20 h-20 bg-gradient-to-br from-secondary to-yellow-500 rounded-2xl flex items-center justify-center shadow-xl shadow-secondary/30 rotate-12">
+              <div className="absolute -top-5 -right-5 w-20 h-20 bg-gradient-to-br from-secondary to-yellow-500 rounded-xl flex items-center justify-center shadow-xl shadow-secondary/30 rotate-12">
                 <TrendingUp className="w-8 h-8 text-white" />
               </div>
-              <div className="absolute -bottom-4 -left-4 w-16 h-16 glass rounded-2xl flex items-center justify-center -rotate-6 shadow-lg">
+              <div className="absolute -bottom-4 -left-4 w-16 h-16 glass rounded-xl flex items-center justify-center -rotate-6 shadow-lg">
                 <Shield className="w-7 h-7 text-primary" />
               </div>
             </div>
@@ -212,8 +212,8 @@ export default function HomePage() {
               { icon: TrendingUp, title: "Affordable Loans", desc: "Low interest rates and easy repayment terms. We fuel your business and personal growth.", gradient: "from-secondary/20 to-secondary/5", text: "text-secondary" },
               { icon: Smartphone, title: "Digital Banking", desc: "Access your money 24/7. Our online portals ensure you are always in control, wherever you are.", gradient: "from-info/20 to-info/5", text: "text-info" },
             ].map((feature) => (
-              <div key={feature.title} className="group glass-card rounded-3xl p-8 hover:-translate-y-2 cursor-default">
-                <div className={`w-14 h-14 rounded-2xl bg-gradient-to-br ${feature.gradient} flex items-center justify-center mb-6`}>
+              <div key={feature.title} className="group glass-card rounded-xl p-8 hover:-translate-y-2 cursor-default">
+                <div className={`w-14 h-14 rounded-xl bg-gradient-to-br ${feature.gradient} flex items-center justify-center mb-6`}>
                   <feature.icon className={`w-7 h-7 ${feature.text}`} />
                 </div>
                 <h3 className="text-xl font-bold text-text mb-3">{feature.title}</h3>
@@ -238,10 +238,10 @@ export default function HomePage() {
               { icon: Users, title: "Member Portal", desc: "Check balances, request loans, and track savings.", gradient: "from-info to-blue-700", portal: "member" },
               { icon: Briefcase, title: "Staff Portal", desc: "Process requests and manage member services.", gradient: "from-accent to-gray-800", portal: "staff" },
             ].map((portal) => (
-              <Link key={portal.title} href={`/login?portal=${portal.portal}`} className="group glass-card rounded-3xl overflow-hidden hover:-translate-y-2">
+              <Link key={portal.title} href={`/login?portal=${portal.portal}`} className="group glass-card rounded-xl overflow-hidden hover:-translate-y-2">
                 <div className={`h-1.5 bg-gradient-to-r ${portal.gradient}`} />
                 <div className="p-8">
-                  <div className={`w-16 h-16 rounded-2xl bg-gradient-to-br ${portal.gradient} flex items-center justify-center mb-6 shadow-lg group-hover:scale-110 transition-transform`}>
+                  <div className={`w-16 h-16 rounded-xl bg-gradient-to-br ${portal.gradient} flex items-center justify-center mb-6 shadow-lg group-hover:scale-110 transition-transform`}>
                     <portal.icon className="w-8 h-8 text-white" />
                   </div>
                   <h3 className="text-xl font-bold text-text mb-2">{portal.title}</h3>
@@ -267,7 +267,7 @@ export default function HomePage() {
               { value: "500+", label: "Loans Disbursed" },
               { value: "12+", label: "Years of Service" },
             ].map((stat) => (
-              <div key={stat.label} className="text-center p-6 rounded-2xl bg-white/10 backdrop-blur-sm border border-white/10">
+              <div key={stat.label} className="text-center p-6 rounded-xl bg-white/10 backdrop-blur-sm border border-white/10">
                 <div className="text-3xl lg:text-4xl font-extrabold text-white">{stat.value}</div>
                 <div className="text-sm text-white/70 mt-2 font-medium">{stat.label}</div>
               </div>
@@ -279,14 +279,14 @@ export default function HomePage() {
       {/* CTA Section */}
       <section className="py-20 lg:py-32 relative">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10">
-          <div className="bg-gradient-to-br from-primary to-primary-dark rounded-3xl p-12 lg:p-16 relative overflow-hidden shadow-2xl shadow-primary/20">
+          <div className="bg-gradient-to-br from-primary to-primary-dark rounded-xl p-12 lg:p-16 relative overflow-hidden shadow-2xl shadow-primary/20">
             <div className="absolute top-0 right-0 w-72 h-72 bg-white/5 rounded-full -translate-y-1/2 translate-x-1/2 blur-2xl" />
             <div className="absolute bottom-0 left-0 w-56 h-56 bg-white/5 rounded-full translate-y-1/2 -translate-x-1/2 blur-2xl" />
             <div className="absolute inset-0 backdrop-blur-[1px]" />
             <div className="relative z-10">
               <h2 className="text-3xl sm:text-4xl font-extrabold text-white mb-4">Ready to Join?</h2>
               <p className="text-lg text-white/80 mb-10 max-w-xl mx-auto">Become part of a growing community dedicated to financial success.</p>
-              <Link href="/register" className="group inline-flex items-center gap-2 px-8 py-4 text-base font-semibold text-primary bg-white rounded-2xl hover:bg-white/90 shadow-xl hover:-translate-y-1">
+              <Link href="/register" className="group inline-flex items-center gap-2 px-8 py-4 text-base font-semibold text-primary bg-white rounded-xl hover:bg-white/90 shadow-xl hover:-translate-y-1">
                 Create an Account <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
               </Link>
             </div>

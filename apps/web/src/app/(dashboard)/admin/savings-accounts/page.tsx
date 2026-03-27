@@ -71,7 +71,7 @@ export default function SavingsAccountsPage() {
   return (
     <div className="space-y-6">
       <div className="flex items-center gap-3">
-        <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center">
+        <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center">
           <Landmark className="w-5 h-5 text-primary" />
         </div>
         <div>
@@ -81,19 +81,19 @@ export default function SavingsAccountsPage() {
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-4 gap-4">
-        <div className="glass-card rounded-2xl p-5">
+        <div className="glass-card rounded-xl p-5">
           <p className="text-sm text-text-muted">Total Accounts</p>
           <p className="text-2xl font-bold text-text mt-1">{stats?.total?.toLocaleString() ?? "—"}</p>
         </div>
-        <div className="glass-card rounded-2xl p-5">
+        <div className="glass-card rounded-xl p-5">
           <p className="text-sm text-text-muted">Total Balance</p>
           <p className="text-2xl font-bold text-primary mt-1">{stats?.totalBalance != null ? formatCurrency(stats.totalBalance) : "—"}</p>
         </div>
-        <div className="glass-card rounded-2xl p-5">
+        <div className="glass-card rounded-xl p-5">
           <p className="text-sm text-text-muted">Active Accounts</p>
           <p className="text-2xl font-bold text-success mt-1">{stats?.active?.toLocaleString() ?? "—"}</p>
         </div>
-        <div className="glass-card rounded-2xl p-5">
+        <div className="glass-card rounded-xl p-5">
           <p className="text-sm text-text-muted">Dormant</p>
           <p className="text-2xl font-bold text-warning mt-1">{stats?.dormant?.toLocaleString() ?? "—"}</p>
         </div>
