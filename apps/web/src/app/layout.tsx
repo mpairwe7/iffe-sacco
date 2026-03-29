@@ -1,7 +1,8 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import { Providers } from "@/components/providers";
+import { ServiceWorkerRegister } from "@/components/sw-register";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -66,6 +67,18 @@ export const metadata: Metadata = {
     canonical: siteUrl,
   },
   category: "finance",
+  other: {
+    "mobile-web-app-capable": "yes",
+    "apple-mobile-web-app-capable": "yes",
+    "apple-mobile-web-app-status-bar-style": "black-translucent",
+  },
+};
+
+export const viewport = {
+  themeColor: [
+    { media: "(prefers-color-scheme: light)", color: "#006622" },
+    { media: "(prefers-color-scheme: dark)", color: "#0f1117" },
+  ],
 };
 
 export default function RootLayout({
@@ -78,6 +91,7 @@ export default function RootLayout({
       <body className="min-h-full flex flex-col font-sans">
         <a href="#main-content" className="skip-to-content">Skip to content</a>
         <Providers>{children}</Providers>
+        <ServiceWorkerRegister />
       </body>
     </html>
   );
