@@ -19,7 +19,7 @@ export const metadata: Metadata = {
     template: "%s | IFFE SACCO",
   },
   description:
-    "Join IFFE Bhenhe SACCO for secure savings, affordable loans, and financial empowerment. A modern cooperative society in Jinja City, Uganda dedicated to your growth.",
+    "IFFE Bbenhe Development SACCO (IBDS) — Obwegaisi Mu Kwisanhia (Unity of Consensus). Secure savings, affordable loans, and community-driven financial empowerment in Jinja City, Uganda.",
   keywords:
     "SACCO, savings, loans, finance, cooperative, IFFE, investment, membership, Uganda, Jinja, microfinance, credit union",
   authors: [{ name: "IFFE Bhenhe Development Association" }],

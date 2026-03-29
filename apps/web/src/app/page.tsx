@@ -21,12 +21,12 @@ import { LoginDropdown } from "@/components/login-dropdown";
 const jsonLd = {
   "@context": "https://schema.org",
   "@type": "FinancialService",
-  name: "IFFE Bhenhe SACCO",
-  alternateName: "IFFE SACCO",
-  description: "A modern savings and credit cooperative organization in Jinja City, Uganda empowering financial freedom through community.",
+  name: "IFFE Bbenhe Development SACCO",
+  alternateName: "IBDS",
+  description: "A modern savings and credit cooperative organization in Jinja City, Uganda. Motto: Obwegaisi Mu Kwisanhia — Unity of Consensus.",
   url: "https://iffe-sacco.vercel.app",
   logo: "https://iffe-sacco.vercel.app/logo.png",
-  telephone: "+256782894875",
+  telephone: ["+256782894875", "+256772875008", "+256772958879"],
   email: "bdfsocial.selfhelp@gmail.com",
   address: {
     "@type": "PostalAddress",
@@ -211,21 +211,70 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* Features / About Section */}
+      {/* About Section — Vision, Mission, Values from IFFE Constitution */}
       <section id="about" className="py-20 lg:py-32 relative">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-          <div className="text-center max-w-2xl mx-auto mb-16">
-            <div className="glass-subtle inline-flex items-center gap-2 px-5 py-2.5 text-primary text-sm font-semibold rounded-full mb-4">Why Choose Us</div>
-            <h2 className="text-3xl sm:text-4xl font-extrabold text-text">Why Choose IFFE?</h2>
-            <p className="mt-4 text-text-muted text-lg">We combine traditional cooperative values with modern technology.</p>
+          {/* Motto */}
+          <div className="text-center max-w-3xl mx-auto mb-16">
+            <p className="text-sm font-bold text-primary uppercase tracking-widest mb-2">Obwegaisi Mu Kwisanhia</p>
+            <h2 className="text-3xl sm:text-4xl font-extrabold text-text mb-2">Unity of Consensus</h2>
+            <p className="text-text-muted text-lg">IFFE Bbenhe Development SACCO (IBDS) — P.O. Box 111223, Jinja</p>
           </div>
+
+          {/* Vision + Mission */}
+          <div className="grid md:grid-cols-2 gap-8 mb-12">
+            <div className="bg-white dark:bg-gray-950 border border-gray-200 dark:border-gray-800 shadow-sm rounded-xl p-8">
+              <h3 className="text-lg font-bold text-primary mb-3">Our Vision</h3>
+              <p className="text-text-muted leading-relaxed">Empowering individual members to take control of their finances and build a strong foundation for a prosperous future.</p>
+            </div>
+            <div className="bg-white dark:bg-gray-950 border border-gray-200 dark:border-gray-800 shadow-sm rounded-xl p-8">
+              <h3 className="text-lg font-bold text-primary mb-3">Our Mission</h3>
+              <p className="text-text-muted leading-relaxed">Mobilization of members for sustainable development.</p>
+            </div>
+          </div>
+
+          {/* Values + Principles */}
+          <div className="grid md:grid-cols-2 gap-8 mb-12">
+            <div className="bg-white dark:bg-gray-950 border border-gray-200 dark:border-gray-800 shadow-sm rounded-xl p-8">
+              <h3 className="text-lg font-bold text-text mb-4">Our Values</h3>
+              <div className="grid grid-cols-2 gap-3">
+                {["Self Help", "Mutual Responsibility", "Equality", "Equity"].map((v) => (
+                  <div key={v} className="flex items-center gap-2 text-sm font-medium text-text-muted">
+                    <div className="w-2 h-2 rounded-full bg-primary shrink-0" />
+                    {v}
+                  </div>
+                ))}
+              </div>
+            </div>
+            <div className="bg-white dark:bg-gray-950 border border-gray-200 dark:border-gray-800 shadow-sm rounded-xl p-8">
+              <h3 className="text-lg font-bold text-text mb-4">Our Principles</h3>
+              <div className="space-y-2">
+                {[
+                  "Voluntary and open membership",
+                  "Democratic member control",
+                  "Economic participation by members",
+                  "Autonomy and independence",
+                  "Education, training and information",
+                  "Cooperation among cooperatives",
+                  "Concern for community in general",
+                ].map((p) => (
+                  <div key={p} className="flex items-start gap-2 text-sm text-text-muted">
+                    <div className="w-1.5 h-1.5 rounded-full bg-secondary shrink-0 mt-1.5" />
+                    {p}
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+
+          {/* Features */}
           <div className="grid md:grid-cols-3 gap-8">
             {[
-              { icon: Wallet, title: "Secure Savings", desc: "Your future is safe with us. Flexible savings plans designed to help you reach your goals faster.", gradient: "from-primary/20 to-primary/5", text: "text-primary" },
-              { icon: TrendingUp, title: "Affordable Loans", desc: "Low interest rates and easy repayment terms. We fuel your business and personal growth.", gradient: "from-secondary/20 to-secondary/5", text: "text-secondary" },
-              { icon: Smartphone, title: "Digital Banking", desc: "Access your money 24/7. Our online portals ensure you are always in control, wherever you are.", gradient: "from-info/20 to-info/5", text: "text-info" },
+              { icon: Wallet, title: "Secure Savings", desc: "Extend help to members in socio-economic problems through urgent financial, material and moral support.", gradient: "from-primary/20 to-primary/5", text: "text-primary" },
+              { icon: TrendingUp, title: "Affordable Loans", desc: "Support members in times of sorrow with financial support including condolences and any other support possible.", gradient: "from-secondary/20 to-secondary/5", text: "text-secondary" },
+              { icon: Smartphone, title: "Digital Access", desc: "Access your savings, loans, welfare programs and reports 24/7 through our modern online portals.", gradient: "from-info/20 to-info/5", text: "text-info" },
             ].map((feature) => (
-              <div key={feature.title} className="group glass-card rounded-xl p-8 hover:-translate-y-2 cursor-default">
+              <div key={feature.title} className="group bg-white dark:bg-gray-950 border border-gray-200 dark:border-gray-800 shadow-sm rounded-xl p-8 hover:-translate-y-1 transition-transform cursor-default">
                 <div className={`w-14 h-14 rounded-xl bg-gradient-to-br ${feature.gradient} flex items-center justify-center mb-6`}>
                   <feature.icon className={`w-7 h-7 ${feature.text}`} />
                 </div>
@@ -324,7 +373,8 @@ export default function HomePage() {
                   <p className="text-[10px] font-semibold text-gray-400 tracking-widest uppercase mt-0.5">Empowering Financial Freedom</p>
                 </div>
               </div>
-              <p className="text-gray-400 leading-relaxed text-sm">Empowering financial freedom through community and innovation. Building a better future, one member at a time.</p>
+              <p className="text-gray-400 leading-relaxed text-sm">IFFE Bbenhe Development SACCO (IBDS). Empowering financial freedom through community, unity and sustainable development since inception.</p>
+              <p className="text-xs text-gray-500 mt-3">P.O. Box 111223, Jinja, Uganda</p>
             </div>
             <div>
               <h4 className="text-sm font-bold uppercase tracking-wider text-gray-500 mb-6">Quick Links</h4>
@@ -345,7 +395,7 @@ export default function HomePage() {
                 </li>
                 <li className="flex items-center gap-3">
                   <div className="w-9 h-9 rounded-full bg-primary/10 ring-1 ring-primary/20 flex items-center justify-center"><Phone className="w-4 h-4 text-primary" /></div>
-                  <a href="tel:+256782894875" className="text-gray-300 hover:text-white font-medium">+256 782 894 875</a>
+                  <span className="text-gray-300 font-medium">0782 894875 / 0772 875008 / 0772 958879</span>
                 </li>
                 <li className="flex items-center gap-3">
                   <div className="w-9 h-9 rounded-full bg-primary/10 ring-1 ring-primary/20 flex items-center justify-center"><Mail className="w-4 h-4 text-primary" /></div>
@@ -355,7 +405,7 @@ export default function HomePage() {
             </div>
           </div>
           <div className="pt-8 text-center">
-            <p className="text-sm text-gray-500">&copy; 2026 IFFE SACCO. All rights reserved.</p>
+            <p className="text-sm text-gray-500">&copy; 2026 IFFE Bbenhe Development SACCO (IBDS). All rights reserved.</p>
           </div>
         </div>
       </footer>
