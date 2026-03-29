@@ -1,9 +1,7 @@
+"use client";
+
 import { WifiOff, RefreshCw, Home } from "lucide-react";
 import Link from "next/link";
-
-export const metadata = {
-  title: "Offline | IFFE SACCO",
-};
 
 export default function OfflinePage() {
   return (
