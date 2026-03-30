@@ -267,11 +267,50 @@ export default function HomePage() {
             </div>
           </div>
 
+          {/* Aims & Objectives */}
+          <div className="bg-white dark:bg-gray-950 border border-gray-200 dark:border-gray-800 shadow-sm rounded-xl p-8 mb-12">
+            <h3 className="text-lg font-bold text-primary mb-5">Aims &amp; Objectives</h3>
+            <div className="grid md:grid-cols-2 gap-x-8 gap-y-3">
+              {[
+                "To extend help to its members in socio-economic problems through urgent financial, material and moral support.",
+                "To support its members in times of sorrow with financial support in terms of condolences and any other support possible.",
+                "To promote professionalism among its members in their respective areas of work.",
+                "To create schemes for the development of the beneficiaries of the SACCO.",
+                "To cooperate with government/private security organs.",
+              ].map((obj) => (
+                <div key={obj} className="flex items-start gap-2.5 text-sm text-text-muted leading-relaxed">
+                  <div className="w-1.5 h-1.5 rounded-full bg-primary shrink-0 mt-2" />
+                  {obj}
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Activities of the SACCO */}
+          <div className="bg-white dark:bg-gray-950 border border-gray-200 dark:border-gray-800 shadow-sm rounded-xl p-8 mb-12">
+            <h3 className="text-lg font-bold text-primary mb-5">Activities of the SACCO</h3>
+            <div className="grid md:grid-cols-2 gap-x-8 gap-y-3">
+              {[
+                "Participate in several socio-economic activities as sanctioned by the SACCO's general assembly in a resolution from its sitting.",
+                "Actively participate in all gatherings, funerals and other social functions and celebrations where the SACCO is mandated to participate.",
+                "Counseling and guidance amongst the SACCO members and other members of the community.",
+                "Lobbying and networking with other development partners in the public and private sectors with the aim of securing both social and economic opportunities for the members.",
+                "Support a member in terms of condolence contribution in case of loss of a beloved one — Him/herself, Spouse(s), Biological children, Parents.",
+                "In case of many members from a family, all of them are to be supported.",
+              ].map((act) => (
+                <div key={act} className="flex items-start gap-2.5 text-sm text-text-muted leading-relaxed">
+                  <div className="w-1.5 h-1.5 rounded-full bg-secondary shrink-0 mt-2" />
+                  {act}
+                </div>
+              ))}
+            </div>
+          </div>
+
           {/* Features */}
           <div className="grid md:grid-cols-3 gap-8">
             {[
-              { icon: Wallet, title: "Secure Savings", desc: "Extend help to members in socio-economic problems through urgent financial, material and moral support.", gradient: "from-primary/20 to-primary/5", text: "text-primary" },
-              { icon: TrendingUp, title: "Affordable Loans", desc: "Support members in times of sorrow with financial support including condolences and any other support possible.", gradient: "from-secondary/20 to-secondary/5", text: "text-secondary" },
+              { icon: Wallet, title: "Secure Savings", desc: "Flexible savings plans designed to help you reach your financial goals with competitive interest rates.", gradient: "from-primary/20 to-primary/5", text: "text-primary" },
+              { icon: TrendingUp, title: "Affordable Loans", desc: "Low interest rates and easy repayment terms to fuel your business and personal growth.", gradient: "from-secondary/20 to-secondary/5", text: "text-secondary" },
               { icon: Smartphone, title: "Digital Access", desc: "Access your savings, loans, welfare programs and reports 24/7 through our modern online portals.", gradient: "from-info/20 to-info/5", text: "text-info" },
             ].map((feature) => (
               <div key={feature.title} className="group bg-white dark:bg-gray-950 border border-gray-200 dark:border-gray-800 shadow-sm rounded-xl p-8 hover:-translate-y-1 transition-transform cursor-default">
