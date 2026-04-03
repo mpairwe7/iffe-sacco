@@ -54,8 +54,8 @@ export function DashboardHeader({ onToggleSidebar }: DashboardHeaderProps) {
 
   const handleLogout = useCallback(() => {
     logout();
-    router.push("/");
-  }, [logout, router]);
+    window.location.href = "/";
+  }, [logout]);
 
   useEffect(() => { setMounted(true); }, []);
 
