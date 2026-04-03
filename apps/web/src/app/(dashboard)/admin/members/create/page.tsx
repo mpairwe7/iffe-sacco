@@ -2,15 +2,25 @@
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { useEffect } from "react";
 import { ArrowLeft, Save, UserPlus, Loader2 } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { memberSchema, type MemberInput } from "@/lib/schemas";
 import { useCreateMember } from "@/hooks/use-members";
+import { useAuthStore } from "@/stores/auth-store";
 import { toast } from "sonner";
 
 export default function CreateMemberPage() {
   const router = useRouter();
+  const userRole = useAuthStore((s) => s.user?.role);
+
+  useEffect(() => {
+    if (userRole && userRole !== "admin") {
+      toast.error("Only administrators can add members directly");
+      router.replace("/admin/members");
+    }
+  }, [userRole, router]);
   const createMember = useCreateMember();
   const {
     register,

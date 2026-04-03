@@ -109,7 +109,7 @@ export const expenses: Expense[] = [
   { id: "EXP-003", description: "Internet & Phone", category: "Utilities", amount: 350000, date: "2026-03-05", approvedBy: "Admin", status: "Approved" },
   { id: "EXP-004", description: "Marketing Campaign", category: "Marketing", amount: 800000, date: "2026-03-10", approvedBy: "Admin", status: "Pending" },
   { id: "EXP-005", description: "Office Supplies", category: "Operations", amount: 150000, date: "2026-03-12", approvedBy: "Admin", status: "Approved" },
-  { id: "EXP-006", description: "System Maintenance", category: "IT", amount: 500000, date: "2026-03-15", approvedBy: "Admin", status: "Approved" },
+  { id: "EXP-006", description: "System Maintenance", category: "Technical Issues", amount: 500000, date: "2026-03-15", approvedBy: "Admin", status: "Approved" },
   { id: "EXP-007", description: "Transport Allowances", category: "Operations", amount: 280000, date: "2026-03-18", approvedBy: "Admin", status: "Approved" },
   { id: "EXP-008", description: "Training Workshop", category: "Training", amount: 650000, date: "2026-03-20", approvedBy: "-", status: "Pending" },
 ];

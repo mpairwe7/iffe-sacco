@@ -15,8 +15,6 @@ export default function MemberSavingsPage() {
   const accounts = accountsData?.data ?? [];
   const recentActivity = txData?.data ?? [];
 
-  const totalSavings = accounts.reduce((sum, acc) => sum + acc.balance, 0);
-
   return (
     <div className="space-y-6">
       <div className="flex items-center gap-3">
@@ -30,14 +28,12 @@ export default function MemberSavingsPage() {
       </div>
 
       {accountsLoading ? (
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-          <StatSkeleton />
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <StatSkeleton />
           <StatSkeleton />
         </div>
       ) : (
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-          <StatCard title="Total Savings" value={formatCurrency(totalSavings)} icon={Wallet} color="primary" />
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <StatCard title="Interest Rate" value={accounts[0] ? `${accounts[0].interestRate}% p.a.` : "N/A"} icon={TrendingUp} color="success" />
           <StatCard title="Total Accounts" value={String(accounts.length)} icon={Wallet} color="info" />
         </div>

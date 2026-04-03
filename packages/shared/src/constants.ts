@@ -9,7 +9,7 @@ export const TRANSACTION_METHODS = ["cash", "mobile_money", "bank_transfer", "ch
 
 export const EXPENSE_CATEGORIES = [
   "Salaries", "Rent", "Utilities", "Marketing", "Operations",
-  "IT", "Training", "Transport", "Insurance", "Other",
+  "Technical Issues", "Training", "Transport", "Other",
 ] as const;
 
 export const INTEREST_RATES = {

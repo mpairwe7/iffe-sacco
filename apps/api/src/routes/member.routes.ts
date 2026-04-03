@@ -25,7 +25,7 @@ members.get("/:id", async (c) => {
   return c.json({ success: true, data: member });
 });
 
-members.post("/", requireRole("admin", "staff"), zValidator("json", createMemberSchema), async (c) => {
+members.post("/", requireRole("admin"), zValidator("json", createMemberSchema), async (c) => {
   const data = c.req.valid("json");
   const member = await service.create(data);
   return c.json({ success: true, data: member }, 201);

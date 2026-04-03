@@ -35,7 +35,7 @@ import { useRouter } from "next/navigation";
 
 // ── Zod Schema ──────────────────────────────────────────────────────
 const placeSchema = z.object({
-  district: z.string().optional(),
+  district: z.string().min(1, "District is required"),
   county: z.string().optional(),
   subCounty: z.string().optional(),
   parish: z.string().optional(),
@@ -43,7 +43,7 @@ const placeSchema = z.object({
 });
 
 const parentSchema = z.object({
-  name: z.string().optional(),
+  name: z.string().min(1, "Name is required"),
   district: z.string().optional(),
   village: z.string().optional(),
   phone: z.string().optional(),
@@ -79,20 +79,20 @@ const applicationSchema = z
   .object({
     // Step 1
     fullName: z.string().min(2, "Full name is required"),
-    dateOfBirth: z.string().optional(),
-    sex: z.string().optional(),
+    dateOfBirth: z.string().min(1, "Date of birth is required"),
+    sex: z.string().min(1, "Please select your sex"),
     phone: z.string().min(10, "Valid phone number is required"),
-    email: z.string().optional(),
-    clan: z.string().optional(),
-    totem: z.string().optional(),
+    email: z.string().email("Valid email is required"),
+    clan: z.string().min(1, "Clan is required"),
+    totem: z.string().min(1, "Totem is required"),
     // Step 2
     birthPlace: placeSchema,
     ancestralPlace: placeSchema,
     residencePlace: placeSchema,
     // Step 3
-    occupation: z.string().optional(),
-    placeOfWork: z.string().optional(),
-    qualifications: z.string().optional(),
+    occupation: z.string().min(1, "Occupation is required"),
+    placeOfWork: z.string().min(1, "Place of work is required"),
+    qualifications: z.string().min(1, "Qualifications are required"),
     // Step 4
     fatherInfo: parentSchema,
     motherInfo: parentSchema,
@@ -124,9 +124,9 @@ const STEPS = [
 
 // Fields to validate per step before allowing next
 const STEP_FIELDS: (keyof ApplicationForm)[][] = [
-  ["fullName", "phone"],
+  ["fullName", "phone", "dateOfBirth", "sex", "email", "clan", "totem"],
   ["birthPlace", "ancestralPlace", "residencePlace"],
-  ["occupation"],
+  ["occupation", "placeOfWork", "qualifications"],
   ["fatherInfo", "motherInfo"],
   ["password", "confirmPassword", "terms", "reaffirmation"],
 ];
@@ -202,6 +202,7 @@ function PlaceFields({
         <FormField
           key={f}
           label={labels[f]}
+          required={f === "district"}
           {...register(`${prefix}.${f}`)}
           error={(errors[prefix] as any)?.[f]?.message}
           placeholder={labels[f]}
@@ -228,7 +229,7 @@ function ParentFields({
   return (
     <CollapsibleSection title={title} defaultOpen={prefix === "fatherInfo"}>
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-        <FormField label="Name" {...register(`${prefix}.name`)} error={pe.name?.message} placeholder="Full name" />
+        <FormField label="Name" required {...register(`${prefix}.name`)} error={pe.name?.message} placeholder="Full name" />
         <FormField label="District" {...register(`${prefix}.district`)} error={pe.district?.message} placeholder="District" />
         <FormField label="Village" {...register(`${prefix}.village`)} error={pe.village?.message} placeholder="Village" />
         <FormField label="Phone" {...register(`${prefix}.phone`)} error={pe.phone?.message} placeholder="Phone number" />
@@ -470,9 +471,9 @@ export default function RegisterPage() {
                 <div className="space-y-4">
                   <FormField label="Full Name" icon={User} required {...register("fullName")} error={errors.fullName?.message} placeholder="e.g. Mukasa John" />
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <FormField label="Date of Birth" type="date" min="1930-01-01" max={new Date().toISOString().split("T")[0]} {...register("dateOfBirth")} error={errors.dateOfBirth?.message} />
+                    <FormField label="Date of Birth" type="date" min="1930-01-01" max={new Date().toISOString().split("T")[0]} required {...register("dateOfBirth")} error={errors.dateOfBirth?.message} />
                     <div>
-                      <label className="block text-sm font-medium text-text mb-2">Sex</label>
+                      <label className="block text-sm font-medium text-text mb-2">Sex<span className="text-danger ml-0.5">*</span></label>
                       <select
                         {...register("sex")}
                         className="w-full px-4 py-3 bg-white/60 dark:bg-white/5 border border-white/40 dark:border-white/10 rounded-lg text-sm text-text focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
@@ -481,15 +482,16 @@ export default function RegisterPage() {
                         <option value="male">Male</option>
                         <option value="female">Female</option>
                       </select>
+                      {errors.sex && <p className="text-sm text-danger mt-1.5">{errors.sex.message}</p>}
                     </div>
                   </div>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <FormField label="Phone" icon={Phone} required {...register("phone")} error={errors.phone?.message} placeholder="+256 700 000 000" />
-                    <FormField label="Email" icon={Mail} {...register("email")} error={errors.email?.message} placeholder="you@example.com" />
+                    <FormField label="Email" icon={Mail} required {...register("email")} error={errors.email?.message} placeholder="you@example.com" />
                   </div>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <FormField label="Clan" {...register("clan")} error={errors.clan?.message} placeholder="Your clan" />
-                    <FormField label="Totem" {...register("totem")} error={errors.totem?.message} placeholder="Your totem" />
+                    <FormField label="Clan" required {...register("clan")} error={errors.clan?.message} placeholder="Your clan" />
+                    <FormField label="Totem" required {...register("totem")} error={errors.totem?.message} placeholder="Your totem" />
                   </div>
                 </div>
               )}
@@ -512,16 +514,17 @@ export default function RegisterPage() {
               {/* ════════════════ STEP 3 ════════════════ */}
               {step === 2 && (
                 <div className="space-y-4">
-                  <FormField label="Occupation" icon={Briefcase} {...register("occupation")} error={errors.occupation?.message} placeholder="e.g. Farmer, Teacher..." />
-                  <FormField label="Place of Work" icon={MapPin} {...register("placeOfWork")} error={errors.placeOfWork?.message} placeholder="e.g. Kampala City Council" />
+                  <FormField label="Occupation" icon={Briefcase} required {...register("occupation")} error={errors.occupation?.message} placeholder="e.g. Farmer, Teacher..." />
+                  <FormField label="Place of Work" icon={MapPin} required {...register("placeOfWork")} error={errors.placeOfWork?.message} placeholder="e.g. Kampala City Council" />
                   <div>
-                    <label className="block text-sm font-medium text-text mb-2">Qualifications</label>
+                    <label className="block text-sm font-medium text-text mb-2">Qualifications<span className="text-danger ml-0.5">*</span></label>
                     <textarea
                       {...register("qualifications")}
                       rows={5}
                       placeholder="List your educational qualifications, certificates, etc."
                       className="w-full px-4 py-3 bg-white/60 dark:bg-white/5 border border-white/40 dark:border-white/10 rounded-lg text-sm text-text placeholder:text-text-light focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary resize-none"
                     />
+                    {errors.qualifications && <p className="text-sm text-danger mt-1.5">{errors.qualifications.message}</p>}
                   </div>
                 </div>
               )}

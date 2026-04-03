@@ -158,7 +158,14 @@ export function Sidebar({ open, onClose }: SidebarProps) {
   }
 
   const filteredNavItems = useMemo(
-    () => navItems.filter((item) => item.roles.includes(role)),
+    () => navItems
+      .filter((item) => item.roles.includes(role))
+      .map((item) => {
+        if (item.label === "Members" && role !== "admin") {
+          return { ...item, children: item.children?.filter((c) => c.href !== "/admin/members/create") };
+        }
+        return item;
+      }),
     [role]
   );
 
@@ -318,14 +325,6 @@ export function Sidebar({ open, onClose }: SidebarProps) {
             );
           })}
         </nav>
-
-        {/* Help link */}
-        <div className="px-3 pb-1">
-          <Link href="/portal/help" onClick={onClose} className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-gray-500 dark:text-gray-500 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-800/60 transition-colors">
-            <HelpCircle className="w-5 h-5 shrink-0" />
-            <span>Help & Support</span>
-          </Link>
-        </div>
 
         {/* Logout */}
         <div className="px-3 py-3 border-t border-gray-200 dark:border-gray-800">

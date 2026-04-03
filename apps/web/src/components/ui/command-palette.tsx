@@ -17,7 +17,7 @@ import type { Role } from "@iffe/shared";
 const allPages = [
   { label: "Dashboard", href: "/dashboard", icon: LayoutDashboard, group: "Pages", roles: ["admin", "chairman", "staff", "member"] as Role[] },
   { label: "Members", href: "/admin/members", icon: Users, group: "Pages", roles: ["admin", "staff"] as Role[] },
-  { label: "Add Member", href: "/admin/members/create", icon: Users, group: "Pages", roles: ["admin", "staff"] as Role[] },
+  { label: "Add Member", href: "/admin/members/create", icon: Users, group: "Pages", roles: ["admin"] as Role[] },
   { label: "Accounts", href: "/admin/savings-accounts", icon: Landmark, group: "Pages", roles: ["admin", "staff"] as Role[] },
   { label: "Transactions", href: "/admin/transactions", icon: Wallet, group: "Pages", roles: ["admin", "staff"] as Role[] },
   { label: "New Transaction", href: "/admin/transactions/create", icon: Wallet, group: "Pages", roles: ["admin", "staff"] as Role[] },

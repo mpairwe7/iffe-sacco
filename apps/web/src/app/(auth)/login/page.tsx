@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Eye, EyeOff, Mail, Lock, ArrowRight, Loader2 } from "lucide-react";
+import { Eye, EyeOff, Mail, Lock, ArrowRight, ArrowLeft, Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import { loginSchema, type LoginInput } from "@/lib/schemas";
 import { useLogin } from "@/hooks/use-auth";
@@ -35,6 +35,13 @@ export default function LoginPage() {
 
   return (
     <div className="max-w-md mx-auto w-full">
+      <Link
+        href="/"
+        className="inline-flex items-center gap-2 text-sm font-medium text-text-muted hover:text-text mb-4 transition-colors"
+      >
+        <ArrowLeft className="w-4 h-4" />
+        Back to Home
+      </Link>
       <div className="glass-card rounded-xl p-8 shadow-xl">
         <h2 className="text-2xl font-bold text-text text-center">Welcome Back</h2>
         <p className="text-text-muted text-center mt-2 mb-8">Sign in to your account</p>
