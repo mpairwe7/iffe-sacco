@@ -2,7 +2,7 @@ import { Hono } from "hono";
 import { zValidator } from "@hono/zod-validator";
 import { createWelfareSchema, updateWelfareSchema, pledgeSchema, paginationSchema } from "@iffe/shared";
 import { WelfareService } from "../services/welfare.service";
-import { authMiddleware, requireRole } from "../middleware/auth";
+import { authMiddleware, requireRole, type AuthUser } from "../middleware/auth";
 import { z } from "zod/v4";
 
 const statusSchema = z.object({
@@ -27,10 +27,13 @@ welfare.get("/stats", async (c) => {
 });
 
 welfare.get("/pledges/mine", async (c) => {
-  const user = c.get("user" as any) as { id: string; role: string };
+  const user = c.get("user") as AuthUser;
+  if (!user.memberId) {
+    return c.json({ success: true, data: [] });
+  }
   const params = { page: 1, limit: 50, sortOrder: "desc" as const };
-  const result = await service.getMemberPledges(user.id, params);
-  return c.json({ success: true, data: result });
+  const result = await service.getMemberPledges(user.memberId, params);
+  return c.json({ success: true, data: result.data });
 });
 
 welfare.get("/:id", async (c) => {
@@ -64,8 +67,11 @@ welfare.get("/:id/pledges", zValidator("query", paginationSchema), async (c) => 
 
 welfare.post("/pledges", zValidator("json", pledgeSchema), async (c) => {
   const data = c.req.valid("json");
-  const user = c.get("user" as any) as { id: string; role: string };
-  const pledge = await service.createPledge({ ...data, memberId: user.id });
+  const user = c.get("user") as AuthUser;
+  if (!user.memberId) {
+    return c.json({ success: false, message: "Only members can create pledges" }, 403);
+  }
+  const pledge = await service.createPledge({ ...data, memberId: user.memberId });
   return c.json({ success: true, data: pledge }, 201);
 });
 

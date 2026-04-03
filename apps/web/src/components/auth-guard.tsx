@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useAuthStore } from "@/stores/auth-store";
 import { authApi } from "@/lib/api/auth";
+import { applicationsApi } from "@/lib/api/applications";
 import { Skeleton } from "@/components/ui/skeleton";
 
 export function AuthGuard({ children }: { children: React.ReactNode }) {
@@ -20,9 +21,8 @@ export function AuthGuard({ children }: { children: React.ReactNode }) {
     // Validate token is still valid
     authApi
       .getMe()
-      .then((user) => {
+      .then(async (user) => {
         setUser(user);
-        setChecked(true);
 
         // Comprehensive role-based route protection
         const p = window.location.pathname;
@@ -37,11 +37,22 @@ export function AuthGuard({ children }: { children: React.ReactNode }) {
           if (p.startsWith("/portal")) { router.replace("/chairman"); return; }
         }
 
-        // Member: can only access /portal/*
+        // Member: can only access /portal/* AND must have approved application
         if (role === "member") {
           if (p.startsWith("/admin")) { router.replace("/portal/savings"); return; }
           if (p.startsWith("/chairman")) { router.replace("/portal/savings"); return; }
           if (p === "/dashboard") { router.replace("/portal/savings"); return; }
+
+          // Block portal access until application is approved
+          try {
+            const application = await applicationsApi.getMine();
+            if (application && application.status !== "approved") {
+              router.replace("/application-status");
+              return;
+            }
+          } catch {
+            // No application found — admin-created member, allow access
+          }
         }
 
         // Staff: same as admin but no /chairman
@@ -51,6 +62,7 @@ export function AuthGuard({ children }: { children: React.ReactNode }) {
         }
 
         // Admin: no restrictions (full access)
+        setChecked(true);
       })
       .catch(() => {
         logout();

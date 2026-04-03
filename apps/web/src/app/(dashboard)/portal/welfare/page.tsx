@@ -13,9 +13,9 @@ export default function WelfarePage() {
   const createPledge = useCreatePledge();
 
   const programs = data?.data ?? [];
-  const pledges = myPledges ?? [];
-  const totalPledged = pledges.reduce((sum, p) => sum + p.amount, 0);
-  const totalRaised = programs.reduce((sum, p) => sum + p.raisedAmount, 0);
+  const pledges = Array.isArray(myPledges) ? myPledges : [];
+  const totalPledged = pledges.reduce((sum: number, p: any) => sum + (p.amount || 0), 0);
+  const totalRaised = programs.reduce((sum: number, p: any) => sum + (p.raisedAmount || 0), 0);
 
   const [pledgeDialogOpen, setPledgeDialogOpen] = useState(false);
   const [selectedProgramId, setSelectedProgramId] = useState<string>("");

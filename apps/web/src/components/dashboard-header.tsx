@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import {
   Menu, Bell, Search, Globe, User, Settings, LogOut,
-  HelpCircle, Sun, Moon, Command, ChevronDown, Clock,
+  Sun, Moon, Command, ChevronDown, Clock,
   CheckCircle, AlertCircle, UserPlus, CreditCard, X,
 } from "lucide-react";
 import { useState, useRef, useEffect, useCallback } from "react";
@@ -54,7 +54,7 @@ export function DashboardHeader({ onToggleSidebar }: DashboardHeaderProps) {
 
   const handleLogout = useCallback(() => {
     logout();
-    router.push("/login");
+    router.push("/");
   }, [logout, router]);
 
   useEffect(() => { setMounted(true); }, []);
@@ -269,9 +269,6 @@ export function DashboardHeader({ onToggleSidebar }: DashboardHeaderProps) {
                     <Settings className="w-4 h-4" /> Settings
                   </Link>
                 )}
-                <Link href="/portal/help" onClick={() => setProfileOpen(false)} className="flex items-center gap-3 px-4 py-2.5 text-sm text-text-muted hover:text-text hover:bg-surface-hover transition-colors">
-                  <HelpCircle className="w-4 h-4" /> Help & Support
-                </Link>
               </div>
               <div className="border-t border-border/40 py-1">
                 <button onClick={handleLogout} className="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-danger hover:bg-danger/5 transition-colors">
