@@ -22,6 +22,7 @@ interface DataTableProps<T> {
   data: T[];
   addHref?: string;
   addLabel?: string;
+  onAdd?: () => void;
   searchPlaceholder?: string;
   isLoading?: boolean;
   error?: Error | null;
@@ -60,6 +61,7 @@ export function DataTable<T extends Record<string, any>>({
   data,
   addHref,
   addLabel = "Add New",
+  onAdd,
   searchPlaceholder = "Search...",
   isLoading = false,
   error = null,
@@ -172,11 +174,15 @@ export function DataTable<T extends Record<string, any>>({
           >
             <FileSpreadsheet className="w-4 h-4" />
           </button>
-          {addHref && (
+          {onAdd ? (
+            <button onClick={onAdd} className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-white bg-primary hover:bg-primary/90 rounded-lg hover:shadow-lg hover:shadow-primary/20">
+              <Plus className="w-4 h-4" /> {addLabel}
+            </button>
+          ) : addHref ? (
             <Link href={addHref} className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-white bg-primary hover:bg-primary/90 rounded-lg hover:shadow-lg hover:shadow-primary/20">
               <Plus className="w-4 h-4" /> {addLabel}
             </Link>
-          )}
+          ) : null}
         </div>
       </div>
 

@@ -2,7 +2,15 @@
 
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { usersApi } from "@/lib/api/users";
-import type { UpdateUserInput, PaginationParams } from "@iffe/shared";
+import type { CreateUserInput, UpdateUserInput, PaginationParams } from "@iffe/shared";
+
+export function useCreateUser() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: (data: CreateUserInput) => usersApi.createUser(data),
+    onSuccess: () => qc.invalidateQueries({ queryKey: ["users"] }),
+  });
+}
 
 export function useUsers(params?: PaginationParams) {
   return useQuery({

@@ -122,6 +122,14 @@ export const createBankAccountSchema = z.object({
 export const updateBankAccountSchema = createBankAccountSchema.partial();
 
 // ===== User management =====
+export const createUserSchema = z.object({
+  name: z.string().min(2, "Name must be at least 2 characters"),
+  email: z.email("Valid email required"),
+  phone: z.string().min(10, "Valid phone number required"),
+  password: z.string().min(8, "Password must be at least 8 characters"),
+  role: z.enum(["admin", "chairman", "staff"]),
+});
+
 export const updateUserSchema = z.object({
   name: z.string().min(2).optional(),
   email: z.email().optional(),
@@ -280,6 +288,7 @@ export type UpdateExpenseInput = z.infer<typeof updateExpenseSchema>;
 export type UpdateWelfareInput = z.infer<typeof updateWelfareSchema>;
 export type CreateBankAccountInput = z.infer<typeof createBankAccountSchema>;
 export type UpdateBankAccountInput = z.infer<typeof updateBankAccountSchema>;
+export type CreateUserInput = z.infer<typeof createUserSchema>;
 export type UpdateUserInput = z.infer<typeof updateUserSchema>;
 export type UpdateProfileInput = z.infer<typeof updateProfileSchema>;
 export type CalculateInterestInput = z.infer<typeof calculateInterestSchema>;

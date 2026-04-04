@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { DataTable } from "@/components/data-table";
 import { EditWelfareModal } from "@/components/modals/edit-welfare-modal";
+import { CreateWelfareModal } from "@/components/modals/create-welfare-modal";
 import { Heart, Pencil } from "lucide-react";
 import { useWelfarePrograms, useWelfareStats } from "@/hooks/use-welfare";
 import { formatCurrency } from "@/lib/utils";
@@ -11,6 +12,7 @@ import type { WelfareProgram } from "@iffe/shared";
 export default function WelfareAdminPage() {
   const { data, isLoading, error, refetch } = useWelfarePrograms();
   const statsQuery = useWelfareStats();
+  const [createOpen, setCreateOpen] = useState(false);
   const [editOpen, setEditOpen] = useState(false);
   const [editProgram, setEditProgram] = useState<WelfareProgram | null>(null);
 
@@ -134,7 +136,7 @@ export default function WelfareAdminPage() {
         title="All Programs"
         columns={columns}
         data={programs}
-        addHref="#"
+        onAdd={() => setCreateOpen(true)}
         addLabel="Create Program"
         searchPlaceholder="Search programs..."
         isLoading={isLoading}
@@ -142,6 +144,10 @@ export default function WelfareAdminPage() {
         onRetry={() => refetch()}
       />
 
+      <CreateWelfareModal
+        open={createOpen}
+        onOpenChange={setCreateOpen}
+      />
       <EditWelfareModal
         open={editOpen}
         onOpenChange={setEditOpen}

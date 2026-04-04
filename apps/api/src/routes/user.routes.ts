@@ -1,7 +1,8 @@
 import { Hono } from "hono";
 import { zValidator } from "@hono/zod-validator";
-import { updateUserSchema, paginationSchema } from "@iffe/shared";
+import { createUserSchema, updateUserSchema, paginationSchema } from "@iffe/shared";
 import { prisma } from "../config/db";
+import { hashPassword } from "../utils/password";
 import { authMiddleware, requireRole } from "../middleware/auth";
 import { HTTPException } from "hono/http-exception";
 
@@ -33,6 +34,19 @@ users.get("/", zValidator("query", paginationSchema), async (c) => {
   ]);
 
   return c.json({ success: true, data: { data, total, page, limit, totalPages: Math.ceil(total / limit) } });
+});
+
+users.post("/", zValidator("json", createUserSchema), async (c) => {
+  const data = c.req.valid("json");
+  const existing = await prisma.user.findUnique({ where: { email: data.email } });
+  if (existing) throw new HTTPException(409, { message: "A user with this email already exists" });
+
+  const password = await hashPassword(data.password);
+  const user = await prisma.user.create({
+    data: { name: data.name, email: data.email, phone: data.phone, password, role: data.role },
+    select: { id: true, name: true, email: true, phone: true, role: true, isActive: true, lastLogin: true, createdAt: true, avatar: true },
+  });
+  return c.json({ success: true, data: user }, 201);
 });
 
 users.get("/:id", async (c) => {

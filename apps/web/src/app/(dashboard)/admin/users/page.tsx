@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { DataTable } from "@/components/data-table";
 import { EditUserModal } from "@/components/modals/edit-user-modal";
+import { CreateUserModal } from "@/components/modals/create-user-modal";
 import { UserCog, Pencil } from "lucide-react";
 import { useUsers, useActivateUser, useDeactivateUser } from "@/hooks/use-users";
 import { toast } from "sonner";
@@ -12,6 +13,7 @@ export default function UsersPage() {
   const { data, isLoading, error, refetch } = useUsers();
   const activateUser = useActivateUser();
   const deactivateUser = useDeactivateUser();
+  const [createOpen, setCreateOpen] = useState(false);
   const [editOpen, setEditOpen] = useState(false);
   const [editUser, setEditUser] = useState<User | null>(null);
 
@@ -132,7 +134,7 @@ export default function UsersPage() {
         title="All Users"
         columns={columns}
         data={users}
-        addHref="#"
+        onAdd={() => setCreateOpen(true)}
         addLabel="Add User"
         searchPlaceholder="Search users..."
         isLoading={isLoading}
@@ -140,6 +142,10 @@ export default function UsersPage() {
         onRetry={() => refetch()}
       />
 
+      <CreateUserModal
+        open={createOpen}
+        onOpenChange={setCreateOpen}
+      />
       <EditUserModal
         open={editOpen}
         onOpenChange={setEditOpen}
