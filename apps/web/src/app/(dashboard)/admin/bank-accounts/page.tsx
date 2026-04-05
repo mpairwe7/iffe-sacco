@@ -4,6 +4,7 @@ import { useState } from "react";
 import { DataTable } from "@/components/data-table";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { EditBankAccountModal } from "@/components/modals/edit-bank-account-modal";
+import { CreateBankAccountModal } from "@/components/modals/create-bank-account-modal";
 import { Building2, Trash2, Pencil } from "lucide-react";
 import { useBankAccounts, useBankAccountStats, useDeleteBankAccount } from "@/hooks/use-bank-accounts";
 import { formatCurrency } from "@/lib/utils";
@@ -15,6 +16,7 @@ export default function BankAccountsPage() {
   const statsQuery = useBankAccountStats();
   const deleteBankAccount = useDeleteBankAccount();
 
+  const [createOpen, setCreateOpen] = useState(false);
   const [deleteId, setDeleteId] = useState<string | null>(null);
   const [editOpen, setEditOpen] = useState(false);
   const [editAccount, setEditAccount] = useState<BankAccount | null>(null);
@@ -128,7 +130,7 @@ export default function BankAccountsPage() {
         title="All Bank Accounts"
         columns={columns}
         data={bankAccounts}
-        addHref="#"
+        onAdd={() => setCreateOpen(true)}
         addLabel="Add Bank Account"
         searchPlaceholder="Search bank accounts..."
         isLoading={isLoading}
@@ -136,6 +138,10 @@ export default function BankAccountsPage() {
         onRetry={() => refetch()}
       />
 
+      <CreateBankAccountModal
+        open={createOpen}
+        onOpenChange={setCreateOpen}
+      />
       <EditBankAccountModal
         open={editOpen}
         onOpenChange={setEditOpen}
