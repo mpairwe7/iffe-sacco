@@ -223,3 +223,14 @@ a, button { transition-duration: 150ms; }
 .dark input, .dark select, .dark textarea {
   color-scheme: dark;
 }
+
+/* ===== SAFE AREA FOR MOBILE BOTTOM NAV ===== */
+.safe-bottom {
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+}
+
+@media (max-width: 1023px) {
+  .has-bottom-nav {
+    padding-bottom: 4.5rem;
+  }
+}
