@@ -87,11 +87,12 @@ export default function MemberWithdrawalsPage() {
             <label className="block text-sm font-medium text-text mb-2">Amount (USh)</label>
             <input
               type="number"
+              inputMode="numeric"
               min="5000"
               step="1000"
               placeholder="Enter amount"
               {...register("amount", { valueAsNumber: true })}
-              className="w-full px-4 py-2.5 bg-white/60 border border-white/40 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
+              className="w-full px-4 py-3 bg-white/60 dark:bg-white/5 border border-white/40 dark:border-white/10 rounded-lg text-sm text-text focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
             />
             {errors.amount && <p className="text-xs text-danger mt-1">{errors.amount.message}</p>}
           </div>

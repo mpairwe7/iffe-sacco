@@ -89,7 +89,7 @@ export function DashboardHeader({ onToggleSidebar }: DashboardHeaderProps) {
       {/* Left: Mobile menu */}
       <button
         onClick={onToggleSidebar}
-        className="lg:hidden p-2 text-gray-500 hover:text-gray-900 dark:hover:text-white rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800"
+        className="lg:hidden p-2.5 -ml-1 text-gray-500 hover:text-gray-900 dark:hover:text-white rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800"
         aria-label="Toggle sidebar"
       >
         <Menu className="w-5 h-5" />
@@ -112,7 +112,7 @@ export function DashboardHeader({ onToggleSidebar }: DashboardHeaderProps) {
       {/* Mobile search icon */}
       <button
         onClick={() => setCommandPaletteOpen(true)}
-        className="md:hidden p-2 text-gray-500 hover:text-gray-900 dark:hover:text-white rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800"
+        className="md:hidden p-2.5 text-gray-500 hover:text-gray-900 dark:hover:text-white rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800"
         aria-label="Search"
       >
         <Search className="w-5 h-5" />
@@ -152,7 +152,7 @@ export function DashboardHeader({ onToggleSidebar }: DashboardHeaderProps) {
         <div ref={notifRef} className="relative">
           <button
             onClick={() => { setNotifOpen(!notifOpen); setProfileOpen(false); }}
-            className="relative p-2 text-gray-500 hover:text-gray-900 dark:hover:text-white rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+            className="relative p-2.5 text-gray-500 hover:text-gray-900 dark:hover:text-white rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
             aria-label={`Notifications${unreadCount > 0 ? ` (${unreadCount} new)` : ""}`}
             aria-expanded={notifOpen}
           >
@@ -185,7 +185,7 @@ export function DashboardHeader({ onToggleSidebar }: DashboardHeaderProps) {
                 </div>
               </div>
 
-              <div className="max-h-80 overflow-y-auto divide-y divide-border/30">
+              <div className="max-h-[60vh] sm:max-h-80 overflow-y-auto divide-y divide-border/30">
                 {notifications.length === 0 ? (
                   <div className="px-4 py-8 text-center">
                     <Bell className="w-8 h-8 text-text-light mx-auto mb-2" />

@@ -272,7 +272,7 @@ export function Sidebar({ open, onClose }: SidebarProps) {
                   <button
                     onClick={() => toggleExpand(item.label)}
                     className={cn(
-                      "w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-semibold transition-colors",
+                      "w-full flex items-center gap-3 px-3 py-3 rounded-lg text-sm font-semibold transition-colors",
                       hasActive
                         ? "text-gray-900 dark:text-white bg-gray-100 dark:bg-gray-800"
                         : "text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-800/60"
@@ -292,7 +292,7 @@ export function Sidebar({ open, onClose }: SidebarProps) {
                           href={child.href}
                           onClick={onClose}
                           className={cn(
-                            "block px-3 py-2 rounded-lg text-sm font-medium transition-colors",
+                            "block px-3 py-2.5 rounded-lg text-sm font-medium transition-colors",
                             isActive(child.href)
                               ? "text-primary font-semibold bg-primary/10"
                               : "text-gray-500 dark:text-gray-500 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-800/60"
@@ -313,7 +313,7 @@ export function Sidebar({ open, onClose }: SidebarProps) {
                 href={item.href!}
                 onClick={onClose}
                 className={cn(
-                  "flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-semibold transition-colors",
+                  "flex items-center gap-3 px-3 py-3 rounded-lg text-sm font-semibold transition-colors",
                   isActive(item.href!)
                     ? "text-white bg-primary shadow-md shadow-primary/20"
                     : "text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-800/60"

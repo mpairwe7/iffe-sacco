@@ -289,7 +289,7 @@ export function DataTable<T extends Record<string, any>>({
             </select>
           </div>
           <div className="flex items-center gap-1">
-            <button onClick={() => setPage(Math.max(1, page - 1))} disabled={page === 1} className="p-2 rounded-lg hover:bg-surface-hover disabled:opacity-40 disabled:cursor-not-allowed" aria-label="Previous page">
+            <button onClick={() => setPage(Math.max(1, page - 1))} disabled={page === 1} className="p-2.5 rounded-lg hover:bg-surface-hover disabled:opacity-40 disabled:cursor-not-allowed" aria-label="Previous page">
               <ChevronLeft className="w-4 h-4" />
             </button>
             {Array.from({ length: Math.min(7, totalPages) }, (_, i) => {
@@ -299,12 +299,12 @@ export function DataTable<T extends Record<string, any>>({
               else if (page >= totalPages - 3) { p = totalPages - 6 + i; }
               else { p = page - 3 + i; }
               return (
-                <button key={p} onClick={() => setPage(p)} aria-label={`Page ${p}`} className={cn("w-9 h-9 rounded-lg text-sm font-medium", p === page ? "bg-primary text-white" : "hover:bg-surface-hover text-text-muted")}>
+                <button key={p} onClick={() => setPage(p)} aria-label={`Page ${p}`} className={cn("w-10 h-10 rounded-lg text-sm font-medium", p === page ? "bg-primary text-white" : "hover:bg-surface-hover text-text-muted")}>
                   {p}
                 </button>
               );
             })}
-            <button onClick={() => setPage(Math.min(totalPages, page + 1))} disabled={page === totalPages} className="p-2 rounded-lg hover:bg-surface-hover disabled:opacity-40 disabled:cursor-not-allowed" aria-label="Next page">
+            <button onClick={() => setPage(Math.min(totalPages, page + 1))} disabled={page === totalPages} className="p-2.5 rounded-lg hover:bg-surface-hover disabled:opacity-40 disabled:cursor-not-allowed" aria-label="Next page">
               <ChevronRight className="w-4 h-4" />
             </button>
           </div>

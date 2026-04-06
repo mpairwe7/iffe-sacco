@@ -97,7 +97,7 @@ export default function MemberLoansPage() {
                       </div>
                       <p className="text-xs text-text-muted font-mono">{loan.id.slice(0, 8)} &middot; Rate: {loan.interestRate}% p.a.</p>
                     </div>
-                    <div className="flex gap-8">
+                    <div className="flex flex-wrap gap-4 md:gap-8">
                       <div>
                         <p className="text-xs text-text-muted">Principal</p>
                         <p className="text-lg font-bold text-text">{formatCurrency(loan.amount)}</p>
@@ -151,30 +151,33 @@ export default function MemberLoansPage() {
             <label className="block text-sm font-medium text-text mb-2">Loan Amount (USh)</label>
             <input
               type="number"
+              inputMode="numeric"
               placeholder="5,000,000"
               value={calcAmount}
               onChange={(e) => setCalcAmount(e.target.value)}
-              className="w-full px-4 py-2.5 bg-white/60 border border-white/40 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
+              className="w-full px-4 py-3 bg-white/60 dark:bg-white/5 border border-white/40 dark:border-white/10 rounded-lg text-sm text-text focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
             />
           </div>
           <div>
             <label className="block text-sm font-medium text-text mb-2">Interest Rate (%)</label>
             <input
               type="number"
+              inputMode="decimal"
               placeholder="12"
               value={calcRate}
               onChange={(e) => setCalcRate(e.target.value)}
-              className="w-full px-4 py-2.5 bg-white/60 border border-white/40 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
+              className="w-full px-4 py-3 bg-white/60 dark:bg-white/5 border border-white/40 dark:border-white/10 rounded-lg text-sm text-text focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
             />
           </div>
           <div>
             <label className="block text-sm font-medium text-text mb-2">Term (Months)</label>
             <input
               type="number"
+              inputMode="numeric"
               placeholder="24"
               value={calcTerm}
               onChange={(e) => setCalcTerm(e.target.value)}
-              className="w-full px-4 py-2.5 bg-white/60 border border-white/40 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
+              className="w-full px-4 py-3 bg-white/60 dark:bg-white/5 border border-white/40 dark:border-white/10 rounded-lg text-sm text-text focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
             />
           </div>
           <div className="flex items-end">
