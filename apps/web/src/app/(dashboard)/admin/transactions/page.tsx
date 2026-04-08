@@ -2,6 +2,7 @@
 
 import { DataTable } from "@/components/data-table";
 import { useTransactions, useTransactionStats, useApproveTransaction, useRejectTransaction } from "@/hooks/use-transactions";
+import { useServerTable } from "@/hooks/use-server-table";
 import { formatCurrency, formatDate } from "@/lib/utils";
 import { Wallet, ArrowUpRight, ArrowDownRight, Check, X } from "lucide-react";
 import { toast } from "sonner";
@@ -9,12 +10,14 @@ import { toast } from "sonner";
 type TransactionRow = any;
 
 export default function TransactionsPage() {
-  const query = useTransactions();
+  const table = useServerTable();
+  const query = useTransactions(table.params);
   const statsQuery = useTransactionStats();
   const approveMutation = useApproveTransaction();
   const rejectMutation = useRejectTransaction();
 
-  const transactions = (query.data?.data || []) as TransactionRow[];
+  const transactionsResponse = query.data;
+  const transactions = (transactionsResponse?.data || []) as TransactionRow[];
   const stats = statsQuery.data as { total?: number; totalDeposits?: number; totalWithdrawals?: number; pending?: number } | undefined;
 
   function handleApprove(id: string) {
@@ -45,6 +48,7 @@ export default function TransactionsPage() {
     {
       key: "member",
       label: "Member",
+      sortable: false,
       render: (row: TransactionRow) => {
         const firstName = row.account?.member?.firstName || "";
         const lastName = row.account?.member?.lastName || "";
@@ -166,6 +170,18 @@ export default function TransactionsPage() {
         isLoading={query.isLoading}
         error={query.error}
         onRetry={() => query.refetch()}
+        serverSide
+        searchValue={table.search}
+        onSearchChange={table.handleSearchChange}
+        page={table.page}
+        perPage={table.limit}
+        totalItems={transactionsResponse?.total ?? 0}
+        totalPages={transactionsResponse?.totalPages ?? 1}
+        onPageChange={table.handlePageChange}
+        onPerPageChange={table.handlePerPageChange}
+        sortKey={table.sortBy}
+        sortDir={table.sortOrder}
+        onSortChange={table.handleSortChange}
       />
     </div>
   );

@@ -6,6 +6,7 @@ import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { CreateExpenseModal } from "@/components/modals/create-expense-modal";
 import { EditExpenseModal } from "@/components/modals/edit-expense-modal";
 import { useExpenses, useExpenseStats, useDeleteExpense, useApproveExpense } from "@/hooks/use-expenses";
+import { useServerTable } from "@/hooks/use-server-table";
 import { formatCurrency, formatDate } from "@/lib/utils";
 import { Receipt, Pencil, Trash2, Check, Plus } from "lucide-react";
 import { toast } from "sonner";
@@ -16,7 +17,8 @@ interface ExpenseRow extends Expense {
 }
 
 export default function ExpensesPage() {
-  const query = useExpenses();
+  const table = useServerTable();
+  const query = useExpenses(table.params);
   const statsQuery = useExpenseStats();
   const deleteMutation = useDeleteExpense();
   const approveMutation = useApproveExpense();
@@ -26,7 +28,8 @@ export default function ExpensesPage() {
   const [editOpen, setEditOpen] = useState(false);
   const [editExpense, setEditExpense] = useState<Expense | null>(null);
 
-  const expenses = (query.data?.data || []) as ExpenseRow[];
+  const expensesResponse = query.data;
+  const expenses = (expensesResponse?.data || []) as ExpenseRow[];
   const stats = statsQuery.data as { totalThisMonth?: number; approved?: number; pending?: number } | undefined;
 
   function handleDelete() {
@@ -172,6 +175,18 @@ export default function ExpensesPage() {
         isLoading={query.isLoading}
         error={query.error}
         onRetry={() => query.refetch()}
+        serverSide
+        searchValue={table.search}
+        onSearchChange={table.handleSearchChange}
+        page={table.page}
+        perPage={table.limit}
+        totalItems={expensesResponse?.total ?? 0}
+        totalPages={expensesResponse?.totalPages ?? 1}
+        onPageChange={table.handlePageChange}
+        onPerPageChange={table.handlePerPageChange}
+        sortKey={table.sortBy}
+        sortDir={table.sortOrder}
+        onSortChange={table.handleSortChange}
       />
 
       <CreateExpenseModal open={createOpen} onOpenChange={setCreateOpen} />

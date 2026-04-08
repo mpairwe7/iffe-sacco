@@ -4,6 +4,7 @@ import { useState } from "react";
 import { DataTable } from "@/components/data-table";
 import { CreateLoanModal } from "@/components/modals/create-loan-modal";
 import { useLoans, useLoanStats, useApproveLoan, useRejectLoan } from "@/hooks/use-loans";
+import { useServerTable } from "@/hooks/use-server-table";
 import { formatCurrency, formatDate } from "@/lib/utils";
 import { Calendar, Check, X, Plus } from "lucide-react";
 import { toast } from "sonner";
@@ -11,13 +12,15 @@ import { toast } from "sonner";
 type LoanRow = any;
 
 export default function LoansPage() {
-  const query = useLoans();
+  const table = useServerTable();
+  const query = useLoans(table.params);
   const statsQuery = useLoanStats();
   const approveMutation = useApproveLoan();
   const rejectMutation = useRejectLoan();
   const [createOpen, setCreateOpen] = useState(false);
 
-  const loans = (query.data?.data || []) as LoanRow[];
+  const loansResponse = query.data;
+  const loans = (loansResponse?.data || []) as LoanRow[];
   const stats = statsQuery.data as { active?: number; totalDisbursed?: number; outstanding?: number; overdue?: number } | undefined;
 
   function handleApprove(id: string) {
@@ -46,6 +49,7 @@ export default function LoansPage() {
     {
       key: "member",
       label: "Member",
+      sortable: false,
       render: (row: LoanRow) => {
         const name = `${row.member?.firstName || ""} ${row.member?.lastName || ""}`.trim();
         return <span className="font-medium text-text">{name || "\u2014"}</span>;
@@ -175,6 +179,18 @@ export default function LoansPage() {
         isLoading={query.isLoading}
         error={query.error}
         onRetry={() => query.refetch()}
+        serverSide
+        searchValue={table.search}
+        onSearchChange={table.handleSearchChange}
+        page={table.page}
+        perPage={table.limit}
+        totalItems={loansResponse?.total ?? 0}
+        totalPages={loansResponse?.totalPages ?? 1}
+        onPageChange={table.handlePageChange}
+        onPerPageChange={table.handlePerPageChange}
+        sortKey={table.sortBy}
+        sortDir={table.sortOrder}
+        onSortChange={table.handleSortChange}
       />
 
       <CreateLoanModal open={createOpen} onOpenChange={setCreateOpen} />

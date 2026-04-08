@@ -2,6 +2,7 @@
 
 import { DataTable } from "@/components/data-table";
 import { useAccounts, useAccountStats } from "@/hooks/use-accounts";
+import { useServerTable } from "@/hooks/use-server-table";
 import { formatCurrency, formatDate } from "@/lib/utils";
 import { Landmark } from "lucide-react";
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -11,10 +12,12 @@ const formatAccountType = (type: string) =>
   type.split("_").map((w) => w.charAt(0).toUpperCase() + w.slice(1)).join(" ");
 
 export default function SavingsAccountsPage() {
-  const query = useAccounts();
+  const table = useServerTable();
+  const query = useAccounts(table.params);
   const statsQuery = useAccountStats();
 
-  const accounts = (query.data?.data || []) as AccountRow[];
+  const accountsResponse = query.data;
+  const accounts = (accountsResponse?.data || []) as AccountRow[];
   const stats = statsQuery.data as { total?: number; totalBalance?: number; active?: number; dormant?: number } | undefined;
 
   const columns = [
@@ -26,6 +29,7 @@ export default function SavingsAccountsPage() {
     {
       key: "member",
       label: "Member",
+      sortable: false,
       render: (row: AccountRow) => {
         const name = `${row.member?.firstName || ""} ${row.member?.lastName || ""}`.trim();
         return <span className="font-medium text-text">{name || "—"}</span>;
@@ -107,6 +111,18 @@ export default function SavingsAccountsPage() {
         isLoading={query.isLoading}
         error={query.error}
         onRetry={() => query.refetch()}
+        serverSide
+        searchValue={table.search}
+        onSearchChange={table.handleSearchChange}
+        page={table.page}
+        perPage={table.limit}
+        totalItems={accountsResponse?.total ?? 0}
+        totalPages={accountsResponse?.totalPages ?? 1}
+        onPageChange={table.handlePageChange}
+        onPerPageChange={table.handlePerPageChange}
+        sortKey={table.sortBy}
+        sortDir={table.sortOrder}
+        onSortChange={table.handleSortChange}
       />
     </div>
   );

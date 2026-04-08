@@ -5,6 +5,7 @@ import Link from "next/link";
 import { DataTable } from "@/components/data-table";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { useMembers, useMemberStats, useDeleteMember } from "@/hooks/use-members";
+import { useServerTable } from "@/hooks/use-server-table";
 import { formatCurrency, formatDate } from "@/lib/utils";
 import { Users, Pencil, Trash2 } from "lucide-react";
 import { toast } from "sonner";
@@ -26,6 +27,7 @@ const columns = [
   {
     key: "name",
     label: "Name",
+    sortKey: "firstName",
     render: (row: MemberRow) => {
       const name = `${row.firstName} ${row.lastName}`;
       const initials = `${row.firstName?.[0] || ""}${row.lastName?.[0] || ""}`;
@@ -52,6 +54,7 @@ const columns = [
     key: "balance",
     label: "Balance",
     align: "right" as const,
+    sortable: false,
     render: (row: MemberRow) => {
       const balance = Number(row.accounts?.[0]?.balance || 0);
       return <span className="font-bold text-gray-900 dark:text-white">{formatCurrency(balance)}</span>;
@@ -74,13 +77,15 @@ const columns = [
 ];
 
 export default function MembersPage() {
-  const query = useMembers();
+  const table = useServerTable();
+  const query = useMembers(table.params);
   const statsQuery = useMemberStats();
   const deleteMutation = useDeleteMember();
   const [deleteId, setDeleteId] = useState<string | null>(null);
   const [deleteOpen, setDeleteOpen] = useState(false);
 
-  const members = (query.data?.data || []) as MemberRow[];
+  const membersResponse = query.data;
+  const members = (membersResponse?.data || []) as MemberRow[];
   const stats = statsQuery.data as { total?: number; active?: number; pending?: number } | undefined;
 
   const actionsColumn = {
@@ -159,6 +164,18 @@ export default function MembersPage() {
         isLoading={query.isLoading}
         error={query.error}
         onRetry={() => query.refetch()}
+        serverSide
+        searchValue={table.search}
+        onSearchChange={table.handleSearchChange}
+        page={table.page}
+        perPage={table.limit}
+        totalItems={membersResponse?.total ?? 0}
+        totalPages={membersResponse?.totalPages ?? 1}
+        onPageChange={table.handlePageChange}
+        onPerPageChange={table.handlePerPageChange}
+        sortKey={table.sortBy}
+        sortDir={table.sortOrder}
+        onSortChange={table.handleSortChange}
       />
 
       <ConfirmDialog

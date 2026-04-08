@@ -7,12 +7,14 @@ import { EditBankAccountModal } from "@/components/modals/edit-bank-account-moda
 import { CreateBankAccountModal } from "@/components/modals/create-bank-account-modal";
 import { Building2, Trash2, Pencil } from "lucide-react";
 import { useBankAccounts, useBankAccountStats, useDeleteBankAccount } from "@/hooks/use-bank-accounts";
+import { useServerTable } from "@/hooks/use-server-table";
 import { formatCurrency } from "@/lib/utils";
 import { toast } from "sonner";
 import type { BankAccount } from "@iffe/shared";
 
 export default function BankAccountsPage() {
-  const { data, isLoading, error, refetch } = useBankAccounts();
+  const table = useServerTable();
+  const { data, isLoading, error, refetch } = useBankAccounts(table.params);
   const statsQuery = useBankAccountStats();
   const deleteBankAccount = useDeleteBankAccount();
 
@@ -136,6 +138,18 @@ export default function BankAccountsPage() {
         isLoading={isLoading}
         error={error as Error | null}
         onRetry={() => refetch()}
+        serverSide
+        searchValue={table.search}
+        onSearchChange={table.handleSearchChange}
+        page={table.page}
+        perPage={table.limit}
+        totalItems={data?.total ?? 0}
+        totalPages={data?.totalPages ?? 1}
+        onPageChange={table.handlePageChange}
+        onPerPageChange={table.handlePerPageChange}
+        sortKey={table.sortBy}
+        sortDir={table.sortOrder}
+        onSortChange={table.handleSortChange}
       />
 
       <CreateBankAccountModal

@@ -4,6 +4,7 @@ import { useState } from "react";
 import { DataTable } from "@/components/data-table";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { useDepositRequests, useApproveDepositRequest, useRejectDepositRequest } from "@/hooks/use-deposit-requests";
+import { useServerTable } from "@/hooks/use-server-table";
 import { formatCurrency, formatDate } from "@/lib/utils";
 import { ArrowDownToLine, Check, X } from "lucide-react";
 import { toast } from "sonner";
@@ -12,13 +13,15 @@ import type { DepositRequest } from "@iffe/shared";
 type DepositRow = DepositRequest;
 
 export default function DepositRequestsPage() {
-  const query = useDepositRequests({ sortOrder: "desc" });
+  const table = useServerTable();
+  const query = useDepositRequests(table.params);
   const approveMutation = useApproveDepositRequest();
   const rejectMutation = useRejectDepositRequest();
 
   const [confirmAction, setConfirmAction] = useState<{ type: "approve" | "reject"; id: string } | null>(null);
 
-  const requests = (query.data?.data || []) as DepositRow[];
+  const requestsResponse = query.data;
+  const requests = (requestsResponse?.data || []) as DepositRow[];
 
   async function handleApprove(id: string) {
     try {
@@ -49,6 +52,7 @@ export default function DepositRequestsPage() {
     {
       key: "member",
       label: "Member",
+      sortable: false,
       render: (row: DepositRow) => {
         const firstName = row.account?.member?.firstName || "";
         const lastName = row.account?.member?.lastName || "";
@@ -127,6 +131,18 @@ export default function DepositRequestsPage() {
         isLoading={query.isLoading}
         error={query.error}
         onRetry={() => query.refetch()}
+        serverSide
+        searchValue={table.search}
+        onSearchChange={table.handleSearchChange}
+        page={table.page}
+        perPage={table.limit}
+        totalItems={requestsResponse?.total ?? 0}
+        totalPages={requestsResponse?.totalPages ?? 1}
+        onPageChange={table.handlePageChange}
+        onPerPageChange={table.handlePerPageChange}
+        sortKey={table.sortBy}
+        sortDir={table.sortOrder}
+        onSortChange={table.handleSortChange}
       />
 
       <ConfirmDialog

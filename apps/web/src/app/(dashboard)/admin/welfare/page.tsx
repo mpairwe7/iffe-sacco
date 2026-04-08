@@ -6,11 +6,13 @@ import { EditWelfareModal } from "@/components/modals/edit-welfare-modal";
 import { CreateWelfareModal } from "@/components/modals/create-welfare-modal";
 import { Heart, Pencil } from "lucide-react";
 import { useWelfarePrograms, useWelfareStats } from "@/hooks/use-welfare";
+import { useServerTable } from "@/hooks/use-server-table";
 import { formatCurrency } from "@/lib/utils";
 import type { WelfareProgram } from "@iffe/shared";
 
 export default function WelfareAdminPage() {
-  const { data, isLoading, error, refetch } = useWelfarePrograms();
+  const table = useServerTable();
+  const { data, isLoading, error, refetch } = useWelfarePrograms(table.params);
   const statsQuery = useWelfareStats();
   const [createOpen, setCreateOpen] = useState(false);
   const [editOpen, setEditOpen] = useState(false);
@@ -54,6 +56,7 @@ export default function WelfareAdminPage() {
     {
       key: "progress",
       label: "Progress",
+      sortable: false,
       render: (row: WelfareProgram) => {
         const target = Number(row.targetAmount);
         const raised = Number(row.raisedAmount);
@@ -142,6 +145,18 @@ export default function WelfareAdminPage() {
         isLoading={isLoading}
         error={error as Error | null}
         onRetry={() => refetch()}
+        serverSide
+        searchValue={table.search}
+        onSearchChange={table.handleSearchChange}
+        page={table.page}
+        perPage={table.limit}
+        totalItems={data?.total ?? 0}
+        totalPages={data?.totalPages ?? 1}
+        onPageChange={table.handlePageChange}
+        onPerPageChange={table.handlePerPageChange}
+        sortKey={table.sortBy}
+        sortDir={table.sortOrder}
+        onSortChange={table.handleSortChange}
       />
 
       <CreateWelfareModal

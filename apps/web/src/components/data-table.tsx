@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useMemo } from "react";
-import { Search, Download, Plus, ChevronLeft, ChevronRight, ChevronDown, ArrowUpDown, ArrowUp, ArrowDown, FileSpreadsheet, AlertTriangle, RefreshCw, Inbox } from "lucide-react";
+import { Search, Plus, ChevronLeft, ChevronRight, ArrowUpDown, ArrowUp, ArrowDown, FileSpreadsheet, AlertTriangle, RefreshCw, Inbox } from "lucide-react";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -12,6 +12,7 @@ interface Column<T> {
   render?: (row: T) => React.ReactNode;
   align?: "left" | "right" | "center";
   sortable?: boolean;
+  sortKey?: string;
   hiddenOnMobile?: boolean;
 }
 
@@ -29,6 +30,18 @@ interface DataTableProps<T> {
   onRetry?: () => void;
   emptyMessage?: string;
   emptyAction?: { label: string; href: string };
+  serverSide?: boolean;
+  searchValue?: string;
+  onSearchChange?: (value: string) => void;
+  page?: number;
+  perPage?: number;
+  totalItems?: number;
+  totalPages?: number;
+  onPageChange?: (page: number) => void;
+  onPerPageChange?: (perPage: number) => void;
+  sortKey?: string | null;
+  sortDir?: "asc" | "desc";
+  onSortChange?: (key: string, dir: "asc" | "desc") => void;
 }
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -68,45 +81,107 @@ export function DataTable<T extends Record<string, any>>({
   onRetry,
   emptyMessage = "No data found",
   emptyAction,
+  serverSide = false,
+  searchValue,
+  onSearchChange,
+  page,
+  perPage,
+  totalItems,
+  totalPages,
+  onPageChange,
+  onPerPageChange,
+  sortKey,
+  sortDir,
+  onSortChange,
 }: DataTableProps<T>) {
-  const [search, setSearch] = useState("");
-  const [page, setPage] = useState(1);
-  const [perPage, setPerPage] = useState(10);
-  const [sortKey, setSortKey] = useState<string | null>(null);
-  const [sortDir, setSortDir] = useState<"asc" | "desc">("asc");
+  const [internalSearch, setInternalSearch] = useState("");
+  const [internalPage, setInternalPage] = useState(1);
+  const [internalPerPage, setInternalPerPage] = useState(10);
+  const [internalSortKey, setInternalSortKey] = useState<string | null>(null);
+  const [internalSortDir, setInternalSortDir] = useState<"asc" | "desc">("asc");
+
+  const activeSearch = serverSide ? (searchValue ?? "") : internalSearch;
+  const activePage = serverSide ? (page ?? 1) : internalPage;
+  const activePerPage = serverSide ? (perPage ?? 10) : internalPerPage;
+  const activeSortKey = serverSide ? (sortKey ?? null) : internalSortKey;
+  const activeSortDir = serverSide ? (sortDir ?? "asc") : internalSortDir;
 
   const filtered = useMemo(() =>
-    data.filter((row) =>
-      Object.values(row).some((v) =>
-        String(v).toLowerCase().includes(search.toLowerCase())
-      )
-    ), [data, search]
+    serverSide
+      ? data
+      : data.filter((row) =>
+        Object.values(row).some((value) =>
+          String(value).toLowerCase().includes(activeSearch.toLowerCase())
+        )
+      ),
+    [activeSearch, data, serverSide]
   );
 
   const sorted = useMemo(() => {
-    if (!sortKey) return filtered;
+    if (serverSide || !activeSortKey) return filtered;
     return [...filtered].sort((a, b) => {
-      const av = a[sortKey], bv = b[sortKey];
+      const av = a[activeSortKey];
+      const bv = b[activeSortKey];
       const cmp = String(av ?? "").localeCompare(String(bv ?? ""), undefined, { numeric: true });
-      return sortDir === "asc" ? cmp : -cmp;
+      return activeSortDir === "asc" ? cmp : -cmp;
     });
-  }, [filtered, sortKey, sortDir]);
+  }, [activeSortDir, activeSortKey, filtered, serverSide]);
 
-  const totalPages = Math.ceil(sorted.length / perPage);
-  const paged = sorted.slice((page - 1) * perPage, page * perPage);
+  const computedTotalItems = serverSide ? (totalItems ?? data.length) : sorted.length;
+  const computedTotalPages = serverSide
+    ? Math.max(1, totalPages ?? Math.ceil(Math.max(computedTotalItems, 1) / activePerPage))
+    : Math.max(1, Math.ceil(Math.max(sorted.length, 1) / activePerPage));
+  const paged = serverSide
+    ? data
+    : sorted.slice((activePage - 1) * activePerPage, activePage * activePerPage);
+
+  function handleSearch(nextValue: string) {
+    if (serverSide) {
+      onSearchChange?.(nextValue);
+      return;
+    }
+    setInternalSearch(nextValue);
+    setInternalPage(1);
+  }
+
+  function handlePage(nextPage: number) {
+    if (serverSide) {
+      onPageChange?.(nextPage);
+      return;
+    }
+    setInternalPage(nextPage);
+  }
+
+  function handlePerPage(nextPerPage: number) {
+    if (serverSide) {
+      onPerPageChange?.(nextPerPage);
+      return;
+    }
+    setInternalPerPage(nextPerPage);
+    setInternalPage(1);
+  }
 
   function handleSort(key: string) {
-    if (sortKey === key) {
-      setSortDir(sortDir === "asc" ? "desc" : "asc");
+    if (activeSortKey === key) {
+      const nextDir = activeSortDir === "asc" ? "desc" : "asc";
+      if (serverSide) {
+        onSortChange?.(key, nextDir);
+      } else {
+        setInternalSortDir(nextDir);
+      }
     } else {
-      setSortKey(key);
-      setSortDir("asc");
+      if (serverSide) {
+        onSortChange?.(key, "asc");
+      } else {
+        setInternalSortKey(key);
+        setInternalSortDir("asc");
+      }
     }
   }
 
   function SortIcon({ colKey }: { colKey: string }) {
-    if (sortKey !== colKey) return <ArrowUpDown className="w-3.5 h-3.5 opacity-40" />;
-    return sortDir === "asc" ? <ArrowUp className="w-3.5 h-3.5 text-primary" /> : <ArrowDown className="w-3.5 h-3.5 text-primary" />;
+    if (activeSortKey !== colKey) return <ArrowUpDown className="w-3.5 h-3.5 opacity-40" />;
+    return activeSortDir === "asc" ? <ArrowUp className="w-3.5 h-3.5 text-primary" /> : <ArrowDown className="w-3.5 h-3.5 text-primary" />;
   }
 
   // Loading state
@@ -158,17 +233,17 @@ export function DataTable<T extends Record<string, any>>({
         </div>
         <div className="flex items-center gap-2 flex-wrap">
           <div className="relative">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-text-light" />
-            <input
-              type="text"
-              placeholder={searchPlaceholder}
-              value={search}
-              onChange={(e) => { setSearch(e.target.value); setPage(1); }}
-              className="pl-10 pr-4 py-2.5 bg-white/60 dark:bg-white/5 border border-white/40 dark:border-white/10 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary w-48 lg:w-64"
-            />
-          </div>
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-text-light" />
+              <input
+                type="text"
+                placeholder={searchPlaceholder}
+                value={activeSearch}
+                onChange={(e) => handleSearch(e.target.value)}
+                className="pl-10 pr-4 py-2.5 bg-white/60 dark:bg-white/5 border border-white/40 dark:border-white/10 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary w-48 lg:w-64"
+              />
+            </div>
           <button
-            onClick={() => exportToCSV(filtered, columns, title.toLowerCase().replace(/\s+/g, "-"))}
+            onClick={() => exportToCSV(serverSide ? data : filtered, columns, title.toLowerCase().replace(/\s+/g, "-"))}
             className="p-2.5 text-text-muted hover:text-text border border-border/50 rounded-lg hover:bg-surface-hover"
             title="Export CSV"
           >
@@ -199,17 +274,17 @@ export function DataTable<T extends Record<string, any>>({
                     "text-xs font-bold text-text-muted uppercase tracking-wider px-6 py-3",
                     col.align === "right" ? "text-right" : col.align === "center" ? "text-center" : "text-left"
                   )}
-                  aria-sort={sortKey === col.key ? (sortDir === "asc" ? "ascending" : "descending") : undefined}
+                  aria-sort={activeSortKey === (col.sortKey || col.key) ? (activeSortDir === "asc" ? "ascending" : "descending") : undefined}
                 >
                   {col.sortable !== false ? (
                     <button
                       type="button"
-                      onClick={() => handleSort(col.key)}
+                      onClick={() => handleSort(col.sortKey || col.key)}
                       className="inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider hover:text-text"
                       aria-label={`Sort by ${col.label}`}
                     >
                       {col.label}
-                      <SortIcon colKey={col.key} />
+                      <SortIcon colKey={col.sortKey || col.key} />
                     </button>
                   ) : (
                     <span className="text-xs font-bold uppercase tracking-wider">{col.label}</span>
@@ -274,13 +349,13 @@ export function DataTable<T extends Record<string, any>>({
       </div>
 
       {/* Pagination */}
-      {sorted.length > 0 && (
+      {computedTotalItems > 0 && (
         <div className="flex flex-col sm:flex-row items-center justify-between gap-3 px-4 lg:px-6 py-4 border-t border-border/50">
           <div className="flex items-center gap-3 text-sm text-text-muted">
-            <span>Showing {(page - 1) * perPage + 1}-{Math.min(page * perPage, sorted.length)} of {sorted.length}</span>
+            <span>Showing {(activePage - 1) * activePerPage + 1}-{Math.min(activePage * activePerPage, computedTotalItems)} of {computedTotalItems}</span>
             <select
-              value={perPage}
-              onChange={(e) => { setPerPage(Number(e.target.value)); setPage(1); }}
+              value={activePerPage}
+              onChange={(e) => handlePerPage(Number(e.target.value))}
               className="bg-white/60 dark:bg-white/5 border border-white/40 dark:border-white/10 rounded-lg px-2 py-1 text-xs focus:outline-none focus:ring-1 focus:ring-primary/20"
             >
               {[10, 25, 50].map((n) => (
@@ -289,22 +364,22 @@ export function DataTable<T extends Record<string, any>>({
             </select>
           </div>
           <div className="flex items-center gap-1">
-            <button onClick={() => setPage(Math.max(1, page - 1))} disabled={page === 1} className="p-2.5 rounded-lg hover:bg-surface-hover disabled:opacity-40 disabled:cursor-not-allowed" aria-label="Previous page">
+            <button onClick={() => handlePage(Math.max(1, activePage - 1))} disabled={activePage === 1} className="p-2.5 rounded-lg hover:bg-surface-hover disabled:opacity-40 disabled:cursor-not-allowed" aria-label="Previous page">
               <ChevronLeft className="w-4 h-4" />
             </button>
-            {Array.from({ length: Math.min(7, totalPages) }, (_, i) => {
+            {Array.from({ length: Math.min(7, computedTotalPages) }, (_, i) => {
               let p: number;
-              if (totalPages <= 7) { p = i + 1; }
-              else if (page <= 4) { p = i + 1; }
-              else if (page >= totalPages - 3) { p = totalPages - 6 + i; }
-              else { p = page - 3 + i; }
+              if (computedTotalPages <= 7) { p = i + 1; }
+              else if (activePage <= 4) { p = i + 1; }
+              else if (activePage >= computedTotalPages - 3) { p = computedTotalPages - 6 + i; }
+              else { p = activePage - 3 + i; }
               return (
-                <button key={p} onClick={() => setPage(p)} aria-label={`Page ${p}`} className={cn("w-10 h-10 rounded-lg text-sm font-medium", p === page ? "bg-primary text-white" : "hover:bg-surface-hover text-text-muted")}>
+                <button key={p} onClick={() => handlePage(p)} aria-label={`Page ${p}`} className={cn("w-10 h-10 rounded-lg text-sm font-medium", p === activePage ? "bg-primary text-white" : "hover:bg-surface-hover text-text-muted")}>
                   {p}
                 </button>
               );
             })}
-            <button onClick={() => setPage(Math.min(totalPages, page + 1))} disabled={page === totalPages} className="p-2.5 rounded-lg hover:bg-surface-hover disabled:opacity-40 disabled:cursor-not-allowed" aria-label="Next page">
+            <button onClick={() => handlePage(Math.min(computedTotalPages, activePage + 1))} disabled={activePage === computedTotalPages} className="p-2.5 rounded-lg hover:bg-surface-hover disabled:opacity-40 disabled:cursor-not-allowed" aria-label="Next page">
               <ChevronRight className="w-4 h-4" />
             </button>
           </div>

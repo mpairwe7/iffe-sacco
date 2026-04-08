@@ -5,6 +5,7 @@ import { DataTable } from "@/components/data-table";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { ArrowUpFromLine, CheckCircle, XCircle } from "lucide-react";
 import { useApproveWithdrawRequest, useRejectWithdrawRequest, useWithdrawRequests } from "@/hooks/use-withdraw-requests";
+import { useServerTable } from "@/hooks/use-server-table";
 import { formatCurrency, formatDate } from "@/lib/utils";
 import { toast } from "sonner";
 import type { WithdrawRequest } from "@iffe/shared";
@@ -12,7 +13,8 @@ import type { WithdrawRequest } from "@iffe/shared";
 type WithdrawRow = WithdrawRequest;
 
 export default function WithdrawRequestsPage() {
-  const { data, isLoading, error, refetch } = useWithdrawRequests({ sortOrder: "desc" });
+  const table = useServerTable();
+  const { data, isLoading, error, refetch } = useWithdrawRequests(table.params);
   const approveTransaction = useApproveWithdrawRequest();
   const rejectTransaction = useRejectWithdrawRequest();
 
@@ -51,6 +53,7 @@ export default function WithdrawRequestsPage() {
     {
       key: "member",
       label: "Member",
+      sortable: false,
       render: (row: WithdrawRow) => (
         <span className="font-medium text-text">
           {row.account?.member ? `${row.account.member.firstName} ${row.account.member.lastName}` : "—"}
@@ -133,6 +136,18 @@ export default function WithdrawRequestsPage() {
         isLoading={isLoading}
         error={error as Error | null}
         onRetry={() => refetch()}
+        serverSide
+        searchValue={table.search}
+        onSearchChange={table.handleSearchChange}
+        page={table.page}
+        perPage={table.limit}
+        totalItems={data?.total ?? 0}
+        totalPages={data?.totalPages ?? 1}
+        onPageChange={table.handlePageChange}
+        onPerPageChange={table.handlePerPageChange}
+        sortKey={table.sortBy}
+        sortDir={table.sortOrder}
+        onSortChange={table.handleSortChange}
       />
 
       <ConfirmDialog

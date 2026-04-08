@@ -6,11 +6,13 @@ import { EditUserModal } from "@/components/modals/edit-user-modal";
 import { CreateUserModal } from "@/components/modals/create-user-modal";
 import { UserCog, Pencil } from "lucide-react";
 import { useUsers, useActivateUser, useDeactivateUser } from "@/hooks/use-users";
+import { useServerTable } from "@/hooks/use-server-table";
 import { toast } from "sonner";
 import type { User } from "@iffe/shared";
 
 export default function UsersPage() {
-  const { data, isLoading, error, refetch } = useUsers();
+  const table = useServerTable();
+  const { data, isLoading, error, refetch } = useUsers(table.params);
   const activateUser = useActivateUser();
   const deactivateUser = useDeactivateUser();
   const [createOpen, setCreateOpen] = useState(false);
@@ -80,6 +82,7 @@ export default function UsersPage() {
     {
       key: "status",
       label: "Status",
+      sortKey: "isActive",
       render: (row: User) => (
         <span
           className={`inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium ${
@@ -140,6 +143,18 @@ export default function UsersPage() {
         isLoading={isLoading}
         error={error as Error | null}
         onRetry={() => refetch()}
+        serverSide
+        searchValue={table.search}
+        onSearchChange={table.handleSearchChange}
+        page={table.page}
+        perPage={table.limit}
+        totalItems={data?.total ?? 0}
+        totalPages={data?.totalPages ?? 1}
+        onPageChange={table.handlePageChange}
+        onPerPageChange={table.handlePerPageChange}
+        sortKey={table.sortBy}
+        sortDir={table.sortOrder}
+        onSortChange={table.handleSortChange}
       />
 
       <CreateUserModal

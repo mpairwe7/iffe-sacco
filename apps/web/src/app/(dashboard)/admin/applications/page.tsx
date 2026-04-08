@@ -10,6 +10,7 @@ import {
   useApproveApplication,
   useRejectApplication,
 } from "@/hooks/use-applications";
+import { useServerTable } from "@/hooks/use-server-table";
 import { formatDate } from "@/lib/utils";
 import { FileText, Eye, Check, X } from "lucide-react";
 import { toast } from "sonner";
@@ -84,9 +85,10 @@ const columns = [
 ];
 
 export default function ApplicationsPage() {
+  const table = useServerTable();
   const [filter, setFilter] = useState<string>("all");
   const query = useApplications(
-    filter !== "all" ? { status: filter } : undefined,
+    filter !== "all" ? { ...table.params, status: filter } : table.params,
   );
   const statsQuery = useApplicationStats();
   const approveMutation = useApproveApplication();
@@ -98,7 +100,8 @@ export default function ApplicationsPage() {
   const [rejectOpen, setRejectOpen] = useState(false);
   const [rejectReason, setRejectReason] = useState("");
 
-  const applications = (query.data?.data || []) as ApplicationRow[];
+  const applicationsResponse = query.data;
+  const applications = (applicationsResponse?.data || []) as ApplicationRow[];
   const stats = statsQuery.data as
     | { total?: number; pending?: number; approved?: number; rejected?: number }
     | undefined;
@@ -228,7 +231,10 @@ export default function ApplicationsPage() {
         {statusFilter.map((s) => (
           <button
             key={s}
-            onClick={() => setFilter(s)}
+            onClick={() => {
+              setFilter(s);
+              table.setPage(1);
+            }}
             className={`px-4 py-2 text-sm font-medium rounded-lg transition-colors ${
               filter === s
                 ? "bg-primary text-white"
@@ -251,6 +257,18 @@ export default function ApplicationsPage() {
         error={query.error}
         onRetry={() => query.refetch()}
         emptyMessage="No applications found"
+        serverSide
+        searchValue={table.search}
+        onSearchChange={table.handleSearchChange}
+        page={table.page}
+        perPage={table.limit}
+        totalItems={applicationsResponse?.total ?? 0}
+        totalPages={applicationsResponse?.totalPages ?? 1}
+        onPageChange={table.handlePageChange}
+        onPerPageChange={table.handlePerPageChange}
+        sortKey={table.sortBy}
+        sortDir={table.sortOrder}
+        onSortChange={table.handleSortChange}
       />
 
       {/* Approve Confirm Dialog */}
