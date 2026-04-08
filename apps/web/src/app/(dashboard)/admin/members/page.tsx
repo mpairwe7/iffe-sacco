@@ -7,7 +7,7 @@ import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { useMembers, useMemberStats, useDeleteMember } from "@/hooks/use-members";
 import { useServerTable } from "@/hooks/use-server-table";
 import { formatCurrency, formatDate } from "@/lib/utils";
-import { Users, Pencil, Trash2 } from "lucide-react";
+import { Users, Pencil, Trash2, Eye } from "lucide-react";
 import { toast } from "sonner";
 import type { Member } from "@iffe/shared";
 
@@ -37,7 +37,9 @@ const columns = [
             <span className="text-xs font-bold text-primary">{initials}</span>
           </div>
           <div>
-            <p className="font-medium text-text">{name}</p>
+            <Link href={`/admin/members/${row.id}`} className="font-medium text-text hover:text-primary transition-colors">
+              {name}
+            </Link>
             <p className="text-xs text-text-muted">{row.email}</p>
           </div>
         </div>
@@ -94,6 +96,13 @@ export default function MembersPage() {
     sortable: false,
     render: (row: MemberRow) => (
       <div className="flex items-center gap-1">
+        <Link
+          href={`/admin/members/${row.id}`}
+          className="p-2.5 text-text-muted hover:text-primary rounded-lg hover:bg-primary/10"
+          title="View dashboard"
+        >
+          <Eye className="w-4 h-4" />
+        </Link>
         <Link
           href={`/admin/members/${row.id}/edit`}
           className="p-2.5 text-text-muted hover:text-primary rounded-lg hover:bg-primary/10"

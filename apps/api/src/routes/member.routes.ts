@@ -20,6 +20,11 @@ members.get("/stats", requireRole("admin", "staff", "chairman"), async (c) => {
   return c.json({ success: true, data: stats });
 });
 
+members.get("/:id/dashboard", requireRole("admin", "staff", "chairman"), async (c) => {
+  const member = await service.getDashboard(c.req.param("id"));
+  return c.json({ success: true, data: member });
+});
+
 members.get("/:id", requireRole("admin", "staff", "chairman"), async (c) => {
   const member = await service.getById(c.req.param("id"));
   return c.json({ success: true, data: member });

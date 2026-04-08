@@ -42,9 +42,33 @@ export interface Member {
   status: "active" | "pending" | "inactive" | "suspended";
   joinDate: string;
   userId?: string | null;
+  shareCount: number;
+  weddingSupportStatus: MemberSupportStatus;
+  weddingSupportDebt: number;
+  condolenceSupportStatus: MemberSupportStatus;
+  condolenceSupportDebt: number;
+  remarks?: string | null;
+  clan?: string | null;
+  totem?: string | null;
+  birthDistrict?: string | null;
+  birthVillage?: string | null;
+  ancestralDistrict?: string | null;
+  ancestralVillage?: string | null;
+  residenceDistrict?: string | null;
+  residenceVillage?: string | null;
+  placeOfWork?: string | null;
+  qualifications?: string | null;
+  fatherInfo?: Record<string, unknown> | null;
+  motherInfo?: Record<string, unknown> | null;
+  spouses?: Record<string, unknown>[] | null;
+  children?: Record<string, unknown>[] | null;
+  otherRelatives?: Record<string, unknown>[] | null;
+  applicationId?: string | null;
   createdAt: string;
   updatedAt: string;
 }
+
+export type MemberSupportStatus = "received" | "not_received";
 
 // ===== Account =====
 export type AccountType = "savings" | "current" | "fixed_deposit";
@@ -183,6 +207,45 @@ export interface Pledge {
   status: "pledged" | "paid" | "cancelled";
   createdAt: string;
   program?: WelfareProgram;
+}
+
+export interface MemberTransactionSummary {
+  totalDeposits: number;
+  totalWithdrawals: number;
+  monthlySubscriptionTotal: number;
+  transactionCount: number;
+  firstDepositAmount?: number | null;
+  firstDepositDate?: string | null;
+  latestDepositAmount?: number | null;
+  latestDepositDate?: string | null;
+}
+
+export interface MemberSupportSnapshot {
+  status: MemberSupportStatus;
+  totalDebt: number;
+}
+
+export interface MemberDashboard {
+  member: Member;
+  accounts: Account[];
+  recentTransactions: Transaction[];
+  pledges: Pledge[];
+  transactionSummary: MemberTransactionSummary;
+  totals: {
+    totalBalance: number;
+    accountCount: number;
+    shareCount: number;
+    outstandingLoanBalance: number;
+    activeLoanCount: number;
+    childCount: number;
+    spouseCount: number;
+  };
+  socialWelfare: {
+    weddings: MemberSupportSnapshot;
+    condolences: MemberSupportSnapshot;
+    totalPledged: number;
+    activePledges: number;
+  };
 }
 
 // ===== Audit Log =====

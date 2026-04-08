@@ -6,7 +6,7 @@ import { useEffect } from "react";
 import { ArrowLeft, Save, UserPlus, Loader2 } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { memberSchema, type MemberInput } from "@/lib/schemas";
+import { memberCreateSchema, type MemberCreateInput } from "@/lib/schemas";
 import { useCreateMember } from "@/hooks/use-members";
 import { useAuthStore } from "@/stores/auth-store";
 import { toast } from "sonner";
@@ -26,14 +26,20 @@ export default function CreateMemberPage() {
     register,
     handleSubmit,
     formState: { errors, isSubmitting },
-  } = useForm<MemberInput>({
-    resolver: zodResolver(memberSchema) as any,
+  } = useForm<MemberCreateInput>({
+    resolver: zodResolver(memberCreateSchema) as any,
     defaultValues: {
       country: "UG",
+      accountType: "savings",
+      shareCount: 0,
+      weddingSupportStatus: "not_received",
+      weddingSupportDebt: 0,
+      condolenceSupportStatus: "not_received",
+      condolenceSupportDebt: 0,
     },
   });
 
-  async function onSubmit(data: MemberInput) {
+  async function onSubmit(data: MemberCreateInput) {
     try {
       await createMember.mutateAsync(data as Parameters<typeof createMember.mutateAsync>[0]);
       toast.success("Member created");
@@ -189,17 +195,16 @@ export default function CreateMemberPage() {
         {/* Account Settings */}
         <div className="p-6 border-b border-border">
           <h3 className="text-base font-semibold text-text mb-4">Account Settings</h3>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
             <div>
               <label className="block text-sm font-medium text-text mb-2">Account Type *</label>
               <select
                 {...register("accountType")}
                 className="w-full px-4 py-2.5 bg-white/60 border border-white/40 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
               >
-                <option value="">Select Account Type</option>
                 <option value="savings">Savings Account</option>
                 <option value="current">Current Account</option>
-                <option value="fixed">Fixed Deposit</option>
+                <option value="fixed_deposit">Fixed Deposit</option>
               </select>
               {errors.accountType && <p className="text-xs text-danger mt-1">{errors.accountType.message}</p>}
             </div>
@@ -213,6 +218,77 @@ export default function CreateMemberPage() {
                 className="w-full px-4 py-2.5 bg-white/60 border border-white/40 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
               />
             </div>
+            <div>
+              <label className="block text-sm font-medium text-text mb-2">No. of Shares</label>
+              <input
+                type="number"
+                min="0"
+                {...register("shareCount", { valueAsNumber: true })}
+                className="w-full px-4 py-2.5 bg-white/60 border border-white/40 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
+              />
+              {errors.shareCount && <p className="text-xs text-danger mt-1">{errors.shareCount.message}</p>}
+            </div>
+          </div>
+        </div>
+
+        <div className="p-6 border-b border-border">
+          <h3 className="text-base font-semibold text-text mb-4">Community Support</h3>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5">
+            <div>
+              <label className="block text-sm font-medium text-text mb-2">Wedding Support</label>
+              <select
+                {...register("weddingSupportStatus")}
+                className="w-full px-4 py-2.5 bg-white/60 border border-white/40 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
+              >
+                <option value="not_received">Not Received</option>
+                <option value="received">Received</option>
+              </select>
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-text mb-2">Wedding Debt</label>
+              <input
+                type="number"
+                min="0"
+                step="0.01"
+                {...register("weddingSupportDebt", { valueAsNumber: true })}
+                className="w-full px-4 py-2.5 bg-white/60 border border-white/40 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
+              />
+              {errors.weddingSupportDebt && <p className="text-xs text-danger mt-1">{errors.weddingSupportDebt.message}</p>}
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-text mb-2">Condolence Support</label>
+              <select
+                {...register("condolenceSupportStatus")}
+                className="w-full px-4 py-2.5 bg-white/60 border border-white/40 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
+              >
+                <option value="not_received">Not Received</option>
+                <option value="received">Received</option>
+              </select>
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-text mb-2">Condolence Debt</label>
+              <input
+                type="number"
+                min="0"
+                step="0.01"
+                {...register("condolenceSupportDebt", { valueAsNumber: true })}
+                className="w-full px-4 py-2.5 bg-white/60 border border-white/40 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
+              />
+              {errors.condolenceSupportDebt && <p className="text-xs text-danger mt-1">{errors.condolenceSupportDebt.message}</p>}
+            </div>
+          </div>
+        </div>
+
+        <div className="p-6 border-b border-border">
+          <h3 className="text-base font-semibold text-text mb-4">Remarks</h3>
+          <div>
+            <label className="block text-sm font-medium text-text mb-2">Member Remarks</label>
+            <textarea
+              rows={4}
+              {...register("remarks")}
+              className="w-full px-4 py-3 bg-white/60 border border-white/40 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary resize-y"
+              placeholder="Add context about subscriptions, welfare follow-up, or any member notes."
+            />
           </div>
         </div>
 

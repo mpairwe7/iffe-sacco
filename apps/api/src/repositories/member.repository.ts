@@ -18,7 +18,7 @@ export class MemberRepository {
       : {};
 
     const [data, total] = await Promise.all([
-      prisma.member.findMany({ where, skip, take: limit, orderBy: { [sortBy]: sortOrder }, include: { accounts: { select: { id: true, accountNo: true, type: true, status: true } } } }),
+      prisma.member.findMany({ where, skip, take: limit, orderBy: { [sortBy]: sortOrder }, include: { accounts: { select: { id: true, accountNo: true, type: true, status: true, balance: true } } } }),
       prisma.member.count({ where }),
     ]);
 
@@ -37,6 +37,8 @@ export class MemberRepository {
     firstName: string; lastName: string; email: string; phone: string;
     gender?: string; dateOfBirth?: Date; nationalId?: string; occupation?: string;
     address?: string; city?: string; district?: string; country?: string; userId?: string;
+    shareCount?: number; weddingSupportStatus?: string; weddingSupportDebt?: number;
+    condolenceSupportStatus?: string; condolenceSupportDebt?: number; remarks?: string;
   }) {
     // Retry loop for unique ID generation
     for (let attempt = 0; attempt < 5; attempt++) {

@@ -26,7 +26,7 @@ export const resetPasswordSchema = z.object({
 });
 export type ResetPasswordInput = z.infer<typeof resetPasswordSchema>;
 
-export const memberSchema = z.object({
+const memberBaseSchema = z.object({
   firstName: z.string().min(2, "First name is required"),
   lastName: z.string().min(2, "Last name is required"),
   email: z.email("Please enter a valid email"),
@@ -38,11 +38,27 @@ export const memberSchema = z.object({
   address: z.string().optional(),
   city: z.string().optional(),
   district: z.string().optional(),
+  shareCount: z.coerce.number().int().min(0, "Shares cannot be negative").default(0),
+  weddingSupportStatus: z.enum(["received", "not_received"]).default("not_received"),
+  weddingSupportDebt: z.coerce.number().min(0, "Debt cannot be negative").default(0),
+  condolenceSupportStatus: z.enum(["received", "not_received"]).default("not_received"),
+  condolenceSupportDebt: z.coerce.number().min(0, "Debt cannot be negative").default(0),
+  remarks: z.string().optional(),
   country: z.string().default("UG"),
-  accountType: z.string().min(1, "Please select an account type"),
   initialDeposit: z.number().min(0).optional(),
 });
-export type MemberInput = z.infer<typeof memberSchema>;
+
+export const memberCreateSchema = memberBaseSchema.extend({
+  accountType: z.enum(["savings", "current", "fixed_deposit"], {
+    message: "Please select an account type",
+  }),
+});
+export type MemberCreateInput = z.infer<typeof memberCreateSchema>;
+
+export const memberUpdateSchema = memberBaseSchema.extend({
+  accountType: z.enum(["savings", "current", "fixed_deposit"]).optional(),
+});
+export type MemberUpdateFormInput = z.infer<typeof memberUpdateSchema>;
 
 export const transactionSchema = z.object({
   type: z.enum(["deposit", "withdraw", "transfer", "loan_repayment"]),

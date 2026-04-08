@@ -23,6 +23,14 @@ export function useMember(id: string) {
   });
 }
 
+export function useMemberDashboard(id: string) {
+  return useQuery({
+    queryKey: ["members", id, "dashboard"],
+    queryFn: () => membersApi.getMemberDashboard(id),
+    enabled: !!id,
+  });
+}
+
 export function useMemberStats() {
   return useQuery({
     queryKey: ["members", "stats"],

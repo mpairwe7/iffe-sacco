@@ -1,6 +1,7 @@
 import { apiClient } from "@/lib/api-client";
 import type {
   Member,
+  MemberDashboard,
   PaginatedResponse,
   CreateMemberInput,
   UpdateMemberInput,
@@ -11,6 +12,8 @@ export const membersApi = {
   getMembers: (params?: PaginationParams) =>
     apiClient.get<PaginatedResponse<Member>>("/members", params),
   getMember: (id: string) => apiClient.get<Member>(`/members/${id}`),
+  getMemberDashboard: (id: string) =>
+    apiClient.get<MemberDashboard>(`/members/${id}/dashboard`),
   createMember: (data: CreateMemberInput) =>
     apiClient.post<Member>("/members", data),
   updateMember: (id: string, data: UpdateMemberInput) =>
