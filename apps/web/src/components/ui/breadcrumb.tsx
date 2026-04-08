@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { ChevronRight, Home } from "lucide-react";
+import { useAuthStore } from "@/stores/auth-store";
 
 const labelMap: Record<string, string> = {
   admin: "Admin",
@@ -33,6 +34,8 @@ const labelMap: Record<string, string> = {
 
 export function Breadcrumb() {
   const pathname = usePathname();
+  const role = useAuthStore((s) => s.user?.role);
+  const homeHref = role === "member" ? "/portal/savings" : role === "chairman" ? "/chairman" : "/dashboard";
   const segments = pathname.split("/").filter(Boolean);
 
   if (segments.length <= 1) return null;
@@ -46,7 +49,7 @@ export function Breadcrumb() {
 
   return (
     <nav aria-label="Breadcrumb" className="flex items-center gap-1.5 text-sm mb-6">
-      <Link href="/dashboard" className="p-1 text-text-light hover:text-primary rounded-md">
+      <Link href={homeHref} className="p-1 text-text-light hover:text-primary rounded-md">
         <Home className="w-4 h-4" />
       </Link>
       {crumbs.map((crumb) => (

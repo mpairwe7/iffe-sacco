@@ -18,6 +18,8 @@ export function useCreateWithdrawRequest() {
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ["withdraw-requests"] });
       qc.invalidateQueries({ queryKey: ["transactions"] });
+      qc.invalidateQueries({ queryKey: ["accounts"] });
+      qc.invalidateQueries({ queryKey: ["dashboard"] });
     },
   });
 }
@@ -29,6 +31,7 @@ export function useApproveWithdrawRequest() {
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ["withdraw-requests"] });
       qc.invalidateQueries({ queryKey: ["transactions"] });
+      qc.invalidateQueries({ queryKey: ["accounts"] });
       qc.invalidateQueries({ queryKey: ["dashboard"] });
     },
   });

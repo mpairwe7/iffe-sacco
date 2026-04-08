@@ -69,7 +69,7 @@ const navItems: NavItem[] = [
     roles: ["member"],
     children: [
       { label: "Loan Overview", href: "/portal/loans" },
-      { label: "Apply for Loan", href: "/portal/loans" },
+      { label: "Apply for Loan", href: "/portal/loans?action=apply" },
     ],
   },
   { label: "My Transactions", href: "/portal/transactions", icon: Wallet, roles: ["member"] },

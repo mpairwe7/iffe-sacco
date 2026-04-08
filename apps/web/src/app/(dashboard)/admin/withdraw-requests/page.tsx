@@ -4,34 +4,39 @@ import { useState } from "react";
 import { DataTable } from "@/components/data-table";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { ArrowUpFromLine, CheckCircle, XCircle } from "lucide-react";
-import { useTransactions, useApproveTransaction, useRejectTransaction } from "@/hooks/use-transactions";
+import { useApproveWithdrawRequest, useRejectWithdrawRequest, useWithdrawRequests } from "@/hooks/use-withdraw-requests";
 import { formatCurrency, formatDate } from "@/lib/utils";
 import { toast } from "sonner";
+import type { WithdrawRequest } from "@iffe/shared";
+
+type WithdrawRow = WithdrawRequest;
+
 export default function WithdrawRequestsPage() {
-  const { data, isLoading, error, refetch } = useTransactions({ type: "withdrawal", status: "pending" } as Record<string, unknown> & { page?: number; limit?: number });
-  const approveTransaction = useApproveTransaction();
-  const rejectTransaction = useRejectTransaction();
+  const { data, isLoading, error, refetch } = useWithdrawRequests({ sortOrder: "desc" });
+  const approveTransaction = useApproveWithdrawRequest();
+  const rejectTransaction = useRejectWithdrawRequest();
 
   const [confirmAction, setConfirmAction] = useState<{ type: "approve" | "reject"; id: string } | null>(null);
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const requests = (data?.data || []) as Record<string, any>[];
+  const requests = (data?.data || []) as WithdrawRow[];
 
   async function handleApprove(id: string) {
     try {
       await approveTransaction.mutateAsync(id);
-      toast.success("Transaction approved");
+      toast.success("Withdrawal approved");
+      setConfirmAction(null);
     } catch {
-      toast.error("Failed to approve transaction");
+      toast.error("Failed to approve withdrawal");
     }
   }
 
   async function handleReject(id: string) {
     try {
       await rejectTransaction.mutateAsync(id);
-      toast.success("Transaction rejected");
+      toast.success("Withdrawal rejected");
+      setConfirmAction(null);
     } catch {
-      toast.error("Failed to reject transaction");
+      toast.error("Failed to reject withdrawal");
     }
   }
 
@@ -39,16 +44,14 @@ export default function WithdrawRequestsPage() {
     {
       key: "id",
       label: "ID",
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      render: (row: Record<string, any>) => (
-        <span className="font-mono text-xs text-text-muted">{row.reference || row.id.slice(0, 8)}</span>
+      render: (row: WithdrawRow) => (
+        <span className="font-mono text-xs text-text-muted">{row.id.slice(0, 8)}</span>
       ),
     },
     {
       key: "member",
       label: "Member",
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      render: (row: Record<string, any>) => (
+      render: (row: WithdrawRow) => (
         <span className="font-medium text-text">
           {row.account?.member ? `${row.account.member.firstName} ${row.account.member.lastName}` : "—"}
         </span>
@@ -58,8 +61,7 @@ export default function WithdrawRequestsPage() {
       key: "amount",
       label: "Amount",
       align: "right" as const,
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      render: (row: Record<string, any>) => (
+      render: (row: WithdrawRow) => (
         <span className="font-bold text-gray-900 dark:text-white">{formatCurrency(Number(row.amount))}</span>
       ),
     },
@@ -67,17 +69,15 @@ export default function WithdrawRequestsPage() {
     {
       key: "createdAt",
       label: "Date",
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      render: (row: Record<string, any>) => <span className="text-text-muted">{formatDate(row.createdAt)}</span>,
+      render: (row: WithdrawRow) => <span className="text-text-muted">{formatDate(row.createdAt)}</span>,
     },
     {
       key: "status",
       label: "Status",
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      render: (row: Record<string, any>) => (
+      render: (row: WithdrawRow) => (
         <span
           className={`inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium ${
-            row.status === "completed"
+            row.status === "approved"
               ? "bg-success/15 text-success"
               : row.status === "pending"
                 ? "bg-warning/15 text-warning"
@@ -92,8 +92,7 @@ export default function WithdrawRequestsPage() {
       key: "actions",
       label: "Actions",
       sortable: false,
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      render: (row: Record<string, any>) =>
+      render: (row: WithdrawRow) =>
         row.status === "pending" ? (
           <div className="flex items-center gap-1">
             <button

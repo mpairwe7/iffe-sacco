@@ -1,4 +1,6 @@
 import type { ApiResponse } from "@iffe/shared";
+import { useAuthStore } from "@/stores/auth-store";
+import { clearAuthCookies, syncAuthCookies } from "@/lib/client-auth-cookies";
 
 const BASE_URL = process.env.NEXT_PUBLIC_API_URL || "/api/v1";
 
@@ -23,9 +25,17 @@ function setAuthTokens(accessToken: string, refreshToken: string) {
       const parsed = JSON.parse(raw);
       parsed.state.accessToken = accessToken;
       parsed.state.refreshToken = refreshToken;
+      parsed.state.isAuthenticated = true;
       localStorage.setItem("iffe-auth", JSON.stringify(parsed));
     }
   } catch { /* ignore */ }
+  syncAuthCookies({ accessToken, refreshToken });
+  useAuthStore.setState((state) => ({
+    ...state,
+    accessToken,
+    refreshToken,
+    isAuthenticated: true,
+  }));
 }
 
 function clearAuth() {
@@ -41,6 +51,14 @@ function clearAuth() {
       localStorage.setItem("iffe-auth", JSON.stringify(parsed));
     }
   } catch { /* ignore */ }
+  clearAuthCookies();
+  useAuthStore.setState((state) => ({
+    ...state,
+    user: null,
+    accessToken: null,
+    refreshToken: null,
+    isAuthenticated: false,
+  }));
 }
 
 async function refreshTokens(): Promise<void> {

@@ -62,12 +62,13 @@ loans.patch("/:id/reject", requireRole("admin"), async (c) => {
 
 const repaySchema = z.object({
   amount: z.number().min(1, "Amount must be positive"),
+  accountId: z.string().uuid().optional(),
 });
 
 loans.patch("/:id/repay", requireRole("admin", "staff"), zValidator("json", repaySchema), async (c) => {
-  const { amount } = c.req.valid("json");
+  const { amount, accountId } = c.req.valid("json");
   const user = c.get("user");
-  const loan = await service.recordRepayment(c.req.param("id"), amount, user.id);
+  const loan = await service.recordRepayment(c.req.param("id"), amount, user.id, accountId);
   return c.json({ success: true, data: loan });
 });
 

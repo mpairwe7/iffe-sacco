@@ -9,18 +9,18 @@ const service = new MemberService();
 
 members.use("*", authMiddleware);
 
-members.get("/", zValidator("query", paginationSchema), async (c) => {
+members.get("/", requireRole("admin", "staff", "chairman"), zValidator("query", paginationSchema), async (c) => {
   const params = c.req.valid("query");
   const result = await service.getAll(params);
   return c.json({ success: true, data: result });
 });
 
-members.get("/stats", async (c) => {
+members.get("/stats", requireRole("admin", "staff", "chairman"), async (c) => {
   const stats = await service.getStats();
   return c.json({ success: true, data: stats });
 });
 
-members.get("/:id", async (c) => {
+members.get("/:id", requireRole("admin", "staff", "chairman"), async (c) => {
   const member = await service.getById(c.req.param("id"));
   return c.json({ success: true, data: member });
 });

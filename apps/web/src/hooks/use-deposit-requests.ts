@@ -18,6 +18,8 @@ export function useCreateDepositRequest() {
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ["deposit-requests"] });
       qc.invalidateQueries({ queryKey: ["transactions"] });
+      qc.invalidateQueries({ queryKey: ["accounts"] });
+      qc.invalidateQueries({ queryKey: ["dashboard"] });
     },
   });
 }
@@ -29,6 +31,7 @@ export function useApproveDepositRequest() {
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ["deposit-requests"] });
       qc.invalidateQueries({ queryKey: ["transactions"] });
+      qc.invalidateQueries({ queryKey: ["accounts"] });
       qc.invalidateQueries({ queryKey: ["dashboard"] });
     },
   });

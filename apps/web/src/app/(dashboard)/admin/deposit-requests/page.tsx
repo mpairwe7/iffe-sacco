@@ -3,19 +3,18 @@
 import { useState } from "react";
 import { DataTable } from "@/components/data-table";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
-import { useTransactions, useApproveTransaction, useRejectTransaction } from "@/hooks/use-transactions";
+import { useDepositRequests, useApproveDepositRequest, useRejectDepositRequest } from "@/hooks/use-deposit-requests";
 import { formatCurrency, formatDate } from "@/lib/utils";
 import { ArrowDownToLine, Check, X } from "lucide-react";
 import { toast } from "sonner";
-import type { PaginationParams } from "@iffe/shared";
+import type { DepositRequest } from "@iffe/shared";
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-type DepositRow = any;
+type DepositRow = DepositRequest;
 
 export default function DepositRequestsPage() {
-  const query = useTransactions({ type: "deposit" } as PaginationParams & { type: string });
-  const approveMutation = useApproveTransaction();
-  const rejectMutation = useRejectTransaction();
+  const query = useDepositRequests({ sortOrder: "desc" });
+  const approveMutation = useApproveDepositRequest();
+  const rejectMutation = useRejectDepositRequest();
 
   const [confirmAction, setConfirmAction] = useState<{ type: "approve" | "reject"; id: string } | null>(null);
 
@@ -75,7 +74,7 @@ export default function DepositRequestsPage() {
         const statusLabel = row.status.charAt(0).toUpperCase() + row.status.slice(1);
         return (
           <span className={`inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium ${
-            row.status === "completed" ? "bg-success/15 text-success" : row.status === "pending" ? "bg-warning/15 text-warning" : "bg-danger/15 text-danger"
+            row.status === "approved" ? "bg-success/15 text-success" : row.status === "pending" ? "bg-warning/15 text-warning" : "bg-danger/15 text-danger"
           }`}>{statusLabel}</span>
         );
       },

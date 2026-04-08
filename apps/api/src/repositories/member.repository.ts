@@ -18,7 +18,7 @@ export class MemberRepository {
       : {};
 
     const [data, total] = await Promise.all([
-      prisma.member.findMany({ where, skip, take: limit, orderBy: { [sortBy]: sortOrder }, include: { accounts: true } }),
+      prisma.member.findMany({ where, skip, take: limit, orderBy: { [sortBy]: sortOrder }, include: { accounts: { select: { id: true, accountNo: true, type: true, status: true } } } }),
       prisma.member.count({ where }),
     ]);
 

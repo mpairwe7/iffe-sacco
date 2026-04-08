@@ -6,6 +6,7 @@ import { useAuthStore } from "@/stores/auth-store";
 import { authApi } from "@/lib/api/auth";
 import { applicationsApi } from "@/lib/api/applications";
 import { Skeleton } from "@/components/ui/skeleton";
+import { getRedirectForPath } from "@/lib/role-routes";
 
 export function AuthGuard({ children }: { children: React.ReactNode }) {
   const router = useRouter();
@@ -24,26 +25,14 @@ export function AuthGuard({ children }: { children: React.ReactNode }) {
       .then(async (user) => {
         setUser(user);
 
-        // Comprehensive role-based route protection
         const p = window.location.pathname;
-        const role = user.role;
-
-        // Chairman: can only access /chairman and /admin/expenses
-        if (role === "chairman") {
-          if (p.startsWith("/dashboard")) { router.replace("/chairman"); return; }
-          if (p.startsWith("/admin") && !p.startsWith("/admin/expenses") && !p.startsWith("/admin/reports")) {
-            router.replace("/chairman"); return;
-          }
-          if (p.startsWith("/portal")) { router.replace("/chairman"); return; }
+        const redirectTo = getRedirectForPath(p, user.role);
+        if (redirectTo) {
+          router.replace(redirectTo);
+          return;
         }
 
-        // Member: can only access /portal/* AND must have approved application
-        if (role === "member") {
-          if (p.startsWith("/admin")) { router.replace("/portal/savings"); return; }
-          if (p.startsWith("/chairman")) { router.replace("/portal/savings"); return; }
-          if (p === "/dashboard") { router.replace("/portal/savings"); return; }
-
-          // Block portal access until application is approved
+        if (user.role === "member") {
           try {
             const application = await applicationsApi.getMine();
             if (application && application.status !== "approved") {
@@ -55,13 +44,6 @@ export function AuthGuard({ children }: { children: React.ReactNode }) {
           }
         }
 
-        // Staff: same as admin but no /chairman
-        if (role === "staff") {
-          if (p.startsWith("/chairman")) { router.replace("/dashboard"); return; }
-          if (p.startsWith("/portal")) { router.replace("/dashboard"); return; }
-        }
-
-        // Admin: no restrictions (full access)
         setChecked(true);
       })
       .catch(() => {

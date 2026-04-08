@@ -48,15 +48,17 @@ export class ExpenseRepository {
   }
 
   async getStats() {
-    const [totalApproved, totalPending, total] = await Promise.all([
+    const now = new Date();
+    const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
+    const [totalApproved, totalPending, totalThisMonth] = await Promise.all([
       prisma.expense.aggregate({ where: { status: "approved" }, _sum: { amount: true } }),
       prisma.expense.aggregate({ where: { status: "pending" }, _sum: { amount: true } }),
-      prisma.expense.count(),
+      prisma.expense.aggregate({ where: { status: "approved", date: { gte: startOfMonth } }, _sum: { amount: true } }),
     ]);
     return {
-      totalApproved: totalApproved._sum.amount || 0,
-      totalPending: totalPending._sum.amount || 0,
-      total,
+      totalThisMonth: totalThisMonth._sum.amount || 0,
+      approved: totalApproved._sum.amount || 0,
+      pending: totalPending._sum.amount || 0,
     };
   }
 }

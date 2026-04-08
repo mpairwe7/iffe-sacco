@@ -19,32 +19,44 @@ const createSchema = z.object({
 withdrawRequests.get("/", zValidator("query", paginationSchema), async (c) => {
   const { page = 1, limit = 20, search, sortOrder = "desc" } = c.req.valid("query");
   const user = c.get("user");
+  if (!["admin", "staff", "member"].includes(user.role)) {
+    throw new HTTPException(403, { message: "Insufficient permissions" });
+  }
+
   const where: any = {};
-  // Members see only their own requests
   if (user.role === "member" && user.memberId) {
     where.memberId = user.memberId;
   }
   if (search) where.OR = [{ reason: { contains: search, mode: "insensitive" } }];
   const skip = (page - 1) * limit;
   const [data, total] = await Promise.all([
-    prisma.withdrawRequest.findMany({ where, skip, take: limit, orderBy: { createdAt: sortOrder } }),
+    prisma.withdrawRequest.findMany({
+      where,
+      skip,
+      take: limit,
+      orderBy: { createdAt: sortOrder },
+      include: { account: { include: { member: true } } },
+    }),
     prisma.withdrawRequest.count({ where }),
   ]);
   return c.json({ success: true, data: { data, total, page, limit, totalPages: Math.ceil(total / limit) } });
 });
 
-withdrawRequests.post("/", zValidator("json", createSchema), async (c) => {
+withdrawRequests.post("/", requireRole("member"), zValidator("json", createSchema), async (c) => {
   const data = c.req.valid("json");
   const user = c.get("user");
+  if (!user.memberId) {
+    throw new HTTPException(403, { message: "Only members can create withdrawal requests" });
+  }
 
-  // Validate sufficient balance before creating request
-  const account = await prisma.account.findUnique({ where: { id: data.accountId } });
-  if (!account) return c.json({ success: false, message: "Account not found" }, 404);
-  if (account.status !== "active") return c.json({ success: false, message: "Account is not active" }, 400);
-  if (Number(account.balance) < data.amount) return c.json({ success: false, message: "Insufficient balance" }, 400);
+  const account = await prisma.account.findFirst({
+    where: { id: data.accountId, memberId: user.memberId },
+  });
+  if (!account) throw new HTTPException(404, { message: "Account not found" });
+  if (account.status !== "active") throw new HTTPException(400, { message: "Account is not active" });
+  if (Number(account.balance) < data.amount) throw new HTTPException(400, { message: "Insufficient balance" });
 
-  const memberId = user.memberId || "";
-  const req = await prisma.withdrawRequest.create({ data: { ...data, memberId } });
+  const req = await prisma.withdrawRequest.create({ data: { ...data, memberId: user.memberId } });
   return c.json({ success: true, data: req }, 201);
 });
 
@@ -53,6 +65,10 @@ withdrawRequests.patch("/:id/approve", requireRole("admin", "staff"), async (c) 
   const user = c.get("user");
 
   const result = await prisma.$transaction(async (tx: any) => {
+    const existing = await tx.withdrawRequest.findUnique({ where: { id } });
+    if (!existing) throw new HTTPException(404, { message: "Withdrawal request not found" });
+    if (existing.status !== "pending") throw new HTTPException(400, { message: "Withdrawal request has already been processed" });
+
     const req = await tx.withdrawRequest.update({
       where: { id },
       data: { status: "approved", processedBy: user.id },
@@ -92,6 +108,9 @@ withdrawRequests.patch("/:id/approve", requireRole("admin", "staff"), async (c) 
 withdrawRequests.patch("/:id/reject", requireRole("admin", "staff"), async (c) => {
   const id = c.req.param("id");
   const user = c.get("user");
+  const existing = await prisma.withdrawRequest.findUnique({ where: { id } });
+  if (!existing) throw new HTTPException(404, { message: "Withdrawal request not found" });
+  if (existing.status !== "pending") throw new HTTPException(400, { message: "Withdrawal request has already been processed" });
   const req = await prisma.withdrawRequest.update({ where: { id }, data: { status: "rejected", processedBy: user.id } });
   return c.json({ success: true, data: req });
 });

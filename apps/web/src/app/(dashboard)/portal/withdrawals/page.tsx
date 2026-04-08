@@ -161,7 +161,7 @@ export default function MemberWithdrawalsPage() {
                       <p className="text-xs text-text-muted">{(w.method || "cash").replace("_", " ").replace(/\b\w/g, (c: string) => c.toUpperCase())} &middot; {formatDate(w.createdAt)}</p>
                     </div>
                     <span className={`text-xs font-medium px-2.5 py-1 rounded-full ${
-                      w.status === "completed" ? "text-success bg-success/15" :
+                      w.status === "approved" ? "text-success bg-success/15" :
                       w.status === "pending" ? "text-warning bg-warning/15" :
                       "text-danger bg-danger/15"
                     }`}>

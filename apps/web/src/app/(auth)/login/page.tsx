@@ -11,6 +11,7 @@ import { useLogin } from "@/hooks/use-auth";
 import { useAuthStore } from "@/stores/auth-store";
 import { SecurityBadge } from "@/components/ui/security-badge";
 import { useRouter } from "next/navigation";
+import { getDefaultRouteForRole } from "@/lib/role-routes";
 
 export default function LoginPage() {
   const [showPassword, setShowPassword] = useState(false);
@@ -27,9 +28,10 @@ export default function LoginPage() {
       const result = await login.mutateAsync({ email: data.email, password: data.password });
       setAuth(result.user, result.tokens);
       toast.success("Welcome back!");
-      router.push("/dashboard");
-    } catch (err: any) {
-      toast.error(err.message || "Login failed");
+      router.push(getDefaultRouteForRole(result.user.role));
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : "Login failed";
+      toast.error(message);
     }
   }
 

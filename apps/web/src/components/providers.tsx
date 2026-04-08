@@ -4,7 +4,9 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ThemeProvider } from "next-themes";
 import { Toaster } from "sonner";
 import { TooltipProvider } from "@radix-ui/react-tooltip";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { useAuthStore } from "@/stores/auth-store";
+import { clearAuthCookies, syncAuthCookies } from "@/lib/client-auth-cookies";
 
 export function Providers({ children }: { children: React.ReactNode }) {
   const [queryClient] = useState(
@@ -19,6 +21,17 @@ export function Providers({ children }: { children: React.ReactNode }) {
         },
       })
   );
+  const accessToken = useAuthStore((s) => s.accessToken);
+  const refreshToken = useAuthStore((s) => s.refreshToken);
+
+  useEffect(() => {
+    if (accessToken && refreshToken) {
+      syncAuthCookies({ accessToken, refreshToken });
+      return;
+    }
+
+    clearAuthCookies();
+  }, [accessToken, refreshToken]);
 
   return (
     <QueryClientProvider client={queryClient}>

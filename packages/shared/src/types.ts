@@ -210,6 +210,7 @@ export interface DepositRequest {
   processedBy?: string | null;
   createdAt: string;
   updatedAt: string;
+  account?: Account;
 }
 
 // ===== Withdraw Request =====
@@ -224,6 +225,7 @@ export interface WithdrawRequest {
   processedBy?: string | null;
   createdAt: string;
   updatedAt: string;
+  account?: Account;
 }
 
 // ===== Payment Gateway =====

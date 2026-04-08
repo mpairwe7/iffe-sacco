@@ -1,6 +1,5 @@
 "use client";
 
-import { useState } from "react";
 import { ArrowDownToLine, Send, Loader2 } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -156,7 +155,7 @@ export default function MemberDepositsPage() {
                       <p className="text-xs text-text-muted">{(dep.method || "cash").replace("_", " ").replace(/\b\w/g, (c: string) => c.toUpperCase())} &middot; {formatDate(dep.createdAt)}</p>
                     </div>
                     <span className={`text-xs font-medium px-2.5 py-1 rounded-full ${
-                      dep.status === "completed" ? "text-success bg-success/15" :
+                      dep.status === "approved" ? "text-success bg-success/15" :
                       dep.status === "pending" ? "text-warning bg-warning/15" :
                       "text-danger bg-danger/15"
                     }`}>

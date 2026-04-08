@@ -86,11 +86,12 @@ export class TransactionService {
   }
 
   async getStats() {
-    const [totalDeposits, totalWithdrawals, pending] = await Promise.all([
+    const [totalDeposits, totalWithdrawals, pending, total] = await Promise.all([
       prisma.transaction.aggregate({ where: { type: "deposit", status: "completed" }, _sum: { amount: true } }),
       prisma.transaction.aggregate({ where: { type: "withdrawal", status: "completed" }, _sum: { amount: true } }),
       prisma.transaction.count({ where: { status: "pending" } }),
+      prisma.transaction.count(),
     ]);
-    return { totalDeposits: totalDeposits._sum.amount || 0, totalWithdrawals: totalWithdrawals._sum.amount || 0, pending };
+    return { total, totalDeposits: totalDeposits._sum.amount || 0, totalWithdrawals: totalWithdrawals._sum.amount || 0, pending };
   }
 }

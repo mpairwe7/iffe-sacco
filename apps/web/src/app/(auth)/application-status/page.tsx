@@ -159,10 +159,10 @@ export default function ApplicationStatusPage() {
           </div>
           <div className="text-center">
             <Link
-              href="/dashboard"
+              href="/portal/savings"
               className="inline-flex items-center gap-2 px-6 py-3 text-sm font-semibold text-white bg-gradient-to-r from-primary to-primary-dark rounded-lg hover:shadow-xl hover:shadow-primary/30 hover:-translate-y-0.5 transition-all"
             >
-              Go to Dashboard <ArrowRight className="w-4 h-4" />
+              Go to My Account <ArrowRight className="w-4 h-4" />
             </Link>
           </div>
         </div>

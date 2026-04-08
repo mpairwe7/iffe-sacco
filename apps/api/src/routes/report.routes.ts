@@ -7,7 +7,7 @@ import { authMiddleware, requireRole } from "../middleware/auth";
 const reports = new Hono();
 
 reports.use("*", authMiddleware);
-reports.use("*", requireRole("admin", "staff"));
+reports.use("*", requireRole("admin", "staff", "chairman"));
 
 const reportTypes = [
   { id: "statement", name: "Account Statement", description: "Transactions for a specific member" },
