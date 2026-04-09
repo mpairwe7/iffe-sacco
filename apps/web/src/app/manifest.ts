@@ -16,10 +16,10 @@ export default function manifest(): MetadataRoute.Manifest {
     dir: "ltr",
     categories: ["finance", "business"],
     icons: [
-      { src: "/favicon.png", sizes: "192x192", type: "image/png" },
-      { src: "/logo.png", sizes: "512x512", type: "image/png" },
-      { src: "/favicon.png", sizes: "192x192", type: "image/png", purpose: "maskable" },
-      { src: "/logo.png", sizes: "512x512", type: "image/png", purpose: "maskable" },
+      { src: "/favicon.png", sizes: "64x64", type: "image/png" },
+      { src: "/logo.png", sizes: "1168x1162", type: "image/png" },
+      { src: "/favicon.png", sizes: "64x64", type: "image/png", purpose: "maskable" },
+      { src: "/logo.png", sizes: "1168x1162", type: "image/png", purpose: "maskable" },
     ],
     shortcuts: [
       { name: "Dashboard", short_name: "Dashboard", url: "/dashboard" },

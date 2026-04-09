@@ -35,10 +35,14 @@ async function fetchApi<T>(path: string): Promise<T | null> {
   return (json.data ?? null) as T | null;
 }
 
+export async function getCurrentUser() {
+  return fetchApi<User>("/auth/me");
+}
+
 export async function getDashboardSession() {
   const requestHeaders = await headers();
   const currentPath = requestHeaders.get("x-current-path") || "/dashboard";
-  const user = await fetchApi<User>("/auth/me");
+  const user = await getCurrentUser();
 
   if (!user) {
     return { user: null, currentPath, application: null as Application | null };
