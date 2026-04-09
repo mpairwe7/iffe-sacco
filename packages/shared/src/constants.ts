@@ -5,6 +5,14 @@ export const DEFAULT_LANGUAGE = "en";
 
 export const ACCOUNT_TYPES = ["savings", "current", "fixed_deposit"] as const;
 export const LOAN_TYPES = ["business", "personal", "emergency", "education", "housing"] as const;
+export type LoanType = typeof LOAN_TYPES[number];
+export const LOAN_INTEREST_RATES: Record<LoanType, number> = {
+  business: 12,
+  personal: 12,
+  emergency: 12,
+  education: 8,
+  housing: 10,
+};
 export const TRANSACTION_METHODS = ["cash", "mobile_money", "bank_transfer", "cheque", "internal"] as const;
 
 export const EXPENSE_CATEGORIES = [
@@ -30,8 +38,13 @@ export const PASSWORD = {
 } as const;
 
 export const TOKEN = {
-  ACCESS_EXPIRY: "15m",
-  REFRESH_EXPIRY: "7d",
+  SESSION_EXPIRY: "1d",
+  REMEMBER_ME_SESSION_EXPIRY: "7d",
+  PASSWORD_RESET_EXPIRY: "30m",
+} as const;
+
+export const AUTH_COOKIE_NAMES = {
+  SESSION: "iffe-session",
 } as const;
 
 export const WELFARE_STATUS = ["active", "completed", "paused"] as const;
@@ -44,7 +57,6 @@ export const APPLICATION_STATUS = ["pending", "approved", "rejected"] as const;
 export const SEX_OPTIONS = ["male", "female"] as const;
 
 // ===== Derived types from constants =====
-export type LoanType = typeof LOAN_TYPES[number];
 // AccountType already exported from types.ts
 export type TransactionMethod = typeof TRANSACTION_METHODS[number];
 export type ExpenseCategory = typeof EXPENSE_CATEGORIES[number];

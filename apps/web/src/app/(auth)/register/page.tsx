@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useState, useCallback, useEffect } from "react";
-import { useForm, useFieldArray, type UseFormReturn } from "react-hook-form";
+import { useForm, useFieldArray, type FieldErrors, type UseFormReturn } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod/v4";
 import { motion, AnimatePresence } from "framer-motion";
@@ -103,15 +103,18 @@ const applicationSchema = z
     applicationLetterName: z.string().optional(),
     password: z.string().min(8, "Password must be at least 8 characters"),
     confirmPassword: z.string(),
-    terms: z.literal(true, "You must accept the terms and conditions"),
-    reaffirmation: z.literal(true, "You must reaffirm the information is correct"),
+    terms: z.boolean().refine((value) => value, "You must accept the terms and conditions"),
+    reaffirmation: z.boolean().refine((value) => value, "You must reaffirm the information is correct"),
   })
   .refine((d) => d.password === d.confirmPassword, {
     message: "Passwords do not match",
     path: ["confirmPassword"],
   });
 
-type ApplicationForm = z.infer<typeof applicationSchema>;
+type ApplicationFormInput = z.input<typeof applicationSchema>;
+type ApplicationForm = z.output<typeof applicationSchema>;
+type PlaceFieldKey = keyof ApplicationFormInput["birthPlace"];
+type ParentFieldKey = keyof ApplicationFormInput["fatherInfo"];
 
 // ── Step definitions ────────────────────────────────────────────────
 const STEPS = [
@@ -123,7 +126,7 @@ const STEPS = [
 ] as const;
 
 // Fields to validate per step before allowing next
-const STEP_FIELDS: (keyof ApplicationForm)[][] = [
+const STEP_FIELDS: (keyof ApplicationFormInput)[][] = [
   ["fullName", "phone", "dateOfBirth", "sex", "email", "clan", "totem"],
   ["birthPlace", "ancestralPlace", "residencePlace"],
   ["occupation", "placeOfWork", "qualifications"],
@@ -137,6 +140,22 @@ const slideVariants = {
   center: { x: 0, opacity: 1 },
   exit: (dir: number) => ({ x: dir > 0 ? -300 : 300, opacity: 0 }),
 };
+
+function getNestedErrorMessage(
+  errors: FieldErrors<ApplicationFormInput>,
+  path: readonly string[],
+) {
+  let current: unknown = errors;
+
+  for (const segment of path) {
+    if (!current || typeof current !== "object") return undefined;
+    current = (current as Record<string, unknown>)[segment];
+  }
+
+  if (!current || typeof current !== "object") return undefined;
+  const message = (current as { message?: unknown }).message;
+  return typeof message === "string" ? message : undefined;
+}
 
 // ── Collapsible section ─────────────────────────────────────────────
 function CollapsibleSection({
@@ -185,10 +204,10 @@ function PlaceFields({
   form,
 }: {
   prefix: "birthPlace" | "ancestralPlace" | "residencePlace";
-  form: UseFormReturn<ApplicationForm, any, any>;
+  form: UseFormReturn<ApplicationFormInput, unknown, ApplicationForm>;
 }) {
   const { register, formState: { errors } } = form;
-  const fields = ["district", "county", "subCounty", "parish", "village"] as const;
+  const fields: readonly PlaceFieldKey[] = ["district", "county", "subCounty", "parish", "village"];
   const labels: Record<string, string> = {
     district: "District",
     county: "County",
@@ -204,7 +223,7 @@ function PlaceFields({
           label={labels[f]}
           required={f === "district"}
           {...register(`${prefix}.${f}`)}
-          error={(errors[prefix] as any)?.[f]?.message}
+          error={getNestedErrorMessage(errors, [prefix, f])}
           placeholder={labels[f]}
         />
       ))}
@@ -220,20 +239,45 @@ function ParentFields({
 }: {
   prefix: "fatherInfo" | "motherInfo";
   title: string;
-  form: UseFormReturn<ApplicationForm, any, any>;
+  form: UseFormReturn<ApplicationFormInput, unknown, ApplicationForm>;
 }) {
   const { register, watch, formState: { errors } } = form;
   const alive = watch(`${prefix}.alive`);
-  const pe = (errors[prefix] || {}) as any;
+  const parentFields: readonly ParentFieldKey[] = ["name", "district", "village", "phone", "email"];
 
   return (
     <CollapsibleSection title={title} defaultOpen={prefix === "fatherInfo"}>
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-        <FormField label="Name" required {...register(`${prefix}.name`)} error={pe.name?.message} placeholder="Full name" />
-        <FormField label="District" {...register(`${prefix}.district`)} error={pe.district?.message} placeholder="District" />
-        <FormField label="Village" {...register(`${prefix}.village`)} error={pe.village?.message} placeholder="Village" />
-        <FormField label="Phone" {...register(`${prefix}.phone`)} error={pe.phone?.message} placeholder="Phone number" />
-        <FormField label="Email" {...register(`${prefix}.email`)} error={pe.email?.message} placeholder="Email address" />
+        {parentFields.map((field) => (
+          <FormField
+            key={field}
+            label={
+              field === "name"
+                ? "Name"
+                : field === "district"
+                  ? "District"
+                  : field === "village"
+                    ? "Village"
+                    : field === "phone"
+                      ? "Phone"
+                      : "Email"
+            }
+            required={field === "name"}
+            {...register(`${prefix}.${field}`)}
+            error={getNestedErrorMessage(errors, [prefix, field])}
+            placeholder={
+              field === "name"
+                ? "Full name"
+                : field === "district"
+                  ? "District"
+                  : field === "village"
+                    ? "Village"
+                    : field === "phone"
+                      ? "Phone number"
+                      : "Email address"
+            }
+          />
+        ))}
       </div>
       <div className="flex items-center gap-6 mt-3">
         <label className="flex items-center gap-2 text-sm text-text cursor-pointer">
@@ -278,8 +322,8 @@ export default function RegisterPage() {
   const submitApp = useSubmitApplication();
   const setAuth = useAuthStore((s) => s.setAuth);
 
-  const form = useForm<ApplicationForm>({
-    resolver: zodResolver(applicationSchema) as any,
+  const form = useForm<ApplicationFormInput, unknown, ApplicationForm>({
+    resolver: zodResolver(applicationSchema),
     defaultValues: {
       fullName: "",
       dateOfBirth: "",
@@ -302,8 +346,8 @@ export default function RegisterPage() {
       applicationLetterName: "",
       password: "",
       confirmPassword: "",
-      terms: undefined as any,
-      reaffirmation: undefined as any,
+      terms: false,
+      reaffirmation: false,
     },
     mode: "onTouched",
   });
@@ -327,7 +371,7 @@ export default function RegisterPage() {
   // ── Step navigation ──────────────────────────────────────────────
   const goNext = useCallback(async () => {
     const fieldsToValidate = STEP_FIELDS[step];
-    const valid = await trigger(fieldsToValidate as any);
+    const valid = await trigger(fieldsToValidate);
     if (!valid) {
       toast.error("Please complete all required fields before continuing");
       return;
@@ -376,10 +420,14 @@ export default function RegisterPage() {
         password: data.password,
         role: "member",
       });
-      setAuth(result.user, result.tokens);
+      setAuth(result.user);
 
       // 2. Submit the application
-      const { password: _, confirmPassword: __, terms: ___, reaffirmation: ____, ...appData } = data;
+      const { password, confirmPassword, terms, reaffirmation, ...appData } = data;
+      void password;
+      void confirmPassword;
+      void terms;
+      void reaffirmation;
       await submitApp.mutateAsync(appData);
 
       toast.success("Application submitted successfully!");

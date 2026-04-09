@@ -1,10 +1,12 @@
 "use client";
 
-import { useState, useMemo, useEffect } from "react";
+import { useState, useMemo } from "react";
+import Image from "next/image";
 import Link from "next/link";
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
 import { useAuthStore } from "@/stores/auth-store";
+import { logoutUser } from "@/lib/auth-session";
 import type { Role } from "@iffe/shared";
 import {
   LayoutDashboard,
@@ -47,9 +49,10 @@ interface NavItem {
 
 const navItems: NavItem[] = [
   // Dashboard Section - role-specific dashboards
-  { label: "Admin Dashboard", href: "/dashboard", icon: LayoutDashboard, roles: ["admin", "staff"] },
+  { label: "Admin Dashboard", href: "/dashboard", icon: LayoutDashboard, roles: ["admin"] },
+  { label: "Staff Dashboard", href: "/staff", icon: LayoutDashboard, roles: ["staff"] },
   { label: "Chairman Dashboard", href: "/chairman", icon: LayoutDashboard, roles: ["chairman"] },
-  { label: "My Dashboard", href: "/portal/savings", icon: LayoutDashboard, roles: ["member"] },
+  { label: "My Dashboard", href: "/portal/dashboard", icon: LayoutDashboard, roles: ["member"] },
 
   // Member Portal Section
   { label: "", href: undefined, icon: LayoutDashboard, divider: true, section: "Member Portal", roles: ["member"] },
@@ -146,15 +149,12 @@ const navItems: NavItem[] = [
 
 export function Sidebar({ open, onClose }: SidebarProps) {
   const pathname = usePathname();
-  const router = useRouter();
-  const [expanded, setExpanded] = useState<string | null>(null);
+  const [expandedByPath, setExpandedByPath] = useState<Record<string, string | false>>({});
   const user = useAuthStore((s) => s.user);
-  const logout = useAuthStore((s) => s.logout);
   const role: Role = (user?.role as Role) || "member";
 
   function handleLogout() {
-    logout();
-    window.location.href = "/";
+    void logoutUser();
   }
 
   const filteredNavItems = useMemo(
@@ -169,16 +169,24 @@ export function Sidebar({ open, onClose }: SidebarProps) {
     [role]
   );
 
-  // Auto-expand the section containing the active route
-  useEffect(() => {
-    const activeGroup = filteredNavItems.find((item) =>
-      item.children?.some((child) => pathname.startsWith(child.href.split("?")[0]))
-    );
-    if (activeGroup) setExpanded(activeGroup.label);
-  }, [pathname, filteredNavItems]);
+  const activeGroupLabel = useMemo(
+    () =>
+      filteredNavItems.find((item) =>
+        item.children?.some((child) => pathname.startsWith(child.href.split("?")[0]))
+      )?.label ?? null,
+    [filteredNavItems, pathname]
+  );
 
   const toggleExpand = (label: string) => {
-    setExpanded(expanded === label ? null : label);
+    setExpandedByPath((current) => {
+      const currentValue = current[pathname];
+      const effectiveExpanded = currentValue === false ? null : currentValue || activeGroupLabel;
+
+      return {
+        ...current,
+        [pathname]: effectiveExpanded === label ? false : label,
+      };
+    });
   };
 
   const isActive = (href: string) => pathname === href || pathname.startsWith(href + "/");
@@ -219,10 +227,9 @@ export function Sidebar({ open, onClose }: SidebarProps) {
       >
         {/* Logo — matching header/footer/auth design */}
         <div className="flex items-center justify-between px-5 h-24 border-b border-gray-200 dark:border-gray-800">
-          <Link href={role === "chairman" ? "/chairman" : role === "member" ? "/portal/savings" : "/dashboard"} className="flex items-center gap-3">
-            { /* eslint-disable-next-line @next/next/no-img-element */ }
+          <Link href={role === "chairman" ? "/chairman" : role === "member" ? "/portal/dashboard" : role === "staff" ? "/staff" : "/dashboard"} className="flex items-center gap-3">
             <div className="w-11 h-11 rounded-full bg-primary/10 ring-2 ring-primary/30 shadow-lg flex items-center justify-center overflow-hidden shrink-0">
-              <img src="/logo.png" alt="IFFE SACCO" className="w-11 h-11 object-cover rounded-full" />
+              <Image src="/logo.png" alt="IFFE SACCO" width={44} height={44} className="w-11 h-11 object-cover rounded-full" />
             </div>
             <div className="leading-tight">
               <span className="text-lg font-extrabold">
@@ -264,7 +271,9 @@ export function Sidebar({ open, onClose }: SidebarProps) {
             }
 
             if (item.children) {
-              const isOpen = expanded === item.label;
+              const currentValue = expandedByPath[pathname];
+              const effectiveExpanded = currentValue === false ? null : currentValue || activeGroupLabel;
+              const isOpen = effectiveExpanded === item.label;
               const hasActive = item.children.some((c) => isActive(c.href));
 
               return (

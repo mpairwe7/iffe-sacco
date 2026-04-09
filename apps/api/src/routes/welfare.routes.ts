@@ -2,14 +2,15 @@ import { Hono } from "hono";
 import { zValidator } from "@hono/zod-validator";
 import { createWelfareSchema, updateWelfareSchema, pledgeSchema, paginationSchema } from "@iffe/shared";
 import { WelfareService } from "../services/welfare.service";
-import { authMiddleware, requireRole, type AuthUser } from "../middleware/auth";
+import { authMiddleware, requireRole, type AuthEnv } from "../middleware/auth";
+import { writeAuditLog } from "../utils/audit";
 import { z } from "zod/v4";
 
 const statusSchema = z.object({
   status: z.enum(["active", "completed", "paused"]),
 });
 
-const welfare = new Hono();
+const welfare = new Hono<AuthEnv>();
 const service = new WelfareService();
 
 welfare.use("*", authMiddleware);
@@ -27,7 +28,7 @@ welfare.get("/stats", async (c) => {
 });
 
 welfare.get("/pledges/mine", async (c) => {
-  const user = c.get("user") as AuthUser;
+  const user = c.get("user");
   if (!user.memberId) {
     return c.json({ success: true, data: [] });
   }
@@ -44,18 +45,34 @@ welfare.get("/:id", async (c) => {
 welfare.post("/", requireRole("admin"), zValidator("json", createWelfareSchema), async (c) => {
   const data = c.req.valid("json");
   const program = await service.create(data);
+  await writeAuditLog(c, {
+    action: "welfare_program_created",
+    entity: "welfare_program",
+    entityId: program.id,
+  });
   return c.json({ success: true, data: program }, 201);
 });
 
 welfare.put("/:id", requireRole("admin"), zValidator("json", updateWelfareSchema), async (c) => {
   const data = c.req.valid("json");
   const program = await service.update(c.req.param("id"), data);
+  await writeAuditLog(c, {
+    action: "welfare_program_updated",
+    entity: "welfare_program",
+    entityId: program.id,
+  });
   return c.json({ success: true, data: program });
 });
 
 welfare.patch("/:id/status", requireRole("admin"), zValidator("json", statusSchema), async (c) => {
   const { status } = c.req.valid("json");
   const program = await service.updateStatus(c.req.param("id"), status);
+  await writeAuditLog(c, {
+    action: "welfare_program_status_updated",
+    entity: "welfare_program",
+    entityId: program.id,
+    details: { status: program.status },
+  });
   return c.json({ success: true, data: program });
 });
 
@@ -67,11 +84,17 @@ welfare.get("/:id/pledges", zValidator("query", paginationSchema), async (c) => 
 
 welfare.post("/pledges", zValidator("json", pledgeSchema), async (c) => {
   const data = c.req.valid("json");
-  const user = c.get("user") as AuthUser;
+  const user = c.get("user");
   if (!user.memberId) {
     return c.json({ success: false, message: "Only members can create pledges" }, 403);
   }
   const pledge = await service.createPledge({ ...data, memberId: user.memberId });
+  await writeAuditLog(c, {
+    action: "pledge_created",
+    entity: "pledge",
+    entityId: pledge.id,
+    details: { programId: pledge.programId, amount: pledge.amount },
+  });
   return c.json({ success: true, data: pledge }, 201);
 });
 

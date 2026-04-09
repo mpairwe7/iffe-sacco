@@ -1,40 +1,18 @@
 import { create } from "zustand";
-import { persist } from "zustand/middleware";
-import type { User, AuthTokens } from "@iffe/shared";
-import { clearAuthCookies, syncAuthCookies } from "@/lib/client-auth-cookies";
+import type { User } from "@iffe/shared";
 
 interface AuthState {
   user: User | null;
-  accessToken: string | null;
-  refreshToken: string | null;
   isAuthenticated: boolean;
-  setAuth: (user: User, tokens: AuthTokens) => void;
-  setTokens: (tokens: AuthTokens) => void;
+  setAuth: (user: User) => void;
   setUser: (user: User) => void;
-  logout: () => void;
+  clearAuth: () => void;
 }
 
-export const useAuthStore = create<AuthState>()(
-  persist(
-    (set) => ({
-      user: null,
-      accessToken: null,
-      refreshToken: null,
-      isAuthenticated: false,
-      setAuth: (user, tokens) => {
-        syncAuthCookies(tokens);
-        set({ user, accessToken: tokens.accessToken, refreshToken: tokens.refreshToken, isAuthenticated: true });
-      },
-      setTokens: (tokens) => {
-        syncAuthCookies(tokens);
-        set({ accessToken: tokens.accessToken, refreshToken: tokens.refreshToken, isAuthenticated: true });
-      },
-      setUser: (user) => set({ user }),
-      logout: () => {
-        clearAuthCookies();
-        set({ user: null, accessToken: null, refreshToken: null, isAuthenticated: false });
-      },
-    }),
-    { name: "iffe-auth" }
-  )
-);
+export const useAuthStore = create<AuthState>((set) => ({
+  user: null,
+  isAuthenticated: false,
+  setAuth: (user) => set({ user, isAuthenticated: true }),
+  setUser: (user) => set({ user, isAuthenticated: true }),
+  clearAuth: () => set({ user: null, isAuthenticated: false }),
+}));

@@ -4,6 +4,7 @@ import { zValidator } from "@hono/zod-validator";
 import { createApplicationSchema, reviewApplicationSchema, paginationSchema } from "@iffe/shared";
 import { ApplicationService } from "../services/application.service";
 import { authMiddleware, requireRole } from "../middleware/auth";
+import { writeAuditLog } from "../utils/audit";
 
 const applications = new Hono();
 const service = new ApplicationService();
@@ -20,6 +21,12 @@ applications.post("/authenticated", authMiddleware, zValidator("json", createApp
   const data = c.req.valid("json");
   const user = c.get("user" as any);
   const result = await service.submit(data, user.id);
+  await writeAuditLog(c, {
+    action: "application_submitted",
+    entity: "application",
+    entityId: result.id,
+    details: { status: result.status },
+  });
   return c.json({ success: true, data: result }, 201);
 });
 
@@ -55,6 +62,15 @@ applications.get("/:id", authMiddleware, requireRole("admin", "staff"), async (c
 applications.put("/:id/approve", authMiddleware, requireRole("admin"), async (c) => {
   const user = c.get("user" as any);
   const result = await service.approve(c.req.param("id"), user.id);
+  await writeAuditLog(c, {
+    action: "application_approved",
+    entity: "application",
+    entityId: c.req.param("id"),
+    details: {
+      memberId: result.member.id,
+      onboardingUserId: result.onboarding?.userId,
+    },
+  });
   return c.json({ success: true, data: result });
 });
 
@@ -63,6 +79,12 @@ applications.put("/:id/reject", authMiddleware, requireRole("admin"), zValidator
   const user = c.get("user" as any);
   const { rejectionReason } = c.req.valid("json");
   const result = await service.reject(c.req.param("id"), user.id, rejectionReason);
+  await writeAuditLog(c, {
+    action: "application_rejected",
+    entity: "application",
+    entityId: c.req.param("id"),
+    details: { rejectionReason: rejectionReason || null },
+  });
   return c.json({ success: true, data: result });
 });
 

@@ -2,9 +2,10 @@ import { Hono } from "hono";
 import { zValidator } from "@hono/zod-validator";
 import { createAccountSchema, updateAccountStatusSchema, paginationSchema } from "@iffe/shared";
 import { AccountService } from "../services/account.service";
-import { authMiddleware, requireRole } from "../middleware/auth";
+import { authMiddleware, requireRole, type AuthEnv } from "../middleware/auth";
+import { writeAuditLog } from "../utils/audit";
 
-const accounts = new Hono();
+const accounts = new Hono<AuthEnv>();
 const service = new AccountService();
 
 accounts.use("*", authMiddleware);
@@ -16,7 +17,7 @@ accounts.get("/", zValidator("query", paginationSchema), async (c) => {
   const user = c.get("user");
 
   // Members can only see their own accounts
-  const memberId = user.role === "member" ? user.memberId : c.req.query("memberId");
+  const memberId = user.role === "member" ? user.memberId ?? undefined : c.req.query("memberId");
 
   const result = await service.getAll({ ...params, type, status, memberId });
   return c.json({ success: true, data: result });
@@ -46,12 +47,24 @@ accounts.get("/:id", async (c) => {
 accounts.post("/", requireRole("admin", "staff"), zValidator("json", createAccountSchema), async (c) => {
   const data = c.req.valid("json");
   const account = await service.create(data);
+  await writeAuditLog(c, {
+    action: "account_created",
+    entity: "account",
+    entityId: account.id,
+    details: { accountNo: account.accountNo, type: account.type },
+  });
   return c.json({ success: true, data: account }, 201);
 });
 
 accounts.patch("/:id/status", requireRole("admin"), zValidator("json", updateAccountStatusSchema), async (c) => {
   const { status } = c.req.valid("json");
   const account = await service.updateStatus(c.req.param("id"), status);
+  await writeAuditLog(c, {
+    action: "account_status_updated",
+    entity: "account",
+    entityId: account.id,
+    details: { status: account.status },
+  });
   return c.json({ success: true, data: account });
 });
 

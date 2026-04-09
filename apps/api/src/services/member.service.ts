@@ -12,6 +12,7 @@ import type {
   TransactionType,
 } from "@iffe/shared";
 import { INTEREST_RATES } from "@iffe/shared";
+import { getNextAccountNumber, getNextMemberNumber } from "../utils/identifiers";
 
 const repo = new MemberRepository();
 const ACTIVE_LOAN_STATUSES = ["approved", "active", "overdue", "defaulted"] as const;
@@ -40,44 +41,47 @@ export class MemberService {
     const existing = await prisma.member.findFirst({ where: { email: input.email } });
     if (existing) throw new HTTPException(409, { message: "A member with this email already exists" });
 
-    const member = await repo.create({
-      firstName: input.firstName,
-      lastName: input.lastName,
-      email: input.email,
-      phone: input.phone,
-      gender: input.gender,
-      dateOfBirth: input.dateOfBirth ? new Date(input.dateOfBirth) : undefined,
-      nationalId: input.nationalId,
-      occupation: input.occupation,
-      address: input.address,
-      city: input.city,
-      district: input.district,
-      country: input.country,
-      shareCount: input.shareCount ?? 0,
-      weddingSupportStatus: input.weddingSupportStatus,
-      weddingSupportDebt: input.weddingSupportDebt ?? 0,
-      condolenceSupportStatus: input.condolenceSupportStatus,
-      condolenceSupportDebt: input.condolenceSupportDebt ?? 0,
-      remarks: input.remarks,
+    return prisma.$transaction(async (tx) => {
+      const member = await tx.member.create({
+        data: {
+          memberId: await getNextMemberNumber(tx),
+          firstName: input.firstName,
+          lastName: input.lastName,
+          email: input.email,
+          phone: input.phone,
+          gender: input.gender,
+          dateOfBirth: input.dateOfBirth ? new Date(input.dateOfBirth) : undefined,
+          nationalId: input.nationalId,
+          occupation: input.occupation,
+          address: input.address,
+          city: input.city,
+          district: input.district,
+          country: input.country,
+          shareCount: input.shareCount ?? 0,
+          weddingSupportStatus: input.weddingSupportStatus,
+          weddingSupportDebt: input.weddingSupportDebt ?? 0,
+          condolenceSupportStatus: input.condolenceSupportStatus,
+          condolenceSupportDebt: input.condolenceSupportDebt ?? 0,
+          remarks: input.remarks,
+          status: "pending",
+        },
+      });
+
+      const rate = INTEREST_RATES[input.accountType as keyof typeof INTEREST_RATES] || 12;
+
+      await tx.account.create({
+        data: {
+          accountNo: await getNextAccountNumber(tx, input.accountType),
+          memberId: member.id,
+          type: input.accountType,
+          balance: input.initialDeposit || 0,
+          interestRate: rate,
+          status: "active",
+        },
+      });
+
+      return member;
     });
-
-    // Auto-create savings account
-    const count = await prisma.account.count();
-    const accountNo = `SAV-${String(count + 1).padStart(4, "0")}`;
-    const rate = INTEREST_RATES[input.accountType as keyof typeof INTEREST_RATES] || 12;
-
-    await prisma.account.create({
-      data: {
-        accountNo,
-        memberId: member.id,
-        type: input.accountType,
-        balance: input.initialDeposit || 0,
-        interestRate: rate,
-        status: "active",
-      },
-    });
-
-    return member;
   }
 
   async update(id: string, data: Record<string, unknown>) {
@@ -146,7 +150,7 @@ export class MemberService {
       totalWithdrawals,
       monthlySubscriptionTotal,
     ] = accountIds.length > 0
-      ? await Promise.all([
+      ? await prisma.$transaction([
           prisma.transaction.findMany({
             where: transactionWhere,
             orderBy: { createdAt: "desc" },
@@ -232,9 +236,9 @@ export class MemberService {
         joinDate: toIsoString(member.joinDate) ?? new Date().toISOString(),
         userId: member.userId,
         shareCount: member.shareCount ?? 0,
-        weddingSupportStatus: member.weddingSupportStatus as "received" | "not_received",
+        weddingSupportStatus: member.weddingSupportStatus as "received" | "requested" | "not_received",
         weddingSupportDebt: toNumber(member.weddingSupportDebt),
-        condolenceSupportStatus: member.condolenceSupportStatus as "received" | "not_received",
+        condolenceSupportStatus: member.condolenceSupportStatus as "received" | "requested" | "not_received",
         condolenceSupportDebt: toNumber(member.condolenceSupportDebt),
         remarks: member.remarks,
         clan: member.clan,
@@ -311,11 +315,11 @@ export class MemberService {
       },
       socialWelfare: {
         weddings: {
-          status: member.weddingSupportStatus as "received" | "not_received",
+          status: member.weddingSupportStatus as "received" | "requested" | "not_received",
           totalDebt: toNumber(member.weddingSupportDebt),
         },
         condolences: {
-          status: member.condolenceSupportStatus as "received" | "not_received",
+          status: member.condolenceSupportStatus as "received" | "requested" | "not_received",
           totalDebt: toNumber(member.condolenceSupportDebt),
         },
         totalPledged: activePledges.reduce((sum, pledge) => sum + toNumber(pledge.amount), 0),

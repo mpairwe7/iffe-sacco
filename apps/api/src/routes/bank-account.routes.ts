@@ -4,6 +4,7 @@ import { createBankAccountSchema, updateBankAccountSchema, paginationSchema } fr
 import { BankAccountRepository } from "../repositories/bank-account.repository";
 import { authMiddleware, requireRole } from "../middleware/auth";
 import { HTTPException } from "hono/http-exception";
+import { writeAuditLog } from "../utils/audit";
 
 const bankAccounts = new Hono();
 const repo = new BankAccountRepository();
@@ -30,17 +31,33 @@ bankAccounts.get("/:id", async (c) => {
 bankAccounts.post("/", requireRole("admin"), zValidator("json", createBankAccountSchema), async (c) => {
   const data = c.req.valid("json");
   const account = await repo.create(data);
+  await writeAuditLog(c, {
+    action: "bank_account_created",
+    entity: "bank_account",
+    entityId: account.id,
+    details: { accountNo: account.accountNo, bankName: account.bankName },
+  });
   return c.json({ success: true, data: account }, 201);
 });
 
 bankAccounts.put("/:id", requireRole("admin"), zValidator("json", updateBankAccountSchema), async (c) => {
   const data = c.req.valid("json");
   const account = await repo.update(c.req.param("id"), data);
+  await writeAuditLog(c, {
+    action: "bank_account_updated",
+    entity: "bank_account",
+    entityId: account.id,
+  });
   return c.json({ success: true, data: account });
 });
 
 bankAccounts.delete("/:id", requireRole("admin"), async (c) => {
   await repo.delete(c.req.param("id"));
+  await writeAuditLog(c, {
+    action: "bank_account_deleted",
+    entity: "bank_account",
+    entityId: c.req.param("id"),
+  });
   return c.json({ success: true, message: "Bank account deleted" });
 });
 

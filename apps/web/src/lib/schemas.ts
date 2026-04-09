@@ -21,10 +21,20 @@ export const registerSchema = z.object({
 });
 export type RegisterInput = z.infer<typeof registerSchema>;
 
-export const resetPasswordSchema = z.object({
+export const resetPasswordRequestSchema = z.object({
   email: z.email("Please enter a valid email address"),
 });
-export type ResetPasswordInput = z.infer<typeof resetPasswordSchema>;
+export type ResetPasswordRequestInput = z.infer<typeof resetPasswordRequestSchema>;
+
+export const resetPasswordConfirmSchema = z.object({
+  token: z.string().min(1, "Reset token is required"),
+  newPassword: z.string().min(8, "Password must be at least 8 characters"),
+  confirmPassword: z.string(),
+}).refine((data) => data.newPassword === data.confirmPassword, {
+  message: "Passwords do not match",
+  path: ["confirmPassword"],
+});
+export type ResetPasswordConfirmInput = z.infer<typeof resetPasswordConfirmSchema>;
 
 const memberBaseSchema = z.object({
   firstName: z.string().min(2, "First name is required"),
@@ -39,9 +49,9 @@ const memberBaseSchema = z.object({
   city: z.string().optional(),
   district: z.string().optional(),
   shareCount: z.coerce.number().int().min(0, "Shares cannot be negative").default(0),
-  weddingSupportStatus: z.enum(["received", "not_received"]).default("not_received"),
+  weddingSupportStatus: z.enum(["received", "requested", "not_received"]).default("not_received"),
   weddingSupportDebt: z.coerce.number().min(0, "Debt cannot be negative").default(0),
-  condolenceSupportStatus: z.enum(["received", "not_received"]).default("not_received"),
+  condolenceSupportStatus: z.enum(["received", "requested", "not_received"]).default("not_received"),
   condolenceSupportDebt: z.coerce.number().min(0, "Debt cannot be negative").default(0),
   remarks: z.string().optional(),
   country: z.string().default("UG"),

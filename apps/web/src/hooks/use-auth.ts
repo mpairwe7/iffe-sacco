@@ -24,6 +24,12 @@ export function useRegister() {
   });
 }
 
+export function useLogout() {
+  return useMutation({
+    mutationFn: authApi.logout,
+  });
+}
+
 export function useChangePassword() {
   return useMutation({
     mutationFn: (data: { currentPassword: string; newPassword: string }) =>

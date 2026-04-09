@@ -1,37 +1,65 @@
 import { createMiddleware } from "hono/factory";
 import { HTTPException } from "hono/http-exception";
-import { verifyAccessToken } from "../utils/jwt";
+import { verifySessionToken } from "../utils/jwt";
 import { prisma } from "../config/db";
+import { getSessionCookie } from "../utils/session";
 
-export type AuthUser = { id: string; role: string; memberId: string | null };
+export type AuthUser = { id: string; role: string; memberId: string | null; sessionId: string };
+export type AuthEnv = { Variables: { user: AuthUser } };
 
-export const authMiddleware = createMiddleware<{ Variables: { user: AuthUser } }>(
+export const authMiddleware = createMiddleware<AuthEnv>(
   async (c, next) => {
     const header = c.req.header("Authorization");
-    if (!header?.startsWith("Bearer ")) {
+    const token = header?.startsWith("Bearer ")
+      ? header.slice(7)
+      : getSessionCookie(c);
+
+    if (!token) {
       throw new HTTPException(401, { message: "Missing or invalid authorization token" });
     }
 
     try {
-      const token = header.slice(7);
-      const payload = await verifyAccessToken(token);
+      const payload = await verifySessionToken(token);
 
-      const dbUser = await prisma.user.findUnique({
-        where: { id: payload.sub },
-        select: { id: true, role: true, isActive: true },
+      const session = await prisma.session.findFirst({
+        where: {
+          id: payload.sid,
+          userId: payload.sub,
+          revokedAt: null,
+          expiresAt: { gt: new Date() },
+        },
+        select: {
+          id: true,
+          lastUsedAt: true,
+          user: {
+            select: {
+              id: true,
+              role: true,
+              isActive: true,
+              member: { select: { id: true } },
+            },
+          },
+        },
       });
-      if (!dbUser || !dbUser.isActive) {
+
+      const dbUser = session?.user;
+      if (!session || !dbUser || !dbUser.isActive) {
         throw new HTTPException(401, { message: "Account is deactivated or not found" });
       }
 
-      // Look up memberId for member-role users to enable per-member data scoping
-      let memberId: string | null = null;
-      if (dbUser.role === "member") {
-        const member = await prisma.member.findFirst({ where: { userId: dbUser.id }, select: { id: true } });
-        memberId = member?.id || null;
+      if (!session.lastUsedAt || Date.now() - session.lastUsedAt.getTime() > 15 * 60 * 1000) {
+        void prisma.session.update({
+          where: { id: session.id },
+          data: { lastUsedAt: new Date() },
+        }).catch(() => undefined);
       }
 
-      c.set("user", { id: dbUser.id, role: dbUser.role, memberId });
+      c.set("user", {
+        id: dbUser.id,
+        role: dbUser.role,
+        memberId: dbUser.member?.id || null,
+        sessionId: session.id,
+      });
       await next();
     } catch (err) {
       if (err instanceof HTTPException) throw err;
@@ -41,7 +69,7 @@ export const authMiddleware = createMiddleware<{ Variables: { user: AuthUser } }
 );
 
 export const requireRole = (...roles: string[]) =>
-  createMiddleware<{ Variables: { user: AuthUser } }>(async (c, next) => {
+  createMiddleware<AuthEnv>(async (c, next) => {
     const user = c.get("user");
     if (!user || !roles.includes(user.role)) {
       throw new HTTPException(403, { message: "Insufficient permissions" });

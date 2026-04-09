@@ -1,2 +1,4 @@
-export const AUTH_ACCESS_COOKIE = "iffe-access-token";
-export const AUTH_REFRESH_COOKIE = "iffe-refresh-token";
+import { AUTH_COOKIE_NAMES } from "@iffe/shared";
+
+export const AUTH_SESSION_COOKIE = AUTH_COOKIE_NAMES.SESSION;
+export const AUTH_ACCESS_COOKIE = AUTH_SESSION_COOKIE;

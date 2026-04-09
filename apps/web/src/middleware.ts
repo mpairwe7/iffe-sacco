@@ -1,18 +1,19 @@
 import type { NextRequest } from "next/server";
 import { NextResponse } from "next/server";
-import { AUTH_ACCESS_COOKIE } from "@/lib/auth-cookie-names";
+import { jwtVerify } from "jose";
+import { AUTH_SESSION_COOKIE } from "@/lib/auth-cookie-names";
 import { getRedirectForPath, type AppRole } from "@/lib/role-routes";
 
-function decodeRole(token?: string): AppRole | null {
+const sessionSecret = new TextEncoder().encode(
+  process.env.JWT_SECRET || "dev-jwt-secret-not-for-production",
+);
+
+async function decodeRole(token?: string): Promise<AppRole | null> {
   if (!token) return null;
 
   try {
-    const payload = token.split(".")[1];
-    if (!payload) return null;
-
-    const normalized = payload.replace(/-/g, "+").replace(/_/g, "/");
-    const padded = normalized.padEnd(Math.ceil(normalized.length / 4) * 4, "=");
-    const parsed = JSON.parse(atob(padded)) as { role?: string; exp?: number };
+    const { payload } = await jwtVerify(token, sessionSecret);
+    const parsed = payload as { role?: string; exp?: number };
 
     if (typeof parsed.exp === "number" && parsed.exp * 1000 <= Date.now()) {
       return null;
@@ -28,17 +29,34 @@ function decodeRole(token?: string): AppRole | null {
   return null;
 }
 
-export function middleware(request: NextRequest) {
-  const token = request.cookies.get(AUTH_ACCESS_COOKIE)?.value;
-  const role = decodeRole(token);
+export async function middleware(request: NextRequest) {
+  const requestHeaders = new Headers(request.headers);
+  requestHeaders.set("x-current-path", request.nextUrl.pathname);
+
+  const token = request.cookies.get(AUTH_SESSION_COOKIE)?.value;
+  const role = await decodeRole(token);
+
+  if (request.nextUrl.pathname === "/login") {
+    return NextResponse.next({
+      request: { headers: requestHeaders },
+    });
+  }
 
   if (!role) {
-    return NextResponse.next();
+    const url = request.nextUrl.clone();
+    url.pathname = "/login";
+    url.search = "";
+
+    const response = NextResponse.redirect(url);
+    response.cookies.delete(AUTH_SESSION_COOKIE);
+    return response;
   }
 
   const redirectTo = getRedirectForPath(request.nextUrl.pathname, role);
   if (!redirectTo || redirectTo === request.nextUrl.pathname) {
-    return NextResponse.next();
+    return NextResponse.next({
+      request: { headers: requestHeaders },
+    });
   }
 
   const url = request.nextUrl.clone();
@@ -49,5 +67,17 @@ export function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/login", "/dashboard/:path*", "/chairman/:path*", "/admin/:path*", "/portal/:path*"],
+  matcher: [
+    "/login",
+    "/dashboard",
+    "/dashboard/:path*",
+    "/chairman",
+    "/chairman/:path*",
+    "/admin",
+    "/admin/:path*",
+    "/portal",
+    "/portal/:path*",
+    "/staff",
+    "/staff/:path*",
+  ],
 };

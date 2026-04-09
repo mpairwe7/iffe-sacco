@@ -2,10 +2,11 @@ import { Hono } from "hono";
 import { zValidator } from "@hono/zod-validator";
 import { createTransactionSchema, paginationSchema } from "@iffe/shared";
 import { TransactionService } from "../services/transaction.service";
-import { authMiddleware, requireRole } from "../middleware/auth";
+import { authMiddleware, requireRole, type AuthEnv } from "../middleware/auth";
 import { prisma } from "../config/db";
+import { writeAuditLog } from "../utils/audit";
 
-const transactions = new Hono();
+const transactions = new Hono<AuthEnv>();
 const service = new TransactionService();
 
 transactions.use("*", authMiddleware);
@@ -57,24 +58,45 @@ transactions.post("/", requireRole("admin", "staff"), zValidator("json", createT
   const data = c.req.valid("json");
   const user = c.get("user");
   const txn = await service.create({ ...data, processedBy: user.id });
+  await writeAuditLog(c, {
+    action: "transaction_created",
+    entity: "transaction",
+    entityId: txn.id,
+    details: { type: txn.type, amount: txn.amount },
+  });
   return c.json({ success: true, data: txn }, 201);
 });
 
 transactions.patch("/:id/approve", requireRole("admin"), async (c) => {
   const user = c.get("user");
   const txn = await service.approve(c.req.param("id"), user.id);
+  await writeAuditLog(c, {
+    action: "transaction_approved",
+    entity: "transaction",
+    entityId: txn.id,
+  });
   return c.json({ success: true, data: txn });
 });
 
 transactions.patch("/:id/reject", requireRole("admin"), async (c) => {
   const user = c.get("user");
   const txn = await service.reject(c.req.param("id"), user.id);
+  await writeAuditLog(c, {
+    action: "transaction_rejected",
+    entity: "transaction",
+    entityId: txn.id,
+  });
   return c.json({ success: true, data: txn });
 });
 
 transactions.patch("/:id/reverse", requireRole("admin"), async (c) => {
   const user = c.get("user");
   const txn = await service.reverse(c.req.param("id"), user.id);
+  await writeAuditLog(c, {
+    action: "transaction_reversed",
+    entity: "transaction",
+    entityId: txn.id,
+  });
   return c.json({ success: true, data: txn });
 });
 

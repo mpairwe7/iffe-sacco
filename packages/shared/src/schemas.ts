@@ -1,9 +1,11 @@
 import { z } from "zod/v4";
+import { LOAN_TYPES } from "./constants";
 
 // ===== Auth =====
 export const loginSchema = z.object({
   email: z.email("Valid email required"),
   password: z.string().min(6, "Password must be at least 6 characters"),
+  remember: z.boolean().optional().default(false),
 });
 
 export const registerSchema = z.object({
@@ -14,8 +16,13 @@ export const registerSchema = z.object({
   role: z.enum(["admin", "chairman", "member", "staff"]).default("member"),
 });
 
-export const refreshTokenSchema = z.object({
-  refreshToken: z.string().min(1),
+export const requestPasswordResetSchema = z.object({
+  email: z.email("Valid email required"),
+});
+
+export const confirmPasswordResetSchema = z.object({
+  token: z.string().min(1, "Reset token required"),
+  newPassword: z.string().min(8, "Password must be at least 8 characters"),
 });
 
 // ===== Member =====
@@ -32,9 +39,9 @@ export const createMemberSchema = z.object({
   city: z.string().optional(),
   district: z.string().optional(),
   shareCount: z.coerce.number().int().min(0).default(0),
-  weddingSupportStatus: z.enum(["received", "not_received"]).default("not_received"),
+  weddingSupportStatus: z.enum(["received", "requested", "not_received"]).default("not_received"),
   weddingSupportDebt: z.coerce.number().min(0).default(0),
-  condolenceSupportStatus: z.enum(["received", "not_received"]).default("not_received"),
+  condolenceSupportStatus: z.enum(["received", "requested", "not_received"]).default("not_received"),
   condolenceSupportDebt: z.coerce.number().min(0).default(0),
   remarks: z.string().trim().max(2000).optional(),
   country: z.string().default("UG"),
@@ -64,10 +71,15 @@ export const createTransactionSchema = z.object({
 // ===== Loan =====
 export const createLoanSchema = z.object({
   memberId: z.string().uuid(),
-  type: z.string().min(1, "Loan type required"),
+  type: z.enum(LOAN_TYPES, { message: "Loan type required" }),
   amount: z.number().min(10000, "Minimum loan amount is 10,000"),
   interestRate: z.number().min(0).max(100),
   term: z.number().min(1, "Loan term required (months)"),
+});
+
+export const memberLoanApplicationSchema = createLoanSchema.omit({
+  memberId: true,
+  interestRate: true,
 });
 
 export const approveLoanSchema = z.object({
@@ -282,10 +294,13 @@ export const reviewApplicationSchema = z.object({
 // ===== Export types =====
 export type LoginInput = z.infer<typeof loginSchema>;
 export type RegisterInput = z.infer<typeof registerSchema>;
+export type RequestPasswordResetInput = z.infer<typeof requestPasswordResetSchema>;
+export type ConfirmPasswordResetInput = z.infer<typeof confirmPasswordResetSchema>;
 export type CreateMemberInput = z.infer<typeof createMemberSchema>;
 export type UpdateMemberInput = z.infer<typeof updateMemberSchema>;
 export type CreateTransactionInput = z.infer<typeof createTransactionSchema>;
 export type CreateLoanInput = z.infer<typeof createLoanSchema>;
+export type MemberLoanApplicationInput = z.infer<typeof memberLoanApplicationSchema>;
 export type CreateExpenseInput = z.infer<typeof createExpenseSchema>;
 export type CreateWelfareInput = z.infer<typeof createWelfareSchema>;
 export type PledgeInput = z.infer<typeof pledgeSchema>;

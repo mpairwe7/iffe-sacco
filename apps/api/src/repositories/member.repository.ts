@@ -1,5 +1,6 @@
 import { prisma } from "../config/db";
 import type { PaginationInput } from "@iffe/shared";
+import { getNextMemberNumber } from "../utils/identifiers";
 
 export class MemberRepository {
   async findAll(params: PaginationInput) {
@@ -40,18 +41,13 @@ export class MemberRepository {
     shareCount?: number; weddingSupportStatus?: string; weddingSupportDebt?: number;
     condolenceSupportStatus?: string; condolenceSupportDebt?: number; remarks?: string;
   }) {
-    // Retry loop for unique ID generation
-    for (let attempt = 0; attempt < 5; attempt++) {
-      try {
-        const count = await prisma.member.count();
-        const memberId = `IFFE-${String(count + 1 + attempt).padStart(3, "0")}`;
-        return await prisma.member.create({ data: { ...data, memberId, status: "pending" } });
-      } catch (err: any) {
-        if (err.code === "P2002" && attempt < 4) continue; // Unique constraint violation, retry
-        throw err;
-      }
-    }
-    throw new Error("Failed to generate unique member ID");
+    return prisma.member.create({
+      data: {
+        ...data,
+        memberId: await getNextMemberNumber(prisma),
+        status: "pending",
+      },
+    });
   }
 
   async update(id: string, data: Record<string, unknown>) {

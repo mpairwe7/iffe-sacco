@@ -3,6 +3,7 @@ import { zValidator } from "@hono/zod-validator";
 import { calculateInterestSchema } from "@iffe/shared";
 import { InterestService } from "../services/interest.service";
 import { authMiddleware, requireRole } from "../middleware/auth";
+import { writeAuditLog } from "../utils/audit";
 
 const interest = new Hono();
 const service = new InterestService();
@@ -20,6 +21,17 @@ interest.post("/calculate", zValidator("json", calculateInterestSchema), async (
   const data = c.req.valid("json");
   const user = c.get("user" as any) as { id: string; role: string };
   const result = await service.calculateAndPost(data, user.id);
+  await writeAuditLog(c, {
+    action: "interest_posted",
+    entity: "interest",
+    details: {
+      accountType: data.accountType,
+      startDate: data.startDate,
+      endDate: data.endDate,
+      accountsProcessed: result.accountsProcessed,
+      totalInterest: result.totalInterest,
+    },
+  });
   return c.json({ success: true, data: result });
 });
 

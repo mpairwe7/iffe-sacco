@@ -3,6 +3,7 @@ import { zValidator } from "@hono/zod-validator";
 import { paginationSchema } from "@iffe/shared";
 import { prisma } from "../config/db";
 import { authMiddleware, requireRole } from "../middleware/auth";
+import { writeAuditLog } from "../utils/audit";
 import { z } from "zod/v4";
 
 const paymentGateways = new Hono();
@@ -37,6 +38,12 @@ paymentGateways.get("/:id", async (c) => {
 paymentGateways.post("/", requireRole("admin"), zValidator("json", createSchema), async (c) => {
   const data = c.req.valid("json");
   const gateway = await prisma.paymentGateway.create({ data: data as any });
+  await writeAuditLog(c, {
+    action: "payment_gateway_created",
+    entity: "payment_gateway",
+    entityId: gateway.id,
+    details: { name: gateway.name, isActive: gateway.isActive },
+  });
   return c.json({ success: true, data: gateway }, 201);
 });
 
@@ -47,6 +54,11 @@ paymentGateways.put("/:id", requireRole("admin"), zValidator("json", updateSchem
   const existing = await prisma.paymentGateway.findUnique({ where: { id } });
   if (!existing) return c.json({ success: false, message: "Payment gateway not found" }, 404);
   const gateway = await prisma.paymentGateway.update({ where: { id }, data: data as any });
+  await writeAuditLog(c, {
+    action: "payment_gateway_updated",
+    entity: "payment_gateway",
+    entityId: gateway.id,
+  });
   return c.json({ success: true, data: gateway });
 });
 
@@ -56,6 +68,12 @@ paymentGateways.patch("/:id/toggle", requireRole("admin"), async (c) => {
   const existing = await prisma.paymentGateway.findUnique({ where: { id } });
   if (!existing) return c.json({ success: false, message: "Payment gateway not found" }, 404);
   const gateway = await prisma.paymentGateway.update({ where: { id }, data: { isActive: !existing.isActive } });
+  await writeAuditLog(c, {
+    action: "payment_gateway_toggled",
+    entity: "payment_gateway",
+    entityId: gateway.id,
+    details: { isActive: gateway.isActive },
+  });
   return c.json({ success: true, data: gateway });
 });
 

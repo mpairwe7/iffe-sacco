@@ -20,7 +20,7 @@ export function useNotifications(limit = 10) {
   return useQuery({
     queryKey: ["notifications", limit],
     queryFn: () => apiClient.get<NotificationsResponse>("/dashboard/notifications", { limit }),
-    refetchInterval: 30000, // Poll every 30s for real-time feel
-    staleTime: 15000,
+    refetchInterval: 60000,
+    staleTime: 30000,
   });
 }

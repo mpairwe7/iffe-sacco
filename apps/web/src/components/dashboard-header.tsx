@@ -1,7 +1,6 @@
 "use client";
 
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 import {
   Menu, Bell, Search, Globe, User, Settings, LogOut,
   Sun, Moon, Command, ChevronDown, Clock,
@@ -12,7 +11,9 @@ import { useTheme } from "next-themes";
 import { useUIStore } from "@/stores/ui-store";
 import { useAuthStore } from "@/stores/auth-store";
 import { useNotifications } from "@/hooks/use-notifications";
+import { useHasMounted } from "@/hooks/use-has-mounted";
 import { cn } from "@/lib/utils";
+import { logoutUser } from "@/lib/auth-session";
 
 interface DashboardHeaderProps {
   onToggleSidebar: () => void;
@@ -39,25 +40,20 @@ function timeAgo(date: string) {
 export function DashboardHeader({ onToggleSidebar }: DashboardHeaderProps) {
   const [profileOpen, setProfileOpen] = useState(false);
   const [notifOpen, setNotifOpen] = useState(false);
-  const [mounted, setMounted] = useState(false);
+  const mounted = useHasMounted();
   const profileRef = useRef<HTMLDivElement>(null);
   const notifRef = useRef<HTMLDivElement>(null);
   const { theme, setTheme } = useTheme();
   const setCommandPaletteOpen = useUIStore((s) => s.setCommandPaletteOpen);
   const user = useAuthStore((s) => s.user);
-  const logout = useAuthStore((s) => s.logout);
-  const router = useRouter();
   const { data: notifData } = useNotifications(15);
 
   const notifications = notifData?.notifications || [];
   const unreadCount = notifData?.unreadCount || 0;
 
   const handleLogout = useCallback(() => {
-    logout();
-    window.location.href = "/";
-  }, [logout]);
-
-  useEffect(() => { setMounted(true); }, []);
+    void logoutUser();
+  }, []);
 
   // Close dropdowns on outside click
   useEffect(() => {

@@ -5,6 +5,7 @@ import { prisma } from "../config/db";
 import { hashPassword } from "../utils/password";
 import { authMiddleware, requireRole } from "../middleware/auth";
 import { HTTPException } from "hono/http-exception";
+import { writeAuditLog } from "../utils/audit";
 
 const users = new Hono();
 
@@ -46,6 +47,12 @@ users.post("/", zValidator("json", createUserSchema), async (c) => {
     data: { name: data.name, email: data.email, phone: data.phone, password, role: data.role },
     select: { id: true, name: true, email: true, phone: true, role: true, isActive: true, lastLogin: true, createdAt: true, avatar: true },
   });
+  await writeAuditLog(c, {
+    action: "user_created",
+    entity: "user",
+    entityId: user.id,
+    details: { role: user.role },
+  });
   return c.json({ success: true, data: user }, 201);
 });
 
@@ -65,6 +72,12 @@ users.put("/:id", zValidator("json", updateUserSchema), async (c) => {
     data,
     select: { id: true, name: true, email: true, phone: true, role: true, isActive: true, lastLogin: true, createdAt: true, avatar: true },
   });
+  await writeAuditLog(c, {
+    action: "user_updated",
+    entity: "user",
+    entityId: user.id,
+    details: { role: user.role, isActive: user.isActive },
+  });
   return c.json({ success: true, data: user });
 });
 
@@ -74,6 +87,11 @@ users.patch("/:id/deactivate", async (c) => {
     data: { isActive: false },
     select: { id: true, name: true, email: true, role: true, isActive: true },
   });
+  await writeAuditLog(c, {
+    action: "user_deactivated",
+    entity: "user",
+    entityId: user.id,
+  });
   return c.json({ success: true, data: user });
 });
 
@@ -82,6 +100,11 @@ users.patch("/:id/activate", async (c) => {
     where: { id: c.req.param("id") },
     data: { isActive: true },
     select: { id: true, name: true, email: true, role: true, isActive: true },
+  });
+  await writeAuditLog(c, {
+    action: "user_activated",
+    entity: "user",
+    entityId: user.id,
   });
   return c.json({ success: true, data: user });
 });

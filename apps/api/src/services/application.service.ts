@@ -1,11 +1,23 @@
 // @ts-nocheck
+import { randomBytes } from "node:crypto";
 import { ApplicationRepository } from "../repositories/application.repository";
 import { prisma } from "../config/db";
 import { hashPassword } from "../utils/password";
 import { HTTPException } from "hono/http-exception";
 import { INTEREST_RATES } from "@iffe/shared";
+import { getNextAccountNumber, getNextMemberNumber } from "../utils/identifiers";
+import { AuthService } from "./auth.service";
 
 const repo = new ApplicationRepository();
+const authService = new AuthService();
+
+function splitName(fullName: string) {
+  const nameParts = fullName.trim().split(/\s+/);
+  return {
+    firstName: nameParts[0],
+    lastName: nameParts.slice(1).join(" ") || nameParts[0],
+  };
+}
 
 export class ApplicationService {
   async getAll(params) {
@@ -85,104 +97,122 @@ export class ApplicationService {
   }
 
   async approve(id: string, adminId: string) {
-    const application = await this.getById(id);
-    if (application.status !== "pending") {
-      throw new HTTPException(400, { message: "Only pending applications can be approved" });
-    }
+    let createdUserId: string | null = null;
 
-    // Create User account if no userId (applicant didn't create account)
-    let userId = application.userId;
-    if (!userId && application.email) {
-      // Check if user with this email already exists
-      const existingUser = await prisma.user.findUnique({ where: { email: application.email } });
-      if (existingUser) {
-        userId = existingUser.id;
-      } else {
-        const password = await hashPassword("member123"); // default password
-        const user = await prisma.user.create({
-          data: {
-            name: application.fullName,
-            email: application.email || `${application.phone}@iffeds.org`,
-            phone: application.phone,
-            password,
-            role: "member",
-          },
-        });
-        userId = user.id;
+    const result = await prisma.$transaction(async (tx) => {
+      const application = await tx.application.findUnique({ where: { id } });
+      if (!application) {
+        throw new HTTPException(404, { message: "Application not found" });
       }
-    }
-
-    // Create Member record
-    // Generate memberId using count + retry
-    let member;
-    for (let attempt = 0; attempt < 5; attempt++) {
-      try {
-        const count = await prisma.member.count();
-        const memberId = `IFFE-${String(count + 1 + attempt).padStart(3, "0")}`;
-
-        // Split fullName into first/last
-        const nameParts = application.fullName.trim().split(/\s+/);
-        const firstName = nameParts[0];
-        const lastName = nameParts.slice(1).join(" ") || nameParts[0];
-
-        member = await prisma.member.create({
-          data: {
-            memberId,
-            firstName,
-            lastName,
-            email: application.email || application.phone,
-            phone: application.phone,
-            gender: application.sex,
-            dateOfBirth: application.dateOfBirth,
-            occupation: application.occupation,
-            district: application.residenceDistrict,
-            country: "UG",
-            status: "active",
-            userId: userId || undefined,
-            applicationId: application.id,
-            // Bio data fields
-            clan: application.clan,
-            totem: application.totem,
-            birthDistrict: application.birthDistrict,
-            birthVillage: application.birthVillage,
-            ancestralDistrict: application.ancestralDistrict,
-            ancestralVillage: application.ancestralVillage,
-            residenceDistrict: application.residenceDistrict,
-            residenceVillage: application.residenceVillage,
-            placeOfWork: application.placeOfWork,
-            qualifications: application.qualifications,
-            fatherInfo: application.fatherInfo || undefined,
-            motherInfo: application.motherInfo || undefined,
-            spouses: application.spouses || undefined,
-            children: application.children || undefined,
-            otherRelatives: application.otherRelatives || undefined,
-          },
-        });
-        break;
-      } catch (err: any) {
-        if (err.code === "P2002" && attempt < 4) continue;
-        throw err;
+      if (application.status !== "pending") {
+        throw new HTTPException(400, { message: "Only pending applications can be approved" });
       }
-    }
 
-    // Create default savings account for the new member
-    if (member) {
-      const accCount = await prisma.account.count();
-      const accountNo = `SAV-${String(accCount + 1).padStart(4, "0")}`;
-      await prisma.account.create({
-        data: { accountNo, memberId: member.id, type: "savings", interestRate: 12, status: "active" },
+      const claimed = await tx.application.updateMany({
+        where: { id, status: "pending" },
+        data: {
+          status: "approved",
+          reviewedBy: adminId,
+          reviewedAt: new Date(),
+        },
       });
-    }
 
-    // Update application status
-    await repo.update(id, {
-      status: "approved",
-      reviewedBy: adminId,
-      reviewedAt: new Date(),
-      memberId: member?.id,
+      if (claimed.count === 0) {
+        throw new HTTPException(409, { message: "Application is no longer pending approval" });
+      }
+
+      let userId = application.userId;
+      if (!userId && application.email) {
+        const existingUser = await tx.user.findUnique({ where: { email: application.email } });
+        if (existingUser) {
+          if (existingUser.role !== "member") {
+            throw new HTTPException(409, { message: "Application email is already assigned to a non-member account" });
+          }
+          userId = existingUser.id;
+        } else {
+          const password = await hashPassword(randomBytes(32).toString("base64url"));
+          const user = await tx.user.create({
+            data: {
+              name: application.fullName,
+              email: application.email,
+              phone: application.phone,
+              password,
+              role: "member",
+            },
+          });
+          userId = user.id;
+          createdUserId = user.id;
+        }
+      }
+
+      const { firstName, lastName } = splitName(application.fullName);
+      const member = await tx.member.create({
+        data: {
+          memberId: await getNextMemberNumber(tx),
+          firstName,
+          lastName,
+          email: application.email || application.phone,
+          phone: application.phone,
+          gender: application.sex,
+          dateOfBirth: application.dateOfBirth,
+          occupation: application.occupation,
+          district: application.residenceDistrict,
+          country: "UG",
+          status: "active",
+          userId: userId || undefined,
+          applicationId: application.id,
+          clan: application.clan,
+          totem: application.totem,
+          birthDistrict: application.birthDistrict,
+          birthVillage: application.birthVillage,
+          ancestralDistrict: application.ancestralDistrict,
+          ancestralVillage: application.ancestralVillage,
+          residenceDistrict: application.residenceDistrict,
+          residenceVillage: application.residenceVillage,
+          placeOfWork: application.placeOfWork,
+          qualifications: application.qualifications,
+          fatherInfo: application.fatherInfo || undefined,
+          motherInfo: application.motherInfo || undefined,
+          spouses: application.spouses || undefined,
+          children: application.children || undefined,
+          otherRelatives: application.otherRelatives || undefined,
+        },
+      });
+
+      await tx.account.create({
+        data: {
+          accountNo: await getNextAccountNumber(tx, "savings"),
+          memberId: member.id,
+          type: "savings",
+          interestRate: INTEREST_RATES.savings,
+          status: "active",
+        },
+      });
+
+      const updatedApplication = await tx.application.update({
+        where: { id },
+        data: { memberId: member.id },
+      });
+
+      return { application: updatedApplication, member };
     });
 
-    return { application: await repo.findById(id), member };
+    let onboarding: { userId: string; debugResetUrl?: string } | undefined;
+    if (createdUserId) {
+      let resetResult: { resetUrl: string } | null = null;
+      try {
+        resetResult = await authService.issuePasswordResetTokenForUser(createdUserId);
+      } catch (error) {
+        console.error("Failed to generate onboarding reset token", error);
+      }
+
+      onboarding = {
+        userId: createdUserId,
+        ...(process.env.NODE_ENV === "production" || !resetResult ? {} : { debugResetUrl: resetResult.resetUrl }),
+      };
+    }
+
+    return { ...result, onboarding };
   }
 
   async reject(id: string, adminId: string, reason?: string) {
@@ -191,12 +221,21 @@ export class ApplicationService {
       throw new HTTPException(400, { message: "Only pending applications can be rejected" });
     }
 
-    return repo.update(id, {
-      status: "rejected",
-      rejectionReason: reason || "Application rejected",
-      reviewedBy: adminId,
-      reviewedAt: new Date(),
+    const updated = await prisma.application.updateMany({
+      where: { id, status: "pending" },
+      data: {
+        status: "rejected",
+        rejectionReason: reason || "Application rejected",
+        reviewedBy: adminId,
+        reviewedAt: new Date(),
+      },
     });
+
+    if (updated.count === 0) {
+      throw new HTTPException(409, { message: "Application is no longer pending review" });
+    }
+
+    return repo.findById(id);
   }
 
   async getStats() {

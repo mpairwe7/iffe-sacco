@@ -1,5 +1,6 @@
 import { prisma } from "../config/db";
 import type { PaginationInput } from "@iffe/shared";
+import { getNextAccountNumber } from "../utils/identifiers";
 
 export class AccountRepository {
   async findAll(params: PaginationInput & { type?: string; status?: string; memberId?: string }) {
@@ -41,29 +42,15 @@ export class AccountRepository {
   }
 
   async create(data: { memberId: string; type: string; interestRate?: number }) {
-    const prefix = data.type === "current" ? "CUR" : data.type === "fixed_deposit" ? "FIX" : "SAV";
-
-    // Retry loop for unique account number generation
-    for (let attempt = 0; attempt < 5; attempt++) {
-      try {
-        const count = await prisma.account.count();
-        const accountNo = `${prefix}-${String(count + 1 + attempt).padStart(4, "0")}`;
-
-        return await prisma.account.create({
-          data: {
-            accountNo,
-            memberId: data.memberId,
-            type: data.type,
-            interestRate: data.interestRate || 12,
-            status: "active",
-          },
-        });
-      } catch (err: any) {
-        if (err.code === "P2002" && attempt < 4) continue; // Unique constraint violation, retry
-        throw err;
-      }
-    }
-    throw new Error("Failed to generate unique account number");
+    return prisma.account.create({
+      data: {
+        accountNo: await getNextAccountNumber(prisma, data.type),
+        memberId: data.memberId,
+        type: data.type,
+        interestRate: data.interestRate || 12,
+        status: "active",
+      },
+    });
   }
 
   async updateStatus(id: string, status: string) {

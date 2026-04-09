@@ -1,12 +1,13 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Eye, EyeOff, Mail, Lock, ArrowRight, ArrowLeft, Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import { loginSchema, type LoginInput } from "@/lib/schemas";
+import { authApi } from "@/lib/api/auth";
 import { useLogin } from "@/hooks/use-auth";
 import { useAuthStore } from "@/stores/auth-store";
 import { SecurityBadge } from "@/components/ui/security-badge";
@@ -23,10 +24,26 @@ export default function LoginPage() {
     resolver: zodResolver(loginSchema),
   });
 
+  useEffect(() => {
+    let cancelled = false;
+
+    authApi.getMe()
+      .then((user) => {
+        if (cancelled) return;
+        setAuth(user);
+        router.replace(getDefaultRouteForRole(user.role));
+      })
+      .catch(() => undefined);
+
+    return () => {
+      cancelled = true;
+    };
+  }, [router, setAuth]);
+
   async function onSubmit(data: LoginInput) {
     try {
-      const result = await login.mutateAsync({ email: data.email, password: data.password });
-      setAuth(result.user, result.tokens);
+      const result = await login.mutateAsync({ email: data.email, password: data.password, remember: data.remember ?? false });
+      setAuth(result.user);
       toast.success("Welcome back!");
       router.push(getDefaultRouteForRole(result.user.role));
     } catch (err: unknown) {

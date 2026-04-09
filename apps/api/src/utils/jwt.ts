@@ -1,31 +1,23 @@
 import * as jose from "jose";
 import { env } from "../config/env";
 
-const accessSecret = new TextEncoder().encode(env.JWT_SECRET);
-const refreshSecret = new TextEncoder().encode(env.JWT_REFRESH_SECRET);
+const sessionSecret = new TextEncoder().encode(env.JWT_SECRET);
 
-export async function signAccessToken(payload: { sub: string; role: string }) {
+export type SessionTokenPayload = {
+  sub: string;
+  role: string;
+  sid: string;
+};
+
+export async function signSessionToken(payload: SessionTokenPayload, expiresAt: Date) {
   return new jose.SignJWT(payload)
     .setProtectedHeader({ alg: "HS256" })
     .setIssuedAt()
-    .setExpirationTime("15m")
-    .sign(accessSecret);
+    .setExpirationTime(Math.floor(expiresAt.getTime() / 1000))
+    .sign(sessionSecret);
 }
 
-export async function signRefreshToken(payload: { sub: string }) {
-  return new jose.SignJWT(payload)
-    .setProtectedHeader({ alg: "HS256" })
-    .setIssuedAt()
-    .setExpirationTime("7d")
-    .sign(refreshSecret);
-}
-
-export async function verifyAccessToken(token: string) {
-  const { payload } = await jose.jwtVerify(token, accessSecret);
-  return payload as { sub: string; role: string };
-}
-
-export async function verifyRefreshToken(token: string) {
-  const { payload } = await jose.jwtVerify(token, refreshSecret);
-  return payload as { sub: string };
+export async function verifySessionToken(token: string) {
+  const { payload } = await jose.jwtVerify(token, sessionSecret);
+  return payload as SessionTokenPayload & { exp: number };
 }

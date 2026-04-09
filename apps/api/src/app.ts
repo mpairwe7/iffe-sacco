@@ -35,10 +35,11 @@ app.use("*", secureHeaders());
 app.use("*", cors({
   origin: (origin) => {
     const allowed = (process.env.CORS_ORIGIN || "http://localhost:3000").split(",");
-    if (!origin || allowed.includes(origin) || origin.includes("vercel.app") || origin.includes("localhost")) {
-      return origin || "*";
+    if (!origin) {
+      return allowed[0];
     }
-    return allowed[0];
+
+    return allowed.includes(origin) ? origin : allowed[0];
   },
   credentials: true,
   allowMethods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],

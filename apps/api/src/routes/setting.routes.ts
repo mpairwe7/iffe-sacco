@@ -3,6 +3,7 @@ import { zValidator } from "@hono/zod-validator";
 import { updateSettingSchema } from "@iffe/shared";
 import { prisma } from "../config/db";
 import { authMiddleware, requireRole } from "../middleware/auth";
+import { writeAuditLog } from "../utils/audit";
 
 const settings = new Hono();
 
@@ -27,11 +28,23 @@ settings.put("/:key", zValidator("json", updateSettingSchema), async (c) => {
     update: { value },
     create: { key, value },
   });
+  await writeAuditLog(c, {
+    action: "setting_updated",
+    entity: "setting",
+    entityId: setting.id,
+    details: { key: setting.key },
+  });
   return c.json({ success: true, data: setting });
 });
 
 settings.delete("/:key", async (c) => {
-  await prisma.setting.delete({ where: { key: c.req.param("key") } });
+  const setting = await prisma.setting.delete({ where: { key: c.req.param("key") } });
+  await writeAuditLog(c, {
+    action: "setting_deleted",
+    entity: "setting",
+    entityId: setting.id,
+    details: { key: setting.key },
+  });
   return c.json({ success: true, message: "Setting deleted" });
 });
 

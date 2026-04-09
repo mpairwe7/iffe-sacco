@@ -1,3 +1,5 @@
+import type { LoanType } from "./constants";
+
 // ===== User & Auth =====
 export type Role = "admin" | "chairman" | "member" | "staff";
 
@@ -13,14 +15,12 @@ export interface User {
   createdAt: string;
 }
 
-export interface AuthTokens {
-  accessToken: string;
-  refreshToken: string;
-}
-
 export interface LoginResponse {
   user: User;
-  tokens: AuthTokens;
+}
+
+export interface PasswordResetRequestResponse {
+  debugResetUrl?: string;
 }
 
 // ===== Member =====
@@ -68,7 +68,7 @@ export interface Member {
   updatedAt: string;
 }
 
-export type MemberSupportStatus = "received" | "not_received";
+export type MemberSupportStatus = "received" | "requested" | "not_received";
 
 // ===== Account =====
 export type AccountType = "savings" | "current" | "fixed_deposit";
@@ -111,7 +111,7 @@ export type LoanStatus = "pending" | "approved" | "active" | "paid" | "overdue" 
 export interface Loan {
   id: string;
   memberId: string;
-  type: string;
+  type: LoanType;
   amount: number;
   balance: number;
   interestRate: number;
