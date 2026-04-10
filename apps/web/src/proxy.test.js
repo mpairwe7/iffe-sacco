@@ -2,7 +2,7 @@ import { describe, expect, it } from "bun:test";
 import { SignJWT } from "jose";
 import { NextRequest } from "next/server";
 import { AUTH_SESSION_COOKIE } from "./lib/auth-cookie-names.ts";
-import { proxy, proxyConfig } from "./proxy.ts";
+import { proxy, config } from "./proxy.ts";
 
 const secret = new TextEncoder().encode("dev-jwt-secret-not-for-production");
 
@@ -108,11 +108,11 @@ describe("proxy role redirects", () => {
   });
 
   it("covers staff, chairman, and profile roots in the proxy matcher", () => {
-    expect(proxyConfig.matcher).toContain("/staff");
-    expect(proxyConfig.matcher).toContain("/staff/:path*");
-    expect(proxyConfig.matcher).toContain("/chairman");
-    expect(proxyConfig.matcher).toContain("/chairman/:path*");
-    expect(proxyConfig.matcher).toContain("/profile");
-    expect(proxyConfig.matcher).toContain("/profile/:path*");
+    expect(config.matcher).toContain("/staff");
+    expect(config.matcher).toContain("/staff/:path*");
+    expect(config.matcher).toContain("/chairman");
+    expect(config.matcher).toContain("/chairman/:path*");
+    expect(config.matcher).toContain("/profile");
+    expect(config.matcher).toContain("/profile/:path*");
   });
 });

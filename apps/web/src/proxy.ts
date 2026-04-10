@@ -103,7 +103,11 @@ export async function proxy(request: NextRequest) {
   return redirectTo(request, redirectPath);
 }
 
-export const proxyConfig = {
+// Next.js 16 proxy config export MUST be named `config`, not `proxyConfig`.
+// With the wrong name the matcher is ignored and the proxy runs on every
+// request (including /_next/static/* and /api/v1/*), which breaks static
+// asset serving and every API call.
+export const config = {
   matcher: [
     "/login",
     "/dashboard",
