@@ -23,7 +23,7 @@
     },
     {
       "path": "/api/v1/cron/gc",
-      "schedule": "0 * * * *"
+      "schedule": "0 5 * * *"
     },
     {
       "path": "/api/v1/cron/month-end-close",
