@@ -61,6 +61,18 @@ const nextConfig: NextConfig = {
       },
     ];
   },
+  async rewrites() {
+    return [
+      // Browsers unconditionally request /favicon.ico on first page load;
+      // the app ships a PNG favicon (see app/layout.tsx metadata.icons)
+      // so map the ICO request to the PNG bytes. Modern browsers accept
+      // PNG content served with any image MIME type for favicons.
+      {
+        source: "/favicon.ico",
+        destination: "/favicon.png",
+      },
+    ];
+  },
 };
 
 /**
