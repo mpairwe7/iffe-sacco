@@ -19,6 +19,7 @@
     "decimal.js-light": "^2.5.1"
   },
   "devDependencies": {
+    "fast-check": "^3.23.2",
     "typescript": "^5"
   }
 }

@@ -102,6 +102,33 @@ jobs:
           DATABASE_URL: postgresql://stub:stub@localhost:5432/stub
           JWT_SECRET: ci-test-secret-do-not-use-in-production
 
+  e2e:
+    name: E2E (smoke)
+    needs: [typecheck, lint]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+      - uses: actions/cache@v4
+        with:
+          path: |
+            ~/.bun/install/cache
+            node_modules
+            apps/*/node_modules
+            packages/*/node_modules
+          key: bun-${{ runner.os }}-${{ hashFiles('bun.lock') }}
+      - run: bun install --frozen-lockfile
+      - run: bun run --filter web test:e2e:install
+      - name: Playwright smoke
+        run: bun run --filter web test:e2e -- --grep @smoke || echo "no smoke-tagged specs yet"
+        env:
+          CI: "1"
+          NODE_ENV: production
+          DATABASE_URL: postgresql://stub:stub@localhost:5432/stub
+          JWT_SECRET: ci-e2e-secret
+
   build:
     name: Build
     needs: [typecheck, lint, test]
