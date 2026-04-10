@@ -98,4 +98,36 @@ welfare.post("/pledges", zValidator("json", pledgeSchema), async (c) => {
   return c.json({ success: true, data: pledge }, 201);
 });
 
+// Phase 10.2 — record a payment against a pledge. Admin/staff only;
+// the admin is recording that money has been collected from the member.
+const pledgePaymentSchema = z.object({
+  amount: z.number().min(1000, "Minimum pledge payment is 1,000"),
+  method: z.string().default("cash"),
+});
+
+welfare.post(
+  "/pledges/:id/payment",
+  requireRole("admin", "staff"),
+  zValidator("json", pledgePaymentSchema),
+  async (c) => {
+    const pledgeId = c.req.param("id");
+    const { amount, method } = c.req.valid("json");
+    const user = c.get("user");
+
+    const updated = await service.recordPledgePayment(pledgeId, amount, method, user.id);
+    await writeAuditLog(c, {
+      action: "pledge_payment_recorded",
+      entity: "pledge",
+      entityId: pledgeId,
+      details: {
+        amount,
+        method,
+        paidAmount: updated?.paidAmount,
+        status: updated?.status,
+      },
+    });
+    return c.json({ success: true, data: updated });
+  },
+);
+
 export { welfare as welfareRoutes };
