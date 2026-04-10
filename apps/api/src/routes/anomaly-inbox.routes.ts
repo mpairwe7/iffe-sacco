@@ -34,10 +34,7 @@ inbox.get("/", async (c) => {
     success: true,
     data: {
       items,
-      counts: counts.reduce<Record<string, number>>(
-        (acc, row) => ({ ...acc, [row.status]: row._count }),
-        {},
-      ),
+      counts: counts.reduce<Record<string, number>>((acc, row) => ({ ...acc, [row.status]: row._count }), {}),
     },
   });
 });

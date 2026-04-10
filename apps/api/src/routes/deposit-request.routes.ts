@@ -42,19 +42,23 @@ depositRequests.get("/", zValidator("query", paginationSchema), async (c) => {
   ]);
 
   const accountIds = Array.from(new Set(data.map((request) => request.accountId)));
-  const accounts = accountIds.length > 0
-    ? await prisma.account.findMany({
-        where: { id: { in: accountIds } },
-        include: { member: true },
-      })
-    : [];
+  const accounts =
+    accountIds.length > 0
+      ? await prisma.account.findMany({
+          where: { id: { in: accountIds } },
+          include: { member: true },
+        })
+      : [];
   const accountsById = new Map(accounts.map((account) => [account.id, account]));
   const enrichedData = data.map((request) => ({
     ...request,
     account: accountsById.get(request.accountId) ?? null,
   }));
 
-  return c.json({ success: true, data: { data: enrichedData, total, page, limit, totalPages: Math.ceil(total / limit) } });
+  return c.json({
+    success: true,
+    data: { data: enrichedData, total, page, limit, totalPages: Math.ceil(total / limit) },
+  });
 });
 
 depositRequests.post("/", requireRole("member"), zValidator("json", createSchema), async (c) => {
@@ -91,7 +95,8 @@ depositRequests.patch("/:id/approve", requireRole("admin", "staff"), async (c) =
   const result = await prisma.$transaction(async (tx: Prisma.TransactionClient) => {
     const existing = await tx.depositRequest.findUnique({ where: { id } });
     if (!existing) throw new HTTPException(404, { message: "Deposit request not found" });
-    if (existing.status !== "pending") throw new HTTPException(400, { message: "Deposit request has already been processed" });
+    if (existing.status !== "pending")
+      throw new HTTPException(400, { message: "Deposit request has already been processed" });
 
     const req = await tx.depositRequest.update({
       where: { id },
@@ -133,7 +138,8 @@ depositRequests.patch("/:id/reject", requireRole("admin", "staff"), async (c) =>
   const user = c.get("user");
   const existing = await prisma.depositRequest.findUnique({ where: { id } });
   if (!existing) throw new HTTPException(404, { message: "Deposit request not found" });
-  if (existing.status !== "pending") throw new HTTPException(400, { message: "Deposit request has already been processed" });
+  if (existing.status !== "pending")
+    throw new HTTPException(400, { message: "Deposit request has already been processed" });
   const req = await prisma.depositRequest.update({ where: { id }, data: { status: "rejected", processedBy: user.id } });
   await writeAuditLog(c, {
     action: "deposit_request_rejected",

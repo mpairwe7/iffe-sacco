@@ -21,7 +21,7 @@ const I18nContext = createContext<I18nContextValue | null>(null);
 
 interface I18nProviderProps {
   locale: Locale;
-  messages: Record<string, any>;
+  messages: Record<string, unknown>;
   children: ReactNode;
 }
 
@@ -29,10 +29,10 @@ export function I18nProvider({ locale, messages, children }: I18nProviderProps) 
   const t = useCallback(
     (key: string, params?: Record<string, string | number>): string => {
       const parts = key.split(".");
-      let current: any = messages;
+      let current: unknown = messages;
       for (const part of parts) {
-        if (current == null) break;
-        current = current[part];
+        if (current == null || typeof current !== "object") break;
+        current = (current as Record<string, unknown>)[part];
       }
       if (typeof current !== "string") return key;
       return format(current, params);
@@ -68,18 +68,15 @@ function format(template: string, params?: Record<string, string | number>): str
   if (!params) return template;
 
   // Plural: {count, plural, =0 {...} one {...} other {...}}
-  template = template.replace(
-    /\{(\w+),\s*plural,([\s\S]*?)\}/g,
-    (_match, key, branches: string) => {
-      const value = Number(params[key] ?? 0);
-      const cases = parsePluralCases(branches);
-      let chosen = cases.other ?? "";
-      if (value === 0 && cases["=0"]) chosen = cases["=0"];
-      else if (value === 1 && cases.one) chosen = cases.one;
-      else if (cases.other) chosen = cases.other;
-      return chosen.replace(/#/g, String(value));
-    },
-  );
+  template = template.replace(/\{(\w+),\s*plural,([\s\S]*?)\}/g, (_match, key, branches: string) => {
+    const value = Number(params[key] ?? 0);
+    const cases = parsePluralCases(branches);
+    let chosen = cases.other ?? "";
+    if (value === 0 && cases["=0"]) chosen = cases["=0"];
+    else if (value === 1 && cases.one) chosen = cases.one;
+    else if (cases.other) chosen = cases.other;
+    return chosen.replace(/#/g, String(value));
+  });
 
   // Simple: {name}
   template = template.replace(/\{(\w+)\}/g, (match, key) => {

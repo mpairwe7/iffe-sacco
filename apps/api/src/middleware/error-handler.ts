@@ -18,14 +18,8 @@ export const errorHandler: ErrorHandler = (err, c) => {
 
   if (err instanceof HTTPException) {
     // 4xx client errors: log at info/warn, never to Sentry.
-    reqLogger.warn(
-      { event: "http_exception", status: err.status, message: err.message },
-      "handled HTTPException",
-    );
-    return c.json(
-      { success: false, message: err.message, requestId },
-      err.status,
-    );
+    reqLogger.warn({ event: "http_exception", status: err.status, message: err.message }, "handled HTTPException");
+    return c.json({ success: false, message: err.message, requestId }, err.status);
   }
 
   if (err instanceof ZodError) {
@@ -35,14 +29,8 @@ export const errorHandler: ErrorHandler = (err, c) => {
       if (!errors[key]) errors[key] = [];
       errors[key].push(issue.message);
     }
-    reqLogger.warn(
-      { event: "validation_error", errors },
-      "request failed validation",
-    );
-    return c.json(
-      { success: false, message: "Validation failed", errors, requestId },
-      422,
-    );
+    reqLogger.warn({ event: "validation_error", errors }, "request failed validation");
+    return c.json({ success: false, message: "Validation failed", errors, requestId }, 422);
   }
 
   // Unhandled 5xx: log with full stack, ship to Sentry if available.

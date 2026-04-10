@@ -1,10 +1,9 @@
 "use client";
 
 import { useQuery } from "@tanstack/react-query";
-import { accountsApi } from "@/lib/api/accounts";
-import type { PaginationParams } from "@iffe/shared";
+import { accountsApi, type AccountQueryParams } from "@/lib/api/accounts";
 
-export function useAccounts(params?: PaginationParams) {
+export function useAccounts(params?: AccountQueryParams) {
   return useQuery({
     queryKey: ["accounts", params],
     queryFn: () => accountsApi.getAccounts(params),

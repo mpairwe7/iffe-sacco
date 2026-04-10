@@ -13,7 +13,11 @@ export default function AuthLayout({ children }: { children: React.ReactNode }) 
           <Link href="/" className="inline-flex flex-col items-center gap-5 group">
             {/* Logo circle with white backing so it pops against any background */}
             <div className="w-28 h-28 sm:w-32 sm:h-32 rounded-full shadow-2xl group-hover:scale-105 transition-transform ring-4 ring-white/50 dark:ring-white/20 bg-white flex items-center justify-center overflow-hidden">
-              <img src="/logo.png" alt="IFFE SACCO Logo" className="w-28 h-28 sm:w-32 sm:h-32 object-cover rounded-full" />
+              <img
+                src="/logo.png"
+                alt="IFFE SACCO Logo"
+                className="w-28 h-28 sm:w-32 sm:h-32 object-cover rounded-full"
+              />
             </div>
 
             {/* Brand text on a frosted pill for maximum readability */}

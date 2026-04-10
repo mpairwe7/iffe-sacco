@@ -4,30 +4,17 @@ import { useState } from "react";
 import { StatCard } from "@/components/stat-card";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { useDashboardStats } from "@/hooks/use-dashboard";
-import {
-  useExpenses,
-  useApproveExpense,
-  useRejectExpense,
-} from "@/hooks/use-expenses";
+import { useExpenses, useApproveExpense, useRejectExpense } from "@/hooks/use-expenses";
 import { useMembers } from "@/hooks/use-members";
 import { formatCurrency, formatDate } from "@/lib/utils";
 import { Skeleton } from "@/components/ui/skeleton";
-import {
-  Shield,
-  Users,
-  TrendingUp,
-  Coins,
-  Receipt,
-  Check,
-  X,
-  Banknote,
-} from "lucide-react";
+import { Shield, Users, TrendingUp, Coins, Receipt, Check, X, Banknote } from "lucide-react";
 import { toast } from "sonner";
 import type { DashboardStats, Expense, Member } from "@iffe/shared";
 
 export default function ChairmanPage() {
   const statsQuery = useDashboardStats();
-  const expensesQuery = useExpenses({ status: "pending" } as any);
+  const expensesQuery = useExpenses({ status: "pending" });
   const membersQuery = useMembers({ limit: 5, sortBy: "createdAt", sortOrder: "desc" });
 
   const approveMutation = useApproveExpense();
@@ -79,9 +66,7 @@ export default function ChairmanPage() {
         </div>
         <div>
           <h1 className="text-xl font-bold text-gray-900 dark:text-white">Chairman Dashboard</h1>
-          <p className="text-text-muted text-sm">
-            Oversight and expense approvals
-          </p>
+          <p className="text-text-muted text-sm">Oversight and expense approvals</p>
         </div>
       </div>
 
@@ -89,7 +74,10 @@ export default function ChairmanPage() {
       <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4 lg:gap-6">
         {statsQuery.isLoading ? (
           Array.from({ length: 4 }).map((_, i) => (
-            <div key={i} className="bg-white dark:bg-gray-950 border border-gray-200 dark:border-gray-800 shadow-sm rounded-xl p-6">
+            <div
+              key={i}
+              className="bg-white dark:bg-gray-950 border border-gray-200 dark:border-gray-800 shadow-sm rounded-xl p-6"
+            >
               <Skeleton className="h-4 w-24 mb-2" />
               <Skeleton className="h-8 w-32" />
             </div>
@@ -105,11 +93,7 @@ export default function ChairmanPage() {
             />
             <StatCard
               title="Active Loans"
-              value={
-                stats
-                  ? formatCurrency(Number(stats.activeLoanAmount))
-                  : "Failed to load"
-              }
+              value={stats ? formatCurrency(Number(stats.activeLoanAmount)) : "Failed to load"}
               change={stats ? `${stats.activeLoans} active loans` : undefined}
               changeType="neutral"
               icon={TrendingUp}
@@ -117,18 +101,14 @@ export default function ChairmanPage() {
             />
             <StatCard
               title="Total Deposits"
-              value={
-                stats ? formatCurrency(Number(stats.totalDeposits)) : "Failed to load"
-              }
+              value={stats ? formatCurrency(Number(stats.totalDeposits)) : "Failed to load"}
               changeType="positive"
               icon={Coins}
               color="success"
             />
             <StatCard
               title="Total Expenses"
-              value={
-                stats ? formatCurrency(Number(stats.totalExpenses)) : "Failed to load"
-              }
+              value={stats ? formatCurrency(Number(stats.totalExpenses)) : "Failed to load"}
               changeType="neutral"
               icon={Receipt}
               color="warning"
@@ -143,9 +123,7 @@ export default function ChairmanPage() {
         <div className="lg:col-span-2 bg-white dark:bg-gray-950 border border-gray-200 dark:border-gray-800 shadow-sm rounded-xl">
           <div className="flex items-center justify-between p-6 border-b border-border/50">
             <div>
-              <h3 className="text-base font-bold text-gray-900 dark:text-white">
-                Pending Expense Approvals
-              </h3>
+              <h3 className="text-base font-bold text-gray-900 dark:text-white">Pending Expense Approvals</h3>
               <p className="text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider">
                 Expenses requiring your approval
               </p>
@@ -172,12 +150,8 @@ export default function ChairmanPage() {
                 <div className="w-14 h-14 rounded-xl bg-success/15 flex items-center justify-center mx-auto mb-3">
                   <Check className="w-7 h-7 text-success" />
                 </div>
-                <p className="text-text-muted font-medium">
-                  No pending expenses
-                </p>
-                <p className="text-sm text-text-light mt-1">
-                  All expenses have been reviewed
-                </p>
+                <p className="text-text-muted font-medium">No pending expenses</p>
+                <p className="text-sm text-text-light mt-1">All expenses have been reviewed</p>
               </div>
             ) : (
               expenses.map((expense) => (
@@ -193,8 +167,7 @@ export default function ChairmanPage() {
                       {expense.description}
                     </p>
                     <p className="text-xs text-text-muted">
-                      {expense.category} &middot;{" "}
-                      {formatDate(expense.date)}
+                      {expense.category} &middot; {formatDate(expense.date)}
                     </p>
                   </div>
                   <span className="text-sm font-semibold text-text whitespace-nowrap mr-2">
@@ -234,9 +207,7 @@ export default function ChairmanPage() {
             <div className="w-8 h-8 rounded-lg bg-success/15 flex items-center justify-center">
               <Coins className="w-4 h-4 text-success" />
             </div>
-            <h3 className="text-base font-bold text-gray-900 dark:text-white">
-              Financial Summary
-            </h3>
+            <h3 className="text-base font-bold text-gray-900 dark:text-white">Financial Summary</h3>
           </div>
 
           {statsQuery.isLoading ? (
@@ -251,7 +222,9 @@ export default function ChairmanPage() {
           ) : (
             <div className="space-y-4">
               <div className="flex items-center justify-between p-3 rounded-lg bg-success/5">
-                <span className="text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Total Deposits</span>
+                <span className="text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                  Total Deposits
+                </span>
                 <span className="text-sm font-semibold text-success">
                   {stats ? formatCurrency(Number(stats.totalDeposits)) : "\u2014"}
                 </span>
@@ -261,38 +234,31 @@ export default function ChairmanPage() {
                   Total Withdrawals
                 </span>
                 <span className="text-sm font-semibold text-warning">
-                  {stats
-                    ? formatCurrency(Number(stats.totalWithdrawals))
-                    : "\u2014"}
+                  {stats ? formatCurrency(Number(stats.totalWithdrawals)) : "\u2014"}
                 </span>
               </div>
               <div className="flex items-center justify-between p-3 rounded-lg bg-info/5">
-                <span className="text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Total Savings</span>
+                <span className="text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                  Total Savings
+                </span>
                 <span className="text-sm font-semibold text-info">
                   {stats ? formatCurrency(Number(stats.totalSavings)) : "\u2014"}
                 </span>
               </div>
               <div className="flex items-center justify-between p-3 rounded-lg bg-danger/5">
-                <span className="text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Total Expenses</span>
+                <span className="text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                  Total Expenses
+                </span>
                 <span className="text-sm font-semibold text-danger">
-                  {stats
-                    ? formatCurrency(Number(stats.totalExpenses))
-                    : "\u2014"}
+                  {stats ? formatCurrency(Number(stats.totalExpenses)) : "\u2014"}
                 </span>
               </div>
 
               <div className="mt-4 pt-4 border-t border-border/50">
                 <div className="flex items-center justify-between">
-                  <span className="text-sm font-medium text-text">
-                    Net Position
-                  </span>
+                  <span className="text-sm font-medium text-text">Net Position</span>
                   <span className="text-base font-bold text-text">
-                    {stats
-                      ? formatCurrency(
-                          Number(stats.totalDeposits) -
-                            Number(stats.totalWithdrawals),
-                        )
-                      : "\u2014"}
+                    {stats ? formatCurrency(Number(stats.totalDeposits) - Number(stats.totalWithdrawals)) : "\u2014"}
                   </span>
                 </div>
               </div>
@@ -305,9 +271,7 @@ export default function ChairmanPage() {
       <div className="bg-white dark:bg-gray-950 border border-gray-200 dark:border-gray-800 shadow-sm rounded-xl">
         <div className="flex items-center justify-between p-6 border-b border-border/50">
           <div>
-            <h3 className="text-base font-bold text-gray-900 dark:text-white">
-              Recent Members
-            </h3>
+            <h3 className="text-base font-bold text-gray-900 dark:text-white">Recent Members</h3>
             <p className="text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider">
               Newest SACCO members
             </p>
@@ -355,10 +319,7 @@ export default function ChairmanPage() {
                 ))
               ) : members.length === 0 ? (
                 <tr>
-                  <td
-                    colSpan={4}
-                    className="px-6 py-12 text-center text-text-muted"
-                  >
+                  <td colSpan={4} className="px-6 py-12 text-center text-text-muted">
                     No members found
                   </td>
                 </tr>
@@ -374,27 +335,17 @@ export default function ChairmanPage() {
                       <td className="px-6 py-4">
                         <div className="flex items-center gap-3">
                           <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center">
-                            <span className="text-xs font-bold text-primary">
-                              {initials}
-                            </span>
+                            <span className="text-xs font-bold text-primary">{initials}</span>
                           </div>
                           <div>
-                            <p className="text-sm font-medium text-text">
-                              {name}
-                            </p>
-                            <p className="text-xs text-text-muted">
-                              {member.email}
-                            </p>
+                            <p className="text-sm font-medium text-text">{name}</p>
+                            <p className="text-xs text-text-muted">{member.email}</p>
                           </div>
                         </div>
                       </td>
-                      <td className="px-6 py-4 text-sm text-text">
-                        {member.phone}
-                      </td>
+                      <td className="px-6 py-4 text-sm text-text">{member.phone}</td>
                       <td className="px-6 py-4 text-sm text-text-muted">
-                        {member.joinDate
-                          ? formatDate(member.joinDate)
-                          : "\u2014"}
+                        {member.joinDate ? formatDate(member.joinDate) : "\u2014"}
                       </td>
                       <td className="px-6 py-4">
                         <span
@@ -406,8 +357,7 @@ export default function ChairmanPage() {
                                 : "bg-text-light/10 text-text-light"
                           }`}
                         >
-                          {member.status.charAt(0).toUpperCase() +
-                            member.status.slice(1)}
+                          {member.status.charAt(0).toUpperCase() + member.status.slice(1)}
                         </span>
                       </td>
                     </tr>

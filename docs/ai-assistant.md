@@ -30,25 +30,26 @@ do, the server decides whether to do it. Money-moving actions are
 
 ## Packages
 
-| Package | Purpose |
-|---|---|
-| `@iffe/assistant` | Prompts, tool schemas, types — no runtime deps on Prisma or Hono |
-| `apps/api/src/services/assistant.service.ts` | Tool implementations (read-only over Prisma) |
-| `apps/api/src/routes/assistant.routes.ts` | Streaming chat endpoint + conversation CRUD |
+| Package                                      | Purpose                                                          |
+| -------------------------------------------- | ---------------------------------------------------------------- |
+| `@iffe/assistant`                            | Prompts, tool schemas, types — no runtime deps on Prisma or Hono |
+| `apps/api/src/services/assistant.service.ts` | Tool implementations (read-only over Prisma)                     |
+| `apps/api/src/routes/assistant.routes.ts`    | Streaming chat endpoint + conversation CRUD                      |
 
 ## Endpoints
 
-| Route | Method | Notes |
-|---|---|---|
-| `/api/v1/assistant/chat` | POST | Streaming SSE. Body: `{ conversationId?, messages }` |
-| `/api/v1/assistant/conversations` | GET | List caller's past conversations |
-| `/api/v1/assistant/conversations/:id` | GET | Full message history for one conversation |
-| `/api/v1/assistant/conversations/:id` | DELETE | Delete a conversation |
-| `/api/v1/assistant/tools` | GET | Introspection: what tools can I call right now? |
+| Route                                 | Method | Notes                                                |
+| ------------------------------------- | ------ | ---------------------------------------------------- |
+| `/api/v1/assistant/chat`              | POST   | Streaming SSE. Body: `{ conversationId?, messages }` |
+| `/api/v1/assistant/conversations`     | GET    | List caller's past conversations                     |
+| `/api/v1/assistant/conversations/:id` | GET    | Full message history for one conversation            |
+| `/api/v1/assistant/conversations/:id` | DELETE | Delete a conversation                                |
+| `/api/v1/assistant/tools`             | GET    | Introspection: what tools can I call right now?      |
 
 ## Tools
 
 ### Member audience
+
 - `getMyBalance(accountType?)` — caller's own account balances
 - `getMyTransactions(limit, type, since)` — caller's own transaction history
 - `getMyLoans(status)` — caller's own loans
@@ -58,12 +59,16 @@ do, the server decides whether to do it. Money-moving actions are
 - `raiseWithHuman(urgency, category, message)` — escalate to human support
 
 ### Staff / chairman audience
+
 All of the above plus:
+
 - `lookupMember(query)` — find a member by id/name/email/phone
 - `explainInterest(...)` — same calculator as members
 
 ### Admin audience
+
 All of the above plus:
+
 - `getTrialBalance(asOf?)` — ledger health snapshot
 - `getAnomalyAlerts(status, limit)` — fraud scoring inbox
 
@@ -126,6 +131,7 @@ SUPPORT_EMAIL="support@sacco.example.org"
 ```
 
 Generate VAPID keys once with:
+
 ```bash
 npx web-push generate-vapid-keys
 ```

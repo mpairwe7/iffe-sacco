@@ -4,7 +4,14 @@ import { Users, Coins, Banknote, TrendingUp, Calendar, ArrowUpRight, ArrowDownRi
 import { StatCard } from "@/components/stat-card";
 import { DepositsWithdrawalsChart, ExpenseChart, LoanChart } from "@/components/dashboard-charts";
 import Link from "next/link";
-import { useDashboardStats, useRecentTransactions, useUpcomingPayments, useMonthlyTransactions, useExpenseBreakdown, useLoanTrends } from "@/hooks/use-dashboard";
+import {
+  useDashboardStats,
+  useRecentTransactions,
+  useUpcomingPayments,
+  useMonthlyTransactions,
+  useExpenseBreakdown,
+  useLoanTrends,
+} from "@/hooks/use-dashboard";
 import { useAuthStore } from "@/stores/auth-store";
 import { formatCurrency, formatDate } from "@/lib/utils";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -27,7 +34,9 @@ export default function DashboardPage() {
     <div className="space-y-8">
       <div>
         <h1 className="text-xl font-bold text-gray-900 dark:text-white">Dashboard</h1>
-        <p className="text-text-muted mt-1">Welcome back, {user?.name?.split(" ")[0] || "User"}. Here&apos;s your overview.</p>
+        <p className="text-text-muted mt-1">
+          Welcome back, {user?.name?.split(" ")[0] || "User"}. Here&apos;s your overview.
+        </p>
       </div>
 
       {/* Stats Grid */}
@@ -35,7 +44,10 @@ export default function DashboardPage() {
         {statsQuery.isLoading ? (
           <>
             {Array.from({ length: 4 }).map((_, i) => (
-              <div key={i} className="bg-white dark:bg-gray-950 border border-gray-200 dark:border-gray-800 shadow-sm rounded-xl p-6">
+              <div
+                key={i}
+                className="bg-white dark:bg-gray-950 border border-gray-200 dark:border-gray-800 shadow-sm rounded-xl p-6"
+              >
                 <Skeleton className="h-4 w-24 mb-2" />
                 <Skeleton className="h-8 w-32" />
               </div>
@@ -94,9 +106,13 @@ export default function DashboardPage() {
           <div className="flex items-center justify-between mb-6">
             <div>
               <h3 className="text-base font-bold text-gray-900 dark:text-white">Upcoming Payments</h3>
-              <p className="text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Due in the next 7 days</p>
+              <p className="text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                Due in the next 7 days
+              </p>
             </div>
-            <Link href="/admin/loans" className="text-sm text-primary font-medium hover:underline">View All</Link>
+            <Link href="/admin/loans" className="text-sm text-primary font-medium hover:underline">
+              View All
+            </Link>
           </div>
           <div className="space-y-4">
             {upcomingQuery.isLoading ? (
@@ -141,37 +157,67 @@ export default function DashboardPage() {
         <div className="flex items-center justify-between p-6 border-b border-border">
           <div>
             <h3 className="text-base font-bold text-gray-900 dark:text-white">Recent Transactions</h3>
-            <p className="text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Latest activity across all accounts</p>
+            <p className="text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+              Latest activity across all accounts
+            </p>
           </div>
-          <Link href="/admin/transactions" className="text-sm text-primary font-medium hover:underline">View All</Link>
+          <Link href="/admin/transactions" className="text-sm text-primary font-medium hover:underline">
+            View All
+          </Link>
         </div>
         <div className="overflow-x-auto">
           <table className="w-full">
             <thead>
               <tr className="border-b border-border">
-                <th className="text-left text-xs font-semibold text-text-muted uppercase tracking-wider px-6 py-3">Transaction</th>
-                <th className="text-left text-xs font-semibold text-text-muted uppercase tracking-wider px-6 py-3">Member</th>
-                <th className="text-left text-xs font-semibold text-text-muted uppercase tracking-wider px-6 py-3">Type</th>
-                <th className="text-right text-xs font-semibold text-text-muted uppercase tracking-wider px-6 py-3">Amount</th>
-                <th className="text-left text-xs font-semibold text-text-muted uppercase tracking-wider px-6 py-3">Date</th>
-                <th className="text-left text-xs font-semibold text-text-muted uppercase tracking-wider px-6 py-3">Status</th>
+                <th className="text-left text-xs font-semibold text-text-muted uppercase tracking-wider px-6 py-3">
+                  Transaction
+                </th>
+                <th className="text-left text-xs font-semibold text-text-muted uppercase tracking-wider px-6 py-3">
+                  Member
+                </th>
+                <th className="text-left text-xs font-semibold text-text-muted uppercase tracking-wider px-6 py-3">
+                  Type
+                </th>
+                <th className="text-right text-xs font-semibold text-text-muted uppercase tracking-wider px-6 py-3">
+                  Amount
+                </th>
+                <th className="text-left text-xs font-semibold text-text-muted uppercase tracking-wider px-6 py-3">
+                  Date
+                </th>
+                <th className="text-left text-xs font-semibold text-text-muted uppercase tracking-wider px-6 py-3">
+                  Status
+                </th>
               </tr>
             </thead>
             <tbody>
               {recentQuery.isLoading ? (
                 Array.from({ length: 5 }).map((_, i) => (
                   <tr key={i} className="border-b border-border-light">
-                    <td className="px-6 py-4"><Skeleton className="h-4 w-20" /></td>
-                    <td className="px-6 py-4"><Skeleton className="h-4 w-28" /></td>
-                    <td className="px-6 py-4"><Skeleton className="h-4 w-20" /></td>
-                    <td className="px-6 py-4"><Skeleton className="h-4 w-24" /></td>
-                    <td className="px-6 py-4"><Skeleton className="h-4 w-20" /></td>
-                    <td className="px-6 py-4"><Skeleton className="h-4 w-16" /></td>
+                    <td className="px-6 py-4">
+                      <Skeleton className="h-4 w-20" />
+                    </td>
+                    <td className="px-6 py-4">
+                      <Skeleton className="h-4 w-28" />
+                    </td>
+                    <td className="px-6 py-4">
+                      <Skeleton className="h-4 w-20" />
+                    </td>
+                    <td className="px-6 py-4">
+                      <Skeleton className="h-4 w-24" />
+                    </td>
+                    <td className="px-6 py-4">
+                      <Skeleton className="h-4 w-20" />
+                    </td>
+                    <td className="px-6 py-4">
+                      <Skeleton className="h-4 w-16" />
+                    </td>
                   </tr>
                 ))
               ) : recentTransactions.length === 0 ? (
                 <tr>
-                  <td colSpan={6} className="px-6 py-12 text-center text-text-muted">No recent transactions</td>
+                  <td colSpan={6} className="px-6 py-12 text-center text-text-muted">
+                    No recent transactions
+                  </td>
                 </tr>
               ) : (
                 recentTransactions.map((txn) => (
@@ -195,15 +241,21 @@ export default function DashboardPage() {
                       </span>
                     </td>
                     <td className="px-6 py-4 text-right">
-                      <span className="text-sm font-bold text-gray-900 dark:text-white">{formatCurrency(Number(txn.amount))}</span>
+                      <span className="text-sm font-bold text-gray-900 dark:text-white">
+                        {formatCurrency(Number(txn.amount))}
+                      </span>
                     </td>
                     <td className="px-6 py-4">
-                      <span className="text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider">{formatDate(txn.createdAt)}</span>
+                      <span className="text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                        {formatDate(txn.createdAt)}
+                      </span>
                     </td>
                     <td className="px-6 py-4">
-                      <span className={`inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium ${
-                        txn.status === "completed" ? "bg-success/15 text-success" : "bg-warning/15 text-warning"
-                      }`}>
+                      <span
+                        className={`inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium ${
+                          txn.status === "completed" ? "bg-success/15 text-success" : "bg-warning/15 text-warning"
+                        }`}
+                      >
                         {txn.status === "completed" ? "Completed" : "Pending"}
                       </span>
                     </td>

@@ -132,14 +132,8 @@ async function checkLoanEligibility(args: any, ctx: AssistantContext) {
     }),
   ]);
 
-  const totalSavings = accounts.reduce(
-    (acc, a) => Money.add(acc, Money.fromDb(a.balance)),
-    Money.zero(),
-  );
-  const totalOutstanding = activeLoans.reduce(
-    (acc, l) => Money.add(acc, Money.fromDb(l.balance)),
-    Money.zero(),
-  );
+  const totalSavings = accounts.reduce((acc, a) => Money.add(acc, Money.fromDb(a.balance)), Money.zero());
+  const totalOutstanding = activeLoans.reduce((acc, l) => Money.add(acc, Money.fromDb(l.balance)), Money.zero());
   const hasOverdue = activeLoans.some((l) => l.status === "overdue");
 
   const amount = Money.of(args.amount);
@@ -148,8 +142,10 @@ async function checkLoanEligibility(args: any, ctx: AssistantContext) {
 
   const reasons: string[] = [];
   if (hasOverdue) reasons.push("Existing loan is overdue — clear arrears first");
-  if (Money.gt(amount, maxByRule)) reasons.push(`Requested amount exceeds 3× savings (max ${Money.toString(maxByRule)} UGX)`);
-  if (Money.gt(totalOutstanding, Money.zero())) reasons.push("Previous loan must be fully repaid before a new one is approved");
+  if (Money.gt(amount, maxByRule))
+    reasons.push(`Requested amount exceeds 3× savings (max ${Money.toString(maxByRule)} UGX)`);
+  if (Money.gt(totalOutstanding, Money.zero()))
+    reasons.push("Previous loan must be fully repaid before a new one is approved");
 
   return {
     eligible: reasons.length === 0,

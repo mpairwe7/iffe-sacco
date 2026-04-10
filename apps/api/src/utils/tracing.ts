@@ -51,7 +51,10 @@ export async function startTracing(): Promise<void> {
   } catch (err) {
     // OTel deps not installed — fail open so the app can still boot.
     // eslint-disable-next-line no-console
-    console.warn("[tracing] OpenTelemetry deps unavailable — tracing disabled:", err instanceof Error ? err.message : err);
+    console.warn(
+      "[tracing] OpenTelemetry deps unavailable — tracing disabled:",
+      err instanceof Error ? err.message : err,
+    );
   }
 }
 

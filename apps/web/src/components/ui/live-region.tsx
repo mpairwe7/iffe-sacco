@@ -48,12 +48,7 @@ export function AnnouncerProvider({ children }: { children: ReactNode }) {
   return (
     <AnnouncerContext.Provider value={{ announce }}>
       {children}
-      <div
-        aria-live="polite"
-        aria-atomic="true"
-        className="sr-only"
-        data-testid="live-region-polite"
-      >
+      <div aria-live="polite" aria-atomic="true" className="sr-only" data-testid="live-region-polite">
         {politeMessage}
       </div>
       <div

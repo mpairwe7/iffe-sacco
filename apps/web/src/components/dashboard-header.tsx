@@ -2,9 +2,23 @@
 
 import Link from "next/link";
 import {
-  Menu, Bell, Search, Globe, User, Settings, LogOut,
-  Sun, Moon, Command, ChevronDown, Clock,
-  CheckCircle, AlertCircle, UserPlus, CreditCard, X,
+  Menu,
+  Bell,
+  Search,
+  Globe,
+  User,
+  Settings,
+  LogOut,
+  Sun,
+  Moon,
+  Command,
+  ChevronDown,
+  Clock,
+  CheckCircle,
+  AlertCircle,
+  UserPlus,
+  CreditCard,
+  X,
 } from "lucide-react";
 import { useState, useRef, useEffect, useCallback } from "react";
 import { useTheme } from "next-themes";
@@ -24,8 +38,10 @@ function getNotificationMeta(action: string) {
   if (action.includes("login")) return { icon: User, color: "text-primary", bg: "bg-primary/10" };
   if (action.includes("approve")) return { icon: CheckCircle, color: "text-success", bg: "bg-success/10" };
   if (action.includes("reject")) return { icon: AlertCircle, color: "text-danger", bg: "bg-danger/10" };
-  if (action.includes("create_member") || action.includes("register")) return { icon: UserPlus, color: "text-info", bg: "bg-info/10" };
-  if (action.includes("transaction") || action.includes("deposit") || action.includes("withdraw")) return { icon: CreditCard, color: "text-warning", bg: "bg-warning/10" };
+  if (action.includes("create_member") || action.includes("register"))
+    return { icon: UserPlus, color: "text-info", bg: "bg-info/10" };
+  if (action.includes("transaction") || action.includes("deposit") || action.includes("withdraw"))
+    return { icon: CreditCard, color: "text-warning", bg: "bg-warning/10" };
   return { icon: Clock, color: "text-text-muted", bg: "bg-surface-alt" };
 }
 
@@ -77,8 +93,20 @@ export function DashboardHeader({ onToggleSidebar }: DashboardHeaderProps) {
     return () => document.removeEventListener("keydown", onKeyDown);
   }, [setCommandPaletteOpen]);
 
-  const initials = user?.name?.split(" ").map((n) => n[0]).join("").slice(0, 2) || "U";
-  const roleBadge = user?.role === "admin" ? "Admin" : user?.role === "chairman" ? "Chairman" : user?.role === "staff" ? "Staff" : "Member";
+  const initials =
+    user?.name
+      ?.split(" ")
+      .map((n) => n[0])
+      .join("")
+      .slice(0, 2) || "U";
+  const roleBadge =
+    user?.role === "admin"
+      ? "Admin"
+      : user?.role === "chairman"
+        ? "Chairman"
+        : user?.role === "staff"
+          ? "Staff"
+          : "Member";
 
   return (
     <header className="sticky top-0 z-30 h-16 bg-white dark:bg-gray-950 border-b border-gray-200 dark:border-gray-800 shadow-sm flex items-center px-4 lg:px-6 gap-3">
@@ -98,7 +126,9 @@ export function DashboardHeader({ onToggleSidebar }: DashboardHeaderProps) {
           className="w-full flex items-center gap-3 pl-4 pr-3 py-2.5 bg-gray-100 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-lg text-sm hover:border-primary/50 hover:bg-gray-50 dark:hover:bg-gray-800 hover:shadow-sm transition-all"
         >
           <Search className="w-4 h-4 shrink-0 text-gray-400" />
-          <span className="flex-1 text-left truncate text-gray-500 dark:text-gray-400 font-medium">Search members, transactions...</span>
+          <span className="flex-1 text-left truncate text-gray-500 dark:text-gray-400 font-medium">
+            Search members, transactions...
+          </span>
           <kbd className="hidden lg:inline-flex items-center gap-0.5 px-2 py-1 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-md text-[10px] font-mono text-gray-400 shadow-sm">
             <Command className="w-2.5 h-2.5" />K
           </kbd>
@@ -147,7 +177,10 @@ export function DashboardHeader({ onToggleSidebar }: DashboardHeaderProps) {
         {/* Notifications — dynamic dropdown */}
         <div ref={notifRef} className="relative">
           <button
-            onClick={() => { setNotifOpen(!notifOpen); setProfileOpen(false); }}
+            onClick={() => {
+              setNotifOpen(!notifOpen);
+              setProfileOpen(false);
+            }}
             className="relative p-2.5 text-gray-500 hover:text-gray-900 dark:hover:text-white rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
             aria-label={`Notifications${unreadCount > 0 ? ` (${unreadCount} new)` : ""}`}
             aria-expanded={notifOpen}
@@ -192,8 +225,13 @@ export function DashboardHeader({ onToggleSidebar }: DashboardHeaderProps) {
                     const meta = getNotificationMeta(n.action);
                     const Icon = meta.icon;
                     return (
-                      <div key={n.id} className="flex items-start gap-3 px-4 py-3 hover:bg-surface-hover/50 transition-colors">
-                        <div className={cn("w-8 h-8 rounded-lg flex items-center justify-center shrink-0 mt-0.5", meta.bg)}>
+                      <div
+                        key={n.id}
+                        className="flex items-start gap-3 px-4 py-3 hover:bg-surface-hover/50 transition-colors"
+                      >
+                        <div
+                          className={cn("w-8 h-8 rounded-lg flex items-center justify-center shrink-0 mt-0.5", meta.bg)}
+                        >
                           <Icon className={cn("w-4 h-4", meta.color)} />
                         </div>
                         <div className="flex-1 min-w-0">
@@ -231,7 +269,10 @@ export function DashboardHeader({ onToggleSidebar }: DashboardHeaderProps) {
         {/* Profile — avatar + name + role + dropdown */}
         <div ref={profileRef} className="relative">
           <button
-            onClick={() => { setProfileOpen(!profileOpen); setNotifOpen(false); }}
+            onClick={() => {
+              setProfileOpen(!profileOpen);
+              setNotifOpen(false);
+            }}
             className="flex items-center gap-2.5 p-1.5 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
             aria-label="User menu"
             aria-expanded={profileOpen}
@@ -240,10 +281,17 @@ export function DashboardHeader({ onToggleSidebar }: DashboardHeaderProps) {
               <span className="text-[11px] font-black text-white">{initials}</span>
             </div>
             <div className="hidden md:block text-left leading-tight">
-              <p className="text-sm font-semibold text-gray-900 dark:text-white truncate max-w-[120px]">{user?.name || "User"}</p>
+              <p className="text-sm font-semibold text-gray-900 dark:text-white truncate max-w-[120px]">
+                {user?.name || "User"}
+              </p>
               <p className="text-[10px] font-bold text-primary uppercase tracking-wider">{roleBadge}</p>
             </div>
-            <ChevronDown className={cn("hidden md:block w-3.5 h-3.5 text-gray-400 transition-transform", profileOpen && "rotate-180")} />
+            <ChevronDown
+              className={cn(
+                "hidden md:block w-3.5 h-3.5 text-gray-400 transition-transform",
+                profileOpen && "rotate-180",
+              )}
+            />
           </button>
 
           {/* Profile dropdown */}
@@ -257,17 +305,28 @@ export function DashboardHeader({ onToggleSidebar }: DashboardHeaderProps) {
                 </span>
               </div>
               <div className="py-1">
-                <Link href="/profile" onClick={() => setProfileOpen(false)} className="flex items-center gap-3 px-4 py-2.5 text-sm text-text-muted hover:text-text hover:bg-surface-hover transition-colors">
+                <Link
+                  href="/profile"
+                  onClick={() => setProfileOpen(false)}
+                  className="flex items-center gap-3 px-4 py-2.5 text-sm text-text-muted hover:text-text hover:bg-surface-hover transition-colors"
+                >
                   <User className="w-4 h-4" /> Profile
                 </Link>
-                {(user?.role === "admin") && (
-                  <Link href="/admin/settings" onClick={() => setProfileOpen(false)} className="flex items-center gap-3 px-4 py-2.5 text-sm text-text-muted hover:text-text hover:bg-surface-hover transition-colors">
+                {user?.role === "admin" && (
+                  <Link
+                    href="/admin/settings"
+                    onClick={() => setProfileOpen(false)}
+                    className="flex items-center gap-3 px-4 py-2.5 text-sm text-text-muted hover:text-text hover:bg-surface-hover transition-colors"
+                  >
                     <Settings className="w-4 h-4" /> Settings
                   </Link>
                 )}
               </div>
               <div className="border-t border-border/40 py-1">
-                <button onClick={handleLogout} className="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-danger hover:bg-danger/5 transition-colors">
+                <button
+                  onClick={handleLogout}
+                  className="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-danger hover:bg-danger/5 transition-colors"
+                >
                   <LogOut className="w-4 h-4" /> Sign out
                 </button>
               </div>

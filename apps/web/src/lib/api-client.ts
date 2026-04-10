@@ -26,11 +26,21 @@ function generateIdempotencyKey(): string {
   // 22 base64url chars ≈ 132 bits — plenty for request-level dedupe.
   const buf = new Uint8Array(16);
   crypto.getRandomValues(buf);
-  return btoa(String.fromCharCode(...buf)).replaceAll("+", "-").replaceAll("/", "_").replaceAll("=", "");
+  return btoa(String.fromCharCode(...buf))
+    .replaceAll("+", "-")
+    .replaceAll("/", "_")
+    .replaceAll("=", "");
 }
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-async function request<T>(method: string, path: string, options?: { body?: unknown; params?: Record<string, any>; idempotent?: boolean }): Promise<T> {
+async function request<T>(
+  method: string,
+  path: string,
+  options?: {
+    body?: unknown;
+    params?: Record<string, string | number | boolean | undefined | null>;
+    idempotent?: boolean;
+  },
+): Promise<T> {
   let url = `${BASE_URL}${path}`;
 
   if (options?.params) {
@@ -68,7 +78,7 @@ async function request<T>(method: string, path: string, options?: { body?: unkno
     if (MUTATING_METHODS.has(method)) {
       const queued = await enqueue({
         path: url,
-        method: method as any,
+        method: method as "POST" | "PUT" | "PATCH" | "DELETE",
         body: options?.body,
         headers,
         summary: `${method} ${path}`,
@@ -83,7 +93,7 @@ async function request<T>(method: string, path: string, options?: { body?: unkno
     throw networkError;
   }
 
-  const json = await res.json() as ApiResponse<T>;
+  const json = (await res.json()) as ApiResponse<T>;
   if (!res.ok || !json.success) {
     if (res.status === 401) {
       clearAuth();

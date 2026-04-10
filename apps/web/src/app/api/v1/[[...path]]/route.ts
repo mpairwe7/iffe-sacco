@@ -19,7 +19,7 @@ async function getApp() {
   if (_initError) throw new Error(_initError);
   try {
     const appPath = path.join(process.cwd(), "api-bundle", "app.mjs");
-    const mod = await import(/* webpackIgnore: true */ appPath) as AppBundle;
+    const mod = (await import(/* webpackIgnore: true */ appPath)) as AppBundle;
     _app = mod.app;
     if (typeof mod.initPrisma === "function") {
       await mod.initPrisma();
@@ -41,7 +41,10 @@ async function getApp() {
  *     Access-Control-Allow-Origin header (browser blocks them).
  */
 function resolveAllowedOrigin(requestOrigin: string | null): string | null {
-  const envList = (process.env.ALLOWED_ORIGINS || "").split(",").map((s) => s.trim()).filter(Boolean);
+  const envList = (process.env.ALLOWED_ORIGINS || "")
+    .split(",")
+    .map((s) => s.trim())
+    .filter(Boolean);
   const isProd = process.env.NODE_ENV === "production";
 
   if (!isProd && envList.length === 0) {
@@ -65,10 +68,7 @@ function corsHeaders(req: Request): Headers {
     headers.set("Vary", "Origin");
     headers.set("Access-Control-Allow-Credentials", "true");
     headers.set("Access-Control-Allow-Methods", "GET,POST,PUT,PATCH,DELETE,OPTIONS");
-    headers.set(
-      "Access-Control-Allow-Headers",
-      "Content-Type,Authorization,Idempotency-Key,X-CSRF-Token,X-Request-Id",
-    );
+    headers.set("Access-Control-Allow-Headers", "Content-Type,Authorization,Idempotency-Key,X-CSRF-Token,X-Request-Id");
     headers.set("Access-Control-Expose-Headers", "X-Request-Id,Idempotent-Replay");
     headers.set("Access-Control-Max-Age", "86400");
   }
@@ -87,10 +87,7 @@ async function handler(req: Request) {
     const message = error instanceof Error ? error.message : "Internal server error";
     const cors = corsHeaders(req);
     cors.set("Content-Type", "application/json");
-    return new Response(
-      JSON.stringify({ success: false, message }),
-      { status: 500, headers: cors },
-    );
+    return new Response(JSON.stringify({ success: false, message }), { status: 500, headers: cors });
   }
 }
 

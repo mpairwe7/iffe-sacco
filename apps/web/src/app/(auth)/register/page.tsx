@@ -141,10 +141,7 @@ const slideVariants = {
   exit: (dir: number) => ({ x: dir > 0 ? -300 : 300, opacity: 0 }),
 };
 
-function getNestedErrorMessage(
-  errors: FieldErrors<ApplicationFormInput>,
-  path: readonly string[],
-) {
+function getNestedErrorMessage(errors: FieldErrors<ApplicationFormInput>, path: readonly string[]) {
   let current: unknown = errors;
 
   for (const segment of path) {
@@ -177,9 +174,7 @@ function CollapsibleSection({
         className="w-full flex items-center justify-between px-4 py-3 bg-white/30 dark:bg-white/5 hover:bg-white/40 dark:hover:bg-white/10 text-sm font-semibold text-text"
       >
         {title}
-        <ChevronDown
-          className={`w-4 h-4 text-text-muted transition-transform ${open ? "rotate-180" : ""}`}
-        />
+        <ChevronDown className={`w-4 h-4 text-text-muted transition-transform ${open ? "rotate-180" : ""}`} />
       </button>
       <AnimatePresence initial={false}>
         {open && (
@@ -206,7 +201,10 @@ function PlaceFields({
   prefix: "birthPlace" | "ancestralPlace" | "residencePlace";
   form: UseFormReturn<ApplicationFormInput, unknown, ApplicationForm>;
 }) {
-  const { register, formState: { errors } } = form;
+  const {
+    register,
+    formState: { errors },
+  } = form;
   const fields: readonly PlaceFieldKey[] = ["district", "county", "subCounty", "parish", "village"];
   const labels: Record<string, string> = {
     district: "District",
@@ -241,7 +239,11 @@ function ParentFields({
   title: string;
   form: UseFormReturn<ApplicationFormInput, unknown, ApplicationForm>;
 }) {
-  const { register, watch, formState: { errors } } = form;
+  const {
+    register,
+    watch,
+    formState: { errors },
+  } = form;
   const alive = watch(`${prefix}.alive`);
   const parentFields: readonly ParentFieldKey[] = ["name", "district", "village", "phone", "email"];
 
@@ -290,7 +292,12 @@ function ParentFields({
         </label>
       </div>
       {!alive && (
-        <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: "auto" }} exit={{ opacity: 0, height: 0 }} className="mt-3">
+        <motion.div
+          initial={{ opacity: 0, height: 0 }}
+          animate={{ opacity: 1, height: "auto" }}
+          exit={{ opacity: 0, height: 0 }}
+          className="mt-3"
+        >
           <div>
             <label className="block text-sm font-medium text-text mb-2">If dead, died before or after joining?</label>
             <select
@@ -338,8 +345,24 @@ export default function RegisterPage() {
       occupation: "",
       placeOfWork: "",
       qualifications: "",
-      fatherInfo: { name: "", district: "", village: "", phone: "", email: "", alive: true, diedBeforeOrAfterJoining: "" },
-      motherInfo: { name: "", district: "", village: "", phone: "", email: "", alive: true, diedBeforeOrAfterJoining: "" },
+      fatherInfo: {
+        name: "",
+        district: "",
+        village: "",
+        phone: "",
+        email: "",
+        alive: true,
+        diedBeforeOrAfterJoining: "",
+      },
+      motherInfo: {
+        name: "",
+        district: "",
+        village: "",
+        phone: "",
+        email: "",
+        alive: true,
+        diedBeforeOrAfterJoining: "",
+      },
       spouses: [],
       children: [],
       otherRelatives: [],
@@ -352,7 +375,12 @@ export default function RegisterPage() {
     mode: "onTouched",
   });
 
-  const { register, handleSubmit, trigger, formState: { errors, isDirty } } = form;
+  const {
+    register,
+    handleSubmit,
+    trigger,
+    formState: { errors, isDirty },
+  } = form;
 
   useEffect(() => {
     if (!isDirty) return;
@@ -517,11 +545,28 @@ export default function RegisterPage() {
               {/* ════════════════ STEP 1 ════════════════ */}
               {step === 0 && (
                 <div className="space-y-4">
-                  <FormField label="Full Name" icon={User} required {...register("fullName")} error={errors.fullName?.message} placeholder="e.g. Mukasa John" />
+                  <FormField
+                    label="Full Name"
+                    icon={User}
+                    required
+                    {...register("fullName")}
+                    error={errors.fullName?.message}
+                    placeholder="e.g. Mukasa John"
+                  />
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <FormField label="Date of Birth" type="date" min="1930-01-01" max={new Date().toISOString().split("T")[0]} required {...register("dateOfBirth")} error={errors.dateOfBirth?.message} />
+                    <FormField
+                      label="Date of Birth"
+                      type="date"
+                      min="1930-01-01"
+                      max={new Date().toISOString().split("T")[0]}
+                      required
+                      {...register("dateOfBirth")}
+                      error={errors.dateOfBirth?.message}
+                    />
                     <div>
-                      <label className="block text-sm font-medium text-text mb-2">Sex<span className="text-danger ml-0.5">*</span></label>
+                      <label className="block text-sm font-medium text-text mb-2">
+                        Sex<span className="text-danger ml-0.5">*</span>
+                      </label>
                       <select
                         {...register("sex")}
                         className="w-full px-4 py-3 bg-white/60 dark:bg-white/5 border border-white/40 dark:border-white/10 rounded-lg text-sm text-text focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
@@ -534,12 +579,38 @@ export default function RegisterPage() {
                     </div>
                   </div>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <FormField label="Phone" icon={Phone} required {...register("phone")} error={errors.phone?.message} placeholder="+256 700 000 000" />
-                    <FormField label="Email" icon={Mail} required {...register("email")} error={errors.email?.message} placeholder="you@example.com" />
+                    <FormField
+                      label="Phone"
+                      icon={Phone}
+                      required
+                      {...register("phone")}
+                      error={errors.phone?.message}
+                      placeholder="+256 700 000 000"
+                    />
+                    <FormField
+                      label="Email"
+                      icon={Mail}
+                      required
+                      {...register("email")}
+                      error={errors.email?.message}
+                      placeholder="you@example.com"
+                    />
                   </div>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <FormField label="Clan" required {...register("clan")} error={errors.clan?.message} placeholder="Your clan" />
-                    <FormField label="Totem" required {...register("totem")} error={errors.totem?.message} placeholder="Your totem" />
+                    <FormField
+                      label="Clan"
+                      required
+                      {...register("clan")}
+                      error={errors.clan?.message}
+                      placeholder="Your clan"
+                    />
+                    <FormField
+                      label="Totem"
+                      required
+                      {...register("totem")}
+                      error={errors.totem?.message}
+                      placeholder="Your totem"
+                    />
                   </div>
                 </div>
               )}
@@ -562,17 +633,35 @@ export default function RegisterPage() {
               {/* ════════════════ STEP 3 ════════════════ */}
               {step === 2 && (
                 <div className="space-y-4">
-                  <FormField label="Occupation" icon={Briefcase} required {...register("occupation")} error={errors.occupation?.message} placeholder="e.g. Farmer, Teacher..." />
-                  <FormField label="Place of Work" icon={MapPin} required {...register("placeOfWork")} error={errors.placeOfWork?.message} placeholder="e.g. Kampala City Council" />
+                  <FormField
+                    label="Occupation"
+                    icon={Briefcase}
+                    required
+                    {...register("occupation")}
+                    error={errors.occupation?.message}
+                    placeholder="e.g. Farmer, Teacher..."
+                  />
+                  <FormField
+                    label="Place of Work"
+                    icon={MapPin}
+                    required
+                    {...register("placeOfWork")}
+                    error={errors.placeOfWork?.message}
+                    placeholder="e.g. Kampala City Council"
+                  />
                   <div>
-                    <label className="block text-sm font-medium text-text mb-2">Qualifications<span className="text-danger ml-0.5">*</span></label>
+                    <label className="block text-sm font-medium text-text mb-2">
+                      Qualifications<span className="text-danger ml-0.5">*</span>
+                    </label>
                     <textarea
                       {...register("qualifications")}
                       rows={5}
                       placeholder="List your educational qualifications, certificates, etc."
                       className="w-full px-4 py-3 bg-white/60 dark:bg-white/5 border border-white/40 dark:border-white/10 rounded-lg text-sm text-text placeholder:text-text-light focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary resize-none"
                     />
-                    {errors.qualifications && <p className="text-sm text-danger mt-1.5">{errors.qualifications.message}</p>}
+                    {errors.qualifications && (
+                      <p className="text-sm text-danger mt-1.5">{errors.qualifications.message}</p>
+                    )}
                   </div>
                 </div>
               )}
@@ -590,27 +679,86 @@ export default function RegisterPage() {
                         <table className="w-full min-w-[700px] text-sm">
                           <thead>
                             <tr className="text-left text-text-muted border-b border-white/20">
-                              <th scope="col" className="pb-2 pr-2">Name</th>
-                              <th scope="col" className="pb-2 pr-2">Father</th>
-                              <th scope="col" className="pb-2 pr-2 w-10">F. Alive</th>
-                              <th scope="col" className="pb-2 pr-2">Mother</th>
-                              <th scope="col" className="pb-2 pr-2 w-10">M. Alive</th>
-                              <th scope="col" className="pb-2 pr-2">Contact</th>
-                              <th scope="col" className="pb-2 pr-2">Address</th>
+                              <th scope="col" className="pb-2 pr-2">
+                                Name
+                              </th>
+                              <th scope="col" className="pb-2 pr-2">
+                                Father
+                              </th>
+                              <th scope="col" className="pb-2 pr-2 w-10">
+                                F. Alive
+                              </th>
+                              <th scope="col" className="pb-2 pr-2">
+                                Mother
+                              </th>
+                              <th scope="col" className="pb-2 pr-2 w-10">
+                                M. Alive
+                              </th>
+                              <th scope="col" className="pb-2 pr-2">
+                                Contact
+                              </th>
+                              <th scope="col" className="pb-2 pr-2">
+                                Address
+                              </th>
                               <th scope="col" className="pb-2 w-8" />
                             </tr>
                           </thead>
                           <tbody>
                             {spousesField.fields.map((field, i) => (
                               <tr key={field.id} className="border-b border-white/10">
-                                <td className="py-1.5 pr-2"><input {...register(`spouses.${i}.name`)} className="w-full px-2 py-1.5 bg-white/40 dark:bg-white/5 border border-white/30 dark:border-white/10 rounded-lg text-sm text-text" /></td>
-                                <td className="py-1.5 pr-2"><input {...register(`spouses.${i}.fatherName`)} className="w-full px-2 py-1.5 bg-white/40 dark:bg-white/5 border border-white/30 dark:border-white/10 rounded-lg text-sm text-text" /></td>
-                                <td className="py-1.5 pr-2 text-center"><input type="checkbox" {...register(`spouses.${i}.fatherAlive`)} className="w-4 h-4 rounded border-border text-primary" /></td>
-                                <td className="py-1.5 pr-2"><input {...register(`spouses.${i}.motherName`)} className="w-full px-2 py-1.5 bg-white/40 dark:bg-white/5 border border-white/30 dark:border-white/10 rounded-lg text-sm text-text" /></td>
-                                <td className="py-1.5 pr-2 text-center"><input type="checkbox" {...register(`spouses.${i}.motherAlive`)} className="w-4 h-4 rounded border-border text-primary" /></td>
-                                <td className="py-1.5 pr-2"><input {...register(`spouses.${i}.contact`)} className="w-full px-2 py-1.5 bg-white/40 dark:bg-white/5 border border-white/30 dark:border-white/10 rounded-lg text-sm text-text" /></td>
-                                <td className="py-1.5 pr-2"><input {...register(`spouses.${i}.address`)} className="w-full px-2 py-1.5 bg-white/40 dark:bg-white/5 border border-white/30 dark:border-white/10 rounded-lg text-sm text-text" /></td>
-                                <td className="py-1.5"><button type="button" onClick={() => spousesField.remove(i)} className="p-1 text-danger hover:bg-danger/10 rounded-lg"><Trash2 className="w-4 h-4" /></button></td>
+                                <td className="py-1.5 pr-2">
+                                  <input
+                                    {...register(`spouses.${i}.name`)}
+                                    className="w-full px-2 py-1.5 bg-white/40 dark:bg-white/5 border border-white/30 dark:border-white/10 rounded-lg text-sm text-text"
+                                  />
+                                </td>
+                                <td className="py-1.5 pr-2">
+                                  <input
+                                    {...register(`spouses.${i}.fatherName`)}
+                                    className="w-full px-2 py-1.5 bg-white/40 dark:bg-white/5 border border-white/30 dark:border-white/10 rounded-lg text-sm text-text"
+                                  />
+                                </td>
+                                <td className="py-1.5 pr-2 text-center">
+                                  <input
+                                    type="checkbox"
+                                    {...register(`spouses.${i}.fatherAlive`)}
+                                    className="w-4 h-4 rounded border-border text-primary"
+                                  />
+                                </td>
+                                <td className="py-1.5 pr-2">
+                                  <input
+                                    {...register(`spouses.${i}.motherName`)}
+                                    className="w-full px-2 py-1.5 bg-white/40 dark:bg-white/5 border border-white/30 dark:border-white/10 rounded-lg text-sm text-text"
+                                  />
+                                </td>
+                                <td className="py-1.5 pr-2 text-center">
+                                  <input
+                                    type="checkbox"
+                                    {...register(`spouses.${i}.motherAlive`)}
+                                    className="w-4 h-4 rounded border-border text-primary"
+                                  />
+                                </td>
+                                <td className="py-1.5 pr-2">
+                                  <input
+                                    {...register(`spouses.${i}.contact`)}
+                                    className="w-full px-2 py-1.5 bg-white/40 dark:bg-white/5 border border-white/30 dark:border-white/10 rounded-lg text-sm text-text"
+                                  />
+                                </td>
+                                <td className="py-1.5 pr-2">
+                                  <input
+                                    {...register(`spouses.${i}.address`)}
+                                    className="w-full px-2 py-1.5 bg-white/40 dark:bg-white/5 border border-white/30 dark:border-white/10 rounded-lg text-sm text-text"
+                                  />
+                                </td>
+                                <td className="py-1.5">
+                                  <button
+                                    type="button"
+                                    onClick={() => spousesField.remove(i)}
+                                    className="p-1 text-danger hover:bg-danger/10 rounded-lg"
+                                  >
+                                    <Trash2 className="w-4 h-4" />
+                                  </button>
+                                </td>
                               </tr>
                             ))}
                           </tbody>
@@ -619,7 +767,17 @@ export default function RegisterPage() {
                     )}
                     <button
                       type="button"
-                      onClick={() => spousesField.append({ name: "", fatherName: "", fatherAlive: true, motherName: "", motherAlive: true, contact: "", address: "" })}
+                      onClick={() =>
+                        spousesField.append({
+                          name: "",
+                          fatherName: "",
+                          fatherAlive: true,
+                          motherName: "",
+                          motherAlive: true,
+                          contact: "",
+                          address: "",
+                        })
+                      }
                       className="flex items-center gap-1.5 text-sm font-medium text-primary hover:text-primary-dark mt-2"
                     >
                       <Plus className="w-4 h-4" /> Add Spouse
@@ -633,25 +791,52 @@ export default function RegisterPage() {
                         <table className="w-full min-w-[400px] text-sm">
                           <thead>
                             <tr className="text-left text-text-muted border-b border-white/20">
-                              <th scope="col" className="pb-2 pr-2">Name</th>
-                              <th scope="col" className="pb-2 pr-2 w-28">Sex</th>
-                              <th scope="col" className="pb-2 pr-2">Contact</th>
+                              <th scope="col" className="pb-2 pr-2">
+                                Name
+                              </th>
+                              <th scope="col" className="pb-2 pr-2 w-28">
+                                Sex
+                              </th>
+                              <th scope="col" className="pb-2 pr-2">
+                                Contact
+                              </th>
                               <th scope="col" className="pb-2 w-8" />
                             </tr>
                           </thead>
                           <tbody>
                             {childrenField.fields.map((field, i) => (
                               <tr key={field.id} className="border-b border-white/10">
-                                <td className="py-1.5 pr-2"><input {...register(`children.${i}.name`)} className="w-full px-2 py-1.5 bg-white/40 dark:bg-white/5 border border-white/30 dark:border-white/10 rounded-lg text-sm text-text" /></td>
                                 <td className="py-1.5 pr-2">
-                                  <select {...register(`children.${i}.sex`)} className="w-full px-2 py-1.5 bg-white/40 dark:bg-white/5 border border-white/30 dark:border-white/10 rounded-lg text-sm text-text">
+                                  <input
+                                    {...register(`children.${i}.name`)}
+                                    className="w-full px-2 py-1.5 bg-white/40 dark:bg-white/5 border border-white/30 dark:border-white/10 rounded-lg text-sm text-text"
+                                  />
+                                </td>
+                                <td className="py-1.5 pr-2">
+                                  <select
+                                    {...register(`children.${i}.sex`)}
+                                    className="w-full px-2 py-1.5 bg-white/40 dark:bg-white/5 border border-white/30 dark:border-white/10 rounded-lg text-sm text-text"
+                                  >
                                     <option value="">--</option>
                                     <option value="male">Male</option>
                                     <option value="female">Female</option>
                                   </select>
                                 </td>
-                                <td className="py-1.5 pr-2"><input {...register(`children.${i}.contact`)} className="w-full px-2 py-1.5 bg-white/40 dark:bg-white/5 border border-white/30 dark:border-white/10 rounded-lg text-sm text-text" /></td>
-                                <td className="py-1.5"><button type="button" onClick={() => childrenField.remove(i)} className="p-1 text-danger hover:bg-danger/10 rounded-lg"><Trash2 className="w-4 h-4" /></button></td>
+                                <td className="py-1.5 pr-2">
+                                  <input
+                                    {...register(`children.${i}.contact`)}
+                                    className="w-full px-2 py-1.5 bg-white/40 dark:bg-white/5 border border-white/30 dark:border-white/10 rounded-lg text-sm text-text"
+                                  />
+                                </td>
+                                <td className="py-1.5">
+                                  <button
+                                    type="button"
+                                    onClick={() => childrenField.remove(i)}
+                                    className="p-1 text-danger hover:bg-danger/10 rounded-lg"
+                                  >
+                                    <Trash2 className="w-4 h-4" />
+                                  </button>
+                                </td>
                               </tr>
                             ))}
                           </tbody>
@@ -674,21 +859,57 @@ export default function RegisterPage() {
                         <table className="w-full min-w-[500px] text-sm">
                           <thead>
                             <tr className="text-left text-text-muted border-b border-white/20">
-                              <th scope="col" className="pb-2 pr-2">Full Name</th>
-                              <th scope="col" className="pb-2 pr-2">Relationship</th>
-                              <th scope="col" className="pb-2 pr-2">Location</th>
-                              <th scope="col" className="pb-2 pr-2">Contact</th>
+                              <th scope="col" className="pb-2 pr-2">
+                                Full Name
+                              </th>
+                              <th scope="col" className="pb-2 pr-2">
+                                Relationship
+                              </th>
+                              <th scope="col" className="pb-2 pr-2">
+                                Location
+                              </th>
+                              <th scope="col" className="pb-2 pr-2">
+                                Contact
+                              </th>
                               <th scope="col" className="pb-2 w-8" />
                             </tr>
                           </thead>
                           <tbody>
                             {relativesField.fields.map((field, i) => (
                               <tr key={field.id} className="border-b border-white/10">
-                                <td className="py-1.5 pr-2"><input {...register(`otherRelatives.${i}.fullName`)} className="w-full px-2 py-1.5 bg-white/40 dark:bg-white/5 border border-white/30 dark:border-white/10 rounded-lg text-sm text-text" /></td>
-                                <td className="py-1.5 pr-2"><input {...register(`otherRelatives.${i}.relationship`)} className="w-full px-2 py-1.5 bg-white/40 dark:bg-white/5 border border-white/30 dark:border-white/10 rounded-lg text-sm text-text" /></td>
-                                <td className="py-1.5 pr-2"><input {...register(`otherRelatives.${i}.location`)} className="w-full px-2 py-1.5 bg-white/40 dark:bg-white/5 border border-white/30 dark:border-white/10 rounded-lg text-sm text-text" /></td>
-                                <td className="py-1.5 pr-2"><input {...register(`otherRelatives.${i}.contact`)} className="w-full px-2 py-1.5 bg-white/40 dark:bg-white/5 border border-white/30 dark:border-white/10 rounded-lg text-sm text-text" /></td>
-                                <td className="py-1.5"><button type="button" onClick={() => relativesField.remove(i)} className="p-1 text-danger hover:bg-danger/10 rounded-lg"><Trash2 className="w-4 h-4" /></button></td>
+                                <td className="py-1.5 pr-2">
+                                  <input
+                                    {...register(`otherRelatives.${i}.fullName`)}
+                                    className="w-full px-2 py-1.5 bg-white/40 dark:bg-white/5 border border-white/30 dark:border-white/10 rounded-lg text-sm text-text"
+                                  />
+                                </td>
+                                <td className="py-1.5 pr-2">
+                                  <input
+                                    {...register(`otherRelatives.${i}.relationship`)}
+                                    className="w-full px-2 py-1.5 bg-white/40 dark:bg-white/5 border border-white/30 dark:border-white/10 rounded-lg text-sm text-text"
+                                  />
+                                </td>
+                                <td className="py-1.5 pr-2">
+                                  <input
+                                    {...register(`otherRelatives.${i}.location`)}
+                                    className="w-full px-2 py-1.5 bg-white/40 dark:bg-white/5 border border-white/30 dark:border-white/10 rounded-lg text-sm text-text"
+                                  />
+                                </td>
+                                <td className="py-1.5 pr-2">
+                                  <input
+                                    {...register(`otherRelatives.${i}.contact`)}
+                                    className="w-full px-2 py-1.5 bg-white/40 dark:bg-white/5 border border-white/30 dark:border-white/10 rounded-lg text-sm text-text"
+                                  />
+                                </td>
+                                <td className="py-1.5">
+                                  <button
+                                    type="button"
+                                    onClick={() => relativesField.remove(i)}
+                                    className="p-1 text-danger hover:bg-danger/10 rounded-lg"
+                                  >
+                                    <Trash2 className="w-4 h-4" />
+                                  </button>
+                                </td>
                               </tr>
                             ))}
                           </tbody>
@@ -697,7 +918,9 @@ export default function RegisterPage() {
                     )}
                     <button
                       type="button"
-                      onClick={() => relativesField.append({ fullName: "", relationship: "", location: "", contact: "" })}
+                      onClick={() =>
+                        relativesField.append({ fullName: "", relationship: "", location: "", contact: "" })
+                      }
                       className="flex items-center gap-1.5 text-sm font-medium text-primary hover:text-primary-dark mt-2"
                     >
                       <Plus className="w-4 h-4" /> Add Relative
@@ -754,7 +977,11 @@ export default function RegisterPage() {
                           {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
                         </button>
                       </div>
-                      {errors.password && <p className="text-xs text-danger mt-1.5" role="alert">{errors.password.message}</p>}
+                      {errors.password && (
+                        <p className="text-xs text-danger mt-1.5" role="alert">
+                          {errors.password.message}
+                        </p>
+                      )}
                     </div>
                     <div>
                       <label className="block text-sm font-medium text-text mb-2">
@@ -769,7 +996,11 @@ export default function RegisterPage() {
                           className={`w-full pl-12 pr-4 py-3 bg-white/60 dark:bg-white/5 border rounded-lg text-sm text-text placeholder:text-text-light focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary ${errors.confirmPassword ? "border-danger" : "border-white/40 dark:border-white/10"}`}
                         />
                       </div>
-                      {errors.confirmPassword && <p className="text-xs text-danger mt-1.5" role="alert">{errors.confirmPassword.message}</p>}
+                      {errors.confirmPassword && (
+                        <p className="text-xs text-danger mt-1.5" role="alert">
+                          {errors.confirmPassword.message}
+                        </p>
+                      )}
                     </div>
                   </div>
 
@@ -783,12 +1014,20 @@ export default function RegisterPage() {
                       />
                       <span className="text-sm text-text-muted">
                         I agree to the{" "}
-                        <a href="/terms" className="text-primary font-medium hover:underline">Terms of Service</a>{" "}
+                        <a href="/terms" className="text-primary font-medium hover:underline">
+                          Terms of Service
+                        </a>{" "}
                         and{" "}
-                        <a href="/privacy" className="text-primary font-medium hover:underline">Privacy Policy</a>
+                        <a href="/privacy" className="text-primary font-medium hover:underline">
+                          Privacy Policy
+                        </a>
                       </span>
                     </label>
-                    {errors.terms && <p className="text-xs text-danger" role="alert">{errors.terms.message}</p>}
+                    {errors.terms && (
+                      <p className="text-xs text-danger" role="alert">
+                        {errors.terms.message}
+                      </p>
+                    )}
                   </div>
 
                   {/* Reaffirmation */}
@@ -803,7 +1042,11 @@ export default function RegisterPage() {
                         I reaffirm that the information I have provided above is correct.
                       </span>
                     </label>
-                    {errors.reaffirmation && <p className="text-xs text-danger mt-1.5" role="alert">{errors.reaffirmation.message}</p>}
+                    {errors.reaffirmation && (
+                      <p className="text-xs text-danger mt-1.5" role="alert">
+                        {errors.reaffirmation.message}
+                      </p>
+                    )}
                   </div>
                 </div>
               )}
@@ -840,9 +1083,13 @@ export default function RegisterPage() {
               className="flex items-center gap-2 px-6 py-2.5 text-sm font-semibold text-white bg-gradient-to-r from-primary to-primary-dark rounded-lg hover:shadow-lg hover:shadow-primary/30 hover:-translate-y-0.5 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:translate-y-0 disabled:hover:shadow-none"
             >
               {isSubmitting ? (
-                <><Loader2 className="w-4 h-4 animate-spin" /> Submitting...</>
+                <>
+                  <Loader2 className="w-4 h-4 animate-spin" /> Submitting...
+                </>
               ) : (
-                <>Submit Application <ArrowRight className="w-4 h-4" /></>
+                <>
+                  Submit Application <ArrowRight className="w-4 h-4" />
+                </>
               )}
             </button>
           )}

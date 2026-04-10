@@ -26,13 +26,15 @@ export class ExpenseService {
 
   async approve(id: string, userId: string) {
     const expense = await this.getById(id);
-    if (expense.status !== "pending") throw new HTTPException(400, { message: "Only pending expenses can be approved" });
+    if (expense.status !== "pending")
+      throw new HTTPException(400, { message: "Only pending expenses can be approved" });
     return repo.updateStatus(id, "approved", userId);
   }
 
   async reject(id: string) {
     const expense = await this.getById(id);
-    if (expense.status !== "pending") throw new HTTPException(400, { message: "Only pending expenses can be rejected" });
+    if (expense.status !== "pending")
+      throw new HTTPException(400, { message: "Only pending expenses can be rejected" });
     return repo.updateStatus(id, "rejected");
   }
 

@@ -17,7 +17,7 @@ accounts.get("/", zValidator("query", paginationSchema), async (c) => {
   const user = c.get("user");
 
   // Members can only see their own accounts
-  const memberId = user.role === "member" ? user.memberId ?? undefined : c.req.query("memberId");
+  const memberId = user.role === "member" ? (user.memberId ?? undefined) : c.req.query("memberId");
 
   const result = await service.getAll({ ...params, type, status, memberId });
   return c.json({ success: true, data: result });

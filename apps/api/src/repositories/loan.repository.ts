@@ -28,13 +28,13 @@ export class LoanRepository {
     return prisma.loan.findUnique({ where: { id }, include: { member: true } });
   }
 
-  async create(data: {
-    memberId: string; type: string; amount: number; interestRate: number; term: number;
-  }) {
+  async create(data: { memberId: string; type: string; amount: number; interestRate: number; term: number }) {
     const monthlyRate = data.interestRate / 100 / 12;
-    const monthlyPayment = monthlyRate > 0
-      ? (data.amount * monthlyRate * Math.pow(1 + monthlyRate, data.term)) / (Math.pow(1 + monthlyRate, data.term) - 1)
-      : data.amount / data.term;
+    const monthlyPayment =
+      monthlyRate > 0
+        ? (data.amount * monthlyRate * Math.pow(1 + monthlyRate, data.term)) /
+          (Math.pow(1 + monthlyRate, data.term) - 1)
+        : data.amount / data.term;
 
     return prisma.loan.create({
       data: {

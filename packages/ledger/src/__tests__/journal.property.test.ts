@@ -31,34 +31,29 @@ const header = {
 describe("JournalEntry properties", () => {
   test("balanced builder always produces balanced entry", () => {
     fc.assert(
-      fc.property(
-        fc.array(fc.tuple(accountCode, amount), { minLength: 1, maxLength: 10 }),
-        (legs) => {
-          const builder = JournalEntry.builder({
-            ...header,
-            idempotencyKey: `prop-${Math.random()}`,
-          });
-          // Left side: all the legs go on debit.
-          for (const [acct, amt] of legs) builder.debit(acct, amt);
-          // Right side: sum of all legs, one credit line against the balancing account.
-          const total = legs.reduce((acc, [, amt]) => Money.add(acc, amt), Money.zero());
-          builder.credit(GL_ACCOUNTS.SUSPENSE.code, total);
+      fc.property(fc.array(fc.tuple(accountCode, amount), { minLength: 1, maxLength: 10 }), (legs) => {
+        const builder = JournalEntry.builder({
+          ...header,
+          idempotencyKey: `prop-${Math.random()}`,
+        });
+        // Left side: all the legs go on debit.
+        for (const [acct, amt] of legs) builder.debit(acct, amt);
+        // Right side: sum of all legs, one credit line against the balancing account.
+        const total = legs.reduce((acc, [, amt]) => Money.add(acc, amt), Money.zero());
+        builder.credit(GL_ACCOUNTS.SUSPENSE.code, total);
 
-          const entry = builder.build();
-          assertBalanced(entry);
-          expect(entry.lines.length).toBe(legs.length + 1);
-          return true;
-        },
-      ),
+        const entry = builder.build();
+        assertBalanced(entry);
+        expect(entry.lines.length).toBe(legs.length + 1);
+        return true;
+      }),
     );
   });
 
   test("mismatched credit always throws at build()", () => {
     fc.assert(
       fc.property(
-        fc
-          .tuple(amount, fc.integer({ min: 1, max: 10 }))
-          .filter(([amt, delta]) => !Money.isZero(amt) && delta !== 0),
+        fc.tuple(amount, fc.integer({ min: 1, max: 10 })).filter(([amt, delta]) => !Money.isZero(amt) && delta !== 0),
         ([amt, delta]) => {
           const builder = JournalEntry.builder({
             ...header,

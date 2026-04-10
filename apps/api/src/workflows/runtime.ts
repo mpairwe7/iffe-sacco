@@ -51,9 +51,7 @@ export async function runWorkflow<I, O>(
     };
   }
   if (existing && existing.status === "running") {
-    throw new Error(
-      `Workflow ${def.type} already running for idempotencyKey=${opts.idempotencyKey}`,
-    );
+    throw new Error(`Workflow ${def.type} already running for idempotencyKey=${opts.idempotencyKey}`);
   }
 
   const run = await prisma.workflowRun.create({

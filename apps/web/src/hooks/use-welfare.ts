@@ -2,12 +2,7 @@
 
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { welfareApi } from "@/lib/api/welfare";
-import type {
-  CreateWelfareInput,
-  UpdateWelfareInput,
-  PledgeInput,
-  PaginationParams,
-} from "@iffe/shared";
+import type { CreateWelfareInput, UpdateWelfareInput, PledgeInput, PaginationParams } from "@iffe/shared";
 
 export function useWelfarePrograms(params?: PaginationParams) {
   return useQuery({
@@ -34,8 +29,7 @@ export function useCreateProgram() {
 export function useUpdateProgram() {
   const qc = useQueryClient();
   return useMutation({
-    mutationFn: ({ id, data }: { id: string; data: UpdateWelfareInput }) =>
-      welfareApi.updateProgram(id, data),
+    mutationFn: ({ id, data }: { id: string; data: UpdateWelfareInput }) => welfareApi.updateProgram(id, data),
     onSuccess: () => qc.invalidateQueries({ queryKey: ["welfare"] }),
   });
 }

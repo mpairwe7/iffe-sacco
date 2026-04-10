@@ -44,9 +44,7 @@ export const pledgePaymentWorkflow = defineWorkflow<PledgePaymentInput, PledgePa
       const pledged = Money.fromDb(pledge.amount);
       const remaining = Money.sub(pledged, alreadyPaid);
       if (Money.gt(amount, remaining)) {
-        throw new Error(
-          `Payment ${Money.toString(amount)} exceeds outstanding pledge ${Money.toString(remaining)}`,
-        );
+        throw new Error(`Payment ${Money.toString(amount)} exceeds outstanding pledge ${Money.toString(remaining)}`);
       }
 
       const debitAccount =

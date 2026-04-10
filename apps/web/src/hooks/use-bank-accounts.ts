@@ -2,11 +2,7 @@
 
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { bankAccountsApi } from "@/lib/api/bank-accounts";
-import type {
-  CreateBankAccountInput,
-  UpdateBankAccountInput,
-  PaginationParams,
-} from "@iffe/shared";
+import type { CreateBankAccountInput, UpdateBankAccountInput, PaginationParams } from "@iffe/shared";
 
 export function useBankAccounts(params?: PaginationParams) {
   return useQuery({
@@ -25,8 +21,7 @@ export function useBankAccountStats() {
 export function useCreateBankAccount() {
   const qc = useQueryClient();
   return useMutation({
-    mutationFn: (data: CreateBankAccountInput) =>
-      bankAccountsApi.createBankAccount(data),
+    mutationFn: (data: CreateBankAccountInput) => bankAccountsApi.createBankAccount(data),
     onSuccess: () => qc.invalidateQueries({ queryKey: ["bank-accounts"] }),
   });
 }
@@ -34,13 +29,8 @@ export function useCreateBankAccount() {
 export function useUpdateBankAccount() {
   const qc = useQueryClient();
   return useMutation({
-    mutationFn: ({
-      id,
-      data,
-    }: {
-      id: string;
-      data: UpdateBankAccountInput;
-    }) => bankAccountsApi.updateBankAccount(id, data),
+    mutationFn: ({ id, data }: { id: string; data: UpdateBankAccountInput }) =>
+      bankAccountsApi.updateBankAccount(id, data),
     onSuccess: () => qc.invalidateQueries({ queryKey: ["bank-accounts"] }),
   });
 }

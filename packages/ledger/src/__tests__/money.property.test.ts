@@ -10,9 +10,7 @@ import fc from "fast-check";
 import { Money } from "../money";
 
 // Generator for integer-valued money (no float footguns at the boundary).
-const moneyInt = fc
-  .integer({ min: 0, max: 1_000_000_000 })
-  .map((n) => Money.of(n));
+const moneyInt = fc.integer({ min: 0, max: 1_000_000_000 }).map((n) => Money.of(n));
 
 // Generator for decimal-string money up to 4 dp.
 const moneyString = fc
@@ -41,15 +39,11 @@ describe("Money properties", () => {
   });
 
   test("zero is additive identity", () => {
-    fc.assert(
-      fc.property(anyMoney, (a) => Money.eq(Money.add(a, Money.zero()), a)),
-    );
+    fc.assert(fc.property(anyMoney, (a) => Money.eq(Money.add(a, Money.zero()), a)));
   });
 
   test("subtracting self yields zero", () => {
-    fc.assert(
-      fc.property(anyMoney, (a) => Money.isZero(Money.sub(a, a))),
-    );
+    fc.assert(fc.property(anyMoney, (a) => Money.isZero(Money.sub(a, a))));
   });
 
   test("add then sub is identity", () => {
@@ -61,15 +55,11 @@ describe("Money properties", () => {
   });
 
   test("mul by 1 is identity", () => {
-    fc.assert(
-      fc.property(anyMoney, (a) => Money.eq(Money.mul(a, 1), a)),
-    );
+    fc.assert(fc.property(anyMoney, (a) => Money.eq(Money.mul(a, 1), a)));
   });
 
   test("mul by 0 is zero", () => {
-    fc.assert(
-      fc.property(anyMoney, (a) => Money.isZero(Money.mul(a, 0))),
-    );
+    fc.assert(fc.property(anyMoney, (a) => Money.isZero(Money.mul(a, 0))));
   });
 
   test("toPostingAmount is idempotent", () => {

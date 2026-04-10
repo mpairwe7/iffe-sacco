@@ -52,7 +52,7 @@ export function EditBankAccountModal({ open, onOpenChange, bankAccount }: Props)
         onError: (err) => {
           toast.error(err.message || "Failed to update bank account");
         },
-      }
+      },
     );
   }
 
@@ -62,9 +62,7 @@ export function EditBankAccountModal({ open, onOpenChange, bankAccount }: Props)
         <Dialog.Overlay className="fixed inset-0 bg-black/40 backdrop-blur-sm z-50 data-[state=open]:animate-in data-[state=open]:fade-in data-[state=closed]:animate-out data-[state=closed]:fade-out" />
         <Dialog.Content className="fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[calc(100%-2rem)] max-w-lg glass-card rounded-xl p-6 z-50 max-h-[90vh] overflow-y-auto data-[state=open]:animate-in data-[state=open]:fade-in data-[state=open]:zoom-in-95 data-[state=open]:slide-in-from-left-1/2 data-[state=open]:slide-in-from-top-[48%]">
           <div className="flex items-center justify-between mb-6">
-            <Dialog.Title className="text-lg font-semibold text-text">
-              Edit Bank Account
-            </Dialog.Title>
+            <Dialog.Title className="text-lg font-semibold text-text">Edit Bank Account</Dialog.Title>
             <Dialog.Close asChild>
               <button className="p-1.5 text-text-light hover:text-text rounded-lg" aria-label="Close">
                 <X className="w-4 h-4" />
@@ -80,13 +78,11 @@ export function EditBankAccountModal({ open, onOpenChange, bankAccount }: Props)
                 {...register("bankName")}
                 className={cn(
                   "w-full px-4 py-2.5 bg-white/60 border border-white/40 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary",
-                  errors.bankName && "border-danger/50 focus:ring-danger/20 focus:border-danger"
+                  errors.bankName && "border-danger/50 focus:ring-danger/20 focus:border-danger",
                 )}
                 placeholder="e.g. Stanbic Bank"
               />
-              {errors.bankName && (
-                <p className="text-xs text-danger mt-1">{errors.bankName.message}</p>
-              )}
+              {errors.bankName && <p className="text-xs text-danger mt-1">{errors.bankName.message}</p>}
             </div>
 
             <div>
@@ -96,13 +92,11 @@ export function EditBankAccountModal({ open, onOpenChange, bankAccount }: Props)
                 {...register("accountName")}
                 className={cn(
                   "w-full px-4 py-2.5 bg-white/60 border border-white/40 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary",
-                  errors.accountName && "border-danger/50 focus:ring-danger/20 focus:border-danger"
+                  errors.accountName && "border-danger/50 focus:ring-danger/20 focus:border-danger",
                 )}
                 placeholder="e.g. IFFE SACCO Main Account"
               />
-              {errors.accountName && (
-                <p className="text-xs text-danger mt-1">{errors.accountName.message}</p>
-              )}
+              {errors.accountName && <p className="text-xs text-danger mt-1">{errors.accountName.message}</p>}
             </div>
 
             <div>
@@ -112,13 +106,11 @@ export function EditBankAccountModal({ open, onOpenChange, bankAccount }: Props)
                 {...register("accountNo")}
                 className={cn(
                   "w-full px-4 py-2.5 bg-white/60 border border-white/40 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary",
-                  errors.accountNo && "border-danger/50 focus:ring-danger/20 focus:border-danger"
+                  errors.accountNo && "border-danger/50 focus:ring-danger/20 focus:border-danger",
                 )}
                 placeholder="Account number"
               />
-              {errors.accountNo && (
-                <p className="text-xs text-danger mt-1">{errors.accountNo.message}</p>
-              )}
+              {errors.accountNo && <p className="text-xs text-danger mt-1">{errors.accountNo.message}</p>}
             </div>
 
             <div>

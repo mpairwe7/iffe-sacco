@@ -18,6 +18,6 @@ export const useUIStore = create<UIState>()(
       setSidebarCollapsed: (collapsed) => set({ sidebarCollapsed: collapsed }),
       setCommandPaletteOpen: (open) => set({ commandPaletteOpen: open }),
     }),
-    { name: "iffe-ui" }
-  )
+    { name: "iffe-ui" },
+  ),
 );

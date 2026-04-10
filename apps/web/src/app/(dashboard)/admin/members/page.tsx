@@ -20,9 +20,7 @@ const columns = [
   {
     key: "memberId",
     label: "Member ID",
-    render: (row: MemberRow) => (
-      <span className="font-mono text-text-muted text-xs">{row.memberId}</span>
-    ),
+    render: (row: MemberRow) => <span className="font-mono text-text-muted text-xs">{row.memberId}</span>,
   },
   {
     key: "name",
@@ -37,7 +35,10 @@ const columns = [
             <span className="text-xs font-bold text-primary">{initials}</span>
           </div>
           <div>
-            <Link href={`/admin/members/${row.id}`} className="font-medium text-text hover:text-primary transition-colors">
+            <Link
+              href={`/admin/members/${row.id}`}
+              className="font-medium text-text hover:text-primary transition-colors"
+            >
               {name}
             </Link>
             <p className="text-xs text-text-muted">{row.email}</p>
@@ -68,9 +69,15 @@ const columns = [
     render: (row: MemberRow) => {
       const statusLabel = row.status.charAt(0).toUpperCase() + row.status.slice(1);
       return (
-        <span className={`inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium ${
-          row.status === "active" ? "bg-success/15 text-success" : row.status === "pending" ? "bg-warning/15 text-warning" : "bg-text-light/10 text-text-light"
-        }`}>
+        <span
+          className={`inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium ${
+            row.status === "active"
+              ? "bg-success/15 text-success"
+              : row.status === "pending"
+                ? "bg-warning/15 text-warning"
+                : "bg-text-light/10 text-text-light"
+          }`}
+        >
           {statusLabel}
         </span>
       );
@@ -111,7 +118,10 @@ export default function MembersPage() {
           <Pencil className="w-4 h-4" />
         </Link>
         <button
-          onClick={() => { setDeleteId(row.id); setDeleteOpen(true); }}
+          onClick={() => {
+            setDeleteId(row.id);
+            setDeleteOpen(true);
+          }}
           className="p-2.5 text-text-muted hover:text-danger rounded-lg hover:bg-danger/15"
           title="Delete"
         >
@@ -150,14 +160,18 @@ export default function MembersPage() {
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
         <div className="bg-white dark:bg-gray-950 border border-gray-200 dark:border-gray-800 shadow-sm rounded-xl p-5">
           <p className="text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Total Members</p>
-          <p className="text-xl font-bold text-gray-900 dark:text-white mt-1">{stats?.total?.toLocaleString() ?? "—"}</p>
+          <p className="text-xl font-bold text-gray-900 dark:text-white mt-1">
+            {stats?.total?.toLocaleString() ?? "—"}
+          </p>
         </div>
         <div className="bg-white dark:bg-gray-950 border border-gray-200 dark:border-gray-800 shadow-sm rounded-xl p-5">
           <p className="text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Active</p>
           <p className="text-2xl font-bold text-success mt-1">{stats?.active?.toLocaleString() ?? "—"}</p>
         </div>
         <div className="bg-white dark:bg-gray-950 border border-gray-200 dark:border-gray-800 shadow-sm rounded-xl p-5">
-          <p className="text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Pending Requests</p>
+          <p className="text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+            Pending Requests
+          </p>
           <p className="text-2xl font-bold text-warning mt-1">{stats?.pending?.toLocaleString() ?? "—"}</p>
         </div>
       </div>

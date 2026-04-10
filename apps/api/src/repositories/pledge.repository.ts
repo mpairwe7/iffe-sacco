@@ -22,7 +22,9 @@ export class PledgeRepository {
     const where = { memberId };
     const [data, total] = await Promise.all([
       prisma.pledge.findMany({
-        where, skip, take: limit,
+        where,
+        skip,
+        take: limit,
         orderBy: { createdAt: "desc" },
         include: { program: true },
       }),

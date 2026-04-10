@@ -8,13 +8,7 @@ import { HTTPException } from "hono/http-exception";
 import { passwordResetEmail, sendEmail } from "./email.service";
 import { recordFailedLogin, recordSuccessfulLogin } from "../middleware/account-lockout";
 import { logger } from "../utils/logger";
-import type {
-  LoginInput,
-  PasswordResetRequestResponse,
-  RegisterInput,
-  UpdateProfileInput,
-  User,
-} from "@iffe/shared";
+import type { LoginInput, PasswordResetRequestResponse, RegisterInput, UpdateProfileInput, User } from "@iffe/shared";
 
 function toUser(user: {
   id: string;
@@ -63,10 +57,7 @@ export class AuthService {
       },
     });
 
-    const sessionToken = await signSessionToken(
-      { sub: user.id, role: user.role, sid: session.id },
-      expiresAt,
-    );
+    const sessionToken = await signSessionToken({ sub: user.id, role: user.role, sid: session.id }, expiresAt);
 
     return { sessionToken, expiresAt, sessionId: session.id };
   }
@@ -191,11 +182,7 @@ export class AuthService {
     return toUser(user);
   }
 
-  async changePassword(
-    userId: string,
-    input: { currentPassword: string; newPassword: string },
-    sessionId?: string,
-  ) {
+  async changePassword(userId: string, input: { currentPassword: string; newPassword: string }, sessionId?: string) {
     const user = await prisma.user.findUnique({ where: { id: userId } });
     if (!user) throw new HTTPException(404, { message: "User not found" });
 
@@ -223,7 +210,17 @@ export class AuthService {
     const user = await prisma.user.update({
       where: { id: userId },
       data: { name: input.name, email: input.email, phone: input.phone },
-      select: { id: true, name: true, email: true, phone: true, role: true, isActive: true, lastLogin: true, createdAt: true, avatar: true },
+      select: {
+        id: true,
+        name: true,
+        email: true,
+        phone: true,
+        role: true,
+        isActive: true,
+        lastLogin: true,
+        createdAt: true,
+        avatar: true,
+      },
     });
     return toUser(user);
   }
@@ -273,10 +270,7 @@ export class AuthService {
         message.to = recipient.email;
         await sendEmail(message);
       } catch (err) {
-        logger.error(
-          { err: err instanceof Error ? err.message : String(err) },
-          "failed to send password reset email",
-        );
+        logger.error({ err: err instanceof Error ? err.message : String(err) }, "failed to send password reset email");
         // Non-fatal: we still return the (debug) url in dev mode; in prod
         // the user can ask support to resend.
       }

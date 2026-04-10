@@ -10,13 +10,13 @@ advice. Revisit with counsel before any production go-live.
 
 ## Regulatory surface area (Uganda)
 
-| Regime | Authority | Scope |
-|---|---|---|
-| Tier 4 Microfinance Institutions and Money Lenders Act (2016) | UMRA | Governance, reporting, consumer protection |
-| Cooperative Societies Act (Cap 112) | Ministry of Trade, Industry and Cooperatives | Registration, bylaws, audit |
-| Data Protection and Privacy Act (2019) | NITA-U | PII processing, data subject rights |
-| Financial Institutions (Anti-Money Laundering) Regulations | Bank of Uganda / FIA | KYC, CTR, STR reporting |
-| NCCA guidance for SACCOs | Ministry | Governance, election, audit |
+| Regime                                                        | Authority                                    | Scope                                      |
+| ------------------------------------------------------------- | -------------------------------------------- | ------------------------------------------ |
+| Tier 4 Microfinance Institutions and Money Lenders Act (2016) | UMRA                                         | Governance, reporting, consumer protection |
+| Cooperative Societies Act (Cap 112)                           | Ministry of Trade, Industry and Cooperatives | Registration, bylaws, audit                |
+| Data Protection and Privacy Act (2019)                        | NITA-U                                       | PII processing, data subject rights        |
+| Financial Institutions (Anti-Money Laundering) Regulations    | Bank of Uganda / FIA                         | KYC, CTR, STR reporting                    |
+| NCCA guidance for SACCOs                                      | Ministry                                     | Governance, election, audit                |
 
 ## Data protection controls
 
@@ -37,26 +37,26 @@ only when the member voluntarily provides them.
 
 ### Data subject rights
 
-| Right | Endpoint | Notes |
-|---|---|---|
-| Access / Portability | `GET /api/v1/gdpr/members/:id/export` | Admin-only, audited, returns full JSON dump |
-| Erasure | `POST /api/v1/gdpr/members/:id/delete` | Soft delete + anonymization; financial ledger retained for regulatory compliance |
-| Rectification | Existing member edit endpoints | Admin role required |
-| Objection | Manual process pending consent table | Contact data protection officer |
-| Restriction | Account status `frozen` | Admin role required |
+| Right                | Endpoint                               | Notes                                                                            |
+| -------------------- | -------------------------------------- | -------------------------------------------------------------------------------- |
+| Access / Portability | `GET /api/v1/gdpr/members/:id/export`  | Admin-only, audited, returns full JSON dump                                      |
+| Erasure              | `POST /api/v1/gdpr/members/:id/delete` | Soft delete + anonymization; financial ledger retained for regulatory compliance |
+| Rectification        | Existing member edit endpoints         | Admin role required                                                              |
+| Objection            | Manual process pending consent table   | Contact data protection officer                                                  |
+| Restriction          | Account status `frozen`                | Admin role required                                                              |
 
 ### Retention policy
 
-| Data class | Retention | Justification |
-|---|---|---|
-| Journal entries | Indefinite | Regulatory audit trail |
-| Audit logs — financial actions | 10 years | Regulatory audit trail |
-| Audit logs — auth/session | 2 years | Security investigation window |
-| Password reset tokens | Single use, 30-min TTL | Security |
-| Idempotency keys | 24h | Request replay window |
-| Sessions | Until revoke or TTL (24h / 7d remember-me) | Minimum viable for UX |
-| Member PII (name, contact, family) | Until deletion request | Data subject control |
-| Applications | 7 years | Regulatory membership records |
+| Data class                         | Retention                                  | Justification                 |
+| ---------------------------------- | ------------------------------------------ | ----------------------------- |
+| Journal entries                    | Indefinite                                 | Regulatory audit trail        |
+| Audit logs — financial actions     | 10 years                                   | Regulatory audit trail        |
+| Audit logs — auth/session          | 2 years                                    | Security investigation window |
+| Password reset tokens              | Single use, 30-min TTL                     | Security                      |
+| Idempotency keys                   | 24h                                        | Request replay window         |
+| Sessions                           | Until revoke or TTL (24h / 7d remember-me) | Minimum viable for UX         |
+| Member PII (name, contact, family) | Until deletion request                     | Data subject control          |
+| Applications                       | 7 years                                    | Regulatory membership records |
 
 ### PII encryption
 
@@ -73,7 +73,7 @@ Not yet implemented — Phase 7 scaffold lives at
 before production:
 
 - [ ] Document-verification step in the application workflow
-  (Smile ID or Onfido via Vercel Marketplace)
+      (Smile ID or Onfido via Vercel Marketplace)
 - [ ] Currency transaction reporting threshold alerts (UGX equivalent
       of USD 10k — configurable)
 - [ ] Suspicious transaction report (STR) generator for the

@@ -8,6 +8,7 @@ import { useAuthStore } from "@/stores/auth-store";
 const labelMap: Record<string, string> = {
   admin: "Admin",
   portal: "Portal",
+  staff: "Staff",
   dashboard: "Dashboard",
   members: "Members",
   create: "Create",
@@ -35,7 +36,14 @@ const labelMap: Record<string, string> = {
 export function Breadcrumb() {
   const pathname = usePathname();
   const role = useAuthStore((s) => s.user?.role);
-  const homeHref = role === "member" ? "/portal/savings" : role === "chairman" ? "/chairman" : "/dashboard";
+  const homeHref =
+    role === "member"
+      ? "/portal/dashboard"
+      : role === "chairman"
+        ? "/chairman"
+        : role === "staff"
+          ? "/staff"
+          : "/dashboard";
   const segments = pathname.split("/").filter(Boolean);
 
   if (segments.length <= 1) return null;
@@ -58,7 +66,9 @@ export function Breadcrumb() {
           {crumb.isLast ? (
             <span className="font-medium text-text">{crumb.label}</span>
           ) : (
-            <Link href={crumb.href} className="text-text-muted hover:text-primary">{crumb.label}</Link>
+            <Link href={crumb.href} className="text-text-muted hover:text-primary">
+              {crumb.label}
+            </Link>
           )}
         </span>
       ))}

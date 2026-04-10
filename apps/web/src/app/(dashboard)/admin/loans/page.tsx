@@ -21,7 +21,9 @@ export default function LoansPage() {
 
   const loansResponse = query.data;
   const loans = (loansResponse?.data || []) as LoanRow[];
-  const stats = statsQuery.data as { active?: number; totalDisbursed?: number; outstanding?: number; overdue?: number } | undefined;
+  const stats = statsQuery.data as
+    | { active?: number; totalDisbursed?: number; outstanding?: number; overdue?: number }
+    | undefined;
 
   function handleApprove(id: string) {
     approveMutation.mutate(id, {
@@ -38,7 +40,10 @@ export default function LoansPage() {
   }
 
   const formatLoanType = (type: string) =>
-    type.split("_").map((w) => w.charAt(0).toUpperCase() + w.slice(1)).join(" ");
+    type
+      .split("_")
+      .map((w) => w.charAt(0).toUpperCase() + w.slice(1))
+      .join(" ");
 
   const columns = [
     {
@@ -61,9 +66,19 @@ export default function LoansPage() {
       render: (row: LoanRow) => {
         const label = formatLoanType(row.type);
         return (
-          <span className={`inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium ${
-            row.type.includes("business") ? "bg-primary/10 text-primary" : row.type.includes("personal") ? "bg-info/10 text-info" : row.type.includes("emergency") ? "bg-danger/15 text-danger" : "bg-secondary/10 text-secondary"
-          }`}>{label}</span>
+          <span
+            className={`inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium ${
+              row.type.includes("business")
+                ? "bg-primary/10 text-primary"
+                : row.type.includes("personal")
+                  ? "bg-info/10 text-info"
+                  : row.type.includes("emergency")
+                    ? "bg-danger/15 text-danger"
+                    : "bg-secondary/10 text-secondary"
+            }`}
+          >
+            {label}
+          </span>
         );
       },
     },
@@ -77,7 +92,9 @@ export default function LoansPage() {
       key: "balance",
       label: "Outstanding",
       align: "right" as const,
-      render: (row: LoanRow) => <span className="font-bold text-gray-900 dark:text-white">{formatCurrency(Number(row.balance))}</span>,
+      render: (row: LoanRow) => (
+        <span className="font-bold text-gray-900 dark:text-white">{formatCurrency(Number(row.balance))}</span>
+      ),
     },
     {
       key: "interestRate",
@@ -95,9 +112,19 @@ export default function LoansPage() {
       render: (row: LoanRow) => {
         const statusLabel = row.status.charAt(0).toUpperCase() + row.status.slice(1);
         return (
-          <span className={`inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium ${
-            row.status === "active" ? "bg-success/15 text-success" : row.status === "pending" ? "bg-warning/15 text-warning" : row.status === "paid" ? "bg-info/10 text-info" : "bg-danger/15 text-danger"
-          }`}>{statusLabel}</span>
+          <span
+            className={`inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium ${
+              row.status === "active"
+                ? "bg-success/15 text-success"
+                : row.status === "pending"
+                  ? "bg-warning/15 text-warning"
+                  : row.status === "paid"
+                    ? "bg-info/10 text-info"
+                    : "bg-danger/15 text-danger"
+            }`}
+          >
+            {statusLabel}
+          </span>
         );
       },
     },
@@ -155,15 +182,21 @@ export default function LoansPage() {
       <div className="grid grid-cols-1 sm:grid-cols-4 gap-4">
         <div className="bg-white dark:bg-gray-950 border border-gray-200 dark:border-gray-800 shadow-sm rounded-xl p-5">
           <p className="text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Active Loans</p>
-          <p className="text-xl font-bold text-gray-900 dark:text-white mt-1">{stats?.active?.toLocaleString() ?? "\u2014"}</p>
+          <p className="text-xl font-bold text-gray-900 dark:text-white mt-1">
+            {stats?.active?.toLocaleString() ?? "\u2014"}
+          </p>
         </div>
         <div className="bg-white dark:bg-gray-950 border border-gray-200 dark:border-gray-800 shadow-sm rounded-xl p-5">
           <p className="text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Total Disbursed</p>
-          <p className="text-2xl font-bold text-primary mt-1">{stats?.totalDisbursed != null ? formatCurrency(stats.totalDisbursed) : "\u2014"}</p>
+          <p className="text-2xl font-bold text-primary mt-1">
+            {stats?.totalDisbursed != null ? formatCurrency(stats.totalDisbursed) : "\u2014"}
+          </p>
         </div>
         <div className="bg-white dark:bg-gray-950 border border-gray-200 dark:border-gray-800 shadow-sm rounded-xl p-5">
           <p className="text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Outstanding</p>
-          <p className="text-2xl font-bold text-warning mt-1">{stats?.outstanding != null ? formatCurrency(stats.outstanding) : "\u2014"}</p>
+          <p className="text-2xl font-bold text-warning mt-1">
+            {stats?.outstanding != null ? formatCurrency(stats.outstanding) : "\u2014"}
+          </p>
         </div>
         <div className="bg-white dark:bg-gray-950 border border-gray-200 dark:border-gray-800 shadow-sm rounded-xl p-5">
           <p className="text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Overdue</p>

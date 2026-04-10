@@ -66,7 +66,10 @@ export default function MemberWithdrawalsPage() {
       </div>
 
       <div className="grid lg:grid-cols-2 gap-6">
-        <form onSubmit={handleSubmit(onSubmit)} className="bg-white dark:bg-gray-950 border border-gray-200 dark:border-gray-800 shadow-sm rounded-xl p-6 space-y-5">
+        <form
+          onSubmit={handleSubmit(onSubmit)}
+          className="bg-white dark:bg-gray-950 border border-gray-200 dark:border-gray-800 shadow-sm rounded-xl p-6 space-y-5"
+        >
           <h3 className="font-bold text-gray-900 dark:text-white">Withdrawal Details</h3>
           <div>
             <label className="block text-sm font-medium text-text mb-2">From Account</label>
@@ -77,7 +80,8 @@ export default function MemberWithdrawalsPage() {
               <option value="">Select an account</option>
               {accounts.map((acc) => (
                 <option key={acc.id} value={acc.id}>
-                  {acc.type.replace("_", " ").replace(/\b\w/g, (c) => c.toUpperCase())} - {acc.accountNo} (Balance: {formatCurrency(acc.balance)})
+                  {acc.type.replace("_", " ").replace(/\b\w/g, (c) => c.toUpperCase())} - {acc.accountNo} (Balance:{" "}
+                  {formatCurrency(acc.balance)})
                 </option>
               ))}
             </select>
@@ -120,7 +124,9 @@ export default function MemberWithdrawalsPage() {
 
           <div className="flex items-start gap-3 p-4 bg-warning/5 border border-warning/20 rounded-lg">
             <AlertTriangle className="w-5 h-5 text-warning shrink-0 mt-0.5" />
-            <p className="text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Withdrawal requests are subject to admin approval and may take up to 24 hours to process.</p>
+            <p className="text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+              Withdrawal requests are subject to admin approval and may take up to 24 hours to process.
+            </p>
           </div>
 
           <button
@@ -158,13 +164,20 @@ export default function MemberWithdrawalsPage() {
                   <div key={w.id} className="flex items-center justify-between p-3 bg-white/50 rounded-lg">
                     <div>
                       <p className="text-sm font-medium text-text">{formatCurrency(w.amount)}</p>
-                      <p className="text-xs text-text-muted">{(w.method || "cash").replace("_", " ").replace(/\b\w/g, (c: string) => c.toUpperCase())} &middot; {formatDate(w.createdAt)}</p>
+                      <p className="text-xs text-text-muted">
+                        {(w.method || "cash").replace("_", " ").replace(/\b\w/g, (c: string) => c.toUpperCase())}{" "}
+                        &middot; {formatDate(w.createdAt)}
+                      </p>
                     </div>
-                    <span className={`text-xs font-medium px-2.5 py-1 rounded-full ${
-                      w.status === "approved" ? "text-success bg-success/15" :
-                      w.status === "pending" ? "text-warning bg-warning/15" :
-                      "text-danger bg-danger/15"
-                    }`}>
+                    <span
+                      className={`text-xs font-medium px-2.5 py-1 rounded-full ${
+                        w.status === "approved"
+                          ? "text-success bg-success/15"
+                          : w.status === "pending"
+                            ? "text-warning bg-warning/15"
+                            : "text-danger bg-danger/15"
+                      }`}
+                    >
                       {w.status.charAt(0).toUpperCase() + w.status.slice(1)}
                     </span>
                   </div>

@@ -91,6 +91,7 @@ The API follows clean architecture with strict dependency rules:
 ```
 
 ### Dependency Direction
+
 - Routes depend on Services and Shared Schemas
 - Services depend on Repositories and Shared Types
 - Repositories depend on Prisma Client
@@ -141,38 +142,38 @@ Request → Logger → Secure Headers → CORS → Auth (JWT) → Route Handler 
 
 ## State Management Strategy
 
-| State Type | Tool | Purpose |
-|-----------|------|---------|
-| **Server State** | TanStack Query | API data, caching, loading/error states |
-| **Client UI State** | Zustand | Sidebar, theme, command palette |
-| **Auth State** | Zustand (persisted) | User session, role, login status |
-| **Form State** | React Hook Form | Form values, validation, submission |
-| **URL State** | Next.js Router | Pagination, filters, search params |
-| **Theme State** | next-themes | Dark/light mode preference |
+| State Type          | Tool                | Purpose                                 |
+| ------------------- | ------------------- | --------------------------------------- |
+| **Server State**    | TanStack Query      | API data, caching, loading/error states |
+| **Client UI State** | Zustand             | Sidebar, theme, command palette         |
+| **Auth State**      | Zustand (persisted) | User session, role, login status        |
+| **Form State**      | React Hook Form     | Form values, validation, submission     |
+| **URL State**       | Next.js Router      | Pagination, filters, search params      |
+| **Theme State**     | next-themes         | Dark/light mode preference              |
 
 ## Design System
 
 ### Glassmorphism Layer System
 
-| Class | Background | Blur | Use Case |
-|-------|-----------|------|----------|
-| `glass` | white 65% | 20px | General overlays |
-| `glass-strong` | white 80% | 30px | Navbar, header |
-| `glass-subtle` | white 45% | 16px | Badges, tags |
-| `glass-dark` | dark 85% | 24px | Sidebar |
-| `glass-card` | white 60% + shadow | 20px | Cards, tables |
+| Class          | Background         | Blur | Use Case         |
+| -------------- | ------------------ | ---- | ---------------- |
+| `glass`        | white 65%          | 20px | General overlays |
+| `glass-strong` | white 80%          | 30px | Navbar, header   |
+| `glass-subtle` | white 45%          | 16px | Badges, tags     |
+| `glass-dark`   | dark 85%           | 24px | Sidebar          |
+| `glass-card`   | white 60% + shadow | 20px | Cards, tables    |
 
 ### Color Tokens
 
-| Token | Light | Dark | Usage |
-|-------|-------|------|-------|
-| `--color-primary` | #006622 | #006622 | Brand, CTAs, active states |
-| `--color-secondary` | #F1C40F | #F1C40F | Accents, warnings |
-| `--color-surface` | #ffffff | #0f1117 | Page backgrounds |
-| `--color-surface-alt` | #f8fafc | #181a24 | Card backgrounds |
-| `--color-text` | #1e293b | #e8eaed | Body text |
-| `--color-text-muted` | #64748b | #9ca3af | Secondary text |
-| `--color-success` | #10b981 | #10b981 | Completed, active |
-| `--color-warning` | #f59e0b | #f59e0b | Pending, caution |
-| `--color-danger` | #ef4444 | #ef4444 | Errors, destructive |
-| `--color-info` | #3b82f6 | #3b82f6 | Information, links |
+| Token                 | Light   | Dark    | Usage                      |
+| --------------------- | ------- | ------- | -------------------------- |
+| `--color-primary`     | #006622 | #006622 | Brand, CTAs, active states |
+| `--color-secondary`   | #F1C40F | #F1C40F | Accents, warnings          |
+| `--color-surface`     | #ffffff | #0f1117 | Page backgrounds           |
+| `--color-surface-alt` | #f8fafc | #181a24 | Card backgrounds           |
+| `--color-text`        | #1e293b | #e8eaed | Body text                  |
+| `--color-text-muted`  | #64748b | #9ca3af | Secondary text             |
+| `--color-success`     | #10b981 | #10b981 | Completed, active          |
+| `--color-warning`     | #f59e0b | #f59e0b | Pending, caution           |
+| `--color-danger`      | #ef4444 | #ef4444 | Errors, destructive        |
+| `--color-info`        | #3b82f6 | #3b82f6 | Information, links         |

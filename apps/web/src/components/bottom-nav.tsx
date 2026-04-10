@@ -4,15 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useAuthStore } from "@/stores/auth-store";
 import type { Role } from "@iffe/shared";
-import {
-  LayoutDashboard,
-  CreditCard,
-  ArrowLeftRight,
-  Heart,
-  Users,
-  ClipboardList,
-  Receipt,
-} from "lucide-react";
+import { LayoutDashboard, CreditCard, ArrowLeftRight, Heart, Users, ClipboardList, Receipt } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 interface NavTab {
@@ -25,7 +17,12 @@ interface NavTab {
 const memberTabs: NavTab[] = [
   { label: "Home", href: "/portal/dashboard", icon: LayoutDashboard, match: ["/portal/dashboard"] },
   { label: "Loans", href: "/portal/loans", icon: CreditCard, match: ["/portal/loans"] },
-  { label: "Transact", href: "/portal/deposits", icon: ArrowLeftRight, match: ["/portal/deposits", "/portal/withdrawals", "/portal/transactions"] },
+  {
+    label: "Transact",
+    href: "/portal/deposits",
+    icon: ArrowLeftRight,
+    match: ["/portal/deposits", "/portal/withdrawals", "/portal/transactions"],
+  },
   { label: "Welfare", href: "/portal/welfare", icon: Heart, match: ["/portal/welfare"] },
 ];
 
@@ -33,7 +30,12 @@ const adminTabs: NavTab[] = [
   { label: "Dashboard", href: "/dashboard", icon: LayoutDashboard, match: ["/dashboard"] },
   { label: "Members", href: "/admin/members", icon: Users, match: ["/admin/members", "/admin/applications"] },
   { label: "Loans", href: "/admin/loans", icon: CreditCard, match: ["/admin/loans"] },
-  { label: "Finance", href: "/admin/transactions", icon: ArrowLeftRight, match: ["/admin/transactions", "/admin/expenses", "/admin/deposit-requests", "/admin/withdraw-requests"] },
+  {
+    label: "Finance",
+    href: "/admin/transactions",
+    icon: ArrowLeftRight,
+    match: ["/admin/transactions", "/admin/expenses", "/admin/deposit-requests", "/admin/withdraw-requests"],
+  },
 ];
 
 const chairmanTabs: NavTab[] = [
@@ -46,8 +48,18 @@ const chairmanTabs: NavTab[] = [
 const staffTabs: NavTab[] = [
   { label: "Dashboard", href: "/staff", icon: LayoutDashboard, match: ["/staff"] },
   { label: "Members", href: "/admin/members", icon: Users, match: ["/admin/members"] },
-  { label: "Queue", href: "/admin/applications", icon: ClipboardList, match: ["/admin/applications", "/admin/deposit-requests", "/admin/withdraw-requests"] },
-  { label: "Finance", href: "/admin/transactions", icon: ArrowLeftRight, match: ["/admin/transactions", "/admin/loans", "/admin/expenses"] },
+  {
+    label: "Queue",
+    href: "/admin/applications",
+    icon: ClipboardList,
+    match: ["/admin/applications", "/admin/deposit-requests", "/admin/withdraw-requests"],
+  },
+  {
+    label: "Finance",
+    href: "/admin/transactions",
+    icon: ArrowLeftRight,
+    match: ["/admin/transactions", "/admin/loans", "/admin/expenses"],
+  },
 ];
 
 export function BottomNav() {
@@ -55,11 +67,15 @@ export function BottomNav() {
   const role = useAuthStore((s) => s.user?.role) as Role | undefined;
 
   const tabs =
-    role === "member" ? memberTabs :
-    role === "chairman" ? chairmanTabs :
-    role === "staff" ? staffTabs :
-    role === "admin" ? adminTabs :
-    memberTabs;
+    role === "member"
+      ? memberTabs
+      : role === "chairman"
+        ? chairmanTabs
+        : role === "staff"
+          ? staffTabs
+          : role === "admin"
+            ? adminTabs
+            : memberTabs;
 
   return (
     <nav
@@ -76,9 +92,7 @@ export function BottomNav() {
               aria-current={isActive ? "page" : undefined}
               className={cn(
                 "flex flex-1 flex-col items-center justify-center gap-0.5 text-[10px] font-semibold transition-colors relative",
-                isActive
-                  ? "text-primary"
-                  : "text-gray-400 dark:text-gray-500 active:text-primary"
+                isActive ? "text-primary" : "text-gray-400 dark:text-gray-500 active:text-primary",
               )}
             >
               {isActive && (

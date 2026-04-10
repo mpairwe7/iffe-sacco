@@ -6,16 +6,17 @@ import { toast } from "sonner";
 import { useWelfarePrograms, useCreatePledge, useMyPledges } from "@/hooks/use-welfare";
 import { formatCurrency } from "@/lib/utils";
 import { StatSkeleton, CardSkeleton } from "@/components/ui/skeleton";
+import type { Pledge, WelfareProgram } from "@iffe/shared";
 
 export default function WelfarePage() {
   const { data, isLoading } = useWelfarePrograms();
   const { data: myPledges } = useMyPledges();
   const createPledge = useCreatePledge();
 
-  const programs = data?.data ?? [];
-  const pledges = Array.isArray(myPledges) ? myPledges : [];
-  const totalPledged = pledges.reduce((sum: number, p: any) => sum + (p.amount || 0), 0);
-  const totalRaised = programs.reduce((sum: number, p: any) => sum + (p.raisedAmount || 0), 0);
+  const programs: WelfareProgram[] = data?.data ?? [];
+  const pledges: Pledge[] = myPledges ?? [];
+  const totalPledged = pledges.reduce((sum, pledge) => sum + Number(pledge.amount || 0), 0);
+  const totalRaised = programs.reduce((sum, program) => sum + Number(program.raisedAmount || 0), 0);
 
   const [pledgeDialogOpen, setPledgeDialogOpen] = useState(false);
   const [selectedProgramId, setSelectedProgramId] = useState<string>("");
@@ -71,11 +72,17 @@ export default function WelfarePage() {
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
           <div className="bg-white dark:bg-gray-950 border border-gray-200 dark:border-gray-800 shadow-sm rounded-xl p-5">
-            <p className="text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Active Programs</p>
-            <p className="text-xl font-bold text-gray-900 dark:text-white mt-1">{programs.filter((p) => p.status === "active").length}</p>
+            <p className="text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+              Active Programs
+            </p>
+            <p className="text-xl font-bold text-gray-900 dark:text-white mt-1">
+              {programs.filter((p) => p.status === "active").length}
+            </p>
           </div>
           <div className="bg-white dark:bg-gray-950 border border-gray-200 dark:border-gray-800 shadow-sm rounded-xl p-5">
-            <p className="text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider">My Total Pledges</p>
+            <p className="text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+              My Total Pledges
+            </p>
             <p className="text-2xl font-bold text-primary mt-1">{formatCurrency(totalPledged)}</p>
           </div>
           <div className="bg-white dark:bg-gray-950 border border-gray-200 dark:border-gray-800 shadow-sm rounded-xl p-5">
@@ -102,14 +109,21 @@ export default function WelfarePage() {
             programs.map((program) => {
               const progress = program.targetAmount > 0 ? (program.raisedAmount / program.targetAmount) * 100 : 0;
               return (
-                <div key={program.id} className="bg-white dark:bg-gray-950 border border-gray-200 dark:border-gray-800 shadow-sm rounded-xl p-6">
+                <div
+                  key={program.id}
+                  className="bg-white dark:bg-gray-950 border border-gray-200 dark:border-gray-800 shadow-sm rounded-xl p-6"
+                >
                   <div className="flex items-center justify-between mb-3">
                     <h3 className="font-bold text-gray-900 dark:text-white">{program.name}</h3>
-                    <span className={`text-xs font-medium px-2.5 py-1 rounded-full ${
-                      program.status === "active" ? "text-success bg-success/15" :
-                      program.status === "completed" ? "text-info bg-info/10" :
-                      "text-warning bg-warning/15"
-                    }`}>
+                    <span
+                      className={`text-xs font-medium px-2.5 py-1 rounded-full ${
+                        program.status === "active"
+                          ? "text-success bg-success/15"
+                          : program.status === "completed"
+                            ? "text-info bg-info/10"
+                            : "text-warning bg-warning/15"
+                      }`}
+                    >
                       {program.status.charAt(0).toUpperCase() + program.status.slice(1)}
                     </span>
                   </div>
@@ -119,7 +133,10 @@ export default function WelfarePage() {
                     <span className="font-medium text-text">{Math.round(progress)}% funded</span>
                   </div>
                   <div className="h-2 bg-surface-alt rounded-full mb-2">
-                    <div className="h-full bg-primary rounded-full transition-all" style={{ width: `${Math.min(progress, 100)}%` }} />
+                    <div
+                      className="h-full bg-primary rounded-full transition-all"
+                      style={{ width: `${Math.min(progress, 100)}%` }}
+                    />
                   </div>
                   <div className="flex items-center justify-between text-sm mb-4">
                     <span className="text-text-muted">{formatCurrency(program.raisedAmount)} raised</span>

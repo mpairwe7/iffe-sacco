@@ -11,6 +11,7 @@
 ## Immediate action
 
 1. **Identify the stuck run.**
+
    ```sql
    SELECT id, type, status, startedAt, startedBy, idempotencyKey
    FROM workflow_runs
@@ -21,6 +22,7 @@
    ```
 
 2. **Pull the step trail.**
+
    ```sql
    SELECT name, status, "startedAt", "finishedAt", error
    FROM workflow_steps
@@ -41,11 +43,11 @@
 
 - You'll see a journal entry, a completed step, and a successful Prisma transaction.
 - Safe action: mark the run as completed.
-   ```sql
-   UPDATE workflow_runs
-   SET status = 'completed', "finishedAt" = NOW()
-   WHERE id = '<run_id>';
-   ```
+  ```sql
+  UPDATE workflow_runs
+  SET status = 'completed', "finishedAt" = NOW()
+  WHERE id = '<run_id>';
+  ```
 - Confirm the user can see the result in the UI.
 
 ### Case B: The workflow failed partway and left inconsistent state
@@ -53,11 +55,11 @@
 - Step table shows a `failed` step but no journal entry.
 - The Prisma transaction rolled back, so the ledger is clean.
 - Action: mark the run as failed with the step error.
-   ```sql
-   UPDATE workflow_runs
-   SET status = 'failed', error = '<step error>', "finishedAt" = NOW()
-   WHERE id = '<run_id>';
-   ```
+  ```sql
+  UPDATE workflow_runs
+  SET status = 'failed', error = '<step error>', "finishedAt" = NOW()
+  WHERE id = '<run_id>';
+  ```
 - Tell the user to retry; the idempotency key will be re-used because
   it came from a client, and our replay logic will let the retry through
   because the previous run is now in a terminal state.
@@ -66,11 +68,11 @@
 
 - Step table shows the last step `running` but no error.
 - Likely cause: a Prisma transaction holding a lock. Check:
-   ```sql
-   SELECT pid, state, query_start, query
-   FROM pg_stat_activity
-   WHERE state = 'active' AND state_change < NOW() - INTERVAL '1 minute';
-   ```
+  ```sql
+  SELECT pid, state, query_start, query
+  FROM pg_stat_activity
+  WHERE state = 'active' AND state_change < NOW() - INTERVAL '1 minute';
+  ```
 - If a query is stuck, terminate it: `SELECT pg_terminate_backend(<pid>);`
 - Then re-run Case B cleanup.
 

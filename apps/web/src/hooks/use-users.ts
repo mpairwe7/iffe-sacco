@@ -22,8 +22,7 @@ export function useUsers(params?: PaginationParams) {
 export function useUpdateUser() {
   const qc = useQueryClient();
   return useMutation({
-    mutationFn: ({ id, data }: { id: string; data: UpdateUserInput }) =>
-      usersApi.updateUser(id, data),
+    mutationFn: ({ id, data }: { id: string; data: UpdateUserInput }) => usersApi.updateUser(id, data),
     onSuccess: () => qc.invalidateQueries({ queryKey: ["users"] }),
   });
 }

@@ -4,12 +4,14 @@
  */
 import type { Locale } from "./config";
 
-const loaders: Record<Locale, () => Promise<Record<string, any>>> = {
-  en: () => import("./messages/en.json").then((m) => m.default ?? m),
-  lg: () => import("./messages/lg.json").then((m) => m.default ?? m),
+type Messages = Record<string, unknown>;
+
+const loaders: Record<Locale, () => Promise<Messages>> = {
+  en: () => import("./messages/en.json").then((m) => (m.default ?? m) as Messages),
+  lg: () => import("./messages/lg.json").then((m) => (m.default ?? m) as Messages),
 };
 
-export async function getMessages(locale: Locale): Promise<Record<string, any>> {
+export async function getMessages(locale: Locale): Promise<Messages> {
   const loader = loaders[locale] ?? loaders.en;
   return loader();
 }

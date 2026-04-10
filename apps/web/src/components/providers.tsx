@@ -26,13 +26,13 @@ export function Providers({ children, locale, messages }: ProvidersProps) {
             refetchOnWindowFocus: false,
           },
         },
-      })
+      }),
   );
 
   return (
     <QueryClientProvider client={queryClient}>
       <ThemeProvider attribute="class" defaultTheme="light" enableSystem disableTransitionOnChange={false}>
-        <I18nProvider locale={locale} messages={messages as Record<string, any>}>
+        <I18nProvider locale={locale} messages={messages}>
           <AnnouncerProvider>
             <TooltipProvider delayDuration={300}>
               {children}

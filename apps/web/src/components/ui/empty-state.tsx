@@ -23,16 +23,8 @@ interface EmptyStateProps {
   className?: string;
 }
 
-export function EmptyState({
-  title,
-  description,
-  icon,
-  action,
-  variant = "card",
-  className,
-}: EmptyStateProps) {
-  const base =
-    "flex flex-col items-center justify-center text-center text-muted-foreground";
+export function EmptyState({ title, description, icon, action, variant = "card", className }: EmptyStateProps) {
+  const base = "flex flex-col items-center justify-center text-center text-muted-foreground";
   const variants = {
     card: "rounded-lg border border-dashed p-10 gap-3",
     table: "py-16 gap-2",
@@ -40,11 +32,7 @@ export function EmptyState({
   } as const;
 
   return (
-    <div
-      role="status"
-      aria-live="polite"
-      className={cn(base, variants[variant], className)}
-    >
+    <div role="status" aria-live="polite" className={cn(base, variants[variant], className)}>
       {icon && <div className="mb-2 text-muted-foreground/60">{icon}</div>}
       <h3 className="text-lg font-semibold text-foreground">{title}</h3>
       {description && <p className="max-w-md text-sm">{description}</p>}

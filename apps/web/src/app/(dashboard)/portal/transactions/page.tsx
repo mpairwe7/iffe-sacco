@@ -10,9 +10,7 @@ const columns = [
   {
     key: "id",
     label: "Ref.",
-    render: (row: Transaction) => (
-      <span className="font-mono text-xs text-text-muted">{row.id.slice(0, 8)}</span>
-    ),
+    render: (row: Transaction) => <span className="font-mono text-xs text-text-muted">{row.id.slice(0, 8)}</span>,
   },
   {
     key: "type",
@@ -22,7 +20,11 @@ const columns = [
       const typeLabel = row.type.replace(/_/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());
       return (
         <span className="inline-flex items-center gap-1.5 text-sm">
-          {isCredit ? <ArrowDownRight className="w-4 h-4 text-success" /> : <ArrowUpRight className="w-4 h-4 text-warning" />}
+          {isCredit ? (
+            <ArrowDownRight className="w-4 h-4 text-success" />
+          ) : (
+            <ArrowUpRight className="w-4 h-4 text-warning" />
+          )}
           {typeLabel}
         </span>
       );
@@ -62,7 +64,9 @@ const columns = [
         reversed: "bg-info/10 text-info",
       };
       return (
-        <span className={`inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium ${colors[row.status] ?? "bg-surface-alt text-text-muted"}`}>
+        <span
+          className={`inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium ${colors[row.status] ?? "bg-surface-alt text-text-muted"}`}
+        >
           {row.status.charAt(0).toUpperCase() + row.status.slice(1)}
         </span>
       );

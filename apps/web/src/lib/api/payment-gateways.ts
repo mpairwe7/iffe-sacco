@@ -1,15 +1,11 @@
 import { apiClient } from "@/lib/api-client";
-import type { PaginationParams } from "@iffe/shared";
+import type { CreatePaymentGatewayInput, PaymentGateway, UpdatePaymentGatewayInput } from "@iffe/shared";
 
 export const paymentGatewaysApi = {
-  getAll: (params?: PaginationParams) =>
-    apiClient.get<any>("/payment-gateways", params as any),
-  getById: (id: string) =>
-    apiClient.get<any>(`/payment-gateways/${id}`),
-  create: (data: any) =>
-    apiClient.post<any>("/payment-gateways", data),
-  update: (id: string, data: any) =>
-    apiClient.put<any>(`/payment-gateways/${id}`, data),
-  toggle: (id: string) =>
-    apiClient.patch<any>(`/payment-gateways/${id}/toggle`),
+  getAll: () => apiClient.get<PaymentGateway[]>("/payment-gateways"),
+  getById: (id: string) => apiClient.get<PaymentGateway>(`/payment-gateways/${id}`),
+  create: (data: CreatePaymentGatewayInput) => apiClient.post<PaymentGateway>("/payment-gateways", data),
+  update: (id: string, data: UpdatePaymentGatewayInput) =>
+    apiClient.put<PaymentGateway>(`/payment-gateways/${id}`, data),
+  toggle: (id: string) => apiClient.patch<PaymentGateway>(`/payment-gateways/${id}/toggle`),
 };

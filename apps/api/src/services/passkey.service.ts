@@ -42,9 +42,7 @@ async function loadSimpleWebAuthn() {
     const mod = await import("@simplewebauthn/server");
     return mod;
   } catch (err) {
-    throw new Error(
-      "@simplewebauthn/server is not installed — run `bun install` to enable passkeys",
-    );
+    throw new Error("@simplewebauthn/server is not installed — run `bun install` to enable passkeys");
   }
 }
 
@@ -89,10 +87,11 @@ export class PasskeyService {
       userName: user.email,
       userDisplayName: user.name,
       attestationType: "none",
-      excludeCredentials: (user as any).passkeys?.map((p: any) => ({
-        id: p.credentialId,
-        transports: p.transports,
-      })) ?? [],
+      excludeCredentials:
+        (user as any).passkeys?.map((p: any) => ({
+          id: p.credentialId,
+          transports: p.transports,
+        })) ?? [],
       authenticatorSelection: {
         residentKey: "preferred",
         userVerification: "preferred",

@@ -25,35 +25,37 @@ import { type Member, ACCOUNT_TYPES } from "@iffe/shared";
 
 ### Core Entities
 
-| Interface | Key Fields | Used By |
-|-----------|-----------|---------|
-| `User` | id, name, email, role, isActive, lastLogin | Auth, user management |
-| `Member` | id, memberId, firstName, lastName, status | Member CRUD |
-| `Account` | id, accountNo, type, balance, interestRate | Account management |
-| `Transaction` | id, type, amount, method, status | Transaction processing |
-| `Loan` | id, type, amount, balance, monthlyPayment, status | Loan management |
-| `Expense` | id, description, category, amount, status | Expense tracking |
-| `WelfareProgram` | id, name, targetAmount, raisedAmount | Social welfare |
-| `Pledge` | id, programId, memberId, amount, status | Welfare pledges |
-| `BankAccount` | id, bankName, accountNo, balance | Bank management |
-| `AuditLog` | id, action, entity, details | Audit trail |
-| `Setting` | id, key, value | System config |
-| `Application` | id, surname, firstName, sex, dateOfBirth, status, 40+ IBDA fields | Membership application |
-| `ApplicationStatus` | status, reviewedBy, reviewedAt, rejectionReason | Application review state |
+| Interface           | Key Fields                                                                             | Used By                        |
+| ------------------- | -------------------------------------------------------------------------------------- | ------------------------------ |
+| `User`              | id, name, email, role, isActive, lastLogin                                             | Auth, user management          |
+| `Member`            | id, memberId, firstName, lastName, shareCount, support statuses/debts, remarks, status | Member CRUD + detail dashboard |
+| `Account`           | id, accountNo, type, balance, interestRate                                             | Account management             |
+| `Transaction`       | id, type, amount, method, status                                                       | Transaction processing         |
+| `Loan`              | id, type, amount, balance, monthlyPayment, status                                      | Loan management                |
+| `Expense`           | id, description, category, amount, status                                              | Expense tracking               |
+| `WelfareProgram`    | id, name, targetAmount, raisedAmount                                                   | Social welfare                 |
+| `Pledge`            | id, programId, memberId, amount, status                                                | Welfare pledges                |
+| `MemberDashboard`   | member, accounts, recentTransactions, transactionSummary, totals, socialWelfare        | Admin member dashboard detail  |
+| `BankAccount`       | id, bankName, accountNo, balance                                                       | Bank management                |
+| `AuditLog`          | id, action, entity, details                                                            | Audit trail                    |
+| `Setting`           | id, key, value                                                                         | System config                  |
+| `Application`       | id, surname, firstName, sex, dateOfBirth, status, 40+ IBDA fields                      | Membership application         |
+| `ApplicationStatus` | status, reviewedBy, reviewedAt, rejectionReason                                        | Application review state       |
 
 ### Utility Types
 
-| Type | Description |
-|------|-------------|
-| `Role` | `"admin" \| "chairman" \| "member" \| "staff"` |
-| `AccountType` | `"savings" \| "current" \| "fixed_deposit"` |
-| `TransactionType` | deposit, withdrawal, transfer, loan_repayment, etc. |
-| `LoanStatus` | pending, approved, active, paid, overdue, defaulted, rejected |
-| `PaginationParams` | page, limit, search, sortBy, sortOrder |
-| `PaginatedResponse<T>` | data[], total, page, limit, totalPages |
-| `ApiResponse<T>` | success, data?, message?, errors? |
-| `AuthTokens` | accessToken, refreshToken |
-| `DashboardStats` | totalMembers, totalDeposits, totalWithdrawals, etc. |
+| Type                   | Description                                                   |
+| ---------------------- | ------------------------------------------------------------- |
+| `Role`                 | `"admin" \| "chairman" \| "member" \| "staff"`                |
+| `MemberSupportStatus`  | `"received" \| "not_received"`                                |
+| `AccountType`          | `"savings" \| "current" \| "fixed_deposit"`                   |
+| `TransactionType`      | deposit, withdrawal, transfer, loan_repayment, etc.           |
+| `LoanStatus`           | pending, approved, active, paid, overdue, defaulted, rejected |
+| `PaginationParams`     | page, limit, search, sortBy, sortOrder                        |
+| `PaginatedResponse<T>` | data[], total, page, limit, totalPages                        |
+| `ApiResponse<T>`       | success, data?, message?, errors?                             |
+| `AuthTokens`           | accessToken, refreshToken                                     |
+| `DashboardStats`       | totalMembers, totalDeposits, totalWithdrawals, etc.           |
 
 ## Schemas (`schemas.ts`)
 
@@ -61,55 +63,55 @@ All schemas use **Zod v4** and export both the schema and inferred TypeScript ty
 
 ### Auth Schemas
 
-| Schema | Fields | Validation |
-|--------|--------|------------|
-| `loginSchema` | email, password | email format, min 6 chars |
-| `registerSchema` | name, email, phone, password, role | email, min 10 phone, min 8 password |
-| `refreshTokenSchema` | refreshToken | non-empty string |
+| Schema               | Fields                             | Validation                          |
+| -------------------- | ---------------------------------- | ----------------------------------- |
+| `loginSchema`        | email, password                    | email format, min 6 chars           |
+| `registerSchema`     | name, email, phone, password, role | email, min 10 phone, min 8 password |
+| `refreshTokenSchema` | refreshToken                       | non-empty string                    |
 
 ### Entity Schemas
 
-| Schema | Purpose |
-|--------|---------|
-| `createMemberSchema` | Full member registration (13 fields) |
-| `updateMemberSchema` | Partial member update |
-| `createAccountSchema` | Account creation |
-| `createTransactionSchema` | Transaction creation (min amount 1) |
-| `createLoanSchema` | Loan application (min 10,000) |
-| `createExpenseSchema` | Expense entry |
-| `createWelfareSchema` | Welfare program creation |
-| `pledgeSchema` | Welfare pledge (min 1,000) |
-| `createApplicationSchema` | Full IBDA Bio Data membership application (40+ fields across 5 steps) |
-| `reviewApplicationSchema` | Application approve/reject with optional reason |
+| Schema                    | Purpose                                                                                       |
+| ------------------------- | --------------------------------------------------------------------------------------------- |
+| `createMemberSchema`      | Full member registration (includes shares, wedding/condolence support status + debt, remarks) |
+| `updateMemberSchema`      | Partial member update                                                                         |
+| `createAccountSchema`     | Account creation                                                                              |
+| `createTransactionSchema` | Transaction creation (min amount 1)                                                           |
+| `createLoanSchema`        | Loan application (min 10,000)                                                                 |
+| `createExpenseSchema`     | Expense entry                                                                                 |
+| `createWelfareSchema`     | Welfare program creation                                                                      |
+| `pledgeSchema`            | Welfare pledge (min 1,000)                                                                    |
+| `createApplicationSchema` | Full IBDA Bio Data membership application (40+ fields across 5 steps)                         |
+| `reviewApplicationSchema` | Application approve/reject with optional reason                                               |
 
 ### Utility Schemas
 
-| Schema | Purpose |
-|--------|---------|
-| `paginationSchema` | Query params (page, limit, search, sort) |
-| `changePasswordSchema` | Password change with match validation |
-| `updateProfileSchema` | Self-service profile update |
-| `updateUserSchema` | Admin user management |
-| `calculateInterestSchema` | Interest calculation params |
-| `updateAccountStatusSchema` | Account status change |
-| `createBankAccountSchema` | Bank account creation |
-| `updateSettingSchema` | System setting update |
+| Schema                      | Purpose                                  |
+| --------------------------- | ---------------------------------------- |
+| `paginationSchema`          | Query params (page, limit, search, sort) |
+| `changePasswordSchema`      | Password change with match validation    |
+| `updateProfileSchema`       | Self-service profile update              |
+| `updateUserSchema`          | Admin user management                    |
+| `calculateInterestSchema`   | Interest calculation params              |
+| `updateAccountStatusSchema` | Account status change                    |
+| `createBankAccountSchema`   | Bank account creation                    |
+| `updateSettingSchema`       | System setting update                    |
 
 ## Constants (`constants.ts`)
 
-| Constant | Value | Usage |
-|----------|-------|-------|
-| `CURRENCY` | `"USh"` | Display currency symbol |
-| `CURRENCY_CODE` | `"UGX"` | ISO currency code |
-| `DEFAULT_COUNTRY` | `"UG"` | Default country code |
-| `ACCOUNT_TYPES` | `["savings", "current", "fixed_deposit"]` | Account type options |
-| `LOAN_TYPES` | `["business", "personal", "emergency", "education", "housing"]` | Loan type options |
-| `TRANSACTION_METHODS` | `["cash", "mobile_money", "bank_transfer", "cheque", "internal"]` | Payment methods |
-| `ROLES` | `["admin", "chairman", "member", "staff"]` | Available user roles |
-| `APPLICATION_STATUS` | `["pending", "approved", "rejected"]` | Application statuses |
-| `SEX_OPTIONS` | `["Male", "Female"]` | Sex options for forms |
-| `EXPENSE_CATEGORIES` | 10 categories | Expense categorization |
-| `INTEREST_RATES` | `{ savings: 12, current: 5, fixed_deposit: 15 }` | Default rates |
-| `PAGINATION` | `{ DEFAULT_PAGE: 1, DEFAULT_LIMIT: 20, MAX_LIMIT: 100 }` | Pagination defaults |
-| `PASSWORD` | `{ MIN_LENGTH: 8, SALT_ROUNDS: 12 }` | Security config |
-| `TOKEN` | `{ ACCESS_EXPIRY: "15m", REFRESH_EXPIRY: "7d" }` | JWT expiry times |
+| Constant              | Value                                                             | Usage                   |
+| --------------------- | ----------------------------------------------------------------- | ----------------------- |
+| `CURRENCY`            | `"USh"`                                                           | Display currency symbol |
+| `CURRENCY_CODE`       | `"UGX"`                                                           | ISO currency code       |
+| `DEFAULT_COUNTRY`     | `"UG"`                                                            | Default country code    |
+| `ACCOUNT_TYPES`       | `["savings", "current", "fixed_deposit"]`                         | Account type options    |
+| `LOAN_TYPES`          | `["business", "personal", "emergency", "education", "housing"]`   | Loan type options       |
+| `TRANSACTION_METHODS` | `["cash", "mobile_money", "bank_transfer", "cheque", "internal"]` | Payment methods         |
+| `ROLES`               | `["admin", "chairman", "member", "staff"]`                        | Available user roles    |
+| `APPLICATION_STATUS`  | `["pending", "approved", "rejected"]`                             | Application statuses    |
+| `SEX_OPTIONS`         | `["Male", "Female"]`                                              | Sex options for forms   |
+| `EXPENSE_CATEGORIES`  | 10 categories                                                     | Expense categorization  |
+| `INTEREST_RATES`      | `{ savings: 12, current: 5, fixed_deposit: 15 }`                  | Default rates           |
+| `PAGINATION`          | `{ DEFAULT_PAGE: 1, DEFAULT_LIMIT: 20, MAX_LIMIT: 100 }`          | Pagination defaults     |
+| `PASSWORD`            | `{ MIN_LENGTH: 8, SALT_ROUNDS: 12 }`                              | Security config         |
+| `TOKEN`               | `{ ACCESS_EXPIRY: "15m", REFRESH_EXPIRY: "7d" }`                  | JWT expiry times        |

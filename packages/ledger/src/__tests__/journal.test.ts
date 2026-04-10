@@ -57,9 +57,7 @@ describe("JournalEntry", () => {
   });
 
   test("idempotencyKey is required", () => {
-    expect(() =>
-      JournalEntry.builder({ description: "x", createdBy: "u", idempotencyKey: "" }),
-    ).toThrow();
+    expect(() => JournalEntry.builder({ description: "x", createdBy: "u", idempotencyKey: "" })).toThrow();
   });
 
   test("sub-cent amounts round at posting", () => {

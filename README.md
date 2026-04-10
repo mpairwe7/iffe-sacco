@@ -22,12 +22,12 @@ docs/           Comprehensive documentation
 
 4 user roles with role-based access and navigation:
 
-| Role | Dashboard | Key Capabilities |
-|------|-----------|-----------------|
-| **Admin** | `/dashboard` | Full system management, application approval |
-| **Chairman** | `/chairman` | View-only oversight dashboard, expense approve/reject |
-| **Staff** | `/dashboard` | Member management, transaction processing |
-| **Member** | `/portal` | Self-service savings, loans, deposits, withdrawals |
+| Role         | Dashboard    | Key Capabilities                                      |
+| ------------ | ------------ | ----------------------------------------------------- |
+| **Admin**    | `/dashboard` | Full system management, application approval          |
+| **Chairman** | `/chairman`  | View-only oversight dashboard, expense approve/reject |
+| **Staff**    | `/dashboard` | Member management, transaction processing             |
+| **Member**   | `/portal`    | Self-service savings, loans, deposits, withdrawals    |
 
 ### First-Run Credentials
 

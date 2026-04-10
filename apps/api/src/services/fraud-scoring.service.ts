@@ -54,9 +54,7 @@ export async function scoreTransaction(ctx: ScoringContext): Promise<FraudScore>
   });
 
   if (recent.length > 0) {
-    const avg = recent
-      .map((t) => Money.fromDb(t.amount))
-      .reduce((acc, v) => Money.add(acc, v), Money.zero());
+    const avg = recent.map((t) => Money.fromDb(t.amount)).reduce((acc, v) => Money.add(acc, v), Money.zero());
     const avgPerTxn = Money.div(avg, recent.length);
     const multiple = Number(Money.toString(Money.div(amount, avgPerTxn))) || 1;
     if (multiple > 10) {
@@ -106,10 +104,7 @@ export async function scoreTransaction(ctx: ScoringContext): Promise<FraudScore>
   const action: FraudScore["action"] =
     score >= BLOCK_THRESHOLD ? "block" : score >= REVIEW_THRESHOLD ? "review" : "allow";
 
-  logger.info(
-    { event: "fraud.scored", memberId: ctx.memberId, type: ctx.type, score, action },
-    "fraud score computed",
-  );
+  logger.info({ event: "fraud.scored", memberId: ctx.memberId, type: ctx.type, score, action }, "fraud score computed");
 
   return { score, signals, action, reasoning };
 }
@@ -120,11 +115,7 @@ export async function scoreTransaction(ctx: ScoringContext): Promise<FraudScore>
  *
  * Disabled unless AI_GATEWAY_API_KEY + AI_GATEWAY_URL are set.
  */
-async function aiNarrative(
-  ctx: ScoringContext,
-  signals: FraudScore["signals"],
-  score: number,
-): Promise<string> {
+async function aiNarrative(ctx: ScoringContext, signals: FraudScore["signals"], score: number): Promise<string> {
   const url = process.env.AI_GATEWAY_URL;
   const key = process.env.AI_GATEWAY_API_KEY;
   if (!url || !key) return "";

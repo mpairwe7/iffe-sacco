@@ -44,11 +44,7 @@ reports.get("/general-ledger/:accountCode", async (c) => {
   const code = c.req.param("accountCode");
   const from = c.req.query("from");
   const to = c.req.query("to");
-  const data = await generalLedgerReport(
-    code,
-    from ? new Date(from) : undefined,
-    to ? new Date(to) : undefined,
-  );
+  const data = await generalLedgerReport(code, from ? new Date(from) : undefined, to ? new Date(to) : undefined);
   return c.json({ success: true, data });
 });
 
@@ -56,11 +52,7 @@ reports.get("/member-statement/:accountId", async (c) => {
   const accountId = c.req.param("accountId");
   const from = c.req.query("from");
   const to = c.req.query("to");
-  const data = await memberStatementReport(
-    accountId,
-    from ? new Date(from) : undefined,
-    to ? new Date(to) : undefined,
-  );
+  const data = await memberStatementReport(accountId, from ? new Date(from) : undefined, to ? new Date(to) : undefined);
   if (!data) return c.json({ success: false, message: "Account not found" }, 404);
   return c.json({ success: true, data });
 });
@@ -108,7 +100,8 @@ reports.post("/generate", zValidator("json", generateSchema), async (c) => {
       const where: Record<string, unknown> = { createdAt: { gte: from, lte: to } };
       if (memberId) where.account = { memberId };
       data = await prisma.transaction.findMany({
-        where, orderBy: { createdAt: "desc" },
+        where,
+        orderBy: { createdAt: "desc" },
         include: { account: { include: { member: true } } },
       });
       break;
@@ -160,7 +153,12 @@ reports.post("/generate", zValidator("json", generateSchema), async (c) => {
 
   return c.json({
     success: true,
-    data: { type, generatedAt: new Date().toISOString(), dateRange: { from: from.toISOString(), to: to.toISOString() }, records: data },
+    data: {
+      type,
+      generatedAt: new Date().toISOString(),
+      dateRange: { from: from.toISOString(), to: to.toISOString() },
+      records: data,
+    },
   });
 });
 

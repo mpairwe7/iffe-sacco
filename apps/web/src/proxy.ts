@@ -4,9 +4,7 @@ import { jwtVerify } from "jose";
 import { AUTH_SESSION_COOKIE } from "@/lib/auth-cookie-names";
 import { getRedirectForPath, type AppRole } from "@/lib/role-routes";
 
-const sessionSecret = new TextEncoder().encode(
-  process.env.JWT_SECRET || "dev-jwt-secret-not-for-production",
-);
+const sessionSecret = new TextEncoder().encode(process.env.JWT_SECRET || "dev-jwt-secret-not-for-production");
 
 const IS_PROD = process.env.NODE_ENV === "production";
 

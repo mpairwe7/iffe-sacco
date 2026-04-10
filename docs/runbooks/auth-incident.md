@@ -13,11 +13,13 @@
 ## Immediate action
 
 1. **Snapshot the current auth state.**
+
    ```bash
    curl -s $API/api/v1/health/ready | jq
    ```
 
 2. **Count active sessions and recent failures.**
+
    ```sql
    -- Active sessions right now
    SELECT COUNT(*) FROM sessions WHERE "revokedAt" IS NULL AND "expiresAt" > NOW();
@@ -40,6 +42,7 @@ Pick the narrowest action that stops the attack.
 ### Option 1: Tighten rate limits temporarily
 
 Set env vars on preview and re-deploy:
+
 ```
 AUTH_RATE_LIMIT_MAX_ATTEMPTS=3
 AUTH_RATE_LIMIT_WINDOW_MS=3600000
@@ -62,6 +65,7 @@ WHERE "userId" = '<user_id>' AND "revokedAt" IS NULL;
 ### Option 4: Force password reset for an affected user
 
 Via admin endpoint:
+
 ```bash
 curl -X POST $API/api/v1/users/<id>/force-reset \
   -H "Authorization: Bearer $ADMIN_TOKEN"

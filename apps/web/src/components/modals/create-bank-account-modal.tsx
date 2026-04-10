@@ -5,6 +5,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { createBankAccountSchema } from "@iffe/shared";
 import type { CreateBankAccountInput } from "@iffe/shared";
+import { z } from "zod/v4";
 import { useCreateBankAccount } from "@/hooks/use-bank-accounts";
 import { toast } from "sonner";
 import { X } from "lucide-react";
@@ -15,6 +16,8 @@ interface Props {
   onOpenChange: (open: boolean) => void;
 }
 
+type CreateBankAccountFormValues = z.input<typeof createBankAccountSchema>;
+
 export function CreateBankAccountModal({ open, onOpenChange }: Props) {
   const createBankAccount = useCreateBankAccount();
 
@@ -23,8 +26,8 @@ export function CreateBankAccountModal({ open, onOpenChange }: Props) {
     handleSubmit,
     reset,
     formState: { errors },
-  } = useForm<CreateBankAccountInput>({
-    resolver: zodResolver(createBankAccountSchema) as any,
+  } = useForm<CreateBankAccountFormValues, unknown, CreateBankAccountInput>({
+    resolver: zodResolver(createBankAccountSchema),
     defaultValues: { balance: 0 },
   });
 
@@ -47,9 +50,7 @@ export function CreateBankAccountModal({ open, onOpenChange }: Props) {
         <Dialog.Overlay className="fixed inset-0 bg-black/40 backdrop-blur-sm z-50 data-[state=open]:animate-in data-[state=open]:fade-in data-[state=closed]:animate-out data-[state=closed]:fade-out" />
         <Dialog.Content className="fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[calc(100%-2rem)] max-w-lg glass-card rounded-xl p-6 z-50 max-h-[90vh] overflow-y-auto data-[state=open]:animate-in data-[state=open]:fade-in data-[state=open]:zoom-in-95 data-[state=open]:slide-in-from-left-1/2 data-[state=open]:slide-in-from-top-[48%]">
           <div className="flex items-center justify-between mb-6">
-            <Dialog.Title className="text-lg font-semibold text-text">
-              Add Bank Account
-            </Dialog.Title>
+            <Dialog.Title className="text-lg font-semibold text-text">Add Bank Account</Dialog.Title>
             <Dialog.Close asChild>
               <button className="p-1.5 text-text-light hover:text-text rounded-lg" aria-label="Close">
                 <X className="w-4 h-4" />
@@ -65,7 +66,7 @@ export function CreateBankAccountModal({ open, onOpenChange }: Props) {
                 {...register("bankName")}
                 className={cn(
                   "w-full px-4 py-2.5 bg-white/60 dark:bg-white/5 border border-white/40 dark:border-white/10 rounded-lg text-sm text-text focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary",
-                  errors.bankName && "border-danger/50 focus:ring-danger/20 focus:border-danger"
+                  errors.bankName && "border-danger/50 focus:ring-danger/20 focus:border-danger",
                 )}
                 placeholder="e.g. Stanbic Bank"
               />
@@ -79,7 +80,7 @@ export function CreateBankAccountModal({ open, onOpenChange }: Props) {
                 {...register("accountName")}
                 className={cn(
                   "w-full px-4 py-2.5 bg-white/60 dark:bg-white/5 border border-white/40 dark:border-white/10 rounded-lg text-sm text-text focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary",
-                  errors.accountName && "border-danger/50 focus:ring-danger/20 focus:border-danger"
+                  errors.accountName && "border-danger/50 focus:ring-danger/20 focus:border-danger",
                 )}
                 placeholder="e.g. IFFE SACCO Main Account"
               />
@@ -93,7 +94,7 @@ export function CreateBankAccountModal({ open, onOpenChange }: Props) {
                 {...register("accountNo")}
                 className={cn(
                   "w-full px-4 py-2.5 bg-white/60 dark:bg-white/5 border border-white/40 dark:border-white/10 rounded-lg text-sm text-text focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary",
-                  errors.accountNo && "border-danger/50 focus:ring-danger/20 focus:border-danger"
+                  errors.accountNo && "border-danger/50 focus:ring-danger/20 focus:border-danger",
                 )}
                 placeholder="Account number"
               />

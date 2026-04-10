@@ -16,7 +16,7 @@ The API is bundled as a Next.js API route, enabling single-deployment on Vercel:
 └──────────────────────────────────┘
 ```
 
-A `prebuild.sh` script runs before the build to copy the API source and shared package into the Next.js project, enabling the Hono API to be served as a catch-all API route at `/api/v1/[...path]`.
+A `prebuild.sh` script runs before the build to generate Prisma client and bundle the Hono API into `apps/web/api-bundle/app.mjs`, enabling the API to be served through the Next.js catch-all route at `/api/v1/[...path]`.
 
 ### Split Deployment (Alternative)
 
@@ -34,6 +34,7 @@ A `prebuild.sh` script runs before the build to copy the API source and shared p
 ### 1. Configure
 
 Create `apps/web/.env.production`:
+
 ```env
 NEXT_PUBLIC_API_URL=/api/v1
 DATABASE_URL=postgresql://...@....neon.tech/neondb?sslmode=require
@@ -47,36 +48,52 @@ NODE_ENV=production
 ### 2. prebuild.sh
 
 The `prebuild.sh` script prepares the unified build:
-- Copies `packages/shared/src/` into the Next.js project
-- Copies `packages/api/src/` into the Next.js project
-- Sets up the catch-all API route at `src/app/api/v1/[...path]/route.ts`
+
+- Runs Prisma client generation from `apps/api`
+- Bundles `apps/api/src/app.ts` into `apps/web/api-bundle/app.mjs` using Bun
+- Keeps API runtime self-contained for Vercel function tracing
 
 ### 3. Deploy
 
 ```bash
-# From project root
-cd apps/web
+# From repository root (recommended for this monorepo project setup)
 npx vercel --prod
 ```
 
 Or connect the GitHub repo to Vercel:
+
 - **Root Directory**: `apps/web`
 - **Build Command**: `bash prebuild.sh && bun run build`
-- **Install Command**: `bun install`
+- **Install Command**: `cd ../.. && bun install`
 - **Output Directory**: `.next`
+
+### 4. CLI Linking Note (Monorepo)
+
+If the Vercel project **Root Directory** is `apps/web`, run deploy commands from repository root.
+
+Running `vercel --prod` from inside `apps/web` can cause path resolution errors such as:
+
+`The provided path “…/apps/web/apps/web” does not exist`
+
+### Current Production Project
+
+- **Vercel Project**: `iffe-sacco`
+- **Production Alias**: `https://iffe-sacco.vercel.app`
 
 ## Split Deployment (Alternative)
 
 ### Frontend (Vercel)
 
 Create `apps/web/.env.production`:
+
 ```env
 NEXT_PUBLIC_API_URL=https://api.iffeds.org/api/v1
 ```
 
 Deploy:
+
 ```bash
-cd apps/web
+# From repository root for projects configured with Root Directory=apps/web
 npx vercel --prod
 ```
 
@@ -94,12 +111,14 @@ CORS_ORIGIN=https://iffeds.org
 ```
 
 Deploy:
+
 ```bash
 railway init
 railway up
 ```
 
 Or connect GitHub:
+
 - **Root Directory**: `apps/api`
 - **Build Command**: `bun build src/index.ts --outdir dist --target bun`
 - **Start Command**: `bun run dist/index.js`
@@ -125,6 +144,7 @@ CMD ["bun", "run", "dist/index.js"]
 ```
 
 Deploy:
+
 ```bash
 cd apps/api
 fly launch --name iffe-sacco-api --region sin  # Singapore
@@ -136,12 +156,12 @@ fly deploy
 
 ### Current Setup
 
-| Property | Value |
-|----------|-------|
-| Project | `snowy-water-12689441` |
-| Region | `aws-ap-southeast-1` (Singapore) |
-| Database | `neondb` |
-| PostgreSQL | 17 |
+| Property   | Value                            |
+| ---------- | -------------------------------- |
+| Project    | `snowy-water-12689441`           |
+| Region     | `aws-ap-southeast-1` (Singapore) |
+| Database   | `neondb`                         |
+| PostgreSQL | 17                               |
 
 ### Production Checklist
 
@@ -161,12 +181,12 @@ DATABASE_URL="production-url" bunx prisma migrate deploy
 
 ## Default Credentials
 
-| Role | Email | Password |
-|------|-------|----------|
-| Admin | admin@iffeds.org | password123 |
+| Role     | Email               | Password    |
+| -------- | ------------------- | ----------- |
+| Admin    | admin@iffeds.org    | password123 |
 | Chairman | chairman@iffeds.org | chairman123 |
-| Staff | staff@iffeds.org | password123 |
-| Member | john@example.com | password123 |
+| Staff    | staff@iffeds.org    | password123 |
+| Member   | john@example.com    | password123 |
 
 > **Security**: Change all passwords immediately in production.
 
@@ -174,30 +194,30 @@ DATABASE_URL="production-url" bunx prisma migrate deploy
 
 ### Unified Deployment (`apps/web` with bundled API)
 
-| Variable | Required | Description |
-|----------|----------|-------------|
-| `NEXT_PUBLIC_API_URL` | No | API base URL (`/api/v1` for unified, full URL for split) |
-| `DATABASE_URL` | Yes | NeonDB PostgreSQL connection string |
-| `JWT_SECRET` | Yes | Secret for access token signing (min 32 chars) |
-| `JWT_REFRESH_SECRET` | Yes | Secret for refresh token signing (min 32 chars) |
-| `NODE_ENV` | No | Environment (default: development) |
+| Variable              | Required | Description                                              |
+| --------------------- | -------- | -------------------------------------------------------- |
+| `NEXT_PUBLIC_API_URL` | No       | API base URL (`/api/v1` for unified, full URL for split) |
+| `DATABASE_URL`        | Yes      | NeonDB PostgreSQL connection string                      |
+| `JWT_SECRET`          | Yes      | Secret for access token signing (min 32 chars)           |
+| `JWT_REFRESH_SECRET`  | Yes      | Secret for refresh token signing (min 32 chars)          |
+| `NODE_ENV`            | No       | Environment (default: development)                       |
 
 ### Split Deployment - Backend (`apps/api`)
 
-| Variable | Required | Description |
-|----------|----------|-------------|
-| `DATABASE_URL` | Yes | NeonDB PostgreSQL connection string |
-| `JWT_SECRET` | Yes | Secret for access token signing (min 32 chars) |
-| `JWT_REFRESH_SECRET` | Yes | Secret for refresh token signing (min 32 chars) |
-| `PORT` | No | API port (default: 4000) |
-| `NODE_ENV` | No | Environment (default: development) |
-| `CORS_ORIGIN` | No | Allowed CORS origin (default: http://localhost:3000) |
+| Variable             | Required | Description                                          |
+| -------------------- | -------- | ---------------------------------------------------- |
+| `DATABASE_URL`       | Yes      | NeonDB PostgreSQL connection string                  |
+| `JWT_SECRET`         | Yes      | Secret for access token signing (min 32 chars)       |
+| `JWT_REFRESH_SECRET` | Yes      | Secret for refresh token signing (min 32 chars)      |
+| `PORT`               | No       | API port (default: 4000)                             |
+| `NODE_ENV`           | No       | Environment (default: development)                   |
+| `CORS_ORIGIN`        | No       | Allowed CORS origin (default: http://localhost:3000) |
 
 ### Split Deployment - Frontend (`apps/web`)
 
-| Variable | Required | Description |
-|----------|----------|-------------|
-| `NEXT_PUBLIC_API_URL` | No | Backend API base URL (full URL for split deployment) |
+| Variable              | Required | Description                                          |
+| --------------------- | -------- | ---------------------------------------------------- |
+| `NEXT_PUBLIC_API_URL` | No       | Backend API base URL (full URL for split deployment) |
 
 ## Security Checklist
 

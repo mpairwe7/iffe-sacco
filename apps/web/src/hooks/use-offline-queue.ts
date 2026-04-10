@@ -12,9 +12,7 @@ import { count, drain, installAutoDrain, list, subscribe, type QueuedMutation } 
 export function useOfflineQueue() {
   const [depth, setDepth] = useState(0);
   const [pending, setPending] = useState<QueuedMutation[]>([]);
-  const [isOnline, setIsOnline] = useState(
-    typeof navigator === "undefined" ? true : navigator.onLine,
-  );
+  const [isOnline, setIsOnline] = useState(typeof navigator === "undefined" ? true : navigator.onLine);
 
   useEffect(() => {
     let cancelled = false;

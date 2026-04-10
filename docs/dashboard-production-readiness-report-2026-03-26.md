@@ -73,8 +73,8 @@ Severity: High
 
 Evidence:
 
-- [layout.tsx](/home/darkhorse/IFFE/apps/web/src/app/(dashboard)/layout.tsx#L1)
-- [layout.tsx](/home/darkhorse/IFFE/apps/web/src/app/(dashboard)/layout.tsx#L15)
+- [layout.tsx](</home/darkhorse/IFFE/apps/web/src/app/(dashboard)/layout.tsx#L1>)
+- [layout.tsx](</home/darkhorse/IFFE/apps/web/src/app/(dashboard)/layout.tsx#L15>)
 - [auth-guard.tsx](/home/darkhorse/IFFE/apps/web/src/components/auth-guard.tsx#L14)
 - [auth-guard.tsx](/home/darkhorse/IFFE/apps/web/src/components/auth-guard.tsx#L21)
 - [auth-guard.tsx](/home/darkhorse/IFFE/apps/web/src/components/auth-guard.tsx#L61)
@@ -130,9 +130,9 @@ Severity: High
 
 Evidence:
 
-- [dashboard/page.tsx](/home/darkhorse/IFFE/apps/web/src/app/(dashboard)/dashboard/page.tsx#L77)
-- [dashboard/page.tsx](/home/darkhorse/IFFE/apps/web/src/app/(dashboard)/dashboard/page.tsx#L79)
-- [dashboard/page.tsx](/home/darkhorse/IFFE/apps/web/src/app/(dashboard)/dashboard/page.tsx#L84)
+- [dashboard/page.tsx](</home/darkhorse/IFFE/apps/web/src/app/(dashboard)/dashboard/page.tsx#L77>)
+- [dashboard/page.tsx](</home/darkhorse/IFFE/apps/web/src/app/(dashboard)/dashboard/page.tsx#L79>)
+- [dashboard/page.tsx](</home/darkhorse/IFFE/apps/web/src/app/(dashboard)/dashboard/page.tsx#L84>)
 - [dashboard-charts.tsx](/home/darkhorse/IFFE/apps/web/src/components/dashboard-charts.tsx#L128)
 - [dashboard-charts.tsx](/home/darkhorse/IFFE/apps/web/src/components/dashboard-charts.tsx#L156)
 
@@ -144,7 +144,7 @@ Why it matters:
 
 Additional trust issue:
 
-- The greeting is hard-coded to “Welcome back, Admin” in [dashboard/page.tsx](/home/darkhorse/IFFE/apps/web/src/app/(dashboard)/dashboard/page.tsx#L25), which is wrong for staff users.
+- The greeting is hard-coded to “Welcome back, Admin” in [dashboard/page.tsx](</home/darkhorse/IFFE/apps/web/src/app/(dashboard)/dashboard/page.tsx#L25>), which is wrong for staff users.
 
 Recommendation:
 
@@ -188,10 +188,10 @@ Severity: High
 
 Evidence:
 
-- [deposit-requests/page.tsx](/home/darkhorse/IFFE/apps/web/src/app/(dashboard)/admin/deposit-requests/page.tsx#L20)
-- [deposit-requests/page.tsx](/home/darkhorse/IFFE/apps/web/src/app/(dashboard)/admin/deposit-requests/page.tsx#L77)
-- [withdraw-requests/page.tsx](/home/darkhorse/IFFE/apps/web/src/app/(dashboard)/admin/withdraw-requests/page.tsx#L19)
-- [withdraw-requests/page.tsx](/home/darkhorse/IFFE/apps/web/src/app/(dashboard)/admin/withdraw-requests/page.tsx#L132)
+- [deposit-requests/page.tsx](</home/darkhorse/IFFE/apps/web/src/app/(dashboard)/admin/deposit-requests/page.tsx#L20>)
+- [deposit-requests/page.tsx](</home/darkhorse/IFFE/apps/web/src/app/(dashboard)/admin/deposit-requests/page.tsx#L77>)
+- [withdraw-requests/page.tsx](</home/darkhorse/IFFE/apps/web/src/app/(dashboard)/admin/withdraw-requests/page.tsx#L19>)
+- [withdraw-requests/page.tsx](</home/darkhorse/IFFE/apps/web/src/app/(dashboard)/admin/withdraw-requests/page.tsx#L132>)
 - [confirm-dialog.tsx](/home/darkhorse/IFFE/apps/web/src/components/ui/confirm-dialog.tsx#L33)
 
 Why it matters:
@@ -217,11 +217,11 @@ Severity: Medium-high
 
 Evidence:
 
-- [reports/page.tsx](/home/darkhorse/IFFE/apps/web/src/app/(dashboard)/admin/reports/page.tsx#L57)
-- [reports/page.tsx](/home/darkhorse/IFFE/apps/web/src/app/(dashboard)/admin/reports/page.tsx#L93)
-- [reports/page.tsx](/home/darkhorse/IFFE/apps/web/src/app/(dashboard)/admin/reports/page.tsx#L165)
-- [reports/page.tsx](/home/darkhorse/IFFE/apps/web/src/app/(dashboard)/admin/reports/page.tsx#L197)
-- [reports/page.tsx](/home/darkhorse/IFFE/apps/web/src/app/(dashboard)/admin/reports/page.tsx#L205)
+- [reports/page.tsx](</home/darkhorse/IFFE/apps/web/src/app/(dashboard)/admin/reports/page.tsx#L57>)
+- [reports/page.tsx](</home/darkhorse/IFFE/apps/web/src/app/(dashboard)/admin/reports/page.tsx#L93>)
+- [reports/page.tsx](</home/darkhorse/IFFE/apps/web/src/app/(dashboard)/admin/reports/page.tsx#L165>)
+- [reports/page.tsx](</home/darkhorse/IFFE/apps/web/src/app/(dashboard)/admin/reports/page.tsx#L197>)
+- [reports/page.tsx](</home/darkhorse/IFFE/apps/web/src/app/(dashboard)/admin/reports/page.tsx#L205>)
 
 Why it matters:
 
@@ -281,7 +281,7 @@ Evidence:
 - [globals.css](/home/darkhorse/IFFE/apps/web/src/app/globals.css#L63)
 - [globals.css](/home/darkhorse/IFFE/apps/web/src/app/globals.css#L100)
 - [globals.css](/home/darkhorse/IFFE/apps/web/src/app/globals.css#L125)
-- [dashboard/page.tsx](/home/darkhorse/IFFE/apps/web/src/app/(dashboard)/dashboard/page.tsx#L147)
+- [dashboard/page.tsx](</home/darkhorse/IFFE/apps/web/src/app/(dashboard)/dashboard/page.tsx#L147>)
 - [data-table.tsx](/home/darkhorse/IFFE/apps/web/src/components/data-table.tsx#L193)
 
 Why it matters:
@@ -308,10 +308,10 @@ Severity: Medium
 
 Evidence:
 
-- [transactions/create/page.tsx](/home/darkhorse/IFFE/apps/web/src/app/(dashboard)/admin/transactions/create/page.tsx#L22)
-- [transactions/create/page.tsx](/home/darkhorse/IFFE/apps/web/src/app/(dashboard)/admin/transactions/create/page.tsx#L39)
-- [transactions/create/page.tsx](/home/darkhorse/IFFE/apps/web/src/app/(dashboard)/admin/transactions/create/page.tsx#L81)
-- [transactions/create/page.tsx](/home/darkhorse/IFFE/apps/web/src/app/(dashboard)/admin/transactions/create/page.tsx#L96)
+- [transactions/create/page.tsx](</home/darkhorse/IFFE/apps/web/src/app/(dashboard)/admin/transactions/create/page.tsx#L22>)
+- [transactions/create/page.tsx](</home/darkhorse/IFFE/apps/web/src/app/(dashboard)/admin/transactions/create/page.tsx#L39>)
+- [transactions/create/page.tsx](</home/darkhorse/IFFE/apps/web/src/app/(dashboard)/admin/transactions/create/page.tsx#L81>)
+- [transactions/create/page.tsx](</home/darkhorse/IFFE/apps/web/src/app/(dashboard)/admin/transactions/create/page.tsx#L96>)
 
 Why it matters:
 
@@ -335,8 +335,8 @@ Evidence:
 - Key examples:
   [dashboard-header.tsx](/home/darkhorse/IFFE/apps/web/src/components/dashboard-header.tsx#L22)
   [dashboard-charts.tsx](/home/darkhorse/IFFE/apps/web/src/components/dashboard-charts.tsx#L20)
-  [withdraw-requests/page.tsx](/home/darkhorse/IFFE/apps/web/src/app/(dashboard)/admin/withdraw-requests/page.tsx#L17)
-  [reports/page.tsx](/home/darkhorse/IFFE/apps/web/src/app/(dashboard)/admin/reports/page.tsx#L6)
+  [withdraw-requests/page.tsx](</home/darkhorse/IFFE/apps/web/src/app/(dashboard)/admin/withdraw-requests/page.tsx#L17>)
+  [reports/page.tsx](</home/darkhorse/IFFE/apps/web/src/app/(dashboard)/admin/reports/page.tsx#L6>)
 
 Why it matters:
 
@@ -352,7 +352,7 @@ Recommendation:
 
 ## Secondary findings
 
-- The help center is currently presentation-only: the cards look interactive, say “Learn more,” and animate like links, but they are plain `div`s with no destinations in [help/page.tsx](/home/darkhorse/IFFE/apps/web/src/app/(dashboard)/portal/help/page.tsx#L35).
+- The help center is currently presentation-only: the cards look interactive, say “Learn more,” and animate like links, but they are plain `div`s with no destinations in [help/page.tsx](</home/darkhorse/IFFE/apps/web/src/app/(dashboard)/portal/help/page.tsx#L35>).
 - The notifications bell and language button in [dashboard-header.tsx](/home/darkhorse/IFFE/apps/web/src/components/dashboard-header.tsx#L82) are visual placeholders rather than working product features.
 - Iconography in [sidebar.tsx](/home/darkhorse/IFFE/apps/web/src/components/sidebar.tsx#L46) is serviceable, but some assignments are semantically muddy:
   `Wallet` covers both transaction history and member savings, and `CreditCard` covers both loans and payment gateways.

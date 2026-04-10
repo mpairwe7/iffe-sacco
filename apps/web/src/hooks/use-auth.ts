@@ -32,8 +32,7 @@ export function useLogout() {
 
 export function useChangePassword() {
   return useMutation({
-    mutationFn: (data: { currentPassword: string; newPassword: string }) =>
-      authApi.changePassword(data),
+    mutationFn: (data: { currentPassword: string; newPassword: string }) => authApi.changePassword(data),
   });
 }
 

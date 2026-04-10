@@ -104,7 +104,13 @@ async function main() {
     const diff = Money.sub(direct, ledger);
     if (!Money.isZero(diff)) {
       logger.warn(
-        { event: "backfill.variance", accountId: acc.id, direct: Money.toString(direct), ledger: Money.toString(ledger), diff: Money.toString(diff) },
+        {
+          event: "backfill.variance",
+          accountId: acc.id,
+          direct: Money.toString(direct),
+          ledger: Money.toString(ledger),
+          diff: Money.toString(diff),
+        },
         "account variance after backfill",
       );
       variance = Money.add(variance, diff);

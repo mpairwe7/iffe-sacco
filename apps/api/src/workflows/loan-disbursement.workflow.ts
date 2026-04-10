@@ -41,10 +41,7 @@ export const loanDisbursementWorkflow = defineWorkflow<LoanDisbursementInput, Lo
 
       // Debit Loans Receivable — we now have an asset (the member owes us).
       // Credit the source of funds we're paying out from.
-      const creditSide =
-        input.method === "cash"
-          ? GL_ACCOUNTS.CASH_ON_HAND
-          : memberLiabilityAccountFor(account.type);
+      const creditSide = input.method === "cash" ? GL_ACCOUNTS.CASH_ON_HAND : memberLiabilityAccountFor(account.type);
 
       const entry = JournalEntry.builder({
         description: `Disburse loan ${loan.id} principal ${Money.toString(principal)}`,

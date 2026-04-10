@@ -39,13 +39,7 @@ export const explainInterestInput = z.object({
 });
 
 export const raiseActionInput = z.object({
-  action: z.enum([
-    "deposit_request",
-    "withdraw_request",
-    "loan_application",
-    "pledge",
-    "account_update",
-  ]),
+  action: z.enum(["deposit_request", "withdraw_request", "loan_application", "pledge", "account_update"]),
   details: z.record(z.string(), z.unknown()),
   summary: z.string().min(10).describe("Natural-language summary the reviewer will see"),
 });
@@ -127,7 +121,8 @@ export const TOOLS = {
   },
   raiseWithHuman: {
     name: "raiseWithHuman",
-    description: "Escalate the conversation to a human agent. Use for fraud reports, disputes, distress, or anything urgent.",
+    description:
+      "Escalate the conversation to a human agent. Use for fraud reports, disputes, distress, or anything urgent.",
     input: raiseWithHumanInput,
     audiences: ["member", "staff", "chairman", "admin"],
   },
@@ -154,5 +149,10 @@ export const TOOLS = {
 export type ToolName = keyof typeof TOOLS;
 
 export function toolsForAudience(audience: AssistantContext["role"]): ToolSpec[] {
-  return Object.values(TOOLS).filter((t) => t.audiences.includes(audience));
+  // The `as const satisfies Record<string, ToolSpec>` on TOOLS narrows each
+  // tool's `audiences` tuple to a literal intersection that TS can't unify
+  // across tools when calling .includes(). Widening to `readonly string[]`
+  // at the call site keeps the runtime check safe without weakening the
+  // type anywhere else.
+  return Object.values(TOOLS).filter((t) => (t.audiences as readonly string[]).includes(audience));
 }

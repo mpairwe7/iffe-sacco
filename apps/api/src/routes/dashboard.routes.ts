@@ -1,9 +1,9 @@
 import { Hono } from "hono";
 import { DashboardService } from "../services/dashboard.service";
-import { authMiddleware, requireRole } from "../middleware/auth";
+import { authMiddleware, requireRole, type AuthEnv } from "../middleware/auth";
 import { prisma } from "../config/db";
 
-const dashboard = new Hono();
+const dashboard = new Hono<AuthEnv>();
 const service = new DashboardService();
 
 dashboard.use("*", authMiddleware);
@@ -39,7 +39,7 @@ dashboard.get("/upcoming-payments", async (c) => {
 
 // Chart data — server-aggregated, no raw records sent to client
 dashboard.get("/charts/monthly-transactions", async (c) => {
-  const user = c.get("user") as { role: string };
+  const user = c.get("user");
   if (user.role === "member") return c.json({ success: false, message: "Insufficient permissions" }, 403);
   const months = Number(c.req.query("months") || 12);
   const data = await service.getMonthlyTransactions(months);
@@ -47,14 +47,14 @@ dashboard.get("/charts/monthly-transactions", async (c) => {
 });
 
 dashboard.get("/charts/expense-breakdown", async (c) => {
-  const user = c.get("user") as { role: string };
+  const user = c.get("user");
   if (user.role === "member") return c.json({ success: false, message: "Insufficient permissions" }, 403);
   const data = await service.getExpenseBreakdown();
   return c.json({ success: true, data });
 });
 
 dashboard.get("/charts/loan-trends", async (c) => {
-  const user = c.get("user") as { role: string };
+  const user = c.get("user");
   if (user.role === "member") return c.json({ success: false, message: "Insufficient permissions" }, 403);
   const months = Number(c.req.query("months") || 12);
   const data = await service.getLoanTrends(months);
@@ -76,7 +76,7 @@ dashboard.get("/chairman", requireRole("chairman", "admin"), async (c) => {
 
 // Notifications — recent audit logs as notifications for any authenticated user
 dashboard.get("/notifications", async (c) => {
-  const user = c.get("user") as { id: string; role: string };
+  const user = c.get("user");
   const limit = Number(c.req.query("limit") || 10);
 
   // Admin/staff/chairman see all recent activity, members see only their own

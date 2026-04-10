@@ -104,7 +104,9 @@ export default async function RootLayout({
   return (
     <html lang={locale} className={`${inter.variable} h-full antialiased`} suppressHydrationWarning>
       <body className="min-h-full flex flex-col font-sans">
-        <a href="#main-content" className="skip-to-content">Skip to content</a>
+        <a href="#main-content" className="skip-to-content">
+          Skip to content
+        </a>
         <Providers locale={locale} messages={messages}>
           <OfflineBanner />
           {children}

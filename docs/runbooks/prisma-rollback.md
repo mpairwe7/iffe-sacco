@@ -11,7 +11,7 @@
 
 ## Immediate action
 
-1. **Freeze traffic promotion** — open the Vercel dashboard, find the deployment, click *Rollback* to the previous known-good production deployment. Rolling Releases users can pause the rollout.
+1. **Freeze traffic promotion** — open the Vercel dashboard, find the deployment, click _Rollback_ to the previous known-good production deployment. Rolling Releases users can pause the rollout.
 2. Announce in #incidents with: deployment SHA, failing migration name, timestamps.
 
 ## Diagnosis

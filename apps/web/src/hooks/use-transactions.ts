@@ -21,8 +21,7 @@ export function useTransactionStats() {
 export function useCreateTransaction() {
   const qc = useQueryClient();
   return useMutation({
-    mutationFn: (data: CreateTransactionInput) =>
-      transactionsApi.createTransaction(data),
+    mutationFn: (data: CreateTransactionInput) => transactionsApi.createTransaction(data),
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ["transactions"] });
       qc.invalidateQueries({ queryKey: ["dashboard"] });

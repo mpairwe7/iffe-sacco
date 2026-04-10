@@ -1,14 +1,10 @@
 "use client";
 
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { expensesApi } from "@/lib/api/expenses";
-import type {
-  CreateExpenseInput,
-  UpdateExpenseInput,
-  PaginationParams,
-} from "@iffe/shared";
+import { expensesApi, type ExpenseQueryParams } from "@/lib/api/expenses";
+import type { CreateExpenseInput, UpdateExpenseInput } from "@iffe/shared";
 
-export function useExpenses(params?: PaginationParams) {
+export function useExpenses(params?: ExpenseQueryParams) {
   return useQuery({
     queryKey: ["expenses", params],
     queryFn: () => expensesApi.getExpenses(params),
@@ -33,8 +29,7 @@ export function useCreateExpense() {
 export function useUpdateExpense() {
   const qc = useQueryClient();
   return useMutation({
-    mutationFn: ({ id, data }: { id: string; data: UpdateExpenseInput }) =>
-      expensesApi.updateExpense(id, data),
+    mutationFn: ({ id, data }: { id: string; data: UpdateExpenseInput }) => expensesApi.updateExpense(id, data),
     onSuccess: () => qc.invalidateQueries({ queryKey: ["expenses"] }),
   });
 }

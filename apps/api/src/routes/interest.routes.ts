@@ -29,7 +29,10 @@ interest.post("/calculate", zValidator("json", calculateInterestSchema), async (
       startDate: data.startDate,
       endDate: data.endDate,
       accountsProcessed: result.accountsProcessed,
-      totalInterest: result.totalInterest,
+      // Phase 1: interest service now returns totalCredited (the actual
+      // amount posted through the savings accrual workflow), not the
+      // legacy totalInterest preview value.
+      totalCredited: result.totalCredited,
     },
   });
   return c.json({ success: true, data: result });

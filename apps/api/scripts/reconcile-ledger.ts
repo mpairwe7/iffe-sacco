@@ -17,10 +17,7 @@ async function main() {
   // 1. Trial balance must be zero.
   const tb = await trialBalance();
   if (!tb.balanced) {
-    logger.error(
-      { event: "reconcile.tb_variance", ...tb },
-      "TRIAL BALANCE OUT OF BALANCE — page on-call",
-    );
+    logger.error({ event: "reconcile.tb_variance", ...tb }, "TRIAL BALANCE OUT OF BALANCE — page on-call");
     process.exit(2);
   }
 
@@ -34,10 +31,7 @@ async function main() {
       where: { memberAccountId: acc.id },
       _sum: { debit: true, credit: true },
     });
-    const ledger = Money.sub(
-      Money.fromDb(agg._sum.credit ?? "0"),
-      Money.fromDb(agg._sum.debit ?? "0"),
-    );
+    const ledger = Money.sub(Money.fromDb(agg._sum.credit ?? "0"), Money.fromDb(agg._sum.debit ?? "0"));
     const diff = Money.sub(direct, ledger);
     if (!Money.isZero(diff)) {
       variances += 1;

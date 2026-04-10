@@ -52,9 +52,7 @@ export function CreateExpenseModal({ open, onOpenChange }: Props) {
         <Dialog.Overlay className="fixed inset-0 bg-black/40 backdrop-blur-sm z-50 data-[state=open]:animate-in data-[state=open]:fade-in data-[state=closed]:animate-out data-[state=closed]:fade-out" />
         <Dialog.Content className="fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[calc(100%-2rem)] max-w-lg glass-card rounded-xl p-6 z-50 max-h-[90vh] overflow-y-auto data-[state=open]:animate-in data-[state=open]:fade-in data-[state=open]:zoom-in-95 data-[state=open]:slide-in-from-left-1/2 data-[state=open]:slide-in-from-top-[48%]">
           <div className="flex items-center justify-between mb-6">
-            <Dialog.Title className="text-lg font-semibold text-text">
-              New Expense
-            </Dialog.Title>
+            <Dialog.Title className="text-lg font-semibold text-text">New Expense</Dialog.Title>
             <Dialog.Close asChild>
               <button className="p-1.5 text-text-light hover:text-text rounded-lg" aria-label="Close">
                 <X className="w-4 h-4" />
@@ -70,13 +68,11 @@ export function CreateExpenseModal({ open, onOpenChange }: Props) {
                 rows={3}
                 className={cn(
                   "w-full px-4 py-2.5 bg-white/60 border border-white/40 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary resize-none",
-                  errors.description && "border-danger/50 focus:ring-danger/20 focus:border-danger"
+                  errors.description && "border-danger/50 focus:ring-danger/20 focus:border-danger",
                 )}
                 placeholder="Enter expense description..."
               />
-              {errors.description && (
-                <p className="text-xs text-danger mt-1">{errors.description.message}</p>
-              )}
+              {errors.description && <p className="text-xs text-danger mt-1">{errors.description.message}</p>}
             </div>
 
             <div>
@@ -85,17 +81,17 @@ export function CreateExpenseModal({ open, onOpenChange }: Props) {
                 {...register("category")}
                 className={cn(
                   "w-full px-4 py-2.5 bg-white/60 border border-white/40 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary",
-                  errors.category && "border-danger/50 focus:ring-danger/20 focus:border-danger"
+                  errors.category && "border-danger/50 focus:ring-danger/20 focus:border-danger",
                 )}
               >
                 <option value="">Select category</option>
                 {EXPENSE_CATEGORIES.map((cat: string) => (
-                  <option key={cat} value={cat}>{cat}</option>
+                  <option key={cat} value={cat}>
+                    {cat}
+                  </option>
                 ))}
               </select>
-              {errors.category && (
-                <p className="text-xs text-danger mt-1">{errors.category.message}</p>
-              )}
+              {errors.category && <p className="text-xs text-danger mt-1">{errors.category.message}</p>}
             </div>
 
             <div className="grid grid-cols-2 gap-4">
@@ -107,13 +103,11 @@ export function CreateExpenseModal({ open, onOpenChange }: Props) {
                   {...register("amount", { valueAsNumber: true })}
                   className={cn(
                     "w-full px-4 py-2.5 bg-white/60 border border-white/40 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary",
-                    errors.amount && "border-danger/50 focus:ring-danger/20 focus:border-danger"
+                    errors.amount && "border-danger/50 focus:ring-danger/20 focus:border-danger",
                   )}
                   placeholder="0"
                 />
-                {errors.amount && (
-                  <p className="text-xs text-danger mt-1">{errors.amount.message}</p>
-                )}
+                {errors.amount && <p className="text-xs text-danger mt-1">{errors.amount.message}</p>}
               </div>
 
               <div>
@@ -123,12 +117,10 @@ export function CreateExpenseModal({ open, onOpenChange }: Props) {
                   {...register("date")}
                   className={cn(
                     "w-full px-4 py-2.5 bg-white/60 border border-white/40 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary",
-                    errors.date && "border-danger/50 focus:ring-danger/20 focus:border-danger"
+                    errors.date && "border-danger/50 focus:ring-danger/20 focus:border-danger",
                   )}
                 />
-                {errors.date && (
-                  <p className="text-xs text-danger mt-1">{errors.date.message}</p>
-                )}
+                {errors.date && <p className="text-xs text-danger mt-1">{errors.date.message}</p>}
               </div>
             </div>
 

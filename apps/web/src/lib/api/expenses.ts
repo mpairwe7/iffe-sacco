@@ -7,18 +7,16 @@ import type {
   PaginationParams,
 } from "@iffe/shared";
 
+export type ExpenseQueryParams = PaginationParams & {
+  status?: string;
+};
+
 export const expensesApi = {
-  getExpenses: (params?: PaginationParams) =>
-    apiClient.get<PaginatedResponse<Expense>>("/expenses", params),
-  createExpense: (data: CreateExpenseInput) =>
-    apiClient.post<Expense>("/expenses", data),
-  updateExpense: (id: string, data: UpdateExpenseInput) =>
-    apiClient.put<Expense>(`/expenses/${id}`, data),
+  getExpenses: (params?: ExpenseQueryParams) => apiClient.get<PaginatedResponse<Expense>>("/expenses", params),
+  createExpense: (data: CreateExpenseInput) => apiClient.post<Expense>("/expenses", data),
+  updateExpense: (id: string, data: UpdateExpenseInput) => apiClient.put<Expense>(`/expenses/${id}`, data),
   deleteExpense: (id: string) => apiClient.del<void>(`/expenses/${id}`),
-  approveExpense: (id: string) =>
-    apiClient.patch<Expense>(`/expenses/${id}/approve`),
-  rejectExpense: (id: string) =>
-    apiClient.patch<Expense>(`/expenses/${id}/reject`),
-  getExpenseStats: () =>
-    apiClient.get<Record<string, unknown>>("/expenses/stats"),
+  approveExpense: (id: string) => apiClient.patch<Expense>(`/expenses/${id}/approve`),
+  rejectExpense: (id: string) => apiClient.patch<Expense>(`/expenses/${id}/reject`),
+  getExpenseStats: () => apiClient.get<Record<string, unknown>>("/expenses/stats"),
 };

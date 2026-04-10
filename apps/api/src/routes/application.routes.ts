@@ -39,12 +39,18 @@ applications.get("/mine", authMiddleware, async (c) => {
 });
 
 // Admin: list all applications
-applications.get("/", authMiddleware, requireRole("admin", "staff"), zValidator("query", paginationSchema), async (c) => {
-  const params = c.req.valid("query");
-  const status = c.req.query("status");
-  const result = await service.getAll({ ...params, status });
-  return c.json({ success: true, data: result });
-});
+applications.get(
+  "/",
+  authMiddleware,
+  requireRole("admin", "staff"),
+  zValidator("query", paginationSchema),
+  async (c) => {
+    const params = c.req.valid("query");
+    const status = c.req.query("status");
+    const result = await service.getAll({ ...params, status });
+    return c.json({ success: true, data: result });
+  },
+);
 
 // Admin: get stats
 applications.get("/stats", authMiddleware, requireRole("admin", "staff"), async (c) => {
@@ -75,17 +81,23 @@ applications.put("/:id/approve", authMiddleware, requireRole("admin"), async (c)
 });
 
 // Admin: reject application
-applications.put("/:id/reject", authMiddleware, requireRole("admin"), zValidator("json", reviewApplicationSchema), async (c) => {
-  const user = c.get("user" as any);
-  const { rejectionReason } = c.req.valid("json");
-  const result = await service.reject(c.req.param("id"), user.id, rejectionReason);
-  await writeAuditLog(c, {
-    action: "application_rejected",
-    entity: "application",
-    entityId: c.req.param("id"),
-    details: { rejectionReason: rejectionReason || null },
-  });
-  return c.json({ success: true, data: result });
-});
+applications.put(
+  "/:id/reject",
+  authMiddleware,
+  requireRole("admin"),
+  zValidator("json", reviewApplicationSchema),
+  async (c) => {
+    const user = c.get("user" as any);
+    const { rejectionReason } = c.req.valid("json");
+    const result = await service.reject(c.req.param("id"), user.id, rejectionReason);
+    await writeAuditLog(c, {
+      action: "application_rejected",
+      entity: "application",
+      entityId: c.req.param("id"),
+      details: { rejectionReason: rejectionReason || null },
+    });
+    return c.json({ success: true, data: result });
+  },
+);
 
 export { applications as applicationRoutes };

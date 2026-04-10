@@ -15,13 +15,14 @@ export async function register() {
   }
 }
 
-export async function onRequestError(
-  err: unknown,
-  request: Request,
-  context: { routerKind: "Pages Router" | "App Router"; routePath: string; routeType: "render" | "route" | "action" | "middleware" },
-) {
-  const dsn = process.env.SENTRY_DSN;
-  if (!dsn) return;
+// Next.js 16 `onRequestError` hook — delegated to Sentry's captureRequestError.
+// Typed with `unknown` because Sentry's request-info type and the Next hook's
+// `Request` type have drifted across minor Sentry releases; the runtime
+// handler is resilient to both shapes and the net effect is a no-op when
+// SENTRY_DSN is unset.
+export async function onRequestError(err: unknown, request: unknown, context: unknown) {
+  if (!process.env.SENTRY_DSN) return;
   const Sentry = await import("@sentry/nextjs");
-  Sentry.captureRequestError(err, request, context);
+  const capture = Sentry.captureRequestError as (err: unknown, req: unknown, ctx: unknown) => void;
+  capture(err, request, context);
 }

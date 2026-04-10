@@ -80,7 +80,14 @@ const navItems: NavItem[] = [
   { label: "Help & Support", href: "/portal/help", icon: HelpCircle, roles: ["member"] },
 
   // Administration Section
-  { label: "", href: undefined, icon: LayoutDashboard, divider: true, section: "Administration", roles: ["admin", "staff", "chairman"] },
+  {
+    label: "",
+    href: undefined,
+    icon: LayoutDashboard,
+    divider: true,
+    section: "Administration",
+    roles: ["admin", "staff", "chairman"],
+  },
   { label: "Applications", href: "/admin/applications", icon: ClipboardList, roles: ["admin", "staff"] },
   {
     label: "Members",
@@ -92,7 +99,12 @@ const navItems: NavItem[] = [
     ],
   },
   { label: "Loans", href: "/admin/loans", icon: Banknote, roles: ["admin", "staff", "chairman"] },
-  { label: "Savings Accounts", href: "/admin/savings-accounts", icon: PiggyBank, roles: ["admin", "staff", "chairman"] },
+  {
+    label: "Savings Accounts",
+    href: "/admin/savings-accounts",
+    icon: PiggyBank,
+    roles: ["admin", "staff", "chairman"],
+  },
   {
     label: "Transactions",
     icon: ArrowLeftRight,
@@ -158,23 +170,23 @@ export function Sidebar({ open, onClose }: SidebarProps) {
   }
 
   const filteredNavItems = useMemo(
-    () => navItems
-      .filter((item) => item.roles.includes(role))
-      .map((item) => {
-        if (item.label === "Members" && role !== "admin") {
-          return { ...item, children: item.children?.filter((c) => c.href !== "/admin/members/create") };
-        }
-        return item;
-      }),
-    [role]
+    () =>
+      navItems
+        .filter((item) => item.roles.includes(role))
+        .map((item) => {
+          if (item.label === "Members" && role !== "admin") {
+            return { ...item, children: item.children?.filter((c) => c.href !== "/admin/members/create") };
+          }
+          return item;
+        }),
+    [role],
   );
 
   const activeGroupLabel = useMemo(
     () =>
-      filteredNavItems.find((item) =>
-        item.children?.some((child) => pathname.startsWith(child.href.split("?")[0]))
-      )?.label ?? null,
-    [filteredNavItems, pathname]
+      filteredNavItems.find((item) => item.children?.some((child) => pathname.startsWith(child.href.split("?")[0])))
+        ?.label ?? null,
+    [filteredNavItems, pathname],
   );
 
   const toggleExpand = (label: string) => {
@@ -201,19 +213,17 @@ export function Sidebar({ open, onClose }: SidebarProps) {
     : "??";
 
   const roleLabel =
-    role === "admin"
-      ? "Administrator"
-      : role === "chairman"
-        ? "Chairman"
-        : role === "staff"
-          ? "Staff"
-          : "Member";
+    role === "admin" ? "Administrator" : role === "chairman" ? "Chairman" : role === "staff" ? "Staff" : "Member";
 
   return (
     <>
       {/* Overlay for mobile */}
       {open && (
-        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-40 lg:hidden" onClick={onClose} aria-hidden="true" />
+        <div
+          className="fixed inset-0 bg-black/50 backdrop-blur-sm z-40 lg:hidden"
+          onClick={onClose}
+          aria-hidden="true"
+        />
       )}
 
       <aside
@@ -221,25 +231,49 @@ export function Sidebar({ open, onClose }: SidebarProps) {
         aria-label="Main navigation"
         className={cn(
           "fixed top-0 left-0 h-full w-[280px] lg:w-72 bg-white dark:bg-gray-950 border-r border-gray-200 dark:border-gray-800 z-50 flex flex-col transition-transform duration-300 lg:translate-x-0 shadow-xl",
-          open ? "translate-x-0" : "-translate-x-full"
+          open ? "translate-x-0" : "-translate-x-full",
         )}
-        onKeyDown={(e) => { if (e.key === "Escape" && open) onClose(); }}
+        onKeyDown={(e) => {
+          if (e.key === "Escape" && open) onClose();
+        }}
       >
         {/* Logo — matching header/footer/auth design */}
         <div className="flex items-center justify-between px-5 h-24 border-b border-gray-200 dark:border-gray-800">
-          <Link href={role === "chairman" ? "/chairman" : role === "member" ? "/portal/dashboard" : role === "staff" ? "/staff" : "/dashboard"} className="flex items-center gap-3">
+          <Link
+            href={
+              role === "chairman"
+                ? "/chairman"
+                : role === "member"
+                  ? "/portal/dashboard"
+                  : role === "staff"
+                    ? "/staff"
+                    : "/dashboard"
+            }
+            className="flex items-center gap-3"
+          >
             <div className="w-11 h-11 rounded-full bg-primary/10 ring-2 ring-primary/30 shadow-lg flex items-center justify-center overflow-hidden shrink-0">
-              <Image src="/logo.png" alt="IFFE SACCO" width={44} height={44} className="w-11 h-11 object-cover rounded-full" />
+              <Image
+                src="/logo.png"
+                alt="IFFE SACCO"
+                width={44}
+                height={44}
+                className="w-11 h-11 object-cover rounded-full"
+              />
             </div>
             <div className="leading-tight">
               <span className="text-lg font-extrabold">
                 <span className="text-primary font-black">IFFE</span>{" "}
                 <span className="text-gray-900 dark:text-white font-extrabold">SACCO</span>
               </span>
-              <p className="text-[9px] font-semibold text-gray-400 dark:text-gray-500 tracking-widest uppercase">Financial Freedom</p>
+              <p className="text-[9px] font-semibold text-gray-400 dark:text-gray-500 tracking-widest uppercase">
+                Financial Freedom
+              </p>
             </div>
           </Link>
-          <button onClick={onClose} className="lg:hidden p-1.5 text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800">
+          <button
+            onClick={onClose}
+            className="lg:hidden p-1.5 text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800"
+          >
             <X className="w-5 h-5" />
           </button>
         </div>
@@ -252,7 +286,9 @@ export function Sidebar({ open, onClose }: SidebarProps) {
             </div>
             <div className="min-w-0">
               <div className="text-sm font-bold text-gray-900 dark:text-white truncate">{user?.name || "User"}</div>
-              <span className="inline-block text-[10px] font-bold text-primary bg-primary/10 px-2 py-0.5 rounded-full uppercase tracking-wider mt-0.5">{roleLabel}</span>
+              <span className="inline-block text-[10px] font-bold text-primary bg-primary/10 px-2 py-0.5 rounded-full uppercase tracking-wider mt-0.5">
+                {roleLabel}
+              </span>
             </div>
           </div>
         </div>
@@ -264,7 +300,9 @@ export function Sidebar({ open, onClose }: SidebarProps) {
               return (
                 <div key={`divider-${idx}`} className="pt-5 pb-2">
                   <div className="border-t border-gray-200 dark:border-gray-800 pt-3 px-3">
-                    <span className="text-[10px] font-bold uppercase tracking-widest text-gray-400 dark:text-gray-500">{item.section}</span>
+                    <span className="text-[10px] font-bold uppercase tracking-widest text-gray-400 dark:text-gray-500">
+                      {item.section}
+                    </span>
                   </div>
                 </div>
               );
@@ -284,14 +322,12 @@ export function Sidebar({ open, onClose }: SidebarProps) {
                       "w-full flex items-center gap-3 px-3 py-3 rounded-lg text-sm font-semibold transition-colors",
                       hasActive
                         ? "text-gray-900 dark:text-white bg-gray-100 dark:bg-gray-800"
-                        : "text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-800/60"
+                        : "text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-800/60",
                     )}
                   >
                     <item.icon className="w-5 h-5 shrink-0" />
                     <span className="flex-1 text-left">{item.label}</span>
-                    <ChevronDown
-                      className={cn("w-4 h-4 transition-transform", isOpen && "rotate-180")}
-                    />
+                    <ChevronDown className={cn("w-4 h-4 transition-transform", isOpen && "rotate-180")} />
                   </button>
                   {isOpen && (
                     <div className="ml-8 mt-1 space-y-0.5 border-l-2 border-gray-200 dark:border-gray-800 pl-3">
@@ -304,7 +340,7 @@ export function Sidebar({ open, onClose }: SidebarProps) {
                             "block px-3 py-2.5 rounded-lg text-sm font-medium transition-colors",
                             isActive(child.href)
                               ? "text-primary font-semibold bg-primary/10"
-                              : "text-gray-500 dark:text-gray-500 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-800/60"
+                              : "text-gray-500 dark:text-gray-500 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-800/60",
                           )}
                         >
                           {child.label}
@@ -325,7 +361,7 @@ export function Sidebar({ open, onClose }: SidebarProps) {
                   "flex items-center gap-3 px-3 py-3 rounded-lg text-sm font-semibold transition-colors",
                   isActive(item.href!)
                     ? "text-white bg-primary shadow-md shadow-primary/20"
-                    : "text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-800/60"
+                    : "text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-800/60",
                 )}
               >
                 <item.icon className="w-5 h-5 shrink-0" />

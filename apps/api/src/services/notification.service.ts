@@ -58,8 +58,7 @@ export async function notify(input: NotificationInput): Promise<{ id: string; se
   const prefs = await getPrefs(input.userId);
   const sentVia: string[] = [];
 
-  const wantsType =
-    input.force || (prefs as any)[PREF_FIELDS[input.type]] !== false;
+  const wantsType = input.force || (prefs as any)[PREF_FIELDS[input.type]] !== false;
 
   // Always record an in-app notification regardless of channel prefs
   // (so the bell icon has a record). Push / email respect prefs.
@@ -144,10 +143,7 @@ async function sendPush(
   const subject = process.env.VAPID_SUBJECT || "mailto:admin@sacco.example.org";
 
   if (!publicKey || !privateKey) {
-    logger.warn(
-      { event: "push.unconfigured" },
-      "VAPID keys unset — skipping push (notification still stored in DB)",
-    );
+    logger.warn({ event: "push.unconfigured" }, "VAPID keys unset — skipping push (notification still stored in DB)");
     return 0;
   }
 
@@ -173,19 +169,13 @@ async function sendPush(
           if (err?.statusCode === 410 || err?.statusCode === 404) {
             await prisma.pushSubscription.delete({ where: { id: sub.id } }).catch(() => undefined);
           } else {
-            logger.warn(
-              { event: "push.send_failed", subId: sub.id, err: err?.message },
-              "web push delivery failed",
-            );
+            logger.warn({ event: "push.send_failed", subId: sub.id, err: err?.message }, "web push delivery failed");
           }
         }
       }),
     );
   } catch (err) {
-    logger.error(
-      { err: err instanceof Error ? err.message : String(err) },
-      "web-push dependency unavailable",
-    );
+    logger.error({ err: err instanceof Error ? err.message : String(err) }, "web-push dependency unavailable");
   }
 
   return delivered;

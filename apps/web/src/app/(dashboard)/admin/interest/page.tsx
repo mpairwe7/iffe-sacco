@@ -16,9 +16,7 @@ export default function InterestCalculationPage() {
   const [accountType, setAccountType] = useState("");
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
-  const [postingDate, setPostingDate] = useState(
-    new Date().toISOString().slice(0, 16)
-  );
+  const [postingDate, setPostingDate] = useState(new Date().toISOString().slice(0, 16));
   const [interestRate, setInterestRate] = useState("");
   const [preview, setPreview] = useState<PreviewResult | null>(null);
   const [previewLoading, setPreviewLoading] = useState(false);
@@ -95,11 +93,16 @@ export default function InterestCalculationPage() {
 
       <div className="bg-info/5 border border-info/20 rounded-xl p-4 flex items-center gap-3">
         <Calculator className="w-5 h-5 text-info shrink-0" />
-        <p className="text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Calculation process may take longer depending on member count.</p>
+        <p className="text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+          Calculation process may take longer depending on member count.
+        </p>
       </div>
 
       <div className="max-w-2xl">
-        <form onSubmit={handlePreview} className="bg-white dark:bg-gray-950 border border-gray-200 dark:border-gray-800 shadow-sm rounded-xl p-6 space-y-5">
+        <form
+          onSubmit={handlePreview}
+          className="bg-white dark:bg-gray-950 border border-gray-200 dark:border-gray-800 shadow-sm rounded-xl p-6 space-y-5"
+        >
           <h3 className="font-bold text-gray-900 dark:text-white">Calculate Interest</h3>
           <div>
             <label className="block text-sm font-medium text-text mb-2">Account Type</label>
@@ -177,11 +180,15 @@ export default function InterestCalculationPage() {
         <div className="max-w-2xl space-y-4">
           <div className="grid grid-cols-2 gap-4">
             <div className="bg-white dark:bg-gray-950 border border-gray-200 dark:border-gray-800 shadow-sm rounded-xl p-5">
-              <p className="text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Accounts Affected</p>
+              <p className="text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                Accounts Affected
+              </p>
               <p className="text-xl font-bold text-gray-900 dark:text-white mt-1">{preview.accountsAffected}</p>
             </div>
             <div className="bg-white dark:bg-gray-950 border border-gray-200 dark:border-gray-800 shadow-sm rounded-xl p-5">
-              <p className="text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Total Interest</p>
+              <p className="text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                Total Interest
+              </p>
               <p className="text-2xl font-bold text-primary mt-1">{formatCurrency(preview.totalInterest)}</p>
             </div>
           </div>
@@ -195,10 +202,18 @@ export default function InterestCalculationPage() {
                 <table className="w-full">
                   <thead>
                     <tr className="border-b border-border/50">
-                      <th className="text-xs font-semibold text-text-muted uppercase tracking-wider px-4 py-3 text-left">Account</th>
-                      <th className="text-xs font-semibold text-text-muted uppercase tracking-wider px-4 py-3 text-left">Member</th>
-                      <th className="text-xs font-semibold text-text-muted uppercase tracking-wider px-4 py-3 text-right">Balance</th>
-                      <th className="text-xs font-semibold text-text-muted uppercase tracking-wider px-4 py-3 text-right">Interest</th>
+                      <th className="text-xs font-semibold text-text-muted uppercase tracking-wider px-4 py-3 text-left">
+                        Account
+                      </th>
+                      <th className="text-xs font-semibold text-text-muted uppercase tracking-wider px-4 py-3 text-left">
+                        Member
+                      </th>
+                      <th className="text-xs font-semibold text-text-muted uppercase tracking-wider px-4 py-3 text-right">
+                        Balance
+                      </th>
+                      <th className="text-xs font-semibold text-text-muted uppercase tracking-wider px-4 py-3 text-right">
+                        Interest
+                      </th>
                     </tr>
                   </thead>
                   <tbody>
@@ -207,7 +222,9 @@ export default function InterestCalculationPage() {
                         <td className="px-4 py-3 text-sm font-mono text-text-muted">{entry.accountNo}</td>
                         <td className="px-4 py-3 text-sm text-text">{entry.memberName}</td>
                         <td className="px-4 py-3 text-sm text-right text-text">{formatCurrency(entry.balance)}</td>
-                        <td className="px-4 py-3 text-sm text-right font-semibold text-primary">{formatCurrency(entry.interest)}</td>
+                        <td className="px-4 py-3 text-sm text-right font-semibold text-primary">
+                          {formatCurrency(entry.interest)}
+                        </td>
                       </tr>
                     ))}
                   </tbody>

@@ -12,17 +12,18 @@
  *     lose fractional shillings before rollup.
  *   - 2 decimal places for display/posting amounts (use `toPostingAmount`).
  */
-import Decimal from "decimal.js-light";
+import Decimal, { type Numeric } from "decimal.js-light";
 
-// decimal.js-light doesn't export modes with the same names as the full lib,
-// so we set rounding per-operation where needed.
+// Global precision for intermediate arithmetic. Posting amounts are
+// explicitly rounded to 2dp via toPostingAmount() before leaving the
+// service layer.
 Decimal.set({ precision: 28 });
 
 export type Money = Decimal & { readonly __money: unique symbol };
 
 const ZERO = new Decimal(0) as Money;
 
-function wrap(value: Decimal.Value): Money {
+function wrap(value: Numeric): Money {
   return new Decimal(value) as Money;
 }
 
@@ -31,7 +32,7 @@ export const Money = {
     return ZERO;
   },
 
-  of(value: Decimal.Value): Money {
+  of(value: Numeric): Money {
     if (value === null || value === undefined) {
       throw new TypeError("Money.of received null/undefined");
     }
@@ -41,9 +42,9 @@ export const Money = {
         `Money.of refuses non-integer JS number (${value}); pass a string instead to avoid float precision loss`,
       );
     }
-    const d = new Decimal(value);
-    if (d.isNaN()) throw new TypeError(`Money.of received NaN (${String(value)})`);
-    return d as Money;
+    // decimal.js-light throws on invalid numeric input, so a successful
+    // construction is guaranteed to be a finite value. No NaN check needed.
+    return new Decimal(value) as Money;
   },
 
   /** Parse from persisted DB/JSON — accepts strings or Prisma.Decimal-like objects. */
@@ -64,11 +65,11 @@ export const Money = {
     return wrap(a.minus(b));
   },
 
-  mul(a: Money, factor: Decimal.Value): Money {
+  mul(a: Money, factor: Numeric): Money {
     return wrap(a.times(factor));
   },
 
-  div(a: Money, divisor: Decimal.Value): Money {
+  div(a: Money, divisor: Numeric): Money {
     return wrap(a.dividedBy(divisor));
   },
 
@@ -78,12 +79,12 @@ export const Money = {
 
   /** Round to 2dp using banker's rounding (ROUND_HALF_EVEN). */
   toPostingAmount(a: Money): Money {
-    return wrap(a.toDecimalPlaces(2, 4 /* ROUND_HALF_EVEN in decimal.js-light */));
+    return wrap(a.toDecimalPlaces(2, Decimal.ROUND_HALF_EVEN));
   },
 
   /** Round to configurable working precision (default 4dp) for intermediate calc. */
   toWorkingPrecision(a: Money, dp = 4): Money {
-    return wrap(a.toDecimalPlaces(dp, 4));
+    return wrap(a.toDecimalPlaces(dp, Decimal.ROUND_HALF_EVEN));
   },
 
   eq(a: Money, b: Money): boolean {

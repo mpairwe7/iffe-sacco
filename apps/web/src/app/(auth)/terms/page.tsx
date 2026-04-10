@@ -13,17 +13,34 @@ export default function TermsPage() {
       <div className="prose prose-sm text-text-muted space-y-4">
         <p>Last updated: March 26, 2026</p>
         <h3 className="text-base font-semibold text-text">1. Acceptance of Terms</h3>
-        <p>By accessing and using the IFFE SACCO platform, you agree to be bound by these Terms of Service and all applicable laws and regulations.</p>
+        <p>
+          By accessing and using the IFFE SACCO platform, you agree to be bound by these Terms of Service and all
+          applicable laws and regulations.
+        </p>
         <h3 className="text-base font-semibold text-text">2. Account Registration</h3>
-        <p>You must provide accurate and complete information during registration. You are responsible for maintaining the confidentiality of your account credentials.</p>
+        <p>
+          You must provide accurate and complete information during registration. You are responsible for maintaining
+          the confidentiality of your account credentials.
+        </p>
         <h3 className="text-base font-semibold text-text">3. Financial Services</h3>
-        <p>IFFE SACCO provides savings, loan, and transaction services subject to regulatory compliance. All financial transactions are governed by applicable banking and cooperative society laws.</p>
+        <p>
+          IFFE SACCO provides savings, loan, and transaction services subject to regulatory compliance. All financial
+          transactions are governed by applicable banking and cooperative society laws.
+        </p>
         <h3 className="text-base font-semibold text-text">4. Privacy & Data Protection</h3>
-        <p>We are committed to protecting your personal and financial data in accordance with applicable data protection regulations. See our Privacy Policy for details.</p>
+        <p>
+          We are committed to protecting your personal and financial data in accordance with applicable data protection
+          regulations. See our Privacy Policy for details.
+        </p>
         <h3 className="text-base font-semibold text-text">5. Limitation of Liability</h3>
-        <p>IFFE SACCO shall not be liable for any indirect, incidental, or consequential damages arising from the use of our services.</p>
+        <p>
+          IFFE SACCO shall not be liable for any indirect, incidental, or consequential damages arising from the use of
+          our services.
+        </p>
         <h3 className="text-base font-semibold text-text">6. Governing Law</h3>
-        <p>These terms are governed by the laws of the Republic of Kenya and applicable cooperative society regulations.</p>
+        <p>
+          These terms are governed by the laws of the Republic of Kenya and applicable cooperative society regulations.
+        </p>
       </div>
     </div>
   );

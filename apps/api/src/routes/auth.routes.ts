@@ -20,14 +20,9 @@ import { prisma } from "../config/db";
 const auth = new Hono<AuthEnv>();
 const service = new AuthService();
 
-// Mark login/register as CSRF-exempt: there's no session cookie yet to
-// compare against. Brute-force protection is handled by the rate limiter
-// and per-account lockout below.
-auth.use("/login", async (c, next) => { c.set("csrf:skip", true); await next(); });
-auth.use("/register", async (c, next) => { c.set("csrf:skip", true); await next(); });
-auth.use("/reset-password", async (c, next) => { c.set("csrf:skip", true); await next(); });
-auth.use("/reset-password/confirm", async (c, next) => { c.set("csrf:skip", true); await next(); });
-auth.use("/logout", async (c, next) => { c.set("csrf:skip", true); await next(); });
+// CSRF exemption for these paths lives in middleware/csrf.ts's
+// CSRF_EXEMPT_PREFIXES list. Brute-force protection is handled by the
+// rate limiter and per-account lockout below.
 
 auth.use("/login", authRateLimit("auth:login"));
 auth.use("/login", accountLockoutGuard);

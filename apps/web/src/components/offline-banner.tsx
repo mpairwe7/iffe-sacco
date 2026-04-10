@@ -30,7 +30,10 @@ export function OfflineBanner() {
         aria-live="polite"
         className="bg-amber-500/15 text-amber-900 border-b border-amber-500/30 px-4 py-2 text-sm"
       >
-        You&apos;re offline. {depth > 0 ? `${depth} action${depth === 1 ? "" : "s"} will sync when you reconnect.` : "Read-only pages still work from the cache."}
+        You&apos;re offline.{" "}
+        {depth > 0
+          ? `${depth} action${depth === 1 ? "" : "s"} will sync when you reconnect.`
+          : "Read-only pages still work from the cache."}
       </div>
     );
   }

@@ -10,9 +10,7 @@ export default function OfflinePage() {
         <div className="w-20 h-20 rounded-full bg-warning/10 flex items-center justify-center mx-auto mb-6">
           <WifiOff className="w-10 h-10 text-warning" />
         </div>
-        <h1 className="text-2xl font-bold text-gray-900 dark:text-white mb-3">
-          You&apos;re Offline
-        </h1>
+        <h1 className="text-2xl font-bold text-gray-900 dark:text-white mb-3">You&apos;re Offline</h1>
         <p className="text-gray-500 dark:text-gray-400 mb-8 leading-relaxed">
           It looks like you&apos;ve lost your internet connection. Some features may be unavailable until you reconnect.
         </p>
@@ -32,9 +30,7 @@ export default function OfflinePage() {
             Go Home
           </Link>
         </div>
-        <p className="mt-10 text-xs text-gray-400">
-          IFFE SACCO — Empowering Financial Freedom
-        </p>
+        <p className="mt-10 text-xs text-gray-400">IFFE SACCO — Empowering Financial Freedom</p>
       </div>
     </div>
   );

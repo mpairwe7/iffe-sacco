@@ -120,7 +120,8 @@ assistant.post("/chat", zValidator("json", chatSchema), async (c) => {
       const model = process.env.ASSISTANT_MODEL || "anthropic/claude-haiku-4-5-20251001";
 
       if (!gatewayUrl || !gatewayKey) {
-        const stub = "Assistant is not configured for this environment. Set AI_GATEWAY_URL and AI_GATEWAY_API_KEY to enable conversational responses.";
+        const stub =
+          "Assistant is not configured for this environment. Set AI_GATEWAY_URL and AI_GATEWAY_API_KEY to enable conversational responses.";
         for (const chunk of stub.match(/.{1,40}/g) ?? [stub]) {
           await send({ type: "text", value: chunk });
         }

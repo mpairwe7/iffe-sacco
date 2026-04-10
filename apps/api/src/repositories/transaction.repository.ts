@@ -20,7 +20,9 @@ export class TransactionRepository {
 
     const [data, total] = await Promise.all([
       prisma.transaction.findMany({
-        where, skip, take: limit,
+        where,
+        skip,
+        take: limit,
         orderBy: { [sortBy]: sortOrder },
         include: { account: { include: { member: true } } },
       }),
@@ -35,8 +37,14 @@ export class TransactionRepository {
   }
 
   async create(data: {
-    accountId: string; type: string; amount: number; method: string;
-    description?: string; reference?: string; status?: string; processedBy?: string;
+    accountId: string;
+    type: string;
+    amount: number;
+    method: string;
+    description?: string;
+    reference?: string;
+    status?: string;
+    processedBy?: string;
   }) {
     return prisma.$transaction(async (tx) => {
       const txn = await tx.transaction.create({ data: { ...data, status: data.status || "pending" } });
@@ -65,9 +73,7 @@ export class TransactionRepository {
       // Adjust balance when approving a pending transaction
       if (txn.status === "pending" && status === "completed") {
         const amount = Number(txn.amount);
-        const delta = ["deposit", "loan_disbursement", "interest_credit"].includes(txn.type)
-          ? amount
-          : -amount;
+        const delta = ["deposit", "loan_disbursement", "interest_credit"].includes(txn.type) ? amount : -amount;
 
         await tx.account.update({
           where: { id: txn.accountId },

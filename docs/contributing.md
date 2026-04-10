@@ -14,13 +14,13 @@ main          ← Production-ready code
 
 ### Branch Naming
 
-| Prefix | Purpose | Example |
-|--------|---------|---------|
-| `feat/` | New feature | `feat/bulk-member-import` |
-| `fix/` | Bug fix | `fix/transaction-balance` |
-| `chore/` | Maintenance | `chore/update-prisma` |
-| `docs/` | Documentation | `docs/api-reference` |
-| `refactor/` | Code refactoring | `refactor/auth-service` |
+| Prefix      | Purpose          | Example                   |
+| ----------- | ---------------- | ------------------------- |
+| `feat/`     | New feature      | `feat/bulk-member-import` |
+| `fix/`      | Bug fix          | `fix/transaction-balance` |
+| `chore/`    | Maintenance      | `chore/update-prisma`     |
+| `docs/`     | Documentation    | `docs/api-reference`      |
+| `refactor/` | Code refactoring | `refactor/auth-service`   |
 
 ### Commit Messages
 
@@ -53,6 +53,7 @@ utils/      → Pure utility functions
 ```
 
 **Rules:**
+
 - Routes call Services, never Repositories directly
 - Services call Repositories, never Prisma directly
 - Repositories own all Prisma queries
@@ -73,6 +74,7 @@ lib/            → Utilities, API client, schemas
 ```
 
 **Rules:**
+
 - Pages are Server Components by default
 - Add `"use client"` only when needed (interactivity, hooks)
 - Use TanStack Query for all server data
@@ -94,6 +96,7 @@ lib/            → Utilities, API client, schemas
 ### Example: Adding "Notifications" module
 
 1. **Shared types** — `packages/shared/src/types.ts`:
+
    ```typescript
    export interface Notification {
      id: string;
@@ -106,6 +109,7 @@ lib/            → Utilities, API client, schemas
    ```
 
 2. **Schema** — `packages/shared/src/schemas.ts`:
+
    ```typescript
    export const createNotificationSchema = z.object({
      userId: z.string().uuid(),
@@ -115,6 +119,7 @@ lib/            → Utilities, API client, schemas
    ```
 
 3. **Prisma model** — `apps/api/prisma/schema.prisma`:
+
    ```prisma
    model Notification {
      id        String   @id @default(uuid())
@@ -137,6 +142,7 @@ lib/            → Utilities, API client, schemas
 7. **Routes** — `apps/api/src/routes/notification.routes.ts`
 
 8. **Wire up** — Add to `apps/api/src/index.ts`:
+
    ```typescript
    import { notificationRoutes } from "./routes/notification.routes";
    app.route("/notifications", notificationRoutes);

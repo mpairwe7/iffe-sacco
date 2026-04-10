@@ -9,7 +9,10 @@ import { Landmark } from "lucide-react";
 type AccountRow = any;
 
 const formatAccountType = (type: string) =>
-  type.split("_").map((w) => w.charAt(0).toUpperCase() + w.slice(1)).join(" ");
+  type
+    .split("_")
+    .map((w) => w.charAt(0).toUpperCase() + w.slice(1))
+    .join(" ");
 
 export default function SavingsAccountsPage() {
   const table = useServerTable();
@@ -18,7 +21,9 @@ export default function SavingsAccountsPage() {
 
   const accountsResponse = query.data;
   const accounts = (accountsResponse?.data || []) as AccountRow[];
-  const stats = statsQuery.data as { total?: number; totalBalance?: number; active?: number; dormant?: number } | undefined;
+  const stats = statsQuery.data as
+    | { total?: number; totalBalance?: number; active?: number; dormant?: number }
+    | undefined;
 
   const columns = [
     {
@@ -41,9 +46,17 @@ export default function SavingsAccountsPage() {
       render: (row: AccountRow) => {
         const label = formatAccountType(row.type);
         return (
-          <span className={`inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium ${
-            row.type === "savings" ? "bg-primary/10 text-primary" : row.type === "fixed_deposit" ? "bg-info/10 text-info" : "bg-secondary/10 text-secondary"
-          }`}>{label}</span>
+          <span
+            className={`inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium ${
+              row.type === "savings"
+                ? "bg-primary/10 text-primary"
+                : row.type === "fixed_deposit"
+                  ? "bg-info/10 text-info"
+                  : "bg-secondary/10 text-secondary"
+            }`}
+          >
+            {label}
+          </span>
         );
       },
     },
@@ -51,7 +64,9 @@ export default function SavingsAccountsPage() {
       key: "balance",
       label: "Balance",
       align: "right" as const,
-      render: (row: AccountRow) => <span className="font-bold text-gray-900 dark:text-white">{formatCurrency(Number(row.balance))}</span>,
+      render: (row: AccountRow) => (
+        <span className="font-bold text-gray-900 dark:text-white">{formatCurrency(Number(row.balance))}</span>
+      ),
     },
     {
       key: "lastActivity",
@@ -64,9 +79,17 @@ export default function SavingsAccountsPage() {
       render: (row: AccountRow) => {
         const statusLabel = row.status.charAt(0).toUpperCase() + row.status.slice(1);
         return (
-          <span className={`inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium ${
-            row.status === "active" ? "bg-success/15 text-success" : row.status === "dormant" ? "bg-warning/15 text-warning" : "bg-danger/15 text-danger"
-          }`}>{statusLabel}</span>
+          <span
+            className={`inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium ${
+              row.status === "active"
+                ? "bg-success/15 text-success"
+                : row.status === "dormant"
+                  ? "bg-warning/15 text-warning"
+                  : "bg-danger/15 text-danger"
+            }`}
+          >
+            {statusLabel}
+          </span>
         );
       },
     },
@@ -87,11 +110,15 @@ export default function SavingsAccountsPage() {
       <div className="grid grid-cols-1 sm:grid-cols-4 gap-4">
         <div className="bg-white dark:bg-gray-950 border border-gray-200 dark:border-gray-800 shadow-sm rounded-xl p-5">
           <p className="text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Total Accounts</p>
-          <p className="text-xl font-bold text-gray-900 dark:text-white mt-1">{stats?.total?.toLocaleString() ?? "—"}</p>
+          <p className="text-xl font-bold text-gray-900 dark:text-white mt-1">
+            {stats?.total?.toLocaleString() ?? "—"}
+          </p>
         </div>
         <div className="bg-white dark:bg-gray-950 border border-gray-200 dark:border-gray-800 shadow-sm rounded-xl p-5">
           <p className="text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Total Balance</p>
-          <p className="text-2xl font-bold text-primary mt-1">{stats?.totalBalance != null ? formatCurrency(stats.totalBalance) : "—"}</p>
+          <p className="text-2xl font-bold text-primary mt-1">
+            {stats?.totalBalance != null ? formatCurrency(stats.totalBalance) : "—"}
+          </p>
         </div>
         <div className="bg-white dark:bg-gray-950 border border-gray-200 dark:border-gray-800 shadow-sm rounded-xl p-5">
           <p className="text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Active Accounts</p>

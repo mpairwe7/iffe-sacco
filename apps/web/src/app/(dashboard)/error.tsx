@@ -11,7 +11,10 @@ export default function DashboardError({ error, reset }: { error: Error; reset: 
         </div>
         <h2 className="text-xl font-bold text-text mb-2">Something went wrong</h2>
         <p className="text-sm text-text-muted mb-6">{error.message || "An unexpected error occurred."}</p>
-        <button onClick={reset} className="inline-flex items-center gap-2 px-6 py-2.5 text-sm font-semibold text-white bg-primary rounded-lg hover:bg-primary-dark">
+        <button
+          onClick={reset}
+          className="inline-flex items-center gap-2 px-6 py-2.5 text-sm font-semibold text-white bg-primary rounded-lg hover:bg-primary-dark"
+        >
           <RefreshCw className="w-4 h-4" /> Try Again
         </button>
       </div>

@@ -66,7 +66,10 @@ export default function MemberDepositsPage() {
       </div>
 
       <div className="grid lg:grid-cols-2 gap-6">
-        <form onSubmit={handleSubmit(onSubmit)} className="bg-white dark:bg-gray-950 border border-gray-200 dark:border-gray-800 shadow-sm rounded-xl p-6 space-y-5">
+        <form
+          onSubmit={handleSubmit(onSubmit)}
+          className="bg-white dark:bg-gray-950 border border-gray-200 dark:border-gray-800 shadow-sm rounded-xl p-6 space-y-5"
+        >
           <h3 className="font-bold text-gray-900 dark:text-white">Deposit Details</h3>
           <div>
             <label className="block text-sm font-medium text-text mb-2">Account</label>
@@ -77,7 +80,8 @@ export default function MemberDepositsPage() {
               <option value="">Select an account</option>
               {accounts.map((acc) => (
                 <option key={acc.id} value={acc.id}>
-                  {acc.type.replace("_", " ").replace(/\b\w/g, (c) => c.toUpperCase())} - {acc.accountNo} (Balance: {formatCurrency(acc.balance)})
+                  {acc.type.replace("_", " ").replace(/\b\w/g, (c) => c.toUpperCase())} - {acc.accountNo} (Balance:{" "}
+                  {formatCurrency(acc.balance)})
                 </option>
               ))}
             </select>
@@ -152,13 +156,20 @@ export default function MemberDepositsPage() {
                   <div key={dep.id} className="flex items-center justify-between p-3 bg-white/50 rounded-lg">
                     <div>
                       <p className="text-sm font-medium text-text">{formatCurrency(dep.amount)}</p>
-                      <p className="text-xs text-text-muted">{(dep.method || "cash").replace("_", " ").replace(/\b\w/g, (c: string) => c.toUpperCase())} &middot; {formatDate(dep.createdAt)}</p>
+                      <p className="text-xs text-text-muted">
+                        {(dep.method || "cash").replace("_", " ").replace(/\b\w/g, (c: string) => c.toUpperCase())}{" "}
+                        &middot; {formatDate(dep.createdAt)}
+                      </p>
                     </div>
-                    <span className={`text-xs font-medium px-2.5 py-1 rounded-full ${
-                      dep.status === "approved" ? "text-success bg-success/15" :
-                      dep.status === "pending" ? "text-warning bg-warning/15" :
-                      "text-danger bg-danger/15"
-                    }`}>
+                    <span
+                      className={`text-xs font-medium px-2.5 py-1 rounded-full ${
+                        dep.status === "approved"
+                          ? "text-success bg-success/15"
+                          : dep.status === "pending"
+                            ? "text-warning bg-warning/15"
+                            : "text-danger bg-danger/15"
+                      }`}
+                    >
                       {dep.status.charAt(0).toUpperCase() + dep.status.slice(1)}
                     </span>
                   </div>

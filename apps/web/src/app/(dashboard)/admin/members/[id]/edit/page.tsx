@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useRouter, useParams } from "next/navigation";
 import { useEffect } from "react";
 import { ArrowLeft, Save, UserCog, Loader2 } from "lucide-react";
-import { useForm } from "react-hook-form";
+import { useForm, type Resolver } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { memberUpdateSchema, type MemberUpdateFormInput } from "@/lib/schemas";
 import { useMember, useUpdateMember } from "@/hooks/use-members";
@@ -25,7 +25,7 @@ export default function EditMemberPage() {
     reset,
     formState: { errors, isSubmitting },
   } = useForm<MemberUpdateFormInput>({
-    resolver: zodResolver(memberUpdateSchema) as any,
+    resolver: zodResolver(memberUpdateSchema) as Resolver<MemberUpdateFormInput>,
     defaultValues: {
       country: "UG",
       shareCount: 0,
@@ -131,7 +131,10 @@ export default function EditMemberPage() {
         </div>
       </div>
 
-      <form onSubmit={handleSubmit(onSubmit)} className="bg-white dark:bg-gray-950 border border-gray-200 dark:border-gray-800 shadow-sm rounded-xl">
+      <form
+        onSubmit={handleSubmit(onSubmit)}
+        className="bg-white dark:bg-gray-950 border border-gray-200 dark:border-gray-800 shadow-sm rounded-xl"
+      >
         {/* Personal Information */}
         <div className="p-6 border-b border-border">
           <h3 className="text-base font-semibold text-text mb-4">Personal Information</h3>
@@ -281,6 +284,7 @@ export default function EditMemberPage() {
                 {...register("weddingSupportStatus")}
                 className="w-full px-4 py-2.5 bg-white/60 border border-white/40 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
               >
+                <option value="requested">Requested</option>
                 <option value="not_received">Not Received</option>
                 <option value="received">Received</option>
               </select>
@@ -294,7 +298,9 @@ export default function EditMemberPage() {
                 {...register("weddingSupportDebt", { valueAsNumber: true })}
                 className="w-full px-4 py-2.5 bg-white/60 border border-white/40 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
               />
-              {errors.weddingSupportDebt && <p className="text-xs text-danger mt-1">{errors.weddingSupportDebt.message}</p>}
+              {errors.weddingSupportDebt && (
+                <p className="text-xs text-danger mt-1">{errors.weddingSupportDebt.message}</p>
+              )}
             </div>
             <div>
               <label className="block text-sm font-medium text-text mb-2">Condolence Support</label>
@@ -302,6 +308,7 @@ export default function EditMemberPage() {
                 {...register("condolenceSupportStatus")}
                 className="w-full px-4 py-2.5 bg-white/60 border border-white/40 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
               >
+                <option value="requested">Requested</option>
                 <option value="not_received">Not Received</option>
                 <option value="received">Received</option>
               </select>
@@ -315,7 +322,9 @@ export default function EditMemberPage() {
                 {...register("condolenceSupportDebt", { valueAsNumber: true })}
                 className="w-full px-4 py-2.5 bg-white/60 border border-white/40 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
               />
-              {errors.condolenceSupportDebt && <p className="text-xs text-danger mt-1">{errors.condolenceSupportDebt.message}</p>}
+              {errors.condolenceSupportDebt && (
+                <p className="text-xs text-danger mt-1">{errors.condolenceSupportDebt.message}</p>
+              )}
             </div>
           </div>
         </div>
@@ -335,7 +344,10 @@ export default function EditMemberPage() {
 
         {/* Actions */}
         <div className="flex items-center justify-end gap-3 p-6">
-          <Link href={`/admin/members/${id}`} className="px-6 py-2.5 text-sm font-medium text-text-muted border border-border rounded-lg hover:bg-surface-alt">
+          <Link
+            href={`/admin/members/${id}`}
+            className="px-6 py-2.5 text-sm font-medium text-text-muted border border-border rounded-lg hover:bg-surface-alt"
+          >
             Cancel
           </Link>
           <button

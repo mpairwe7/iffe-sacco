@@ -5,13 +5,13 @@
 
 ## Secrets to rotate
 
-| Secret | Store | Rotation trigger | Impact |
-|---|---|---|---|
-| `JWT_SECRET` | Vercel env (api) | Quarterly, or suspected leak | All active sessions invalidated |
-| `CREDENTIALS_KEK` | Vercel env (api) | Annually, or suspected leak | Payment gateway configs must be re-encrypted |
-| `DATABASE_URL` | Neon + Vercel env | On Neon role rotation | Brief connection blip during deploy |
-| `RESEND_API_KEY` | Resend dashboard + Vercel env | On leak | Password reset emails stop until updated |
-| `SENTRY_AUTH_TOKEN` | Sentry + Vercel env | On leak | Source map uploads fail |
+| Secret              | Store                         | Rotation trigger             | Impact                                       |
+| ------------------- | ----------------------------- | ---------------------------- | -------------------------------------------- |
+| `JWT_SECRET`        | Vercel env (api)              | Quarterly, or suspected leak | All active sessions invalidated              |
+| `CREDENTIALS_KEK`   | Vercel env (api)              | Annually, or suspected leak  | Payment gateway configs must be re-encrypted |
+| `DATABASE_URL`      | Neon + Vercel env             | On Neon role rotation        | Brief connection blip during deploy          |
+| `RESEND_API_KEY`    | Resend dashboard + Vercel env | On leak                      | Password reset emails stop until updated     |
+| `SENTRY_AUTH_TOKEN` | Sentry + Vercel env           | On leak                      | Source map uploads fail                      |
 
 ## Pre-rotation checklist
 
@@ -49,10 +49,7 @@ every row with the new KEK before the old one is retired.
    helper to try the new key first, fall back to the old:
    ```ts
    // Temporary shim in apps/api/src/utils/crypto.ts
-   const KEKS = [
-     process.env.CREDENTIALS_KEK_NEW,
-     process.env.CREDENTIALS_KEK,
-   ].filter(Boolean);
+   const KEKS = [process.env.CREDENTIALS_KEK_NEW, process.env.CREDENTIALS_KEK].filter(Boolean);
    ```
 3. Set `CREDENTIALS_KEK_NEW` in Vercel and deploy.
 4. Run the re-encrypt script (one-shot):

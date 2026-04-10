@@ -37,9 +37,7 @@ export class InterestService {
       // daily = balance * (rate/100) / 365
       // period = daily * days
       const dailyRate = Money.div(Money.div(rate, 100), 365);
-      const interest = Money.toPostingAmount(
-        Money.mul(Money.mul(balance, dailyRate), days),
-      );
+      const interest = Money.toPostingAmount(Money.mul(Money.mul(balance, dailyRate), days));
 
       return {
         accountId: account.id,
@@ -51,10 +49,7 @@ export class InterestService {
       };
     });
 
-    const totalInterest = details.reduce(
-      (acc, d) => Money.add(acc, Money.of(d.interest)),
-      Money.zero(),
-    );
+    const totalInterest = details.reduce((acc, d) => Money.add(acc, Money.of(d.interest)), Money.zero());
 
     return {
       accountsProcessed: details.length,
@@ -86,10 +81,7 @@ export class InterestService {
       });
     }
 
-    const totalCredited = results.reduce(
-      (acc, r) => Money.add(acc, Money.of(r.credited)),
-      Money.zero(),
-    );
+    const totalCredited = results.reduce((acc, r) => Money.add(acc, Money.of(r.credited)), Money.zero());
 
     return {
       accountsProcessed: results.length,

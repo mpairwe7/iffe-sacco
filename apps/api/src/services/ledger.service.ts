@@ -30,10 +30,7 @@ type Tx = Parameters<Parameters<PrismaClient["$transaction"]>[0]>[0];
  * @param tx          Optional Prisma transaction client — pass when this call
  *                    is part of a larger workflow step.
  */
-export async function postJournal(
-  entry: LedgerEntry,
-  tx?: Tx,
-): Promise<PostJournalResult> {
+export async function postJournal(entry: LedgerEntry, tx?: Tx): Promise<PostJournalResult> {
   // Defensive re-check: never persist an unbalanced entry.
   assertBalanced(entry);
 

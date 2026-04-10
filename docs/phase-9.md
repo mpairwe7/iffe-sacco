@@ -79,6 +79,7 @@ trained in English). The string inventory reflects this: `common`,
 ### Persistence
 
 Three layers, first match wins:
+
 1. `iffe-locale` cookie (set by the switcher, works without a session)
 2. `users.locale` column on the authenticated user
 3. `Accept-Language` header

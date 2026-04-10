@@ -1,24 +1,16 @@
 import { apiClient } from "@/lib/api-client";
-import type {
-  Application,
-  PaginatedResponse,
-  PaginationParams,
-} from "@iffe/shared";
+import type { Application, PaginatedResponse, PaginationParams } from "@iffe/shared";
 
 export const applicationsApi = {
   // Public submit (no auth)
   submit: (data: Record<string, unknown>) => apiClient.post<Application>("/applications", data),
   // Authenticated submit
-  submitAuth: (data: Record<string, unknown>) =>
-    apiClient.post<Application>("/applications/authenticated", data),
+  submitAuth: (data: Record<string, unknown>) => apiClient.post<Application>("/applications/authenticated", data),
   // Check own status
   getMine: () => apiClient.get<Application | null>("/applications/mine"),
   // Admin list
   getAll: (params?: PaginationParams & { status?: string }) =>
-    apiClient.get<PaginatedResponse<Application>>(
-      "/applications",
-      params as Record<string, unknown>,
-    ),
+    apiClient.get<PaginatedResponse<Application>>("/applications", params as Record<string, unknown>),
   // Admin stats
   getStats: () =>
     apiClient.get<{

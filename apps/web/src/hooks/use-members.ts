@@ -2,11 +2,7 @@
 
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { membersApi } from "@/lib/api/members";
-import type {
-  CreateMemberInput,
-  UpdateMemberInput,
-  PaginationParams,
-} from "@iffe/shared";
+import type { CreateMemberInput, UpdateMemberInput, PaginationParams } from "@iffe/shared";
 
 export function useMembers(params?: PaginationParams) {
   return useQuery({
@@ -31,6 +27,13 @@ export function useMemberDashboard(id: string) {
   });
 }
 
+export function useMyMemberDashboard() {
+  return useQuery({
+    queryKey: ["members", "me", "dashboard"],
+    queryFn: membersApi.getMyDashboard,
+  });
+}
+
 export function useMemberStats() {
   return useQuery({
     queryKey: ["members", "stats"],
@@ -49,8 +52,7 @@ export function useCreateMember() {
 export function useUpdateMember() {
   const qc = useQueryClient();
   return useMutation({
-    mutationFn: ({ id, data }: { id: string; data: UpdateMemberInput }) =>
-      membersApi.updateMember(id, data),
+    mutationFn: ({ id, data }: { id: string; data: UpdateMemberInput }) => membersApi.updateMember(id, data),
     onSuccess: () => qc.invalidateQueries({ queryKey: ["members"] }),
   });
 }

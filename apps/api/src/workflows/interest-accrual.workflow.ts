@@ -132,9 +132,7 @@ export const accrueSavingsInterestWorkflow = defineWorkflow<AccrueSavingsInteres
       const rate = Money.fromDb(account.interestRate);
 
       const dailyRate = Money.div(Money.div(rate, 100), 365);
-      const periodInterest = Money.toPostingAmount(
-        Money.mul(Money.mul(balance, dailyRate), days),
-      );
+      const periodInterest = Money.toPostingAmount(Money.mul(Money.mul(balance, dailyRate), days));
 
       if (Money.isZero(periodInterest) || Money.isNegative(periodInterest)) {
         return { accountId: account.id, journalEntryId: null, credited: "0", days };

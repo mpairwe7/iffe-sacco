@@ -5,7 +5,7 @@ export const DEFAULT_LANGUAGE = "en";
 
 export const ACCOUNT_TYPES = ["savings", "current", "fixed_deposit"] as const;
 export const LOAN_TYPES = ["business", "personal", "emergency", "education", "housing"] as const;
-export type LoanType = typeof LOAN_TYPES[number];
+export type LoanType = (typeof LOAN_TYPES)[number];
 export const LOAN_INTEREST_RATES: Record<LoanType, number> = {
   business: 12,
   personal: 12,
@@ -16,8 +16,15 @@ export const LOAN_INTEREST_RATES: Record<LoanType, number> = {
 export const TRANSACTION_METHODS = ["cash", "mobile_money", "bank_transfer", "cheque", "internal"] as const;
 
 export const EXPENSE_CATEGORIES = [
-  "Salaries", "Rent", "Utilities", "Marketing", "Operations",
-  "Technical Issues", "Training", "Transport", "Other",
+  "Salaries",
+  "Rent",
+  "Utilities",
+  "Marketing",
+  "Operations",
+  "Technical Issues",
+  "Training",
+  "Transport",
+  "Other",
 ] as const;
 
 export const INTEREST_RATES = {
@@ -58,7 +65,7 @@ export const SEX_OPTIONS = ["male", "female"] as const;
 
 // ===== Derived types from constants =====
 // AccountType already exported from types.ts
-export type TransactionMethod = typeof TRANSACTION_METHODS[number];
-export type ExpenseCategory = typeof EXPENSE_CATEGORIES[number];
-export type WelfareStatus = typeof WELFARE_STATUS[number];
-export type PledgeStatusType = typeof PLEDGE_STATUS[number];
+export type TransactionMethod = (typeof TRANSACTION_METHODS)[number];
+export type ExpenseCategory = (typeof EXPENSE_CATEGORIES)[number];
+export type WelfareStatus = (typeof WELFARE_STATUS)[number];
+export type PledgeStatusType = (typeof PLEDGE_STATUS)[number];

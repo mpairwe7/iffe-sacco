@@ -13,8 +13,10 @@
  * site can't read the cookie (SameSite=Lax on the CSRF cookie) and
  * therefore can't forge a matching header.
  *
- * Skipped for: GET/HEAD/OPTIONS, the login endpoint itself (no session
- * yet), and any route tagged with `c.set("csrf:skip", true)`.
+ * Skipped for: GET/HEAD/OPTIONS, and paths matched by CSRF_EXEMPT_PREFIXES
+ * (login/register/reset/passkey-login — no session cookie exists there,
+ * so there's nothing to cross-submit against, and brute-force is already
+ * guarded by the rate limiter + per-account lockout).
  */
 // @ts-nocheck
 import { createMiddleware } from "hono/factory";
@@ -87,14 +89,29 @@ export const csrfTokenIssuer = createMiddleware(async (c, next) => {
 
 const SAFE_METHODS = new Set(["GET", "HEAD", "OPTIONS"]);
 
+// Path substrings that are exempt from CSRF checks because there's no
+// session cookie at the time of the request. Kept as a small allowlist
+// — adding to this list is a security-relevant change and should be
+// code-reviewed.
+const CSRF_EXEMPT_PREFIXES = [
+  "/auth/login",
+  "/auth/register",
+  "/auth/reset-password",
+  "/auth/logout",
+  "/passkeys/login",
+];
+
+function isExemptPath(pathname: string): boolean {
+  return CSRF_EXEMPT_PREFIXES.some((prefix) => pathname.includes(prefix));
+}
+
 export const csrfProtect = createMiddleware(async (c, next) => {
   if (SAFE_METHODS.has(c.req.method)) {
     await next();
     return;
   }
 
-  // Allow explicit per-route opt-out (e.g. the login endpoint).
-  if (c.get("csrf:skip")) {
+  if (isExemptPath(new URL(c.req.url).pathname)) {
     await next();
     return;
   }

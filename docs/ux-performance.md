@@ -9,12 +9,14 @@ a single engineer can land in a half-day.
 **Pattern:** `<EmptyState title="…" description="…" action={…} variant="table" />`
 
 **Where to apply**
+
 - Every page under `apps/web/src/app/(dashboard)/**` that renders a DataTable:
   replace the `"—"` placeholder row with `<EmptyState variant="table" />`.
 - Member-facing portal pages (`/portal/**`) when no transactions/loans/pledges.
 - Admin dashboards when a filter yields no rows.
 
 **Priority pages (most empty during onboarding):**
+
 - `/portal/loans`
 - `/portal/welfare`
 - `/admin/deposit-requests`
@@ -31,6 +33,7 @@ it consistently in place of raw `<label>` + `<input>` pairs so every
 form gets WCAG 2.1 AA compliance without touching each input.
 
 **Where to apply (prioritize high-traffic forms):**
+
 1. `/login` — the single most-used form
 2. `/register` multi-step application form
 3. `/password/reset` confirm form
@@ -52,6 +55,7 @@ announce("Deposit failed — please try again", { assertive: true });
 ```
 
 **Targets:**
+
 - Toast notifications should mirror their message to the announcer.
 - Long-running async forms (loan application, member creation).
 
@@ -89,6 +93,7 @@ export async function createMember(input: MemberInput) {
 ```
 
 **Targets (order by impact):**
+
 1. Admin members list — currently refetches on every route push
 2. Chairman dashboard — mostly read-only aggregations
 3. Member portal dashboard — single-member view, cheap to tag
@@ -104,6 +109,7 @@ ANALYZE=true bun run --filter web build
 ```
 
 Watch for:
+
 - `recharts` or `framer-motion` in the main bundle (should be split)
 - Any Radix primitive pulled into every route
 - Icon tree-shake failures (`lucide-react` should be per-icon imports)
@@ -111,6 +117,7 @@ Watch for:
 ## 6. PWA offline caching
 
 The service worker at `apps/web/public/sw.js` caches:
+
 - Navigations (network-first with `/offline` fallback)
 - Static assets (cache-first)
 - API reads (network-first with stale fallback)

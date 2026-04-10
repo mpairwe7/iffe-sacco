@@ -1,6 +1,16 @@
 import {
-  members, transactions, loans, expenses, savingsAccounts, dashboardStats,
-  type Member, type Transaction, type Loan, type Expense, type SavingsAccount, type DashboardStats,
+  members,
+  transactions,
+  loans,
+  expenses,
+  savingsAccounts,
+  dashboardStats,
+  type Member,
+  type Transaction,
+  type Loan,
+  type Expense,
+  type SavingsAccount,
+  type DashboardStats,
 } from "./mock-data";
 
 // Simulate network delay

@@ -53,11 +53,7 @@ export class JournalEntryBuilder {
     if (!header.createdBy) throw new Error("JournalEntry requires createdBy");
   }
 
-  debit(
-    accountCode: string,
-    amount: Money,
-    opts: { memberAccountId?: string; currency?: string } = {},
-  ): this {
+  debit(accountCode: string, amount: Money, opts: { memberAccountId?: string; currency?: string } = {}): this {
     if (Money.isNegative(amount)) throw new Error(`debit amount must be >= 0 on ${accountCode}`);
     this.lines.push({
       accountCode,
@@ -69,11 +65,7 @@ export class JournalEntryBuilder {
     return this;
   }
 
-  credit(
-    accountCode: string,
-    amount: Money,
-    opts: { memberAccountId?: string; currency?: string } = {},
-  ): this {
+  credit(accountCode: string, amount: Money, opts: { memberAccountId?: string; currency?: string } = {}): this {
     if (Money.isNegative(amount)) throw new Error(`credit amount must be >= 0 on ${accountCode}`);
     this.lines.push({
       accountCode,

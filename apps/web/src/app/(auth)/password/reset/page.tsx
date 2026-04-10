@@ -69,13 +69,13 @@ function PasswordResetPageContent() {
     return (
       <div className="bg-white rounded-xl shadow-xl shadow-black/5 border border-border p-8">
         <h2 className="text-2xl font-bold text-text text-center">Choose a New Password</h2>
-        <p className="text-text-muted text-center mt-2 mb-8">
-          Set a new password for your IFFE SACCO account.
-        </p>
+        <p className="text-text-muted text-center mt-2 mb-8">Set a new password for your IFFE SACCO account.</p>
 
         <form onSubmit={handleSubmit(onConfirmReset)} className="space-y-5">
           <div>
-            <label htmlFor="newPassword" className="block text-sm font-medium text-text mb-2">New Password</label>
+            <label htmlFor="newPassword" className="block text-sm font-medium text-text mb-2">
+              New Password
+            </label>
             <div className="relative">
               <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-text-light" />
               <input
@@ -88,11 +88,17 @@ function PasswordResetPageContent() {
                 className={`w-full pl-12 pr-4 py-3 bg-surface-alt border rounded-lg text-text placeholder:text-text-light focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all ${errors.newPassword ? "border-danger" : "border-border"}`}
               />
             </div>
-            {errors.newPassword && <p className="text-xs text-danger mt-1.5" role="alert">{errors.newPassword.message}</p>}
+            {errors.newPassword && (
+              <p className="text-xs text-danger mt-1.5" role="alert">
+                {errors.newPassword.message}
+              </p>
+            )}
           </div>
 
           <div>
-            <label htmlFor="confirmPassword" className="block text-sm font-medium text-text mb-2">Confirm Password</label>
+            <label htmlFor="confirmPassword" className="block text-sm font-medium text-text mb-2">
+              Confirm Password
+            </label>
             <div className="relative">
               <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-text-light" />
               <input
@@ -105,7 +111,11 @@ function PasswordResetPageContent() {
                 className={`w-full pl-12 pr-4 py-3 bg-surface-alt border rounded-lg text-text placeholder:text-text-light focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all ${errors.confirmPassword ? "border-danger" : "border-border"}`}
               />
             </div>
-            {errors.confirmPassword && <p className="text-xs text-danger mt-1.5" role="alert">{errors.confirmPassword.message}</p>}
+            {errors.confirmPassword && (
+              <p className="text-xs text-danger mt-1.5" role="alert">
+                {errors.confirmPassword.message}
+              </p>
+            )}
           </div>
 
           <button
@@ -114,15 +124,22 @@ function PasswordResetPageContent() {
             className="w-full flex items-center justify-center gap-2 px-6 py-3.5 text-base font-semibold text-white bg-primary rounded-lg hover:bg-primary-dark transition-all shadow-lg shadow-primary/25 disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {isSubmitting ? (
-              <><Loader2 className="w-5 h-5 animate-spin" /> Resetting...</>
+              <>
+                <Loader2 className="w-5 h-5 animate-spin" /> Resetting...
+              </>
             ) : (
-              <>Reset Password <ArrowRight className="w-5 h-5" /></>
+              <>
+                Reset Password <ArrowRight className="w-5 h-5" />
+              </>
             )}
           </button>
         </form>
 
         <p className="text-center mt-6">
-          <Link href="/login" className="inline-flex items-center gap-2 text-sm font-medium text-text-muted hover:text-primary">
+          <Link
+            href="/login"
+            className="inline-flex items-center gap-2 text-sm font-medium text-text-muted hover:text-primary"
+          >
             <ArrowLeft className="w-4 h-4" /> Back to Login
           </Link>
         </p>
@@ -143,7 +160,9 @@ function PasswordResetPageContent() {
 
       <form onSubmit={handleSubmit(onRequestReset)} className="space-y-5">
         <div>
-          <label htmlFor="email" className="block text-sm font-medium text-text mb-2">Email Address</label>
+          <label htmlFor="email" className="block text-sm font-medium text-text mb-2">
+            Email Address
+          </label>
           <div className="relative">
             <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-text-light" />
             <input
@@ -155,7 +174,11 @@ function PasswordResetPageContent() {
               className={`w-full pl-12 pr-4 py-3 bg-surface-alt border rounded-lg text-text placeholder:text-text-light focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all ${errors.email ? "border-danger" : "border-border"}`}
             />
           </div>
-          {errors.email && <p className="text-xs text-danger mt-1.5" role="alert">{errors.email.message}</p>}
+          {errors.email && (
+            <p className="text-xs text-danger mt-1.5" role="alert">
+              {errors.email.message}
+            </p>
+          )}
         </div>
 
         <button
@@ -164,9 +187,13 @@ function PasswordResetPageContent() {
           className="w-full flex items-center justify-center gap-2 px-6 py-3.5 text-base font-semibold text-white bg-primary rounded-lg hover:bg-primary-dark transition-all shadow-lg shadow-primary/25 disabled:opacity-50 disabled:cursor-not-allowed"
         >
           {isSubmitting ? (
-            <><Loader2 className="w-5 h-5 animate-spin" /> Sending...</>
+            <>
+              <Loader2 className="w-5 h-5 animate-spin" /> Sending...
+            </>
           ) : (
-            <>Send Reset Link <ArrowRight className="w-5 h-5" /></>
+            <>
+              Send Reset Link <ArrowRight className="w-5 h-5" />
+            </>
           )}
         </button>
       </form>
@@ -175,14 +202,20 @@ function PasswordResetPageContent() {
         <div className="mt-6 rounded-lg border border-primary/20 bg-primary/5 p-4">
           <p className="text-sm font-medium text-text">Development reset link</p>
           <p className="text-xs text-text-muted mt-1 break-all">{debugResetUrl}</p>
-          <Link href={debugResetUrl} className="inline-flex items-center gap-2 mt-3 text-sm font-medium text-primary hover:text-primary-dark">
+          <Link
+            href={debugResetUrl}
+            className="inline-flex items-center gap-2 mt-3 text-sm font-medium text-primary hover:text-primary-dark"
+          >
             Open reset link <ArrowRight className="w-4 h-4" />
           </Link>
         </div>
       )}
 
       <p className="text-center mt-6">
-        <Link href="/login" className="inline-flex items-center gap-2 text-sm font-medium text-text-muted hover:text-primary">
+        <Link
+          href="/login"
+          className="inline-flex items-center gap-2 text-sm font-medium text-text-muted hover:text-primary"
+        >
           <ArrowLeft className="w-4 h-4" /> Back to Login
         </Link>
       </p>
@@ -193,14 +226,14 @@ function PasswordResetPageContent() {
 export default function PasswordResetPage() {
   return (
     <Suspense
-      fallback={(
+      fallback={
         <div className="bg-white rounded-xl shadow-xl shadow-black/5 border border-border p-8">
           <div className="flex items-center justify-center gap-3 text-text-muted">
             <Loader2 className="w-5 h-5 animate-spin" />
             <span>Loading reset form...</span>
           </div>
         </div>
-      )}
+      }
     >
       <PasswordResetPageContent />
     </Suspense>

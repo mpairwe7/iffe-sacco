@@ -4,14 +4,17 @@ import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { ArrowLeft, Send, Loader2 } from "lucide-react";
 import { Suspense } from "react";
-import { useForm } from "react-hook-form";
+import { useForm, useWatch } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { z } from "zod/v4";
 import { transactionSchema, type TransactionInput } from "@/lib/schemas";
 import { useCreateTransaction } from "@/hooks/use-transactions";
 import { useMembers } from "@/hooks/use-members";
 import { useAccounts } from "@/hooks/use-accounts";
 import { toast } from "sonner";
 import type { Member, Account } from "@iffe/shared";
+
+type TransactionFormValues = z.input<typeof transactionSchema>;
 
 function TransactionForm() {
   const router = useRouter();
@@ -23,12 +26,12 @@ function TransactionForm() {
   const members = (membersQuery.data?.data || []) as Member[];
 
   const {
+    control,
     register,
     handleSubmit,
-    watch,
     formState: { errors, isSubmitting },
-  } = useForm<TransactionInput>({
-    resolver: zodResolver(transactionSchema) as any,
+  } = useForm<TransactionFormValues, unknown, TransactionInput>({
+    resolver: zodResolver(transactionSchema),
     defaultValues: {
       type: type as TransactionInput["type"],
       method: "cash",
@@ -36,10 +39,8 @@ function TransactionForm() {
     },
   });
 
-  const selectedMemberId = watch("member");
-  const accountsQuery = useAccounts(
-    selectedMemberId ? ({ memberId: selectedMemberId, limit: 50 } as Record<string, unknown> & { page?: number; limit?: number }) : undefined
-  );
+  const selectedMemberId = useWatch({ control, name: "member" });
+  const accountsQuery = useAccounts(selectedMemberId ? { memberId: selectedMemberId, limit: 50 } : undefined);
   const accounts = selectedMemberId ? ((accountsQuery.data?.data || []) as Account[]) : [];
 
   async function onSubmit(data: TransactionInput) {
@@ -59,7 +60,10 @@ function TransactionForm() {
   }
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="bg-white dark:bg-gray-950 border border-gray-200 dark:border-gray-800 shadow-sm rounded-xl">
+    <form
+      onSubmit={handleSubmit(onSubmit)}
+      className="bg-white dark:bg-gray-950 border border-gray-200 dark:border-gray-800 shadow-sm rounded-xl"
+    >
       <div className="p-6 border-b border-border">
         <h3 className="text-base font-semibold text-text mb-4">Transaction Details</h3>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
@@ -152,7 +156,12 @@ function TransactionForm() {
       </div>
 
       <div className="flex items-center justify-end gap-3 p-6">
-        <Link href="/admin/transactions" className="px-6 py-2.5 text-sm font-medium text-text-muted border border-border rounded-lg hover:bg-surface-alt">Cancel</Link>
+        <Link
+          href="/admin/transactions"
+          className="px-6 py-2.5 text-sm font-medium text-text-muted border border-border rounded-lg hover:bg-surface-alt"
+        >
+          Cancel
+        </Link>
         <button
           type="submit"
           disabled={isSubmitting || createTransaction.isPending}
@@ -182,7 +191,13 @@ export default function CreateTransactionPage() {
           <p className="text-text-muted text-sm">Create a new deposit, withdrawal, or transfer</p>
         </div>
       </div>
-      <Suspense fallback={<div className="bg-white dark:bg-gray-950 border border-gray-200 dark:border-gray-800 shadow-sm rounded-xl p-12 text-center text-text-muted">Loading...</div>}>
+      <Suspense
+        fallback={
+          <div className="bg-white dark:bg-gray-950 border border-gray-200 dark:border-gray-800 shadow-sm rounded-xl p-12 text-center text-text-muted">
+            Loading...
+          </div>
+        }
+      >
         <TransactionForm />
       </Suspense>
     </div>

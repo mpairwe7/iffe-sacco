@@ -3,34 +3,18 @@
 import { useState } from "react";
 import Link from "next/link";
 import { useRouter, useParams } from "next/navigation";
-import {
-  useApplication,
-  useApproveApplication,
-  useRejectApplication,
-} from "@/hooks/use-applications";
+import { useApplication, useApproveApplication, useRejectApplication } from "@/hooks/use-applications";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { formatDate } from "@/lib/utils";
 import { Skeleton } from "@/components/ui/skeleton";
-import {
-  ArrowLeft,
-  FileText,
-  Check,
-  X,
-  ExternalLink,
-  User,
-  MapPin,
-  Briefcase,
-  Users,
-} from "lucide-react";
+import { ArrowLeft, FileText, Check, X, ExternalLink, User, MapPin, Briefcase, Users } from "lucide-react";
 import { toast } from "sonner";
 import type { Application } from "@iffe/shared";
 
 function InfoField({ label, value }: { label: string; value?: string | null }) {
   return (
     <div>
-      <p className="text-xs text-text-muted font-medium uppercase tracking-wider">
-        {label}
-      </p>
+      <p className="text-xs text-text-muted font-medium uppercase tracking-wider">{label}</p>
       <p className="text-sm text-text mt-0.5">{value || "\u2014"}</p>
     </div>
   );
@@ -47,25 +31,24 @@ function SectionCard({
 }) {
   const id = title.toLowerCase().replace(/\s+/g, "-");
   return (
-    <section aria-labelledby={id} className="bg-white dark:bg-gray-950 border border-gray-200 dark:border-gray-800 shadow-sm rounded-xl p-6">
+    <section
+      aria-labelledby={id}
+      className="bg-white dark:bg-gray-950 border border-gray-200 dark:border-gray-800 shadow-sm rounded-xl p-6"
+    >
       <div className="flex items-center gap-2 mb-4">
         <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center">
           <Icon className="w-4 h-4 text-primary" />
         </div>
-        <h3 id={id} className="text-base font-bold text-gray-900 dark:text-white">{title}</h3>
+        <h3 id={id} className="text-base font-bold text-gray-900 dark:text-white">
+          {title}
+        </h3>
       </div>
       {children}
     </section>
   );
 }
 
-function JsonTable({
-  data,
-  columns,
-}: {
-  data: Record<string, unknown>[];
-  columns: { key: string; label: string }[];
-}) {
+function JsonTable({ data, columns }: { data: Record<string, unknown>[]; columns: { key: string; label: string }[] }) {
   if (!data || data.length === 0) {
     return <p className="text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider">None recorded</p>;
   }
@@ -87,10 +70,7 @@ function JsonTable({
         </thead>
         <tbody>
           {data.map((row, i) => (
-            <tr
-              key={i}
-              className="border-b border-border/20 hover:bg-surface-hover/30"
-            >
+            <tr key={i} className="border-b border-border/20 hover:bg-surface-hover/30">
               {columns.map((col) => (
                 <td key={col.key} className="px-4 py-2 text-sm text-text">
                   {String(row[col.key] ?? "\u2014")}
@@ -152,7 +132,10 @@ export default function ApplicationDetailPage() {
         <Skeleton className="h-8 w-48" />
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           {Array.from({ length: 4 }).map((_, i) => (
-            <div key={i} className="bg-white dark:bg-gray-950 border border-gray-200 dark:border-gray-800 shadow-sm rounded-xl p-6">
+            <div
+              key={i}
+              className="bg-white dark:bg-gray-950 border border-gray-200 dark:border-gray-800 shadow-sm rounded-xl p-6"
+            >
               <Skeleton className="h-5 w-32 mb-4" />
               <div className="space-y-3">
                 <Skeleton className="h-4 w-full" />
@@ -170,18 +153,14 @@ export default function ApplicationDetailPage() {
     return (
       <div className="bg-white dark:bg-gray-950 border border-gray-200 dark:border-gray-800 shadow-sm rounded-xl p-12 text-center">
         <p className="text-text-muted">Application not found.</p>
-        <Link
-          href="/admin/applications"
-          className="text-primary font-medium hover:underline mt-2 inline-block"
-        >
+        <Link href="/admin/applications" className="text-primary font-medium hover:underline mt-2 inline-block">
           Back to Applications
         </Link>
       </div>
     );
   }
 
-  const statusLabel =
-    app.status.charAt(0).toUpperCase() + app.status.slice(1);
+  const statusLabel = app.status.charAt(0).toUpperCase() + app.status.slice(1);
 
   return (
     <div className="space-y-6">
@@ -199,9 +178,7 @@ export default function ApplicationDetailPage() {
           </div>
           <div>
             <h1 className="text-xl font-bold text-gray-900 dark:text-white">{app.fullName}</h1>
-            <p className="text-text-muted text-sm">
-              Application submitted {formatDate(app.createdAt)}
-            </p>
+            <p className="text-text-muted text-sm">Application submitted {formatDate(app.createdAt)}</p>
           </div>
         </div>
         <span
@@ -223,10 +200,7 @@ export default function ApplicationDetailPage() {
         <SectionCard title="General Information" icon={User}>
           <div className="grid grid-cols-2 gap-4">
             <InfoField label="Full Name" value={app.fullName} />
-            <InfoField
-              label="Date of Birth"
-              value={app.dateOfBirth ? formatDate(app.dateOfBirth) : null}
-            />
+            <InfoField label="Date of Birth" value={app.dateOfBirth ? formatDate(app.dateOfBirth) : null} />
             <InfoField label="Sex" value={app.sex} />
             <InfoField label="Phone" value={app.phone} />
             <InfoField label="Email" value={app.email} />
@@ -273,10 +247,7 @@ export default function ApplicationDetailPage() {
           <div className="grid grid-cols-2 gap-4">
             <InfoField label="Occupation" value={app.occupation} />
             <InfoField label="Place of Work" value={app.placeOfWork} />
-            <InfoField
-              label="Qualifications"
-              value={app.qualifications}
-            />
+            <InfoField label="Qualifications" value={app.qualifications} />
           </div>
         </SectionCard>
 
@@ -284,25 +255,15 @@ export default function ApplicationDetailPage() {
         <SectionCard title="Father Information" icon={User}>
           {app.fatherInfo ? (
             <div className="grid grid-cols-2 gap-4">
-              <InfoField
-                label="Name"
-                value={String(app.fatherInfo.name ?? "")}
-              />
-              <InfoField
-                label="Clan"
-                value={String(app.fatherInfo.clan ?? "")}
-              />
-              <InfoField
-                label="Totem"
-                value={String(app.fatherInfo.totem ?? "")}
-              />
-              <InfoField
-                label="Origin"
-                value={String(app.fatherInfo.origin ?? "")}
-              />
+              <InfoField label="Name" value={String(app.fatherInfo.name ?? "")} />
+              <InfoField label="Clan" value={String(app.fatherInfo.clan ?? "")} />
+              <InfoField label="Totem" value={String(app.fatherInfo.totem ?? "")} />
+              <InfoField label="Origin" value={String(app.fatherInfo.origin ?? "")} />
             </div>
           ) : (
-            <p className="text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider">No information provided</p>
+            <p className="text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+              No information provided
+            </p>
           )}
         </SectionCard>
 
@@ -310,25 +271,15 @@ export default function ApplicationDetailPage() {
         <SectionCard title="Mother Information" icon={User}>
           {app.motherInfo ? (
             <div className="grid grid-cols-2 gap-4">
-              <InfoField
-                label="Name"
-                value={String(app.motherInfo.name ?? "")}
-              />
-              <InfoField
-                label="Clan"
-                value={String(app.motherInfo.clan ?? "")}
-              />
-              <InfoField
-                label="Totem"
-                value={String(app.motherInfo.totem ?? "")}
-              />
-              <InfoField
-                label="Origin"
-                value={String(app.motherInfo.origin ?? "")}
-              />
+              <InfoField label="Name" value={String(app.motherInfo.name ?? "")} />
+              <InfoField label="Clan" value={String(app.motherInfo.clan ?? "")} />
+              <InfoField label="Totem" value={String(app.motherInfo.totem ?? "")} />
+              <InfoField label="Origin" value={String(app.motherInfo.origin ?? "")} />
             </div>
           ) : (
-            <p className="text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider">No information provided</p>
+            <p className="text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+              No information provided
+            </p>
           )}
         </SectionCard>
 
@@ -398,15 +349,9 @@ export default function ApplicationDetailPage() {
       {/* Rejection Reason (if rejected) */}
       {app.status === "rejected" && app.rejectionReason && (
         <div className="bg-white dark:bg-gray-950 border border-gray-200 dark:border-gray-800 shadow-sm rounded-xl p-6 border-l-4 border-danger">
-          <h3 className="text-base font-semibold text-danger mb-2">
-            Rejection Reason
-          </h3>
+          <h3 className="text-base font-semibold text-danger mb-2">Rejection Reason</h3>
           <p className="text-sm text-text">{app.rejectionReason}</p>
-          {app.reviewedAt && (
-            <p className="text-xs text-text-muted mt-2">
-              Reviewed on {formatDate(app.reviewedAt)}
-            </p>
-          )}
+          {app.reviewedAt && <p className="text-xs text-text-muted mt-2">Reviewed on {formatDate(app.reviewedAt)}</p>}
         </div>
       )}
 
@@ -461,8 +406,7 @@ export default function ApplicationDetailPage() {
       >
         <div className="mt-2 space-y-3">
           <p className="text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider">
-            Are you sure you want to reject this application? Please provide a
-            reason below.
+            Are you sure you want to reject this application? Please provide a reason below.
           </p>
           <textarea
             value={rejectReason}

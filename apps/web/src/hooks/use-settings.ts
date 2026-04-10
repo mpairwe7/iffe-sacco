@@ -12,8 +12,7 @@ export function useSettings() {
 export function useUpdateSetting() {
   const qc = useQueryClient();
   return useMutation({
-    mutationFn: ({ key, value }: { key: string; value: string }) =>
-      settingsApi.updateSetting(key, value),
+    mutationFn: ({ key, value }: { key: string; value: string }) => settingsApi.updateSetting(key, value),
     onSuccess: () => qc.invalidateQueries({ queryKey: ["settings"] }),
   });
 }

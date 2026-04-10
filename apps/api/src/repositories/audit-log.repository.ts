@@ -13,7 +13,9 @@ export class AuditLogRepository {
 
     const [data, total] = await Promise.all([
       prisma.auditLog.findMany({
-        where, skip, take: limit,
+        where,
+        skip,
+        take: limit,
         orderBy: { createdAt: sortOrder },
         include: { user: { select: { name: true, email: true } } },
       }),
@@ -23,7 +25,14 @@ export class AuditLogRepository {
     return { data, total, page, limit, totalPages: Math.ceil(total / limit) };
   }
 
-  async create(data: { userId: string; action: string; entity: string; entityId?: string; details?: unknown; ipAddress?: string }) {
+  async create(data: {
+    userId: string;
+    action: string;
+    entity: string;
+    entityId?: string;
+    details?: unknown;
+    ipAddress?: string;
+  }) {
     return prisma.auditLog.create({ data: data as Parameters<typeof prisma.auditLog.create>[0]["data"] });
   }
 }

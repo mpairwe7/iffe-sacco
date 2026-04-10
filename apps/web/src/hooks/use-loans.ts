@@ -2,7 +2,7 @@
 
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { loansApi } from "@/lib/api/loans";
-import type { CreateLoanInput, PaginationParams } from "@iffe/shared";
+import type { CreateLoanInput, MemberLoanApplicationInput, PaginationParams } from "@iffe/shared";
 
 export function useLoans(params?: PaginationParams) {
   return useQuery({
@@ -23,6 +23,17 @@ export function useCreateLoan() {
   return useMutation({
     mutationFn: (data: CreateLoanInput) => loansApi.createLoan(data),
     onSuccess: () => qc.invalidateQueries({ queryKey: ["loans"] }),
+  });
+}
+
+export function useApplyForLoan() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: (data: MemberLoanApplicationInput) => loansApi.applyForLoan(data),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ["loans"] });
+      qc.invalidateQueries({ queryKey: ["members", "me", "dashboard"] });
+    },
   });
 }
 

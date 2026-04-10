@@ -21,7 +21,9 @@ export class AccountRepository {
 
     const [data, total] = await Promise.all([
       prisma.account.findMany({
-        where, skip, take: limit,
+        where,
+        skip,
+        take: limit,
         orderBy: { [sortBy]: sortOrder },
         include: { member: true },
       }),

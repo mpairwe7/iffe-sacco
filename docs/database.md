@@ -2,15 +2,15 @@
 
 ## Provider
 
-| Detail | Value |
-|--------|-------|
-| **Provider** | NeonDB (Serverless PostgreSQL) |
-| **Region** | `aws-ap-southeast-1` (Singapore) |
-| **Project** | `snowy-water-12689441` |
-| **Host** | `ep-frosty-water-a14qap8n.ap-southeast-1.aws.neon.tech` |
-| **PostgreSQL Version** | 17 |
-| **ORM** | Prisma 7.5 |
-| **Adapter** | `@prisma/adapter-pg` (node-pg Pool) |
+| Detail                 | Value                                                   |
+| ---------------------- | ------------------------------------------------------- |
+| **Provider**           | NeonDB (Serverless PostgreSQL)                          |
+| **Region**             | `aws-ap-southeast-1` (Singapore)                        |
+| **Project**            | `snowy-water-12689441`                                  |
+| **Host**               | `ep-frosty-water-a14qap8n.ap-southeast-1.aws.neon.tech` |
+| **PostgreSQL Version** | 17                                                      |
+| **ORM**                | Prisma 7.5                                              |
+| **Adapter**            | `@prisma/adapter-pg` (node-pg Pool)                     |
 
 ## Connection
 
@@ -115,176 +115,197 @@ const prisma = new PrismaClient({ adapter });
 ## Models (15)
 
 ### User
+
 Central authentication entity. Links to Member (1:1) and AuditLog (1:N).
 
-| Column | Type | Constraints |
-|--------|------|-------------|
-| id | UUID | PK, auto |
-| name | String | Required |
-| email | String | Unique, indexed |
-| phone | String? | Optional |
-| password | String | bcrypt hash |
-| role | String | "admin" / "chairman" / "member" / "staff" |
-| avatar | String? | URL |
-| isActive | Boolean | Default true |
-| lastLogin | DateTime? | Updated on login |
+| Column    | Type      | Constraints                               |
+| --------- | --------- | ----------------------------------------- |
+| id        | UUID      | PK, auto                                  |
+| name      | String    | Required                                  |
+| email     | String    | Unique, indexed                           |
+| phone     | String?   | Optional                                  |
+| password  | String    | bcrypt hash                               |
+| role      | String    | "admin" / "chairman" / "member" / "staff" |
+| avatar    | String?   | URL                                       |
+| isActive  | Boolean   | Default true                              |
+| lastLogin | DateTime? | Updated on login                          |
 
 ### Member
+
 SACCO member profile. Optionally linked to User for self-service portal access. Extended with IBDA Bio Data fields.
 
-| Column | Type | Constraints |
-|--------|------|-------------|
-| id | UUID | PK |
-| memberId | String | Unique (IFFE-001 format), indexed |
-| firstName, lastName | String | Required |
-| email, phone | String | Required, email indexed |
-| gender, nationalId, occupation | String? | Optional profile fields |
-| address, city, district, country | String? | Address (country default "UG") |
-| clan | String? | Member's clan |
-| totem | String? | Member's totem |
-| birthPlace | String? | Place of birth |
-| ancestralPlace | String? | Ancestral home area |
-| residencePlace | String? | Current residence |
-| fatherName | String? | Father's full name |
-| motherName | String? | Mother's full name |
-| spouses | Json? | Array of spouse records |
-| children | Json? | Array of children records |
-| relatives | Json? | Array of relative records |
-| status | String | "active" / "pending" / "inactive" / "suspended", indexed |
-| userId | UUID? | FK to User (unique, 1:1) |
+| Column                              | Type          | Constraints                                              |
+| ----------------------------------- | ------------- | -------------------------------------------------------- |
+| id                                  | UUID          | PK                                                       |
+| memberId                            | String        | Unique (IFFE-001 format), indexed                        |
+| firstName, lastName                 | String        | Required                                                 |
+| email, phone                        | String        | Required, email indexed                                  |
+| gender, nationalId, occupation      | String?       | Optional profile fields                                  |
+| address, city, district, country    | String?       | Address (country default "UG")                           |
+| shareCount                          | Int           | Default 0                                                |
+| weddingSupportStatus                | String        | `received` / `not_received` (default `not_received`)     |
+| weddingSupportDebt                  | Decimal(15,2) | Default 0                                                |
+| condolenceSupportStatus             | String        | `received` / `not_received` (default `not_received`)     |
+| condolenceSupportDebt               | Decimal(15,2) | Default 0                                                |
+| remarks                             | String?       | Optional freeform notes for dashboard                    |
+| clan                                | String?       | Member's clan                                            |
+| totem                               | String?       | Member's totem                                           |
+| birthDistrict, birthVillage         | String?       | Place of birth details                                   |
+| ancestralDistrict, ancestralVillage | String?       | Ancestral home details                                   |
+| residenceDistrict, residenceVillage | String?       | Current residence details                                |
+| placeOfWork, qualifications         | String?       | Work and education details                               |
+| fatherInfo, motherInfo              | Json?         | Parent information payload                               |
+| spouses                             | Json?         | Array of spouse records                                  |
+| children                            | Json?         | Array of children records                                |
+| otherRelatives                      | Json?         | Array of relative records                                |
+| status                              | String        | "active" / "pending" / "inactive" / "suspended", indexed |
+| userId                              | UUID?         | FK to User (unique, 1:1)                                 |
+| applicationId                       | UUID?         | FK to Application (unique)                               |
 
 ### Application
+
 Membership application using the full IBDA Bio Data form. Contains 40+ fields across 5 sections (General, Places, Work, Family, Documents). Approved applications auto-create a Member record.
 
-| Column | Type | Constraints |
-|--------|------|-------------|
-| id | UUID | PK |
-| status | String | "pending" / "approved" / "rejected", indexed |
-| rejectionReason | String? | Reason if rejected |
-| reviewedBy | UUID? | FK to User who reviewed |
-| reviewedAt | DateTime? | When review occurred |
-| userId | UUID? | FK to User (if submitted by logged-in user) |
-| memberId | UUID? | FK to Member (set on approval) |
-| **General Info** | | |
-| surname, firstName, otherNames | String | Required |
-| sex | String | "Male" / "Female" |
-| dateOfBirth | DateTime | Required |
-| nationalId | String? | National ID number |
-| phone, email | String | Required |
-| **Places** | | |
-| birthPlace, birthDistrict | String? | Place of birth |
-| ancestralHome, ancestralDistrict | String? | Ancestral home |
-| currentResidence, currentDistrict | String? | Current residence |
-| **Work** | | |
-| occupation, employer, workAddress | String? | Employment details |
-| **Family** | | |
-| fatherName, fatherStatus | String? | Father info |
-| motherName, motherStatus | String? | Mother info |
-| clan, totem | String? | Clan/totem |
-| spouses | Json? | Array of spouse records |
-| children | Json? | Array of children records |
-| relatives | Json? | Array of relative records |
-| **Documents** | | |
-| passportPhoto, nationalIdPhoto | String? | Document file paths |
-| signature | String? | Signature file path |
+| Column                            | Type      | Constraints                                  |
+| --------------------------------- | --------- | -------------------------------------------- |
+| id                                | UUID      | PK                                           |
+| status                            | String    | "pending" / "approved" / "rejected", indexed |
+| rejectionReason                   | String?   | Reason if rejected                           |
+| reviewedBy                        | UUID?     | FK to User who reviewed                      |
+| reviewedAt                        | DateTime? | When review occurred                         |
+| userId                            | UUID?     | FK to User (if submitted by logged-in user)  |
+| memberId                          | UUID?     | FK to Member (set on approval)               |
+| **General Info**                  |           |                                              |
+| surname, firstName, otherNames    | String    | Required                                     |
+| sex                               | String    | "Male" / "Female"                            |
+| dateOfBirth                       | DateTime  | Required                                     |
+| nationalId                        | String?   | National ID number                           |
+| phone, email                      | String    | Required                                     |
+| **Places**                        |           |                                              |
+| birthPlace, birthDistrict         | String?   | Place of birth                               |
+| ancestralHome, ancestralDistrict  | String?   | Ancestral home                               |
+| currentResidence, currentDistrict | String?   | Current residence                            |
+| **Work**                          |           |                                              |
+| occupation, employer, workAddress | String?   | Employment details                           |
+| **Family**                        |           |                                              |
+| fatherName, fatherStatus          | String?   | Father info                                  |
+| motherName, motherStatus          | String?   | Mother info                                  |
+| clan, totem                       | String?   | Clan/totem                                   |
+| spouses                           | Json?     | Array of spouse records                      |
+| children                          | Json?     | Array of children records                    |
+| relatives                         | Json?     | Array of relative records                    |
+| **Documents**                     |           |                                              |
+| passportPhoto, nationalIdPhoto    | String?   | Document file paths                          |
+| signature                         | String?   | Signature file path                          |
 
 ### Account
+
 Financial account for a member. Supports multiple types per member.
 
-| Column | Type | Constraints |
-|--------|------|-------------|
-| id | UUID | PK |
-| accountNo | String | Unique (SAV-0001/FIX-0002/CUR-0003), indexed |
-| memberId | UUID | FK to Member (cascade delete) |
-| type | String | "savings" / "current" / "fixed_deposit" |
-| balance | Decimal(15,2) | Default 0 |
-| interestRate | Decimal(5,2) | Annual rate (savings: 12%, fixed: 15%, current: 5%) |
-| status | String | "active" / "dormant" / "frozen" / "closed", indexed |
+| Column       | Type          | Constraints                                         |
+| ------------ | ------------- | --------------------------------------------------- |
+| id           | UUID          | PK                                                  |
+| accountNo    | String        | Unique (SAV-0001/FIX-0002/CUR-0003), indexed        |
+| memberId     | UUID          | FK to Member (cascade delete)                       |
+| type         | String        | "savings" / "current" / "fixed_deposit"             |
+| balance      | Decimal(15,2) | Default 0                                           |
+| interestRate | Decimal(5,2)  | Annual rate (savings: 12%, fixed: 15%, current: 5%) |
+| status       | String        | "active" / "dormant" / "frozen" / "closed", indexed |
 
 ### Transaction
+
 All financial movements. Balance updated on approval.
 
-| Column | Type | Constraints |
-|--------|------|-------------|
-| id | UUID | PK |
-| accountId | UUID | FK to Account (cascade delete), indexed |
-| type | String | deposit / withdrawal / transfer / loan_repayment / loan_disbursement / interest_credit / fee, indexed |
-| amount | Decimal(15,2) | Must be positive |
-| method | String | cash / mobile_money / bank_transfer / cheque / internal |
-| reference | String? | External reference number |
-| status | String | pending / completed / rejected / reversed, indexed |
-| processedBy | UUID? | User ID who approved/rejected |
-| createdAt | DateTime | Indexed for time-series queries |
+| Column      | Type          | Constraints                                                                                           |
+| ----------- | ------------- | ----------------------------------------------------------------------------------------------------- |
+| id          | UUID          | PK                                                                                                    |
+| accountId   | UUID          | FK to Account (cascade delete), indexed                                                               |
+| type        | String        | deposit / withdrawal / transfer / loan_repayment / loan_disbursement / interest_credit / fee, indexed |
+| amount      | Decimal(15,2) | Must be positive                                                                                      |
+| method      | String        | cash / mobile_money / bank_transfer / cheque / internal                                               |
+| reference   | String?       | External reference number                                                                             |
+| status      | String        | pending / completed / rejected / reversed, indexed                                                    |
+| processedBy | UUID?         | User ID who approved/rejected                                                                         |
+| createdAt   | DateTime      | Indexed for time-series queries                                                                       |
 
 ### Loan
+
 Full lifecycle: pending → approved → active → paid/overdue/defaulted.
 
-| Column | Type | Constraints |
-|--------|------|-------------|
-| id | UUID | PK |
-| memberId | UUID | FK to Member (cascade delete), indexed |
-| type | String | business / personal / emergency / education / housing |
-| amount | Decimal(15,2) | Principal |
-| balance | Decimal(15,2) | Outstanding (decreases with repayments) |
-| interestRate | Decimal(5,2) | Annual rate |
-| term | Int | Duration in months |
-| monthlyPayment | Decimal(15,2) | Auto-calculated via amortization formula |
-| nextPaymentDate | DateTime? | Indexed for upcoming payment queries |
-| status | String | pending / approved / active / paid / overdue / defaulted / rejected |
-| approvedBy | UUID? | Admin who approved |
-| disbursedAt | DateTime? | When funds were released |
+| Column          | Type          | Constraints                                                         |
+| --------------- | ------------- | ------------------------------------------------------------------- |
+| id              | UUID          | PK                                                                  |
+| memberId        | UUID          | FK to Member (cascade delete), indexed                              |
+| type            | String        | business / personal / emergency / education / housing               |
+| amount          | Decimal(15,2) | Principal                                                           |
+| balance         | Decimal(15,2) | Outstanding (decreases with repayments)                             |
+| interestRate    | Decimal(5,2)  | Annual rate                                                         |
+| term            | Int           | Duration in months                                                  |
+| monthlyPayment  | Decimal(15,2) | Auto-calculated via amortization formula                            |
+| nextPaymentDate | DateTime?     | Indexed for upcoming payment queries                                |
+| status          | String        | pending / approved / active / paid / overdue / defaulted / rejected |
+| approvedBy      | UUID?         | Admin who approved                                                  |
+| disbursedAt     | DateTime?     | When funds were released                                            |
 
 ### Expense
+
 Organizational expenses with approval workflow.
 
-| Column | Type | Constraints |
-|--------|------|-------------|
-| id | UUID | PK |
-| description | String | Required |
-| category | String | Salaries / Rent / Utilities / Marketing / Operations / IT / Training / Insurance |
-| amount | Decimal(15,2) | Required |
-| date | DateTime | Expense date, indexed |
-| status | String | pending / approved / rejected, indexed |
-| approvedBy | UUID? | Admin who approved |
+| Column      | Type          | Constraints                                                                      |
+| ----------- | ------------- | -------------------------------------------------------------------------------- |
+| id          | UUID          | PK                                                                               |
+| description | String        | Required                                                                         |
+| category    | String        | Salaries / Rent / Utilities / Marketing / Operations / IT / Training / Insurance |
+| amount      | Decimal(15,2) | Required                                                                         |
+| date        | DateTime      | Expense date, indexed                                                            |
+| status      | String        | pending / approved / rejected, indexed                                           |
+| approvedBy  | UUID?         | Admin who approved                                                               |
 
 ### DepositRequest
+
 Member-initiated deposit requests requiring admin approval.
 
-| Column | Type | Constraints |
-|--------|------|-------------|
-| id | UUID | PK |
-| memberId | String | Indexed |
-| accountId | String | Target account |
-| amount | Decimal(15,2) | Requested amount |
-| method | String | Payment method |
-| status | String | pending / approved / rejected, indexed |
-| processedBy | UUID? | Staff/admin who processed |
+| Column      | Type          | Constraints                            |
+| ----------- | ------------- | -------------------------------------- |
+| id          | UUID          | PK                                     |
+| memberId    | String        | Indexed                                |
+| accountId   | String        | Target account                         |
+| amount      | Decimal(15,2) | Requested amount                       |
+| method      | String        | Payment method                         |
+| status      | String        | pending / approved / rejected, indexed |
+| processedBy | UUID?         | Staff/admin who processed              |
 
 ### WithdrawRequest
+
 Member-initiated withdrawal requests requiring admin approval.
 
-| Column | Type | Constraints |
-|--------|------|-------------|
-| id | UUID | PK |
-| memberId | String | Indexed |
-| accountId | String | Source account |
-| amount | Decimal(15,2) | Requested amount |
-| reason | String? | Withdrawal reason |
-| status | String | pending / approved / rejected, indexed |
+| Column    | Type          | Constraints                            |
+| --------- | ------------- | -------------------------------------- |
+| id        | UUID          | PK                                     |
+| memberId  | String        | Indexed                                |
+| accountId | String        | Source account                         |
+| amount    | Decimal(15,2) | Requested amount                       |
+| reason    | String?       | Withdrawal reason                      |
+| status    | String        | pending / approved / rejected, indexed |
 
 ### WelfareProgram + Pledge
+
 Social welfare with member pledges. Pledge has FK to both WelfareProgram and Member.
 
 ### PaymentGateway
+
 Payment gateway configuration (MTN, Airtel, Visa, etc.) with active/inactive toggle.
 
 ### BankAccount
+
 SACCO's organizational bank accounts with balances.
 
 ### AuditLog
+
 System activity log. FK to User. Tracks action, entity, entityId, IP address.
 
 ### Setting
+
 Key-value system configuration (company_name, currency, timezone, etc.).
 
 ## Indexes
@@ -328,10 +349,11 @@ bunx prisma studio
 
 ### Migration History
 
-| Migration | Description |
-|-----------|-------------|
-| `20260325224040_init` | Initial schema: User, Member, Account, Transaction, Loan, Expense, WelfareProgram, Pledge, AuditLog, BankAccount, Setting |
-| `20260325230945_add_requests_gateways_pledge_relations` | Added DepositRequest, WithdrawRequest, PaymentGateway models. Added Member→Pledge relation. |
+| Migration                                               | Description                                                                                                               |
+| ------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------- |
+| `20260325224040_init`                                   | Initial schema: User, Member, Account, Transaction, Loan, Expense, WelfareProgram, Pledge, AuditLog, BankAccount, Setting |
+| `20260325230945_add_requests_gateways_pledge_relations` | Added DepositRequest, WithdrawRequest, PaymentGateway models. Added Member→Pledge relation.                               |
+| `20260408113000_add_member_dashboard_fields`            | Added Member dashboard support fields: shares, wedding/condolence support status + debt, remarks.                         |
 
 ## Seeding
 
@@ -351,34 +373,34 @@ bun run db:seed
 
 ### Seed Data Summary (209+ records)
 
-| Entity | Count | Status Distribution | Notes |
-|--------|-------|-------------------|-------|
-| **Users** | 9 | 2 admin, 1 chairman, 3 staff (1 inactive), 2 member, 1 inactive staff | All password: `password123` (chairman: `chairman123`) |
-| **Applications** | 3+ | Sample pending, approved, rejected applications | IBDA Bio Data form submissions |
-| **Members** | 16 | 10 active, 3 pending, 1 inactive, 1 suspended | Linked to users where applicable |
-| **Accounts** | 20 | 16 active, 1 dormant, 1 frozen, 1 closed | Mix: 13 savings, 3 fixed_deposit, 4 current |
-| **Transactions** | 40 | 28 completed, 6 pending, 2 rejected, 1 reversed | All types: deposit, withdrawal, transfer, loan_repayment, loan_disbursement, interest_credit, fee. Spread over 40 days. |
-| **Loans** | 16 | 8 active, 3 pending, 2 paid, 1 overdue, 1 rejected, 1 defaulted | Types: business, personal, emergency, education, housing |
-| **Expenses** | 20 | 14 approved, 4 pending, 1 rejected | 8 categories: Salaries, Rent, Utilities, Marketing, Operations, IT, Training, Insurance |
-| **Deposit Requests** | 10 | 4 pending, 4 approved, 2 rejected | Mixed methods: cash, mobile_money, bank_transfer |
-| **Withdraw Requests** | 10 | 3 pending, 4 approved, 3 rejected | With reasons |
-| **Payment Gateways** | 5 | 2 active (MTN, Airtel), 3 inactive (Stanbic, Visa, PayPal) | |
-| **Welfare Programs** | 4 | All active with varied funding (32-64%) | Medical, Education, Bereavement, Housing |
-| **Pledges** | 25 | 10 paid, 10 pledged, 5 cancelled | Distributed across all 4 programs and 14 members |
-| **Bank Accounts** | 5 | 4 active, 1 inactive | Stanbic, DFCU, Centenary, Equity, Bank of Africa |
-| **Settings** | 15 | All active | Company info, currency, limits, security flags |
-| **Audit Logs** | 15 | Login, create, approve, reject, update, deactivate | Spread over 15 days |
+| Entity                | Count | Status Distribution                                                   | Notes                                                                                                                   |
+| --------------------- | ----- | --------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------- |
+| **Users**             | 9     | 2 admin, 1 chairman, 3 staff (1 inactive), 2 member, 1 inactive staff | All password: `password123` (chairman: `chairman123`)                                                                   |
+| **Applications**      | 3+    | Sample pending, approved, rejected applications                       | IBDA Bio Data form submissions                                                                                          |
+| **Members**           | 16    | 10 active, 3 pending, 1 inactive, 1 suspended                         | Linked to users where applicable                                                                                        |
+| **Accounts**          | 20    | 16 active, 1 dormant, 1 frozen, 1 closed                              | Mix: 13 savings, 3 fixed_deposit, 4 current                                                                             |
+| **Transactions**      | 40    | 28 completed, 6 pending, 2 rejected, 1 reversed                       | All types: deposit, withdrawal, transfer, loan_repayment, loan_disbursement, interest_credit, fee. Spread over 40 days. |
+| **Loans**             | 16    | 8 active, 3 pending, 2 paid, 1 overdue, 1 rejected, 1 defaulted       | Types: business, personal, emergency, education, housing                                                                |
+| **Expenses**          | 20    | 14 approved, 4 pending, 1 rejected                                    | 8 categories: Salaries, Rent, Utilities, Marketing, Operations, IT, Training, Insurance                                 |
+| **Deposit Requests**  | 10    | 4 pending, 4 approved, 2 rejected                                     | Mixed methods: cash, mobile_money, bank_transfer                                                                        |
+| **Withdraw Requests** | 10    | 3 pending, 4 approved, 3 rejected                                     | With reasons                                                                                                            |
+| **Payment Gateways**  | 5     | 2 active (MTN, Airtel), 3 inactive (Stanbic, Visa, PayPal)            |                                                                                                                         |
+| **Welfare Programs**  | 4     | All active with varied funding (32-64%)                               | Medical, Education, Bereavement, Housing                                                                                |
+| **Pledges**           | 25    | 10 paid, 10 pledged, 5 cancelled                                      | Distributed across all 4 programs and 14 members                                                                        |
+| **Bank Accounts**     | 5     | 4 active, 1 inactive                                                  | Stanbic, DFCU, Centenary, Equity, Bank of Africa                                                                        |
+| **Settings**          | 15    | All active                                                            | Company info, currency, limits, security flags                                                                          |
+| **Audit Logs**        | 15    | Login, create, approve, reject, update, deactivate                    | Spread over 15 days                                                                                                     |
 
 ### Default Login Credentials
 
-| Portal | Email | Password |
-|--------|-------|----------|
-| **Admin** | admin@iffeds.org | password123 |
-| **Admin** | superadmin@iffeds.org | password123 |
-| **Staff** | staff@iffeds.org | password123 |
-| **Staff** | mike@iffeds.org | password123 |
-| **Member** | john@example.com | password123 |
-| **Member** | grace@example.com | password123 |
-| **Chairman** | chairman@iffeds.org | chairman123 |
+| Portal       | Email                 | Password    |
+| ------------ | --------------------- | ----------- |
+| **Admin**    | admin@iffeds.org      | password123 |
+| **Admin**    | superadmin@iffeds.org | password123 |
+| **Staff**    | staff@iffeds.org      | password123 |
+| **Staff**    | mike@iffeds.org       | password123 |
+| **Member**   | john@example.com      | password123 |
+| **Member**   | grace@example.com     | password123 |
+| **Chairman** | chairman@iffeds.org   | chairman123 |
 
 > **Security**: Change all passwords immediately in production.

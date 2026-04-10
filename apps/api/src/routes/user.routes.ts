@@ -27,9 +27,21 @@ users.get("/", zValidator("query", paginationSchema), async (c) => {
 
   const [data, total] = await Promise.all([
     prisma.user.findMany({
-      where, skip, take: limit,
+      where,
+      skip,
+      take: limit,
       orderBy: { [sortBy]: sortOrder },
-      select: { id: true, name: true, email: true, phone: true, role: true, isActive: true, lastLogin: true, createdAt: true, avatar: true },
+      select: {
+        id: true,
+        name: true,
+        email: true,
+        phone: true,
+        role: true,
+        isActive: true,
+        lastLogin: true,
+        createdAt: true,
+        avatar: true,
+      },
     }),
     prisma.user.count({ where }),
   ]);
@@ -45,7 +57,17 @@ users.post("/", zValidator("json", createUserSchema), async (c) => {
   const password = await hashPassword(data.password);
   const user = await prisma.user.create({
     data: { name: data.name, email: data.email, phone: data.phone, password, role: data.role },
-    select: { id: true, name: true, email: true, phone: true, role: true, isActive: true, lastLogin: true, createdAt: true, avatar: true },
+    select: {
+      id: true,
+      name: true,
+      email: true,
+      phone: true,
+      role: true,
+      isActive: true,
+      lastLogin: true,
+      createdAt: true,
+      avatar: true,
+    },
   });
   await writeAuditLog(c, {
     action: "user_created",
@@ -59,7 +81,17 @@ users.post("/", zValidator("json", createUserSchema), async (c) => {
 users.get("/:id", async (c) => {
   const user = await prisma.user.findUnique({
     where: { id: c.req.param("id") },
-    select: { id: true, name: true, email: true, phone: true, role: true, isActive: true, lastLogin: true, createdAt: true, avatar: true },
+    select: {
+      id: true,
+      name: true,
+      email: true,
+      phone: true,
+      role: true,
+      isActive: true,
+      lastLogin: true,
+      createdAt: true,
+      avatar: true,
+    },
   });
   if (!user) throw new HTTPException(404, { message: "User not found" });
   return c.json({ success: true, data: user });
@@ -70,7 +102,17 @@ users.put("/:id", zValidator("json", updateUserSchema), async (c) => {
   const user = await prisma.user.update({
     where: { id: c.req.param("id") },
     data,
-    select: { id: true, name: true, email: true, phone: true, role: true, isActive: true, lastLogin: true, createdAt: true, avatar: true },
+    select: {
+      id: true,
+      name: true,
+      email: true,
+      phone: true,
+      role: true,
+      isActive: true,
+      lastLogin: true,
+      createdAt: true,
+      avatar: true,
+    },
   });
   await writeAuditLog(c, {
     action: "user_updated",

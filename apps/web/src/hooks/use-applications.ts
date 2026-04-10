@@ -4,9 +4,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { applicationsApi } from "@/lib/api/applications";
 import type { PaginationParams } from "@iffe/shared";
 
-export function useApplications(
-  params?: PaginationParams & { status?: string },
-) {
+export function useApplications(params?: PaginationParams & { status?: string }) {
   return useQuery({
     queryKey: ["applications", params],
     queryFn: () => applicationsApi.getAll(params),

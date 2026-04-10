@@ -23,10 +23,34 @@ export function MobileNav() {
       {open && (
         <div className="absolute top-full left-0 right-0 bg-white dark:bg-gray-950 border-b border-gray-200 dark:border-gray-800 shadow-xl">
           <div className="px-4 py-6 space-y-4">
-            <a href="#home" onClick={() => setOpen(false)} className="block text-base font-medium text-text-muted hover:text-primary">Home</a>
-            <a href="#about" onClick={() => setOpen(false)} className="block text-base font-medium text-text-muted hover:text-primary">About Us</a>
-            <a href="#services" onClick={() => setOpen(false)} className="block text-base font-medium text-text-muted hover:text-primary">Services</a>
-            <a href="#contact" onClick={() => setOpen(false)} className="block text-base font-medium text-text-muted hover:text-primary">Contact</a>
+            <a
+              href="#home"
+              onClick={() => setOpen(false)}
+              className="block text-base font-medium text-text-muted hover:text-primary"
+            >
+              Home
+            </a>
+            <a
+              href="#about"
+              onClick={() => setOpen(false)}
+              className="block text-base font-medium text-text-muted hover:text-primary"
+            >
+              About Us
+            </a>
+            <a
+              href="#services"
+              onClick={() => setOpen(false)}
+              className="block text-base font-medium text-text-muted hover:text-primary"
+            >
+              Services
+            </a>
+            <a
+              href="#contact"
+              onClick={() => setOpen(false)}
+              className="block text-base font-medium text-text-muted hover:text-primary"
+            >
+              Contact
+            </a>
             <div className="pt-4 border-t border-border space-y-2">
               <button
                 onClick={() => setLoginOpen(!loginOpen)}
@@ -37,13 +61,25 @@ export function MobileNav() {
               </button>
               {loginOpen && (
                 <div className="bg-surface-alt rounded-lg overflow-hidden border border-border">
-                  <Link href="/login?portal=admin" onClick={() => setOpen(false)} className="flex items-center gap-3 px-5 py-3 text-sm font-medium text-text hover:bg-white border-b border-border">
+                  <Link
+                    href="/login?portal=admin"
+                    onClick={() => setOpen(false)}
+                    className="flex items-center gap-3 px-5 py-3 text-sm font-medium text-text hover:bg-white border-b border-border"
+                  >
                     <Shield className="w-4 h-4 text-primary" /> Admin Portal
                   </Link>
-                  <Link href="/login?portal=member" onClick={() => setOpen(false)} className="flex items-center gap-3 px-5 py-3 text-sm font-medium text-text hover:bg-white border-b border-border">
+                  <Link
+                    href="/login?portal=member"
+                    onClick={() => setOpen(false)}
+                    className="flex items-center gap-3 px-5 py-3 text-sm font-medium text-text hover:bg-white border-b border-border"
+                  >
                     <Users className="w-4 h-4 text-info" /> Member Portal
                   </Link>
-                  <Link href="/login?portal=staff" onClick={() => setOpen(false)} className="flex items-center gap-3 px-5 py-3 text-sm font-medium text-text hover:bg-white">
+                  <Link
+                    href="/login?portal=staff"
+                    onClick={() => setOpen(false)}
+                    className="flex items-center gap-3 px-5 py-3 text-sm font-medium text-text hover:bg-white"
+                  >
                     <Briefcase className="w-4 h-4 text-text-muted" /> Staff Portal
                   </Link>
                 </div>

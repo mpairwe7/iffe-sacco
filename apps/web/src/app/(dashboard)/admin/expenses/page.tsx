@@ -73,14 +73,18 @@ export default function ExpensesPage() {
       key: "category",
       label: "Category",
       render: (row: ExpenseRow) => (
-        <span className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-surface-alt text-text-muted">{row.category}</span>
+        <span className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-surface-alt text-text-muted">
+          {row.category}
+        </span>
       ),
     },
     {
       key: "amount",
       label: "Amount",
       align: "right" as const,
-      render: (row: ExpenseRow) => <span className="font-bold text-gray-900 dark:text-white">{formatCurrency(Number(row.amount))}</span>,
+      render: (row: ExpenseRow) => (
+        <span className="font-bold text-gray-900 dark:text-white">{formatCurrency(Number(row.amount))}</span>
+      ),
     },
     {
       key: "date",
@@ -93,7 +97,11 @@ export default function ExpensesPage() {
       render: (row: ExpenseRow) => {
         const statusLabel = row.status.charAt(0).toUpperCase() + row.status.slice(1);
         return (
-          <span className={`inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium ${row.status === "approved" ? "bg-success/15 text-success" : "bg-warning/15 text-warning"}`}>{statusLabel}</span>
+          <span
+            className={`inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium ${row.status === "approved" ? "bg-success/15 text-success" : "bg-warning/15 text-warning"}`}
+          >
+            {statusLabel}
+          </span>
         );
       },
     },
@@ -121,7 +129,10 @@ export default function ExpensesPage() {
             <Pencil className="w-4 h-4" />
           </button>
           <button
-            onClick={() => { setDeleteId(row.id); setDeleteOpen(true); }}
+            onClick={() => {
+              setDeleteId(row.id);
+              setDeleteOpen(true);
+            }}
             className="p-2.5 text-text-muted hover:text-danger rounded-lg hover:bg-danger/15"
             title="Delete"
           >
@@ -154,16 +165,26 @@ export default function ExpensesPage() {
 
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
         <div className="bg-white dark:bg-gray-950 border border-gray-200 dark:border-gray-800 shadow-sm rounded-xl p-5">
-          <p className="text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Total This Month</p>
-          <p className="text-xl font-bold text-gray-900 dark:text-white mt-1">{stats?.totalThisMonth != null ? formatCurrency(stats.totalThisMonth) : "\u2014"}</p>
+          <p className="text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+            Total This Month
+          </p>
+          <p className="text-xl font-bold text-gray-900 dark:text-white mt-1">
+            {stats?.totalThisMonth != null ? formatCurrency(stats.totalThisMonth) : "\u2014"}
+          </p>
         </div>
         <div className="bg-white dark:bg-gray-950 border border-gray-200 dark:border-gray-800 shadow-sm rounded-xl p-5">
           <p className="text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Approved</p>
-          <p className="text-2xl font-bold text-success mt-1">{stats?.approved != null ? formatCurrency(stats.approved) : "\u2014"}</p>
+          <p className="text-2xl font-bold text-success mt-1">
+            {stats?.approved != null ? formatCurrency(stats.approved) : "\u2014"}
+          </p>
         </div>
         <div className="bg-white dark:bg-gray-950 border border-gray-200 dark:border-gray-800 shadow-sm rounded-xl p-5">
-          <p className="text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Pending Approval</p>
-          <p className="text-2xl font-bold text-warning mt-1">{stats?.pending != null ? formatCurrency(stats.pending) : "\u2014"}</p>
+          <p className="text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+            Pending Approval
+          </p>
+          <p className="text-2xl font-bold text-warning mt-1">
+            {stats?.pending != null ? formatCurrency(stats.pending) : "\u2014"}
+          </p>
         </div>
       </div>
 
@@ -191,11 +212,7 @@ export default function ExpensesPage() {
 
       <CreateExpenseModal open={createOpen} onOpenChange={setCreateOpen} />
 
-      <EditExpenseModal
-        open={editOpen}
-        onOpenChange={setEditOpen}
-        expense={editExpense}
-      />
+      <EditExpenseModal open={editOpen} onOpenChange={setEditOpen} expense={editExpense} />
 
       <ConfirmDialog
         open={deleteOpen}

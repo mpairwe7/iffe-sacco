@@ -1,6 +1,6 @@
 "use client";
 
-import { CreditCard, ToggleLeft, ToggleRight, Loader2 } from "lucide-react";
+import { CreditCard, ToggleLeft, ToggleRight } from "lucide-react";
 import { usePaymentGateways, useTogglePaymentGateway } from "@/hooks/use-payment-gateways";
 import { toast } from "sonner";
 import type { PaymentGateway } from "@iffe/shared";
@@ -9,7 +9,7 @@ export default function PaymentGatewaysPage() {
   const { data, isLoading } = usePaymentGateways();
   const toggleGateway = useTogglePaymentGateway();
 
-  const gateways: PaymentGateway[] = Array.isArray(data) ? data : (data as any)?.data ?? [];
+  const gateways: PaymentGateway[] = data ?? [];
 
   function handleToggle(id: string) {
     toggleGateway.mutate(id, {
@@ -33,7 +33,10 @@ export default function PaymentGatewaysPage() {
       <div className="grid gap-4">
         {isLoading ? (
           Array.from({ length: 3 }).map((_, i) => (
-            <div key={i} className="bg-white dark:bg-gray-950 border border-gray-200 dark:border-gray-800 shadow-sm rounded-xl p-6 flex items-center justify-between animate-pulse">
+            <div
+              key={i}
+              className="bg-white dark:bg-gray-950 border border-gray-200 dark:border-gray-800 shadow-sm rounded-xl p-6 flex items-center justify-between animate-pulse"
+            >
               <div className="flex items-center gap-4">
                 <div className="w-12 h-12 rounded-xl bg-surface-alt" />
                 <div className="space-y-2">
@@ -54,18 +57,25 @@ export default function PaymentGatewaysPage() {
           </div>
         ) : (
           gateways.map((gw) => (
-            <div key={gw.id} className="bg-white dark:bg-gray-950 border border-gray-200 dark:border-gray-800 shadow-sm rounded-xl p-6 flex items-center justify-between">
+            <div
+              key={gw.id}
+              className="bg-white dark:bg-gray-950 border border-gray-200 dark:border-gray-800 shadow-sm rounded-xl p-6 flex items-center justify-between"
+            >
               <div className="flex items-center gap-4">
                 <div className="w-12 h-12 rounded-xl bg-surface-alt flex items-center justify-center">
                   <CreditCard className="w-6 h-6 text-text-muted" />
                 </div>
                 <div>
                   <h3 className="font-bold text-gray-900 dark:text-white">{gw.name}</h3>
-                  <p className="text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider">{gw.type} &middot; {gw.currency} &middot; Fee: {gw.fee}</p>
+                  <p className="text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                    {gw.type} &middot; {gw.currency} &middot; Fee: {gw.fee}
+                  </p>
                 </div>
               </div>
               <div className="flex items-center gap-4">
-                <span className={`text-xs font-medium px-2.5 py-1 rounded-full ${gw.isActive ? "bg-success/15 text-success" : "bg-text-light/10 text-text-light"}`}>
+                <span
+                  className={`text-xs font-medium px-2.5 py-1 rounded-full ${gw.isActive ? "bg-success/15 text-success" : "bg-text-light/10 text-text-light"}`}
+                >
                   {gw.isActive ? "Active" : "Inactive"}
                 </span>
                 <button

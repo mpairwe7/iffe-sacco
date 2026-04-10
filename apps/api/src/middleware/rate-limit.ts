@@ -35,10 +35,7 @@ function takeBucket(key: string, windowMs: number) {
 
 export function authRateLimit(prefix: string) {
   return createMiddleware(async (c, next) => {
-    const bucket = takeBucket(
-      `${prefix}:${getClientIp(c.req.raw.headers)}`,
-      env.AUTH_RATE_LIMIT_WINDOW_MS,
-    );
+    const bucket = takeBucket(`${prefix}:${getClientIp(c.req.raw.headers)}`, env.AUTH_RATE_LIMIT_WINDOW_MS);
 
     if (bucket.count > env.AUTH_RATE_LIMIT_MAX_ATTEMPTS) {
       c.header("Retry-After", String(Math.ceil((bucket.resetAt - Date.now()) / 1000)));

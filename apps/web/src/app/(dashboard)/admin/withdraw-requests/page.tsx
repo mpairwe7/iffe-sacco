@@ -4,7 +4,11 @@ import { useState } from "react";
 import { DataTable } from "@/components/data-table";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { ArrowUpFromLine, CheckCircle, XCircle } from "lucide-react";
-import { useApproveWithdrawRequest, useRejectWithdrawRequest, useWithdrawRequests } from "@/hooks/use-withdraw-requests";
+import {
+  useApproveWithdrawRequest,
+  useRejectWithdrawRequest,
+  useWithdrawRequests,
+} from "@/hooks/use-withdraw-requests";
 import { useServerTable } from "@/hooks/use-server-table";
 import { formatCurrency, formatDate } from "@/lib/utils";
 import { toast } from "sonner";
@@ -46,9 +50,7 @@ export default function WithdrawRequestsPage() {
     {
       key: "id",
       label: "ID",
-      render: (row: WithdrawRow) => (
-        <span className="font-mono text-xs text-text-muted">{row.id.slice(0, 8)}</span>
-      ),
+      render: (row: WithdrawRow) => <span className="font-mono text-xs text-text-muted">{row.id.slice(0, 8)}</span>,
     },
     {
       key: "member",

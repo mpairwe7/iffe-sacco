@@ -11,7 +11,9 @@ import { Money } from "@iffe/ledger";
 
 // Mock the prisma module before importing the service so the service
 // picks up our stub client.
-mock.module("../config/db", () => ({
+// Path is `../../config/db` from the test file, which resolves to the
+// same absolute path as `../config/db` in interest.service.ts itself.
+mock.module("../../config/db", () => ({
   prisma: {
     account: {
       findMany: async () => [

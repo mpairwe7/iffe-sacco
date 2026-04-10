@@ -25,11 +25,7 @@ export function isLocale(value: unknown): value is Locale {
   return typeof value === "string" && (locales as readonly string[]).includes(value);
 }
 
-export function resolveLocale(input: {
-  cookie?: string;
-  profile?: string;
-  acceptLanguage?: string | null;
-}): Locale {
+export function resolveLocale(input: { cookie?: string; profile?: string; acceptLanguage?: string | null }): Locale {
   if (isLocale(input.cookie)) return input.cookie;
   if (isLocale(input.profile)) return input.profile;
 

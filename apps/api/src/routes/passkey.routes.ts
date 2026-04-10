@@ -29,23 +29,18 @@ const verifyRegSchema = z.object({
   nickname: z.string().trim().max(80).optional(),
 });
 
-passkeys.post(
-  "/register/verify",
-  authMiddleware,
-  zValidator("json", verifyRegSchema),
-  async (c) => {
-    const user = c.get("user");
-    const { response, nickname } = c.req.valid("json");
-    const result = await passkeyService.verifyRegistration(user.id, response, nickname);
-    await writeAuditLog(c, {
-      action: "passkey_registered",
-      entity: "user",
-      entityId: user.id,
-      details: { nickname: nickname ?? null },
-    });
-    return c.json({ success: true, data: result }, 201);
-  },
-);
+passkeys.post("/register/verify", authMiddleware, zValidator("json", verifyRegSchema), async (c) => {
+  const user = c.get("user");
+  const { response, nickname } = c.req.valid("json");
+  const result = await passkeyService.verifyRegistration(user.id, response, nickname);
+  await writeAuditLog(c, {
+    action: "passkey_registered",
+    entity: "user",
+    entityId: user.id,
+    details: { nickname: nickname ?? null },
+  });
+  return c.json({ success: true, data: result }, 201);
+});
 
 passkeys.get("/", authMiddleware, async (c) => {
   const user = c.get("user");
@@ -67,9 +62,9 @@ passkeys.delete("/:id", authMiddleware, async (c) => {
 });
 
 // ===== Public: authentication =====
-// Skip CSRF since there's no session cookie yet; rate-limit like /login.
-passkeys.use("/login/options", async (c, next) => { c.set("csrf:skip", true); await next(); });
-passkeys.use("/login/verify", async (c, next) => { c.set("csrf:skip", true); await next(); });
+// CSRF exemption for /passkeys/login/* lives in middleware/csrf.ts's
+// CSRF_EXEMPT_PREFIXES — there's no session cookie at auth time, so
+// rate limiting is the relevant brute-force guard.
 passkeys.use("/login/options", authRateLimit("auth:passkey-options"));
 passkeys.use("/login/verify", authRateLimit("auth:passkey-verify"));
 

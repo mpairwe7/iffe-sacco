@@ -63,7 +63,9 @@ export default function DepositRequestsPage() {
       key: "amount",
       label: "Amount",
       align: "right" as const,
-      render: (row: DepositRow) => <span className="font-bold text-gray-900 dark:text-white">{formatCurrency(Number(row.amount))}</span>,
+      render: (row: DepositRow) => (
+        <span className="font-bold text-gray-900 dark:text-white">{formatCurrency(Number(row.amount))}</span>
+      ),
     },
     { key: "method", label: "Method" },
     {
@@ -77,9 +79,17 @@ export default function DepositRequestsPage() {
       render: (row: DepositRow) => {
         const statusLabel = row.status.charAt(0).toUpperCase() + row.status.slice(1);
         return (
-          <span className={`inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium ${
-            row.status === "approved" ? "bg-success/15 text-success" : row.status === "pending" ? "bg-warning/15 text-warning" : "bg-danger/15 text-danger"
-          }`}>{statusLabel}</span>
+          <span
+            className={`inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium ${
+              row.status === "approved"
+                ? "bg-success/15 text-success"
+                : row.status === "pending"
+                  ? "bg-warning/15 text-warning"
+                  : "bg-danger/15 text-danger"
+            }`}
+          >
+            {statusLabel}
+          </span>
         );
       },
     },

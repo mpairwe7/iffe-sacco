@@ -16,10 +16,7 @@ import { Hono } from "hono";
 import { HTTPException } from "hono/http-exception";
 import { prisma } from "../config/db";
 import { runWorkflow } from "../workflows/runtime";
-import {
-  accrueLoanInterestWorkflow,
-  accrueSavingsInterestWorkflow,
-} from "../workflows/interest-accrual.workflow";
+import { accrueLoanInterestWorkflow, accrueSavingsInterestWorkflow } from "../workflows/interest-accrual.workflow";
 import { Money } from "@iffe/ledger";
 import { trialBalance } from "../services/ledger.service";
 import { logger } from "../utils/logger";
@@ -77,7 +74,11 @@ cron.get("/accrue-savings-interest", async (c) => {
     } catch (err) {
       failed += 1;
       logger.error(
-        { event: "cron.savings_accrual.failed", accountId: acc.id, err: err instanceof Error ? err.message : String(err) },
+        {
+          event: "cron.savings_accrual.failed",
+          accountId: acc.id,
+          err: err instanceof Error ? err.message : String(err),
+        },
         "savings interest accrual failed",
       );
     }
@@ -85,7 +86,14 @@ cron.get("/accrue-savings-interest", async (c) => {
 
   const durationMs = Date.now() - started;
   logger.info(
-    { event: "cron.savings_accrual.done", accounts: accounts.length, succeeded, failed, credited: Money.toString(credited), durationMs },
+    {
+      event: "cron.savings_accrual.done",
+      accounts: accounts.length,
+      succeeded,
+      failed,
+      credited: Money.toString(credited),
+      durationMs,
+    },
     "savings interest accrual cron complete",
   );
 
@@ -188,10 +196,7 @@ cron.get("/reconcile", async (c) => {
       _sum: { debit: true, credit: true },
     });
     const direct = Money.fromDb(acc.balance);
-    const ledger = Money.sub(
-      Money.fromDb(agg._sum.credit ?? "0"),
-      Money.fromDb(agg._sum.debit ?? "0"),
-    );
+    const ledger = Money.sub(Money.fromDb(agg._sum.credit ?? "0"), Money.fromDb(agg._sum.debit ?? "0"));
     const diff = Money.sub(direct, ledger);
     if (!Money.isZero(diff)) {
       variances.push({

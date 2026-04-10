@@ -28,11 +28,24 @@ export function setSessionCookie(c: Context, token: string, expiresAt: Date) {
 }
 
 export function clearSessionCookie(c: Context) {
+  // Delete with the exact attributes used when the cookie was set so every
+  // browser drops it on the spot.
   deleteCookie(c, SESSION_COOKIE_NAME, {
     httpOnly: true,
     secure: env.NODE_ENV === "production",
     sameSite: "Strict",
     path: "/",
+  });
+  // Extra belt-and-braces Set-Cookie with an explicit past `expires` — a
+  // few client stacks still honour `expires` but not `max-age=0`, so
+  // emitting both maximises compatibility.
+  setCookie(c, SESSION_COOKIE_NAME, "", {
+    httpOnly: true,
+    secure: env.NODE_ENV === "production",
+    sameSite: "Strict",
+    path: "/",
+    maxAge: 0,
+    expires: new Date(0),
   });
 }
 

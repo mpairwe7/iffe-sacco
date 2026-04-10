@@ -12,7 +12,6 @@
  */
 
 import { useCallback, useEffect, useRef, useState } from "react";
-import { apiClient } from "@/lib/api-client";
 
 interface Message {
   id: string;
@@ -51,7 +50,10 @@ export function AssistantChatWindow() {
 
     try {
       const history = [...messages, userMsg].map((m) => ({ role: m.role, content: m.content }));
-      const csrf = document.cookie.split("; ").find((c) => c.startsWith("csrf-token="))?.split("=")[1];
+      const csrf = document.cookie
+        .split("; ")
+        .find((c) => c.startsWith("csrf-token="))
+        ?.split("=")[1];
 
       const res = await fetch("/api/v1/assistant/chat", {
         method: "POST",

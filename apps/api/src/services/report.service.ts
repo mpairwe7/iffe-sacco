@@ -299,10 +299,7 @@ export async function loanAgingReport() {
   const totals: Record<string, string> = {};
   for (const [bucket, items] of Object.entries(buckets)) {
     totals[bucket] = Money.toString(
-      (items as any[]).reduce(
-        (acc, i) => Money.add(acc, Money.of(i.principal)),
-        Money.zero(),
-      ),
+      (items as any[]).reduce((acc, i) => Money.add(acc, Money.of(i.principal)), Money.zero()),
     );
   }
 

@@ -51,7 +51,7 @@ export function EditWelfareModal({ open, onOpenChange, program }: Props) {
         onError: (err) => {
           toast.error(err.message || "Failed to update program");
         },
-      }
+      },
     );
   }
 
@@ -61,9 +61,7 @@ export function EditWelfareModal({ open, onOpenChange, program }: Props) {
         <Dialog.Overlay className="fixed inset-0 bg-black/40 backdrop-blur-sm z-50 data-[state=open]:animate-in data-[state=open]:fade-in data-[state=closed]:animate-out data-[state=closed]:fade-out" />
         <Dialog.Content className="fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[calc(100%-2rem)] max-w-lg glass-card rounded-xl p-6 z-50 max-h-[90vh] overflow-y-auto data-[state=open]:animate-in data-[state=open]:fade-in data-[state=open]:zoom-in-95 data-[state=open]:slide-in-from-left-1/2 data-[state=open]:slide-in-from-top-[48%]">
           <div className="flex items-center justify-between mb-6">
-            <Dialog.Title className="text-lg font-semibold text-text">
-              Edit Welfare Program
-            </Dialog.Title>
+            <Dialog.Title className="text-lg font-semibold text-text">Edit Welfare Program</Dialog.Title>
             <Dialog.Close asChild>
               <button className="p-1.5 text-text-light hover:text-text rounded-lg" aria-label="Close">
                 <X className="w-4 h-4" />
@@ -79,13 +77,11 @@ export function EditWelfareModal({ open, onOpenChange, program }: Props) {
                 {...register("name")}
                 className={cn(
                   "w-full px-4 py-2.5 bg-white/60 border border-white/40 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary",
-                  errors.name && "border-danger/50 focus:ring-danger/20 focus:border-danger"
+                  errors.name && "border-danger/50 focus:ring-danger/20 focus:border-danger",
                 )}
                 placeholder="Program name"
               />
-              {errors.name && (
-                <p className="text-xs text-danger mt-1">{errors.name.message}</p>
-              )}
+              {errors.name && <p className="text-xs text-danger mt-1">{errors.name.message}</p>}
             </div>
 
             <div>
@@ -95,13 +91,11 @@ export function EditWelfareModal({ open, onOpenChange, program }: Props) {
                 rows={3}
                 className={cn(
                   "w-full px-4 py-2.5 bg-white/60 border border-white/40 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary resize-none",
-                  errors.description && "border-danger/50 focus:ring-danger/20 focus:border-danger"
+                  errors.description && "border-danger/50 focus:ring-danger/20 focus:border-danger",
                 )}
                 placeholder="Describe the program..."
               />
-              {errors.description && (
-                <p className="text-xs text-danger mt-1">{errors.description.message}</p>
-              )}
+              {errors.description && <p className="text-xs text-danger mt-1">{errors.description.message}</p>}
             </div>
 
             <div>
@@ -112,13 +106,11 @@ export function EditWelfareModal({ open, onOpenChange, program }: Props) {
                 {...register("targetAmount", { valueAsNumber: true })}
                 className={cn(
                   "w-full px-4 py-2.5 bg-white/60 border border-white/40 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary",
-                  errors.targetAmount && "border-danger/50 focus:ring-danger/20 focus:border-danger"
+                  errors.targetAmount && "border-danger/50 focus:ring-danger/20 focus:border-danger",
                 )}
                 placeholder="0"
               />
-              {errors.targetAmount && (
-                <p className="text-xs text-danger mt-1">{errors.targetAmount.message}</p>
-              )}
+              {errors.targetAmount && <p className="text-xs text-danger mt-1">{errors.targetAmount.message}</p>}
             </div>
 
             <div className="flex items-center justify-end gap-3 pt-4">

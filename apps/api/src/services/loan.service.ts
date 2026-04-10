@@ -1,6 +1,7 @@
 import { prisma } from "../config/db";
 import { HTTPException } from "hono/http-exception";
-import type { PaginationInput } from "@iffe/shared";
+import { LOAN_INTEREST_RATES } from "@iffe/shared";
+import type { CreateLoanInput, LoanType, MemberLoanApplicationInput, PaginationInput } from "@iffe/shared";
 import type { Prisma } from "@prisma/client";
 
 const ACCOUNT_TYPE_PRIORITY = ["savings", "current", "fixed_deposit"] as const;
@@ -12,10 +13,11 @@ export class LoanService {
     const where: any = {};
     if (status) where.status = status;
     if (memberId) where.memberId = memberId;
-    if (search) where.OR = [
-      { type: { contains: search, mode: "insensitive" } },
-      { member: { firstName: { contains: search, mode: "insensitive" } } },
-    ];
+    if (search)
+      where.OR = [
+        { type: { contains: search, mode: "insensitive" } },
+        { member: { firstName: { contains: search, mode: "insensitive" } } },
+      ];
     const [data, total] = await Promise.all([
       prisma.loan.findMany({ where, skip, take: limit, orderBy: { [sortBy]: sortOrder }, include: { member: true } }),
       prisma.loan.count({ where }),
@@ -29,19 +31,60 @@ export class LoanService {
     return loan;
   }
 
-  async create(data: { memberId: string; type: string; amount: number; interestRate: number; term: number }) {
-    const member = await prisma.member.findUnique({ where: { id: data.memberId } });
-    if (!member) throw new HTTPException(404, { message: "Member not found" });
-    if (member.status !== "active") throw new HTTPException(400, { message: "Member must be active to apply for a loan" });
+  private calculateMonthlyPayment(amount: number, interestRate: number, term: number) {
+    const monthlyRate = interestRate / 100 / 12;
 
-    const monthlyRate = data.interestRate / 100 / 12;
-    const monthlyPayment = monthlyRate > 0
-      ? (data.amount * monthlyRate * Math.pow(1 + monthlyRate, data.term)) / (Math.pow(1 + monthlyRate, data.term) - 1)
-      : data.amount / data.term;
+    if (monthlyRate > 0) {
+      return Math.round(
+        (amount * monthlyRate * Math.pow(1 + monthlyRate, term)) / (Math.pow(1 + monthlyRate, term) - 1),
+      );
+    }
+
+    return Math.round(amount / term);
+  }
+
+  private async ensureEligibleMember(memberId: string) {
+    const member = await prisma.member.findUnique({ where: { id: memberId } });
+    if (!member) throw new HTTPException(404, { message: "Member not found" });
+    if (member.status !== "active")
+      throw new HTTPException(400, { message: "Member must be active to apply for a loan" });
+    return member;
+  }
+
+  private async createPendingLoan(data: CreateLoanInput) {
+    const monthlyPayment = this.calculateMonthlyPayment(data.amount, data.interestRate, data.term);
 
     return prisma.loan.create({
-      data: { ...data, balance: data.amount, monthlyPayment: Math.round(monthlyPayment), status: "pending" },
+      data: { ...data, balance: data.amount, monthlyPayment, status: "pending" },
       include: { member: true },
+    });
+  }
+
+  async create(data: CreateLoanInput) {
+    await this.ensureEligibleMember(data.memberId);
+    return this.createPendingLoan(data);
+  }
+
+  async applyForMember(memberId: string, data: MemberLoanApplicationInput) {
+    await this.ensureEligibleMember(memberId);
+
+    const existingPendingLoan = await prisma.loan.findFirst({
+      where: {
+        memberId,
+        status: "pending",
+      },
+    });
+    if (existingPendingLoan) {
+      throw new HTTPException(409, { message: "You already have a pending loan application under review" });
+    }
+
+    const type = data.type as LoanType;
+    return this.createPendingLoan({
+      memberId,
+      type,
+      amount: data.amount,
+      interestRate: LOAN_INTEREST_RATES[type],
+      term: data.term,
     });
   }
 
@@ -76,13 +119,19 @@ export class LoanService {
       throw new HTTPException(400, { message: "Member needs an active account before loan processing" });
     }
 
-    return [...accounts].sort((left, right) => {
+    const selectedAccount = [...accounts].sort((left, right) => {
       const leftPriority = ACCOUNT_TYPE_PRIORITY.indexOf(left.type as (typeof ACCOUNT_TYPE_PRIORITY)[number]);
       const rightPriority = ACCOUNT_TYPE_PRIORITY.indexOf(right.type as (typeof ACCOUNT_TYPE_PRIORITY)[number]);
       const normalizedLeft = leftPriority === -1 ? ACCOUNT_TYPE_PRIORITY.length : leftPriority;
       const normalizedRight = rightPriority === -1 ? ACCOUNT_TYPE_PRIORITY.length : rightPriority;
       return normalizedLeft - normalizedRight;
     })[0];
+
+    if (!selectedAccount) {
+      throw new HTTPException(400, { message: "Member needs an active account before loan processing" });
+    }
+
+    return selectedAccount;
   }
 
   private getNextPaymentDate(baseDate = new Date()) {
@@ -236,6 +285,11 @@ export class LoanService {
       prisma.loan.count({ where: { status: "overdue" } }),
       prisma.loan.aggregate({ where: { status: { in: ["active", "paid"] } }, _sum: { amount: true } }),
     ]);
-    return { active: activeCount, outstanding: activeAmount._sum.balance || 0, overdue, totalDisbursed: totalDisbursed._sum.amount || 0 };
+    return {
+      active: activeCount,
+      outstanding: activeAmount._sum.balance || 0,
+      overdue,
+      totalDisbursed: totalDisbursed._sum.amount || 0,
+    };
   }
 }

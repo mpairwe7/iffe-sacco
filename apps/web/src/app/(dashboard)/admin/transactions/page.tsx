@@ -1,7 +1,12 @@
 "use client";
 
 import { DataTable } from "@/components/data-table";
-import { useTransactions, useTransactionStats, useApproveTransaction, useRejectTransaction } from "@/hooks/use-transactions";
+import {
+  useTransactions,
+  useTransactionStats,
+  useApproveTransaction,
+  useRejectTransaction,
+} from "@/hooks/use-transactions";
 import { useServerTable } from "@/hooks/use-server-table";
 import { formatCurrency, formatDate } from "@/lib/utils";
 import { Wallet, ArrowUpRight, ArrowDownRight, Check, X } from "lucide-react";
@@ -18,7 +23,9 @@ export default function TransactionsPage() {
 
   const transactionsResponse = query.data;
   const transactions = (transactionsResponse?.data || []) as TransactionRow[];
-  const stats = statsQuery.data as { total?: number; totalDeposits?: number; totalWithdrawals?: number; pending?: number } | undefined;
+  const stats = statsQuery.data as
+    | { total?: number; totalDeposits?: number; totalWithdrawals?: number; pending?: number }
+    | undefined;
 
   function handleApprove(id: string) {
     approveMutation.mutate(id, {
@@ -37,7 +44,10 @@ export default function TransactionsPage() {
   const isInflow = (type: string) => type === "deposit" || type === "loan_repayment" || type === "interest_credit";
 
   const formatType = (type: string) =>
-    type.split("_").map((w) => w.charAt(0).toUpperCase() + w.slice(1)).join(" ");
+    type
+      .split("_")
+      .map((w) => w.charAt(0).toUpperCase() + w.slice(1))
+      .join(" ");
 
   const columns = [
     {
@@ -91,9 +101,17 @@ export default function TransactionsPage() {
       render: (row: TransactionRow) => {
         const statusLabel = row.status.charAt(0).toUpperCase() + row.status.slice(1);
         return (
-          <span className={`inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium ${
-            row.status === "completed" ? "bg-success/15 text-success" : row.status === "pending" ? "bg-warning/15 text-warning" : "bg-danger/15 text-danger"
-          }`}>{statusLabel}</span>
+          <span
+            className={`inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium ${
+              row.status === "completed"
+                ? "bg-success/15 text-success"
+                : row.status === "pending"
+                  ? "bg-warning/15 text-warning"
+                  : "bg-danger/15 text-danger"
+            }`}
+          >
+            {statusLabel}
+          </span>
         );
       },
     },
@@ -142,16 +160,26 @@ export default function TransactionsPage() {
 
       <div className="grid grid-cols-1 sm:grid-cols-4 gap-4">
         <div className="bg-white dark:bg-gray-950 border border-gray-200 dark:border-gray-800 shadow-sm rounded-xl p-5">
-          <p className="text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Total Transactions</p>
-          <p className="text-xl font-bold text-gray-900 dark:text-white mt-1">{stats?.total?.toLocaleString() ?? "—"}</p>
+          <p className="text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+            Total Transactions
+          </p>
+          <p className="text-xl font-bold text-gray-900 dark:text-white mt-1">
+            {stats?.total?.toLocaleString() ?? "—"}
+          </p>
         </div>
         <div className="bg-white dark:bg-gray-950 border border-gray-200 dark:border-gray-800 shadow-sm rounded-xl p-5">
           <p className="text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Total Deposits</p>
-          <p className="text-2xl font-bold text-success mt-1">{stats?.totalDeposits != null ? formatCurrency(stats.totalDeposits) : "—"}</p>
+          <p className="text-2xl font-bold text-success mt-1">
+            {stats?.totalDeposits != null ? formatCurrency(stats.totalDeposits) : "—"}
+          </p>
         </div>
         <div className="bg-white dark:bg-gray-950 border border-gray-200 dark:border-gray-800 shadow-sm rounded-xl p-5">
-          <p className="text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Total Withdrawals</p>
-          <p className="text-2xl font-bold text-warning mt-1">{stats?.totalWithdrawals != null ? formatCurrency(stats.totalWithdrawals) : "—"}</p>
+          <p className="text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+            Total Withdrawals
+          </p>
+          <p className="text-2xl font-bold text-warning mt-1">
+            {stats?.totalWithdrawals != null ? formatCurrency(stats.totalWithdrawals) : "—"}
+          </p>
         </div>
         <div className="bg-white dark:bg-gray-950 border border-gray-200 dark:border-gray-800 shadow-sm rounded-xl p-5">
           <p className="text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Pending</p>

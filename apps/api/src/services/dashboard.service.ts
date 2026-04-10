@@ -3,25 +3,17 @@ import type { DashboardStats } from "@iffe/shared";
 
 export class DashboardService {
   async getStats(): Promise<DashboardStats> {
-    const [
-      totalMembers,
-      deposits,
-      withdrawals,
-      activeLoans,
-      activeLoanAmount,
-      expenses,
-      savings,
-      pending,
-    ] = await Promise.all([
-      prisma.member.count(),
-      prisma.transaction.aggregate({ where: { type: "deposit", status: "completed" }, _sum: { amount: true } }),
-      prisma.transaction.aggregate({ where: { type: "withdrawal", status: "completed" }, _sum: { amount: true } }),
-      prisma.loan.count({ where: { status: "active" } }),
-      prisma.loan.aggregate({ where: { status: "active" }, _sum: { balance: true } }),
-      prisma.expense.aggregate({ where: { status: "approved" }, _sum: { amount: true } }),
-      prisma.account.aggregate({ where: { status: "active" }, _sum: { balance: true } }),
-      prisma.transaction.count({ where: { status: "pending" } }),
-    ]);
+    const [totalMembers, deposits, withdrawals, activeLoans, activeLoanAmount, expenses, savings, pending] =
+      await Promise.all([
+        prisma.member.count(),
+        prisma.transaction.aggregate({ where: { type: "deposit", status: "completed" }, _sum: { amount: true } }),
+        prisma.transaction.aggregate({ where: { type: "withdrawal", status: "completed" }, _sum: { amount: true } }),
+        prisma.loan.count({ where: { status: "active" } }),
+        prisma.loan.aggregate({ where: { status: "active" }, _sum: { balance: true } }),
+        prisma.expense.aggregate({ where: { status: "approved" }, _sum: { amount: true } }),
+        prisma.account.aggregate({ where: { status: "active" }, _sum: { balance: true } }),
+        prisma.transaction.count({ where: { status: "pending" } }),
+      ]);
 
     return {
       totalMembers,

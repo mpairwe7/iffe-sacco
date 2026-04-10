@@ -14,12 +14,11 @@ export const FormField = forwardRef<HTMLInputElement, FormFieldProps>(
     return (
       <div>
         <label className="block text-sm font-semibold text-text mb-2.5">
-          {label}{required && <span className="text-danger ml-0.5">*</span>}
+          {label}
+          {required && <span className="text-danger ml-0.5">*</span>}
         </label>
         <div className="relative">
-          {Icon && (
-            <Icon className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-text-light" />
-          )}
+          {Icon && <Icon className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-text-light" />}
           <input
             ref={ref}
             required={required}
@@ -29,7 +28,7 @@ export const FormField = forwardRef<HTMLInputElement, FormFieldProps>(
               "w-full py-3.5 bg-white/60 dark:bg-white/5 border rounded-lg text-sm text-text placeholder:text-text-light focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary focus:bg-white/80 dark:focus:bg-white/10",
               Icon ? "pl-12 pr-4" : "px-4",
               error ? "border-danger focus:ring-danger/20" : "border-white/40 dark:border-white/10",
-              className
+              className,
             )}
             {...props}
           />
@@ -39,11 +38,9 @@ export const FormField = forwardRef<HTMLInputElement, FormFieldProps>(
             {error}
           </p>
         )}
-        {helpText && !error && (
-          <p className="text-xs text-text-muted mt-1.5">{helpText}</p>
-        )}
+        {helpText && !error && <p className="text-xs text-text-muted mt-1.5">{helpText}</p>}
       </div>
     );
-  }
+  },
 );
 FormField.displayName = "FormField";

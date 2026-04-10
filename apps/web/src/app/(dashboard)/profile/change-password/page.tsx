@@ -46,7 +46,10 @@ export default function ChangePasswordPage() {
       </div>
 
       <div className="max-w-lg">
-        <form onSubmit={handleSubmit(onSubmit)} className="bg-white dark:bg-gray-950 border border-gray-200 dark:border-gray-800 shadow-sm rounded-xl p-6 space-y-5">
+        <form
+          onSubmit={handleSubmit(onSubmit)}
+          className="bg-white dark:bg-gray-950 border border-gray-200 dark:border-gray-800 shadow-sm rounded-xl p-6 space-y-5"
+        >
           <div>
             <label className="block text-sm font-medium text-text mb-2">Current Password</label>
             <input

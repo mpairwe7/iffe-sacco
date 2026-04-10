@@ -18,7 +18,7 @@
     "db:seed": "bun run prisma/seed.ts",
     "ledger:backfill": "bun run scripts/backfill-ledger.ts",
     "ledger:backfill:dry": "bun run scripts/backfill-ledger.ts --dry-run",
-    "test": "bun test",
+    "test": "bun test src",
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {

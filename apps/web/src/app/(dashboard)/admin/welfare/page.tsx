@@ -36,9 +36,7 @@ export default function WelfareAdminPage() {
       key: "targetAmount",
       label: "Target",
       align: "right" as const,
-      render: (row: WelfareProgram) => (
-        <span className="text-text">{formatCurrency(Number(row.targetAmount))}</span>
-      ),
+      render: (row: WelfareProgram) => <span className="text-text">{formatCurrency(Number(row.targetAmount))}</span>,
     },
     {
       key: "raisedAmount",
@@ -119,17 +117,19 @@ export default function WelfareAdminPage() {
       {stats && (
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
           <div className="bg-white dark:bg-gray-950 border border-gray-200 dark:border-gray-800 shadow-sm rounded-xl p-5">
-            <p className="text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Total Programs</p>
+            <p className="text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+              Total Programs
+            </p>
             <p className="text-xl font-bold text-gray-900 dark:text-white mt-1">{String(stats.totalPrograms ?? 0)}</p>
           </div>
           <div className="bg-white dark:bg-gray-950 border border-gray-200 dark:border-gray-800 shadow-sm rounded-xl p-5">
             <p className="text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Total Raised</p>
-            <p className="text-2xl font-bold text-success mt-1">
-              {formatCurrency(Number(stats.totalRaised ?? 0))}
-            </p>
+            <p className="text-2xl font-bold text-success mt-1">{formatCurrency(Number(stats.totalRaised ?? 0))}</p>
           </div>
           <div className="bg-white dark:bg-gray-950 border border-gray-200 dark:border-gray-800 shadow-sm rounded-xl p-5">
-            <p className="text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Total Contributors</p>
+            <p className="text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+              Total Contributors
+            </p>
             <p className="text-2xl font-bold text-primary mt-1">{String(stats.totalContributors ?? 0)}</p>
           </div>
         </div>
@@ -159,15 +159,8 @@ export default function WelfareAdminPage() {
         onSortChange={table.handleSortChange}
       />
 
-      <CreateWelfareModal
-        open={createOpen}
-        onOpenChange={setCreateOpen}
-      />
-      <EditWelfareModal
-        open={editOpen}
-        onOpenChange={setEditOpen}
-        program={editProgram}
-      />
+      <CreateWelfareModal open={createOpen} onOpenChange={setCreateOpen} />
+      <EditWelfareModal open={editOpen} onOpenChange={setEditOpen} program={editProgram} />
     </div>
   );
 }

@@ -1,7 +1,18 @@
 "use client";
 
 import { useState } from "react";
-import { HelpCircle, Wallet, CreditCard, Calculator, ArrowDownToLine, ArrowUpFromLine, Heart, BarChart3, ChevronDown, FileText } from "lucide-react";
+import {
+  HelpCircle,
+  Wallet,
+  CreditCard,
+  Calculator,
+  ArrowDownToLine,
+  ArrowUpFromLine,
+  Heart,
+  BarChart3,
+  ChevronDown,
+  FileText,
+} from "lucide-react";
 
 const helpArticles = [
   {
@@ -135,27 +146,36 @@ export default function HelpPage() {
         {helpArticles.map((article) => {
           const isOpen = expanded === article.title;
           return (
-            <div key={article.title} className="bg-white dark:bg-gray-950 border border-gray-200 dark:border-gray-800 shadow-sm rounded-xl overflow-hidden transition-all hover:shadow-md">
+            <div
+              key={article.title}
+              className="bg-white dark:bg-gray-950 border border-gray-200 dark:border-gray-800 shadow-sm rounded-xl overflow-hidden transition-all hover:shadow-md"
+            >
               <button
                 type="button"
                 onClick={() => toggle(article.title)}
                 className="w-full flex items-start gap-4 p-5 text-left"
               >
-                <div className={`w-12 h-12 rounded-xl flex items-center justify-center shrink-0 ${colorMap[article.color]}`}>
+                <div
+                  className={`w-12 h-12 rounded-xl flex items-center justify-center shrink-0 ${colorMap[article.color]}`}
+                >
                   <article.icon className="w-6 h-6" />
                 </div>
                 <div className="flex-1 min-w-0">
                   <h3 className="text-sm font-semibold text-gray-900 dark:text-white">{article.title}</h3>
                   <p className="text-xs text-text-muted mt-0.5">{article.desc}</p>
                 </div>
-                <ChevronDown className={`w-5 h-5 text-text-muted shrink-0 mt-1 transition-transform ${isOpen ? "rotate-180" : ""}`} />
+                <ChevronDown
+                  className={`w-5 h-5 text-text-muted shrink-0 mt-1 transition-transform ${isOpen ? "rotate-180" : ""}`}
+                />
               </button>
               {isOpen && (
                 <div className="px-5 pb-5 pt-0">
                   <ol className="space-y-2 border-t border-gray-100 dark:border-gray-800 pt-4">
                     {article.steps.map((step, i) => (
                       <li key={i} className="flex gap-3 text-sm text-text">
-                        <span className="w-6 h-6 rounded-full bg-primary/10 text-primary text-xs font-bold flex items-center justify-center shrink-0">{i + 1}</span>
+                        <span className="w-6 h-6 rounded-full bg-primary/10 text-primary text-xs font-bold flex items-center justify-center shrink-0">
+                          {i + 1}
+                        </span>
                         {step}
                       </li>
                     ))}

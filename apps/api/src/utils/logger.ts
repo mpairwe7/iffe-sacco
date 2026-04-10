@@ -38,16 +38,17 @@ export const logger: Logger = pino({
     ],
     censor: "[REDACTED]",
   },
-  transport: !isProd && !isTest
-    ? {
-        target: "pino-pretty",
-        options: {
-          colorize: true,
-          translateTime: "HH:MM:ss.l",
-          ignore: "pid,hostname,service,env",
-        },
-      }
-    : undefined,
+  transport:
+    !isProd && !isTest
+      ? {
+          target: "pino-pretty",
+          options: {
+            colorize: true,
+            translateTime: "HH:MM:ss.l",
+            ignore: "pid,hostname,service,env",
+          },
+        }
+      : undefined,
 });
 
 export type { Logger };

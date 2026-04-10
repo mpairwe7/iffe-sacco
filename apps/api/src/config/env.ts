@@ -10,7 +10,9 @@ export const env = {
   PORT: Number(process.env.PORT || 4000),
   NODE_ENV: process.env.NODE_ENV || "development",
   DATABASE_URL: required("DATABASE_URL"),
-  JWT_SECRET: process.env.JWT_SECRET || (process.env.NODE_ENV === "production" ? required("JWT_SECRET") : "dev-jwt-secret-not-for-production"),
+  JWT_SECRET:
+    process.env.JWT_SECRET ||
+    (process.env.NODE_ENV === "production" ? required("JWT_SECRET") : "dev-jwt-secret-not-for-production"),
   CORS_ORIGIN: process.env.CORS_ORIGIN || "http://localhost:3000",
   APP_BASE_URL: process.env.APP_BASE_URL || process.env.CORS_ORIGIN?.split(",")[0] || "http://localhost:3000",
   SESSION_TTL_HOURS: Number(process.env.SESSION_TTL_HOURS || 24),

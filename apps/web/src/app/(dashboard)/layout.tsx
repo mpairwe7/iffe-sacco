@@ -7,7 +7,13 @@ export default async function DashboardLayout({ children }: { children: React.Re
   const { user, currentPath, application } = await getDashboardSession();
 
   if (!user) {
-    redirect("/login");
+    // IMPORTANT: route through `/logout` (a route handler, NOT in the
+    // middleware matcher) so any stale-but-still-verifiable session cookie
+    // is hard-deleted before the browser lands on `/login`. Going straight
+    // to `/login` would let the middleware re-redirect the user back here
+    // and produce an infinite loop when the JWT is still valid but the
+    // DB session has been revoked.
+    redirect("/logout");
   }
 
   const redirectTo = getRedirectForPath(currentPath, user.role);

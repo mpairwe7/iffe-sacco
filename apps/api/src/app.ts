@@ -47,19 +47,22 @@ app.use("*", secureHeaders());
 // Login / register / password reset are explicitly opted out via c.set("csrf:skip").
 app.use("*", csrfTokenIssuer);
 app.use("*", csrfProtect);
-app.use("*", cors({
-  origin: (origin) => {
-    const allowed = (process.env.CORS_ORIGIN || "http://localhost:3000").split(",");
-    if (!origin) {
-      return allowed[0];
-    }
+app.use(
+  "*",
+  cors({
+    origin: (origin) => {
+      const allowed = (process.env.CORS_ORIGIN || "http://localhost:3000").split(",");
+      if (!origin) {
+        return allowed[0];
+      }
 
-    return allowed.includes(origin) ? origin : allowed[0];
-  },
-  credentials: true,
-  allowMethods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
-  allowHeaders: ["Content-Type", "Authorization"],
-}));
+      return allowed.includes(origin) ? origin : allowed[0];
+    },
+    credentials: true,
+    allowMethods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
+    allowHeaders: ["Content-Type", "Authorization"],
+  }),
+);
 
 // ===== Routes =====
 app.route("/health", healthRoutes);

@@ -157,15 +157,8 @@ export default function UsersPage() {
         onSortChange={table.handleSortChange}
       />
 
-      <CreateUserModal
-        open={createOpen}
-        onOpenChange={setCreateOpen}
-      />
-      <EditUserModal
-        open={editOpen}
-        onOpenChange={setEditOpen}
-        user={editUser}
-      />
+      <CreateUserModal open={createOpen} onOpenChange={setCreateOpen} />
+      <EditUserModal open={editOpen} onOpenChange={setEditOpen} user={editUser} />
     </div>
   );
 }

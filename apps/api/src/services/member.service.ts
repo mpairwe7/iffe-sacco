@@ -142,59 +142,46 @@ export class MemberService {
     const accountIds = member.accounts.map((account) => account.id);
     const transactionWhere = accountIds.length > 0 ? { accountId: { in: accountIds } } : undefined;
 
-    const [
-      recentTransactions,
-      firstDeposit,
-      latestDeposit,
-      totalDeposits,
-      totalWithdrawals,
-      monthlySubscriptionTotal,
-    ] = accountIds.length > 0
-      ? await prisma.$transaction([
-          prisma.transaction.findMany({
-            where: transactionWhere,
-            orderBy: { createdAt: "desc" },
-            take: 12,
-          }),
-          prisma.transaction.findFirst({
-            where: { ...transactionWhere, type: "deposit", status: "completed" },
-            orderBy: { createdAt: "asc" },
-          }),
-          prisma.transaction.findFirst({
-            where: { ...transactionWhere, type: "deposit", status: "completed" },
-            orderBy: { createdAt: "desc" },
-          }),
-          prisma.transaction.aggregate({
-            where: { ...transactionWhere, type: "deposit", status: "completed" },
-            _sum: { amount: true },
-            _count: true,
-          }),
-          prisma.transaction.aggregate({
-            where: { ...transactionWhere, type: "withdrawal", status: "completed" },
-            _sum: { amount: true },
-          }),
-          prisma.transaction.aggregate({
-            where: {
-              ...transactionWhere,
-              status: "completed",
-              OR: [
-                { description: { contains: "subscription", mode: "insensitive" } },
-                { description: { contains: "monthly", mode: "insensitive" } },
-                { reference: { contains: "subscription", mode: "insensitive" } },
-                { reference: { contains: "monthly", mode: "insensitive" } },
-              ],
-            },
-            _sum: { amount: true },
-          }),
-        ])
-      : [
-          [],
-          null,
-          null,
-          { _sum: { amount: 0 }, _count: 0 },
-          { _sum: { amount: 0 } },
-          { _sum: { amount: 0 } },
-        ];
+    const [recentTransactions, firstDeposit, latestDeposit, totalDeposits, totalWithdrawals, monthlySubscriptionTotal] =
+      accountIds.length > 0
+        ? await prisma.$transaction([
+            prisma.transaction.findMany({
+              where: transactionWhere,
+              orderBy: { createdAt: "desc" },
+              take: 12,
+            }),
+            prisma.transaction.findFirst({
+              where: { ...transactionWhere, type: "deposit", status: "completed" },
+              orderBy: { createdAt: "asc" },
+            }),
+            prisma.transaction.findFirst({
+              where: { ...transactionWhere, type: "deposit", status: "completed" },
+              orderBy: { createdAt: "desc" },
+            }),
+            prisma.transaction.aggregate({
+              where: { ...transactionWhere, type: "deposit", status: "completed" },
+              _sum: { amount: true },
+              _count: true,
+            }),
+            prisma.transaction.aggregate({
+              where: { ...transactionWhere, type: "withdrawal", status: "completed" },
+              _sum: { amount: true },
+            }),
+            prisma.transaction.aggregate({
+              where: {
+                ...transactionWhere,
+                status: "completed",
+                OR: [
+                  { description: { contains: "subscription", mode: "insensitive" } },
+                  { description: { contains: "monthly", mode: "insensitive" } },
+                  { reference: { contains: "subscription", mode: "insensitive" } },
+                  { reference: { contains: "monthly", mode: "insensitive" } },
+                ],
+              },
+              _sum: { amount: true },
+            }),
+          ])
+        : [[], null, null, { _sum: { amount: 0 }, _count: 0 }, { _sum: { amount: 0 } }, { _sum: { amount: 0 } }];
 
     const accountLookup = new Map<string, Account>(
       member.accounts.map((account) => [

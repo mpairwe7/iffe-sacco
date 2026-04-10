@@ -23,7 +23,8 @@ const jsonLd = {
   "@type": "FinancialService",
   name: "IFFE Bbenhe Development SACCO",
   alternateName: "IBDS",
-  description: "A modern savings and credit cooperative organization in Jinja City, Uganda. Motto: Obwegaisi Mu Kwisanhia — Unity of Consensus.",
+  description:
+    "A modern savings and credit cooperative organization in Jinja City, Uganda. Motto: Obwegaisi Mu Kwisanhia — Unity of Consensus.",
   url: "https://iffe-sacco.vercel.app",
   logo: "https://iffe-sacco.vercel.app/logo.png",
   telephone: ["+256782894875", "+256772875008", "+256772958879"],
@@ -65,7 +66,9 @@ export default function HomePage() {
               </div>
               <div className="leading-tight">
                 <span className="text-xl sm:text-2xl lg:text-[1.75rem] font-extrabold tracking-tight">
-                  <span className="text-primary text-2xl sm:text-3xl lg:text-[2.1rem] font-black drop-shadow-sm">IFFE</span>{" "}
+                  <span className="text-primary text-2xl sm:text-3xl lg:text-[2.1rem] font-black drop-shadow-sm">
+                    IFFE
+                  </span>{" "}
                   <span className="text-gray-900 dark:text-white font-extrabold">SACCO</span>
                 </span>
                 <p className="hidden sm:block text-[10px] sm:text-[11px] lg:text-xs font-semibold text-gray-500 dark:text-gray-400 tracking-widest uppercase mt-0.5">
@@ -123,18 +126,30 @@ export default function HomePage() {
                 <span className="text-primary relative inline-block">
                   Within Your Reach
                   <svg className="absolute -bottom-2 left-0 w-full" viewBox="0 0 300 12" fill="none">
-                    <path d="M2 10C50 4 100 2 150 4C200 6 250 3 298 8" stroke="#F1C40F" strokeWidth="4" strokeLinecap="round" />
+                    <path
+                      d="M2 10C50 4 100 2 150 4C200 6 250 3 298 8"
+                      stroke="#F1C40F"
+                      strokeWidth="4"
+                      strokeLinecap="round"
+                    />
                   </svg>
                 </span>
               </h1>
               <p className="mt-8 text-lg text-text-muted leading-relaxed max-w-lg">
-                Experience the power of a modern SACCO. Secure savings, affordable loans, and a community dedicated to your growth.
+                Experience the power of a modern SACCO. Secure savings, affordable loans, and a community dedicated to
+                your growth.
               </p>
               <div className="flex flex-wrap gap-4 mt-10">
-                <Link href="/register" className="group inline-flex items-center gap-2 px-8 py-4 text-base font-semibold text-white bg-gradient-to-r from-primary to-primary-dark rounded-xl shadow-xl shadow-primary/30 hover:shadow-2xl hover:shadow-primary/40 hover:-translate-y-1">
+                <Link
+                  href="/register"
+                  className="group inline-flex items-center gap-2 px-8 py-4 text-base font-semibold text-white bg-gradient-to-r from-primary to-primary-dark rounded-xl shadow-xl shadow-primary/30 hover:shadow-2xl hover:shadow-primary/40 hover:-translate-y-1"
+                >
                   Open Account <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
                 </Link>
-                <a href="#about" className="inline-flex items-center gap-2 px-8 py-4 text-base font-semibold text-text glass rounded-xl hover:bg-white/80 hover:-translate-y-0.5">
+                <a
+                  href="#about"
+                  className="inline-flex items-center gap-2 px-8 py-4 text-base font-semibold text-text glass rounded-xl hover:bg-white/80 hover:-translate-y-0.5"
+                >
                   Learn More
                 </a>
               </div>
@@ -175,7 +190,9 @@ export default function HomePage() {
                       <div className="text-sm text-text-muted">Total Balance</div>
                       <div className="text-xl font-bold text-text">USh 4,250,000</div>
                     </div>
-                    <div className="text-sm font-semibold text-success bg-success/10 px-3 py-1 rounded-full">+12.5%</div>
+                    <div className="text-sm font-semibold text-success bg-success/10 px-3 py-1 rounded-full">
+                      +12.5%
+                    </div>
                   </div>
                   <div className="h-px bg-white/40" />
                   <div className="grid grid-cols-2 gap-4">
@@ -225,7 +242,10 @@ export default function HomePage() {
           <div className="grid md:grid-cols-2 gap-8 mb-12">
             <div className="bg-white dark:bg-gray-950 border border-gray-200 dark:border-gray-800 shadow-sm rounded-xl p-8">
               <h3 className="text-lg font-bold text-primary mb-3">Our Vision</h3>
-              <p className="text-text-muted leading-relaxed">Empowering individual members to take control of their finances and build a strong foundation for a prosperous future.</p>
+              <p className="text-text-muted leading-relaxed">
+                Empowering individual members to take control of their finances and build a strong foundation for a
+                prosperous future.
+              </p>
             </div>
             <div className="bg-white dark:bg-gray-950 border border-gray-200 dark:border-gray-800 shadow-sm rounded-xl p-8">
               <h3 className="text-lg font-bold text-primary mb-3">Our Mission</h3>
@@ -309,12 +329,35 @@ export default function HomePage() {
           {/* Features */}
           <div className="grid md:grid-cols-3 gap-8">
             {[
-              { icon: Wallet, title: "Secure Savings", desc: "Flexible savings plans designed to help you reach your financial goals with competitive interest rates.", gradient: "from-primary/20 to-primary/5", text: "text-primary" },
-              { icon: TrendingUp, title: "Affordable Loans", desc: "Low interest rates and easy repayment terms to fuel your business and personal growth.", gradient: "from-secondary/20 to-secondary/5", text: "text-secondary" },
-              { icon: Smartphone, title: "Digital Access", desc: "Access your savings, loans, welfare programs and reports 24/7 through our modern online portals.", gradient: "from-info/20 to-info/5", text: "text-info" },
+              {
+                icon: Wallet,
+                title: "Secure Savings",
+                desc: "Flexible savings plans designed to help you reach your financial goals with competitive interest rates.",
+                gradient: "from-primary/20 to-primary/5",
+                text: "text-primary",
+              },
+              {
+                icon: TrendingUp,
+                title: "Affordable Loans",
+                desc: "Low interest rates and easy repayment terms to fuel your business and personal growth.",
+                gradient: "from-secondary/20 to-secondary/5",
+                text: "text-secondary",
+              },
+              {
+                icon: Smartphone,
+                title: "Digital Access",
+                desc: "Access your savings, loans, welfare programs and reports 24/7 through our modern online portals.",
+                gradient: "from-info/20 to-info/5",
+                text: "text-info",
+              },
             ].map((feature) => (
-              <div key={feature.title} className="group bg-white dark:bg-gray-950 border border-gray-200 dark:border-gray-800 shadow-sm rounded-xl p-8 hover:-translate-y-1 transition-transform cursor-default">
-                <div className={`w-14 h-14 rounded-xl bg-gradient-to-br ${feature.gradient} flex items-center justify-center mb-6`}>
+              <div
+                key={feature.title}
+                className="group bg-white dark:bg-gray-950 border border-gray-200 dark:border-gray-800 shadow-sm rounded-xl p-8 hover:-translate-y-1 transition-transform cursor-default"
+              >
+                <div
+                  className={`w-14 h-14 rounded-xl bg-gradient-to-br ${feature.gradient} flex items-center justify-center mb-6`}
+                >
                   <feature.icon className={`w-7 h-7 ${feature.text}`} />
                 </div>
                 <h3 className="text-xl font-bold text-text mb-3">{feature.title}</h3>
@@ -329,20 +372,46 @@ export default function HomePage() {
       <section id="services" className="py-20 lg:py-32 mesh-gradient relative">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           <div className="text-center max-w-2xl mx-auto mb-16">
-            <div className="glass-subtle inline-flex items-center gap-2 px-5 py-2.5 text-primary text-sm font-semibold rounded-full mb-4">Access Portals</div>
+            <div className="glass-subtle inline-flex items-center gap-2 px-5 py-2.5 text-primary text-sm font-semibold rounded-full mb-4">
+              Access Portals
+            </div>
             <h2 className="text-3xl sm:text-4xl font-extrabold text-text">Our Portals</h2>
             <p className="mt-4 text-text-muted text-lg">Seamless access for every stakeholder.</p>
           </div>
           <div className="grid md:grid-cols-3 gap-8">
             {[
-              { icon: Shield, title: "Admin Portal", desc: "Manage system operations, users, and reports.", gradient: "from-primary to-primary-dark", portal: "admin" },
-              { icon: Users, title: "Member Portal", desc: "Check balances, request loans, and track savings.", gradient: "from-info to-blue-700", portal: "member" },
-              { icon: Briefcase, title: "Staff Portal", desc: "Process requests and manage member services.", gradient: "from-accent to-gray-800", portal: "staff" },
+              {
+                icon: Shield,
+                title: "Admin Portal",
+                desc: "Manage system operations, users, and reports.",
+                gradient: "from-primary to-primary-dark",
+                portal: "admin",
+              },
+              {
+                icon: Users,
+                title: "Member Portal",
+                desc: "Check balances, request loans, and track savings.",
+                gradient: "from-info to-blue-700",
+                portal: "member",
+              },
+              {
+                icon: Briefcase,
+                title: "Staff Portal",
+                desc: "Process requests and manage member services.",
+                gradient: "from-accent to-gray-800",
+                portal: "staff",
+              },
             ].map((portal) => (
-              <Link key={portal.title} href={`/login?portal=${portal.portal}`} className="group glass-card rounded-xl overflow-hidden hover:-translate-y-2">
+              <Link
+                key={portal.title}
+                href={`/login?portal=${portal.portal}`}
+                className="group glass-card rounded-xl overflow-hidden hover:-translate-y-2"
+              >
                 <div className={`h-1.5 bg-gradient-to-r ${portal.gradient}`} />
                 <div className="p-8">
-                  <div className={`w-16 h-16 rounded-xl bg-gradient-to-br ${portal.gradient} flex items-center justify-center mb-6 shadow-lg group-hover:scale-110 transition-transform`}>
+                  <div
+                    className={`w-16 h-16 rounded-xl bg-gradient-to-br ${portal.gradient} flex items-center justify-center mb-6 shadow-lg group-hover:scale-110 transition-transform`}
+                  >
                     <portal.icon className="w-8 h-8 text-white" />
                   </div>
                   <h3 className="text-xl font-bold text-text mb-2">{portal.title}</h3>
@@ -368,7 +437,10 @@ export default function HomePage() {
               { value: "500+", label: "Loans Disbursed" },
               { value: "12+", label: "Years of Service" },
             ].map((stat) => (
-              <div key={stat.label} className="text-center p-6 rounded-xl bg-white/10 backdrop-blur-sm border border-white/10">
+              <div
+                key={stat.label}
+                className="text-center p-6 rounded-xl bg-white/10 backdrop-blur-sm border border-white/10"
+              >
                 <div className="text-3xl lg:text-4xl font-extrabold text-white">{stat.value}</div>
                 <div className="text-sm text-white/70 mt-2 font-medium">{stat.label}</div>
               </div>
@@ -386,8 +458,13 @@ export default function HomePage() {
             <div className="absolute inset-0 backdrop-blur-[1px]" />
             <div className="relative z-10">
               <h2 className="text-3xl sm:text-4xl font-extrabold text-white mb-4">Ready to Join?</h2>
-              <p className="text-lg text-white/80 mb-10 max-w-xl mx-auto">Become part of a growing community dedicated to financial success.</p>
-              <Link href="/register" className="group inline-flex items-center gap-2 px-8 py-4 text-base font-semibold text-primary bg-white rounded-xl hover:bg-white/90 shadow-xl hover:-translate-y-1">
+              <p className="text-lg text-white/80 mb-10 max-w-xl mx-auto">
+                Become part of a growing community dedicated to financial success.
+              </p>
+              <Link
+                href="/register"
+                className="group inline-flex items-center gap-2 px-8 py-4 text-base font-semibold text-primary bg-white rounded-xl hover:bg-white/90 shadow-xl hover:-translate-y-1"
+              >
                 Create an Account <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
               </Link>
             </div>
@@ -409,10 +486,15 @@ export default function HomePage() {
                     <span className="text-primary font-black">IFFE</span>{" "}
                     <span className="text-white font-extrabold">SACCO</span>
                   </span>
-                  <p className="text-[10px] font-semibold text-gray-400 tracking-widest uppercase mt-0.5">Empowering Financial Freedom</p>
+                  <p className="text-[10px] font-semibold text-gray-400 tracking-widest uppercase mt-0.5">
+                    Empowering Financial Freedom
+                  </p>
                 </div>
               </div>
-              <p className="text-gray-400 leading-relaxed text-sm">IFFE Bbenhe Development SACCO (IBDS). Empowering financial freedom through community, unity and sustainable development since inception.</p>
+              <p className="text-gray-400 leading-relaxed text-sm">
+                IFFE Bbenhe Development SACCO (IBDS). Empowering financial freedom through community, unity and
+                sustainable development since inception.
+              </p>
               <p className="text-xs text-gray-500 mt-3">P.O. Box 111223, Jinja, Uganda</p>
             </div>
             <div>
@@ -420,7 +502,12 @@ export default function HomePage() {
               <ul className="space-y-3">
                 {["Home", "About", "Services", "Login"].map((link) => (
                   <li key={link}>
-                    <a href={link === "Login" ? "/login" : `#${link.toLowerCase()}`} className="text-gray-300 hover:text-white font-medium transition-colors">{link}</a>
+                    <a
+                      href={link === "Login" ? "/login" : `#${link.toLowerCase()}`}
+                      className="text-gray-300 hover:text-white font-medium transition-colors"
+                    >
+                      {link}
+                    </a>
                   </li>
                 ))}
               </ul>
@@ -429,22 +516,32 @@ export default function HomePage() {
               <h4 className="text-sm font-bold uppercase tracking-wider text-gray-500 mb-6">Contact Us</h4>
               <ul className="space-y-4">
                 <li className="flex items-center gap-3">
-                  <div className="w-9 h-9 rounded-full bg-primary/10 ring-1 ring-primary/20 flex items-center justify-center"><MapPin className="w-4 h-4 text-primary" /></div>
+                  <div className="w-9 h-9 rounded-full bg-primary/10 ring-1 ring-primary/20 flex items-center justify-center">
+                    <MapPin className="w-4 h-4 text-primary" />
+                  </div>
                   <span className="text-gray-300 font-medium">Jinja City, Uganda</span>
                 </li>
                 <li className="flex items-center gap-3">
-                  <div className="w-9 h-9 rounded-full bg-primary/10 ring-1 ring-primary/20 flex items-center justify-center"><Phone className="w-4 h-4 text-primary" /></div>
+                  <div className="w-9 h-9 rounded-full bg-primary/10 ring-1 ring-primary/20 flex items-center justify-center">
+                    <Phone className="w-4 h-4 text-primary" />
+                  </div>
                   <span className="text-gray-300 font-medium">0782 894875 / 0772 875008 / 0772 958879</span>
                 </li>
                 <li className="flex items-center gap-3">
-                  <div className="w-9 h-9 rounded-full bg-primary/10 ring-1 ring-primary/20 flex items-center justify-center"><Mail className="w-4 h-4 text-primary" /></div>
-                  <a href="mailto:bdfsocial.selfhelp@gmail.com" className="text-gray-300 hover:text-white font-medium">bdfsocial.selfhelp@gmail.com</a>
+                  <div className="w-9 h-9 rounded-full bg-primary/10 ring-1 ring-primary/20 flex items-center justify-center">
+                    <Mail className="w-4 h-4 text-primary" />
+                  </div>
+                  <a href="mailto:bdfsocial.selfhelp@gmail.com" className="text-gray-300 hover:text-white font-medium">
+                    bdfsocial.selfhelp@gmail.com
+                  </a>
                 </li>
               </ul>
             </div>
           </div>
           <div className="pt-8 text-center">
-            <p className="text-sm text-gray-500">&copy; 2026 IFFE Bbenhe Development SACCO (IBDS). All rights reserved.</p>
+            <p className="text-sm text-gray-500">
+              &copy; 2026 IFFE Bbenhe Development SACCO (IBDS). All rights reserved.
+            </p>
           </div>
         </div>
       </footer>

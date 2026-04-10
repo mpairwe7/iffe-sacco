@@ -28,6 +28,7 @@ the promoted branch.
    find the latest wall-clock time before the incident.
 
 2. **Create the PITR branch.**
+
    ```bash
    neonctl branches create \
      --name restore-$(date +%Y%m%d-%H%M) \
@@ -37,19 +38,23 @@ the promoted branch.
 
 3. **Validate the restored data** on the new branch. Connect with the
    branch-specific connection string:
+
    ```bash
    psql "$RESTORE_BRANCH_URL" -c "SELECT COUNT(*) FROM journal_entries;"
    psql "$RESTORE_BRANCH_URL" -c "SELECT * FROM journal_entries ORDER BY occurredAt DESC LIMIT 10;"
    ```
+
    Run `apps/api/scripts/reconcile-ledger.ts` against the restore branch
    to confirm the ledger is balanced at that point.
 
 4. **Promote the branch.** In Neon console or via `neonctl`:
+
    ```bash
    neonctl branches set-primary <restore-branch-id>
    ```
 
 5. **Update Vercel `DATABASE_URL`** to point at the promoted branch:
+
    ```bash
    vercel env rm DATABASE_URL production
    vercel env add DATABASE_URL production
@@ -58,6 +63,7 @@ the promoted branch.
    ```
 
 6. **Verify production.**
+
    ```bash
    curl -s $PROD/api/v1/health/ready | jq
    curl -s $PROD/api/v1/reports/trial-balance | jq

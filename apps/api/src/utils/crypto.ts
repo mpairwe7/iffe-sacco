@@ -45,7 +45,7 @@ export function encrypt(plaintext: string): string {
 export function decrypt(envelope: string): string {
   const parts = envelope.split(":");
   if (parts.length !== 4) throw new Error("Invalid ciphertext envelope");
-  const [version, ivB64, ctB64, tagB64] = parts;
+  const [version, ivB64, ctB64, tagB64] = parts as [string, string, string, string];
   if (version !== VERSION) throw new Error(`Unknown envelope version: ${version}`);
 
   const key = getKey();

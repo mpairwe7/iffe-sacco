@@ -30,9 +30,9 @@ export function usePasskey(options: UsePasskeyOptions = {}) {
     setStatus("working");
     try {
       const { startRegistration } = await import("@simplewebauthn/browser");
-      const options = await apiClient.post<any>("/passkeys/register/options", {});
-      const attResp = await startRegistration({ optionsJSON: options });
-      await apiClient.post<any>("/passkeys/register/verify", { response: attResp, nickname });
+      const regOptions = await apiClient.post<unknown>("/passkeys/register/options", {});
+      const attResp = await startRegistration({ optionsJSON: regOptions as never });
+      await apiClient.post<unknown>("/passkeys/register/verify", { response: attResp, nickname });
       setStatus("done");
     } catch (err) {
       const message = err instanceof Error ? err.message : "Failed to enrol passkey";
@@ -47,11 +47,14 @@ export function usePasskey(options: UsePasskeyOptions = {}) {
       setStatus("working");
       try {
         const { startAuthentication } = await import("@simplewebauthn/browser");
-        const options = await apiClient.post<any>("/passkeys/login/options", { email });
-        const assertion = await startAuthentication({ optionsJSON: options });
-        await apiClient.post<any>("/passkeys/login/verify", { response: assertion });
+        // Distinct name from the outer `options` param so the callback
+        // below still dispatches onLoggedIn on the caller's handler,
+        // not on the API response object.
+        const authOptions = await apiClient.post<unknown>("/passkeys/login/options", { email });
+        const assertion = await startAuthentication({ optionsJSON: authOptions as never });
+        await apiClient.post<unknown>("/passkeys/login/verify", { response: assertion });
         setStatus("done");
-        options?.onLoggedIn?.();
+        options.onLoggedIn?.();
         // Prefer a hard navigation so the server layout re-reads /auth/me.
         if (typeof window !== "undefined") {
           window.location.replace("/");

@@ -52,7 +52,7 @@ export function EditUserModal({ open, onOpenChange, user }: Props) {
         onError: (err) => {
           toast.error(err.message || "Failed to update user");
         },
-      }
+      },
     );
   }
 
@@ -62,9 +62,7 @@ export function EditUserModal({ open, onOpenChange, user }: Props) {
         <Dialog.Overlay className="fixed inset-0 bg-black/40 backdrop-blur-sm z-50 data-[state=open]:animate-in data-[state=open]:fade-in data-[state=closed]:animate-out data-[state=closed]:fade-out" />
         <Dialog.Content className="fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[calc(100%-2rem)] max-w-lg glass-card rounded-xl p-6 z-50 max-h-[90vh] overflow-y-auto data-[state=open]:animate-in data-[state=open]:fade-in data-[state=open]:zoom-in-95 data-[state=open]:slide-in-from-left-1/2 data-[state=open]:slide-in-from-top-[48%]">
           <div className="flex items-center justify-between mb-6">
-            <Dialog.Title className="text-lg font-semibold text-text">
-              Edit User
-            </Dialog.Title>
+            <Dialog.Title className="text-lg font-semibold text-text">Edit User</Dialog.Title>
             <Dialog.Close asChild>
               <button className="p-1.5 text-text-light hover:text-text rounded-lg" aria-label="Close">
                 <X className="w-4 h-4" />
@@ -80,13 +78,11 @@ export function EditUserModal({ open, onOpenChange, user }: Props) {
                 {...register("name")}
                 className={cn(
                   "w-full px-4 py-2.5 bg-white/60 border border-white/40 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary",
-                  errors.name && "border-danger/50 focus:ring-danger/20 focus:border-danger"
+                  errors.name && "border-danger/50 focus:ring-danger/20 focus:border-danger",
                 )}
                 placeholder="Full name"
               />
-              {errors.name && (
-                <p className="text-xs text-danger mt-1">{errors.name.message}</p>
-              )}
+              {errors.name && <p className="text-xs text-danger mt-1">{errors.name.message}</p>}
             </div>
 
             <div>
@@ -96,13 +92,11 @@ export function EditUserModal({ open, onOpenChange, user }: Props) {
                 {...register("email")}
                 className={cn(
                   "w-full px-4 py-2.5 bg-white/60 border border-white/40 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary",
-                  errors.email && "border-danger/50 focus:ring-danger/20 focus:border-danger"
+                  errors.email && "border-danger/50 focus:ring-danger/20 focus:border-danger",
                 )}
                 placeholder="user@example.com"
               />
-              {errors.email && (
-                <p className="text-xs text-danger mt-1">{errors.email.message}</p>
-              )}
+              {errors.email && <p className="text-xs text-danger mt-1">{errors.email.message}</p>}
             </div>
 
             <div>
@@ -121,7 +115,7 @@ export function EditUserModal({ open, onOpenChange, user }: Props) {
                 {...register("role")}
                 className={cn(
                   "w-full px-4 py-2.5 bg-white/60 border border-white/40 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary",
-                  errors.role && "border-danger/50 focus:ring-danger/20 focus:border-danger"
+                  errors.role && "border-danger/50 focus:ring-danger/20 focus:border-danger",
                 )}
               >
                 <option value="member">Member</option>
@@ -129,9 +123,7 @@ export function EditUserModal({ open, onOpenChange, user }: Props) {
                 <option value="chairman">Chairman</option>
                 <option value="admin">Admin</option>
               </select>
-              {errors.role && (
-                <p className="text-xs text-danger mt-1">{errors.role.message}</p>
-              )}
+              {errors.role && <p className="text-xs text-danger mt-1">{errors.role.message}</p>}
             </div>
 
             <div className="flex items-center justify-end gap-3 pt-4">

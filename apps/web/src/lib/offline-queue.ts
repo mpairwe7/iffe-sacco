@@ -62,7 +62,10 @@ function openDb(): Promise<IDBDatabase> {
 function newId(): string {
   const bytes = new Uint8Array(16);
   crypto.getRandomValues(bytes);
-  const base = btoa(String.fromCharCode(...bytes)).replaceAll("+", "-").replaceAll("/", "_").replaceAll("=", "");
+  const base = btoa(String.fromCharCode(...bytes))
+    .replaceAll("+", "-")
+    .replaceAll("/", "_")
+    .replaceAll("=", "");
   return `oq-${Date.now().toString(36)}-${base.slice(0, 16)}`;
 }
 
@@ -88,10 +91,11 @@ export async function enqueue(input: Omit<QueuedMutation, "id" | "enqueuedAt" | 
   // Ask the SW to drain on the next online event if available.
   if ("serviceWorker" in navigator && navigator.serviceWorker.controller) {
     try {
-      // @ts-ignore - Background Sync is optional
       const reg = await navigator.serviceWorker.ready;
+      // Background Sync is optional and not in the base ServiceWorkerRegistration
+      // DOM lib; feature-detect before calling.
       if ("sync" in reg) {
-        // @ts-ignore
+        // @ts-expect-error — BackgroundSync is a draft API not in lib.dom
         await reg.sync.register("drain-offline-queue");
       }
     } catch {
@@ -186,7 +190,7 @@ export async function drain(options: { onProgress?: (remaining: number) => void 
       });
       break;
     }
-    options.onProgress?.((await count()));
+    options.onProgress?.(await count());
   }
 
   notifySubscribers();

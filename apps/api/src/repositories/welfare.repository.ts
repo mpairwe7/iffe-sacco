@@ -17,7 +17,9 @@ export class WelfareRepository {
 
     const [data, total] = await Promise.all([
       prisma.welfareProgram.findMany({
-        where, skip, take: limit,
+        where,
+        skip,
+        take: limit,
         orderBy: { [sortBy]: sortOrder },
         include: { _count: { select: { pledges: true } } },
       }),

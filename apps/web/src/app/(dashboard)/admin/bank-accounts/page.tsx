@@ -109,7 +109,9 @@ export default function BankAccountsPage() {
 
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
         <div className="bg-white dark:bg-gray-950 border border-gray-200 dark:border-gray-800 shadow-sm rounded-xl p-5">
-          <p className="text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Total Bank Balance</p>
+          <p className="text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+            Total Bank Balance
+          </p>
           <p className="text-2xl font-bold text-primary mt-1">
             {stats ? formatCurrency(Number(stats.totalBalance ?? 0)) : "\u2014"}
           </p>
@@ -121,7 +123,9 @@ export default function BankAccountsPage() {
           </p>
         </div>
         <div className="bg-white dark:bg-gray-950 border border-gray-200 dark:border-gray-800 shadow-sm rounded-xl p-5">
-          <p className="text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider">This Month Inflow</p>
+          <p className="text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+            This Month Inflow
+          </p>
           <p className="text-2xl font-bold text-success mt-1">
             {stats ? formatCurrency(Number(stats.monthlyInflow ?? 0)) : "\u2014"}
           </p>
@@ -152,15 +156,8 @@ export default function BankAccountsPage() {
         onSortChange={table.handleSortChange}
       />
 
-      <CreateBankAccountModal
-        open={createOpen}
-        onOpenChange={setCreateOpen}
-      />
-      <EditBankAccountModal
-        open={editOpen}
-        onOpenChange={setEditOpen}
-        bankAccount={editAccount}
-      />
+      <CreateBankAccountModal open={createOpen} onOpenChange={setCreateOpen} />
+      <EditBankAccountModal open={editOpen} onOpenChange={setEditOpen} bankAccount={editAccount} />
 
       <ConfirmDialog
         open={!!deleteId}

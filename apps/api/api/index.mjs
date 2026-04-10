@@ -41,7 +41,9 @@ export default async function handler(req, res) {
     const request = new Request(url, { method: req.method, headers, body });
     const response = await app.fetch(request);
     const resHeaders = { ...CORS };
-    response.headers.forEach((v, k) => { resHeaders[k] = v; });
+    response.headers.forEach((v, k) => {
+      resHeaders[k] = v;
+    });
     res.writeHead(response.status, resHeaders);
     res.end(await response.text());
   } catch (e) {

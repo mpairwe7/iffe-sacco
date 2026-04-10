@@ -6,8 +6,6 @@ export const withdrawRequestsApi = {
     apiClient.get<PaginatedResponse<WithdrawRequest>>("/withdraw-requests", params as Record<string, unknown>),
   create: (data: { accountId: string; amount: number; method?: string; reason?: string }) =>
     apiClient.post<WithdrawRequest>("/withdraw-requests", data),
-  approve: (id: string) =>
-    apiClient.patch<WithdrawRequest>(`/withdraw-requests/${id}/approve`),
-  reject: (id: string) =>
-    apiClient.patch<WithdrawRequest>(`/withdraw-requests/${id}/reject`),
+  approve: (id: string) => apiClient.patch<WithdrawRequest>(`/withdraw-requests/${id}/approve`),
+  reject: (id: string) => apiClient.patch<WithdrawRequest>(`/withdraw-requests/${id}/reject`),
 };

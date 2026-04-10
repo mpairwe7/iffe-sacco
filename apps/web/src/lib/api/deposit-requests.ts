@@ -6,8 +6,6 @@ export const depositRequestsApi = {
     apiClient.get<PaginatedResponse<DepositRequest>>("/deposit-requests", params as Record<string, unknown>),
   create: (data: { accountId: string; amount: number; method?: string; description?: string }) =>
     apiClient.post<DepositRequest>("/deposit-requests", data),
-  approve: (id: string) =>
-    apiClient.patch<DepositRequest>(`/deposit-requests/${id}/approve`),
-  reject: (id: string) =>
-    apiClient.patch<DepositRequest>(`/deposit-requests/${id}/reject`),
+  approve: (id: string) => apiClient.patch<DepositRequest>(`/deposit-requests/${id}/approve`),
+  reject: (id: string) => apiClient.patch<DepositRequest>(`/deposit-requests/${id}/reject`),
 };

@@ -3,32 +3,62 @@ import { HTTPException } from "hono/http-exception";
 import type { PaginationInput } from "@iffe/shared";
 
 export class TransactionService {
-  async getAll(params: PaginationInput & { type?: string; status?: string; accountId?: string; accountIds?: string[] }) {
-    const { page = 1, limit = 20, search, sortBy = "createdAt", sortOrder = "desc", type, status, accountId, accountIds } = params;
+  async getAll(
+    params: PaginationInput & { type?: string; status?: string; accountId?: string; accountIds?: string[] },
+  ) {
+    const {
+      page = 1,
+      limit = 20,
+      search,
+      sortBy = "createdAt",
+      sortOrder = "desc",
+      type,
+      status,
+      accountId,
+      accountIds,
+    } = params;
     const skip = (page - 1) * limit;
     const where: any = {};
     if (type) where.type = type;
     if (status) where.status = status;
     if (accountIds) where.accountId = { in: accountIds };
     else if (accountId) where.accountId = accountId;
-    if (search) where.OR = [
-      { description: { contains: search, mode: "insensitive" } },
-      { reference: { contains: search, mode: "insensitive" } },
-    ];
+    if (search)
+      where.OR = [
+        { description: { contains: search, mode: "insensitive" } },
+        { reference: { contains: search, mode: "insensitive" } },
+      ];
     const [data, total] = await Promise.all([
-      prisma.transaction.findMany({ where, skip, take: limit, orderBy: { [sortBy]: sortOrder }, include: { account: { include: { member: true } } } }),
+      prisma.transaction.findMany({
+        where,
+        skip,
+        take: limit,
+        orderBy: { [sortBy]: sortOrder },
+        include: { account: { include: { member: true } } },
+      }),
       prisma.transaction.count({ where }),
     ]);
     return { data, total, page, limit, totalPages: Math.ceil(total / limit) };
   }
 
   async getById(id: string) {
-    const txn = await prisma.transaction.findUnique({ where: { id }, include: { account: { include: { member: true } } } });
+    const txn = await prisma.transaction.findUnique({
+      where: { id },
+      include: { account: { include: { member: true } } },
+    });
     if (!txn) throw new HTTPException(404, { message: "Transaction not found" });
     return txn;
   }
 
-  async create(data: { accountId: string; type: string; amount: number; method: string; description?: string; reference?: string; processedBy?: string }) {
+  async create(data: {
+    accountId: string;
+    type: string;
+    amount: number;
+    method: string;
+    description?: string;
+    reference?: string;
+    processedBy?: string;
+  }) {
     // Validate account exists and is active
     const account = await prisma.account.findUnique({ where: { id: data.accountId } });
     if (!account) throw new HTTPException(404, { message: "Account not found" });
@@ -57,7 +87,10 @@ export class TransactionService {
       // Update account balance
       const isCredit = ["deposit", "loan_disbursement", "interest_credit"].includes(txn.type);
       const delta = isCredit ? Number(txn.amount) : -Number(txn.amount);
-      await tx.account.update({ where: { id: txn.accountId }, data: { balance: { increment: delta }, lastActivity: new Date() } });
+      await tx.account.update({
+        where: { id: txn.accountId },
+        data: { balance: { increment: delta }, lastActivity: new Date() },
+      });
 
       return updated;
     });
@@ -71,7 +104,8 @@ export class TransactionService {
 
   async reverse(id: string, processedBy: string) {
     const txn = await this.getById(id);
-    if (txn.status !== "completed") throw new HTTPException(400, { message: "Only completed transactions can be reversed" });
+    if (txn.status !== "completed")
+      throw new HTTPException(400, { message: "Only completed transactions can be reversed" });
 
     return prisma.$transaction(async (tx: any) => {
       const updated = await tx.transaction.update({ where: { id }, data: { status: "reversed", processedBy } });
@@ -79,7 +113,10 @@ export class TransactionService {
       // Reverse the balance change
       const isCredit = ["deposit", "loan_disbursement", "interest_credit"].includes(txn.type);
       const delta = isCredit ? -Number(txn.amount) : Number(txn.amount);
-      await tx.account.update({ where: { id: txn.accountId }, data: { balance: { increment: delta }, lastActivity: new Date() } });
+      await tx.account.update({
+        where: { id: txn.accountId },
+        data: { balance: { increment: delta }, lastActivity: new Date() },
+      });
 
       return updated;
     });
@@ -92,6 +129,11 @@ export class TransactionService {
       prisma.transaction.count({ where: { status: "pending" } }),
       prisma.transaction.count(),
     ]);
-    return { total, totalDeposits: totalDeposits._sum.amount || 0, totalWithdrawals: totalWithdrawals._sum.amount || 0, pending };
+    return {
+      total,
+      totalDeposits: totalDeposits._sum.amount || 0,
+      totalWithdrawals: totalWithdrawals._sum.amount || 0,
+      pending,
+    };
   }
 }
