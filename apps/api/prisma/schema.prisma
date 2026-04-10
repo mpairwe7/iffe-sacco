@@ -15,6 +15,7 @@ model User {
   password  String
   role      String   @default("member") // admin | chairman | member | staff
   avatar    String?
+  locale    String   @default("en") // en | lg
   isActive  Boolean  @default(true)
   lastLogin DateTime?
   createdAt DateTime @default(now())
@@ -640,4 +641,39 @@ model AnomalyAlert {
   @@index([memberId])
   @@index([createdAt])
   @@map("anomaly_alerts")
+}
+
+// ===================================================================
+// PHASE 9: Passkeys (WebAuthn) + user locale
+// ===================================================================
+
+model Passkey {
+  id              String   @id @default(uuid())
+  userId          String
+  credentialId    String   @unique
+  publicKey       Bytes
+  counter         BigInt   @default(0)
+  deviceType      String?  // singleDevice | multiDevice
+  backedUp        Boolean  @default(false)
+  transports      String[] @default([]) // usb | nfc | ble | hybrid | internal
+  nickname        String?
+  lastUsedAt      DateTime?
+  createdAt       DateTime @default(now())
+
+  @@index([userId])
+  @@map("passkeys")
+}
+
+model WebAuthnChallenge {
+  id        String   @id @default(uuid())
+  userId    String?
+  challenge String   @unique
+  kind      String   // registration | authentication
+  expiresAt DateTime
+  usedAt    DateTime?
+  createdAt DateTime @default(now())
+
+  @@index([userId])
+  @@index([expiresAt])
+  @@map("webauthn_challenges")
 }

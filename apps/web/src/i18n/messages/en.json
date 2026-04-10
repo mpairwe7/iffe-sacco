@@ -1,0 +1,67 @@
+{
+  "common": {
+    "appName": "IFFE SACCO",
+    "save": "Save",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "confirm": "Confirm",
+    "back": "Back",
+    "next": "Next",
+    "loading": "Loading…",
+    "error": "Something went wrong",
+    "retry": "Try again",
+    "logout": "Log out",
+    "language": "Language",
+    "offlineBannerOffline": "You're offline. {count, plural, =0 {Read-only pages still work.} one {# action will sync when you reconnect.} other {# actions will sync when you reconnect.}}",
+    "offlineBannerSyncing": "Syncing {count, plural, one {# pending action} other {# pending actions}}…"
+  },
+  "auth": {
+    "login": "Log in",
+    "loginWithPassword": "Log in with password",
+    "loginWithPasskey": "Log in with passkey",
+    "email": "Email",
+    "password": "Password",
+    "rememberMe": "Remember me",
+    "forgotPassword": "Forgot password?",
+    "noAccount": "Not a member yet?",
+    "applyToJoin": "Apply to join",
+    "invalidCredentials": "Invalid email or password",
+    "accountLocked": "Your account is temporarily locked. Please try again later."
+  },
+  "portal": {
+    "greeting": "Welcome back, {name}",
+    "savingsBalance": "Savings balance",
+    "currentLoan": "Current loan",
+    "nextPaymentDue": "Next payment due",
+    "recentActivity": "Recent activity",
+    "quickActions": "Quick actions",
+    "deposit": "Deposit",
+    "withdraw": "Withdraw",
+    "applyLoan": "Apply for a loan",
+    "welfare": "Welfare",
+    "noTransactionsYet": "No transactions yet",
+    "noTransactionsHint": "When you make your first deposit it will show up here."
+  },
+  "notifications": {
+    "title": "Notifications",
+    "enable": "Enable notifications",
+    "enabled": "Notifications on",
+    "blocked": "Notifications blocked in browser settings",
+    "markAllRead": "Mark all as read",
+    "empty": "You're all caught up"
+  },
+  "passkeys": {
+    "title": "Passkeys",
+    "description": "Sign in without a password using your device biometrics or security key.",
+    "addNew": "Add a passkey",
+    "enrollSuccess": "Passkey added successfully",
+    "removeConfirm": "Remove this passkey? You will need your password to sign in on this device until you add another.",
+    "notSupported": "Passkeys are not supported on this device or browser."
+  },
+  "assistant": {
+    "title": "SACCO Assistant",
+    "placeholder": "Ask me anything…",
+    "send": "Send",
+    "emptyHint": "Ask about your balance, loans, or upcoming payments. I can also raise requests to a human."
+  }
+}

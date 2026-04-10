@@ -1,5 +1,6 @@
 import type { ApiResponse } from "@iffe/shared";
 import { useAuthStore } from "@/stores/auth-store";
+import { enqueue } from "@/lib/offline-queue";
 
 const BASE_URL = process.env.NEXT_PUBLIC_API_URL || "/api/v1";
 const MUTATING_METHODS = new Set(["POST", "PUT", "PATCH", "DELETE"]);
@@ -51,12 +52,36 @@ async function request<T>(method: string, path: string, options?: { body?: unkno
     }
   }
 
-  const res = await fetch(url, {
-    method,
-    headers,
-    body: options?.body ? JSON.stringify(options.body) : undefined,
-    credentials: "include",
-  });
+  let res: Response;
+  try {
+    res = await fetch(url, {
+      method,
+      headers,
+      body: options?.body ? JSON.stringify(options.body) : undefined,
+      credentials: "include",
+    });
+  } catch (networkError) {
+    // Offline / network unreachable. For mutations we enqueue the
+    // request to IndexedDB and resolve with an optimistic response
+    // shape; GETs are left to fail so the caller can render an
+    // offline state instead of a phantom success.
+    if (MUTATING_METHODS.has(method)) {
+      const queued = await enqueue({
+        path: url,
+        method: method as any,
+        body: options?.body,
+        headers,
+        summary: `${method} ${path}`,
+      });
+      const err = new Error(
+        "You're offline. This action has been queued and will submit automatically when you reconnect.",
+      ) as Error & { offlineQueued?: boolean; queueId?: string };
+      err.offlineQueued = true;
+      err.queueId = queued.id;
+      throw err;
+    }
+    throw networkError;
+  }
 
   const json = await res.json() as ApiResponse<T>;
   if (!res.ok || !json.success) {

@@ -1,0 +1,67 @@
+{
+  "common": {
+    "appName": "IFFE SACCO",
+    "save": "Kuuma",
+    "cancel": "Sazaamu",
+    "delete": "Gyamu",
+    "confirm": "Kakasa",
+    "back": "Komawo",
+    "next": "Kyenkulu",
+    "loading": "Kituka…",
+    "error": "Waliwo ekizibu",
+    "retry": "Geramu nate",
+    "logout": "Fuluma",
+    "language": "Olulimi",
+    "offlineBannerOffline": "Tolina mutimbagano. {count, plural, =0 {Amapeesa g'okusoma gakyakola.} one {Ekikolwa # kigenda kutumibwa nga oddayo ku mutimbagano.} other {Ebikolwa # bigenda kutumibwa nga oddayo ku mutimbagano.}}",
+    "offlineBannerSyncing": "Kituusa ebikolwa {count, plural, one {#} other {#}}…"
+  },
+  "auth": {
+    "login": "Yingira",
+    "loginWithPassword": "Yingira n'olupapula lw'ebyama",
+    "loginWithPasskey": "Yingira ne Passkey",
+    "email": "Email",
+    "password": "Olupapula lw'ebyama",
+    "rememberMe": "Njjukire",
+    "forgotPassword": "Weerabidde olupapula lw'ebyama?",
+    "noAccount": "Tonnaba kuba mwelisa?",
+    "applyToJoin": "Saba okuyingira",
+    "invalidCredentials": "Email oba olupapula lw'ebyama si lutuufu",
+    "accountLocked": "Akawunti yo egudukidde okumala akaseera. Geramu edda."
+  },
+  "portal": {
+    "greeting": "Tukwaniriza, {name}",
+    "savingsBalance": "Ensente ez'okutereka",
+    "currentLoan": "Bamba lwa leero",
+    "nextPaymentDue": "Ekissa ky'okusasula ekyenkulu",
+    "recentActivity": "Ebikolebwa ebisembyeyo",
+    "quickActions": "Ebikolwa ebyangu",
+    "deposit": "Yingiza sente",
+    "withdraw": "Ggyamu sente",
+    "applyLoan": "Saba bamba",
+    "welfare": "Obuyambi",
+    "noTransactionsYet": "Tewali bikolwa nga bw'okyakola",
+    "noTransactionsHint": "Bw'onoyingiza sente akasooka, kijja kulabibwa wano."
+  },
+  "notifications": {
+    "title": "Obubaka",
+    "enable": "Kkiriza obubaka",
+    "enabled": "Obubaka bukkirizibwa",
+    "blocked": "Obubaka buziyiziddwa mu settings z'omutimbagano",
+    "markAllRead": "Teeka byonna nga bisomeddwa",
+    "empty": "Tolina bubaka obupya"
+  },
+  "passkeys": {
+    "title": "Passkeys",
+    "description": "Yingira awatali lupapula lw'ebyama ng'okozesa ekifananyi ky'omukono oba ekikozesebwa ky'obukuumi.",
+    "addNew": "Ggyako passkey empya",
+    "enrollSuccess": "Passkey ogyiseeko bulungi",
+    "removeConfirm": "Ogyeko passkey eno? Ojja kwetaaga olupapula lw'ebyama okuyingira ku kyuma kino okutuusa ng'ogattako eyeekyamu.",
+    "notSupported": "Passkeys tezikola ku kyuma kino oba ku browser eno."
+  },
+  "assistant": {
+    "title": "Omuyambi wa SACCO",
+    "placeholder": "Mbuuza ekintu kyonna…",
+    "send": "Tuma",
+    "emptyHint": "Mbuuza ku nsente zo, ku bamba, oba ku kusasula okwenkulu. Nsobola n'okukuwa omuntu omulamu."
+  }
+}
