@@ -13,6 +13,7 @@ import { requestContext } from "./middleware/request-id";
 import { csrfProtect, csrfTokenIssuer } from "./middleware/csrf";
 import { healthRoutes } from "./routes/health.routes";
 import { cronRoutes } from "./routes/cron.routes";
+import { gdprRoutes } from "./routes/gdpr.routes";
 import { authRoutes } from "./routes/auth.routes";
 import { memberRoutes } from "./routes/member.routes";
 import { transactionRoutes } from "./routes/transaction.routes";
@@ -58,6 +59,7 @@ app.use("*", cors({
 // ===== Routes =====
 app.route("/health", healthRoutes);
 app.route("/cron", cronRoutes);
+app.route("/gdpr", gdprRoutes);
 app.route("/auth", authRoutes);
 app.route("/members", memberRoutes);
 app.route("/transactions", transactionRoutes);
