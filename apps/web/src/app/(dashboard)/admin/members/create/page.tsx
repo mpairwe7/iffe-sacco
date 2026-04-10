@@ -248,7 +248,7 @@ export default function CreateMemberPage() {
                 {...register("weddingSupportStatus")}
                 className="w-full px-4 py-2.5 bg-white/60 border border-white/40 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
               >
-                <option value="requested">Requested</option>
+                <option value="requested">Pending</option>
                 <option value="not_received">Not Received</option>
                 <option value="received">Received</option>
               </select>
@@ -272,7 +272,7 @@ export default function CreateMemberPage() {
                 {...register("condolenceSupportStatus")}
                 className="w-full px-4 py-2.5 bg-white/60 border border-white/40 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
               >
-                <option value="requested">Requested</option>
+                <option value="requested">Pending</option>
                 <option value="not_received">Not Received</option>
                 <option value="received">Received</option>
               </select>

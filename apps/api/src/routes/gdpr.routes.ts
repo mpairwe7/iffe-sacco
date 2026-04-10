@@ -15,7 +15,7 @@ import { Hono } from "hono";
 import { HTTPException } from "hono/http-exception";
 import { zValidator } from "@hono/zod-validator";
 import { z } from "zod/v4";
-import { prisma } from "../config/db";
+import { prisma, withTx } from "../config/db";
 import { authMiddleware, requireRole } from "../middleware/auth";
 import { writeAuditLog } from "../utils/audit";
 import { Money } from "@iffe/ledger";
@@ -170,7 +170,7 @@ gdpr.post("/members/:id/delete", zValidator("json", actionSchema), async (c) => 
 
   const anonymizedMarker = `[anonymized-${Date.now()}]`;
 
-  await prisma.$transaction(async (tx) => {
+  await withTx(async (tx) => {
     // Anonymize personal fields on the Member row. Keep the row so
     // historical journal entries still reference a valid id.
     await tx.member.update({

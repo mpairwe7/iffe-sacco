@@ -1,4 +1,4 @@
-import { prisma } from "../config/db";
+import { prisma, withTx } from "../config/db";
 import type { PaginationInput } from "@iffe/shared";
 
 export class PledgeRepository {
@@ -35,7 +35,7 @@ export class PledgeRepository {
   }
 
   async create(data: { programId: string; memberId: string; amount: number }) {
-    return prisma.$transaction(async (tx: any) => {
+    return withTx(async (tx: any) => {
       const pledge = await tx.pledge.create({ data: { ...data, status: "pledged" } });
       await tx.welfareProgram.update({
         where: { id: data.programId },
@@ -49,7 +49,7 @@ export class PledgeRepository {
   }
 
   async updateStatus(id: string, status: string) {
-    return prisma.$transaction(async (tx: any) => {
+    return withTx(async (tx: any) => {
       const pledge = await tx.pledge.findUniqueOrThrow({ where: { id } });
       const updated = await tx.pledge.update({ where: { id }, data: { status } });
 

@@ -1,7 +1,7 @@
 // @ts-nocheck
 import { randomBytes } from "node:crypto";
 import { ApplicationRepository } from "../repositories/application.repository";
-import { prisma } from "../config/db";
+import { prisma, withTx } from "../config/db";
 import { hashPassword } from "../utils/password";
 import { HTTPException } from "hono/http-exception";
 import { INTEREST_RATES } from "@iffe/shared";
@@ -99,7 +99,7 @@ export class ApplicationService {
   async approve(id: string, adminId: string) {
     let createdUserId: string | null = null;
 
-    const result = await prisma.$transaction(async (tx) => {
+    const result = await withTx(async (tx) => {
       const application = await tx.application.findUnique({ where: { id } });
       if (!application) {
         throw new HTTPException(404, { message: "Application not found" });

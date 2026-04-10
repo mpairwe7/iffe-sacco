@@ -83,9 +83,9 @@ model Member {
   userId      String?  @unique
   shareCount  Int      @default(0)
   weddingSupportStatus    String   @default("not_received") // received | requested | not_received
-  weddingSupportDebt      Decimal  @default(0) @db.Decimal(15, 2)
+  weddingSupportDebt      Decimal  @default(0) @db.Decimal(18, 4)
   condolenceSupportStatus String   @default("not_received") // received | requested | not_received
-  condolenceSupportDebt   Decimal  @default(0) @db.Decimal(15, 2)
+  condolenceSupportDebt   Decimal  @default(0) @db.Decimal(18, 4)
   remarks                 String?
 
   // Extended bio data (from IBDA Bio Data form)

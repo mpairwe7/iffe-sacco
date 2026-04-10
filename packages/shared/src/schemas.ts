@@ -40,7 +40,14 @@ export const confirmPasswordResetSchema = z.object({
 });
 
 // ===== Member =====
-export const createMemberSchema = z.object({
+//
+// Defined as an object schema first (reusable for .partial()) and then
+// refined with a business rule: a member whose wedding/condolence support
+// status is "not_received" cannot have a non-zero debt balance — if they
+// never received the support, they can't owe anything for it. The
+// refinement is applied to both create and update so the rule is
+// uniformly enforced.
+const memberInputObject = z.object({
   firstName: z.string().min(2, "First name required"),
   lastName: z.string().min(2, "Last name required"),
   email: z.email("Valid email required"),
@@ -63,7 +70,37 @@ export const createMemberSchema = z.object({
   initialDeposit: z.number().min(0).default(0),
 });
 
-export const updateMemberSchema = createMemberSchema.partial();
+function enforceWelfareDebtRule<
+  T extends {
+    weddingSupportStatus?: "received" | "requested" | "not_received";
+    weddingSupportDebt?: number;
+    condolenceSupportStatus?: "received" | "requested" | "not_received";
+    condolenceSupportDebt?: number;
+  },
+>(schema: z.ZodType<T>) {
+  return schema
+    .refine(
+      (data) =>
+        data.weddingSupportStatus !== "not_received" || !data.weddingSupportDebt || data.weddingSupportDebt === 0,
+      {
+        message: "Wedding support debt must be 0 when status is 'not_received'",
+        path: ["weddingSupportDebt"],
+      },
+    )
+    .refine(
+      (data) =>
+        data.condolenceSupportStatus !== "not_received" ||
+        !data.condolenceSupportDebt ||
+        data.condolenceSupportDebt === 0,
+      {
+        message: "Condolence support debt must be 0 when status is 'not_received'",
+        path: ["condolenceSupportDebt"],
+      },
+    );
+}
+
+export const createMemberSchema = enforceWelfareDebtRule(memberInputObject);
+export const updateMemberSchema = enforceWelfareDebtRule(memberInputObject.partial());
 
 // ===== Account =====
 export const createAccountSchema = z.object({

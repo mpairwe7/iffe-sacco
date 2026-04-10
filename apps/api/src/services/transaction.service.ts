@@ -1,4 +1,4 @@
-import { prisma } from "../config/db";
+import { prisma, withTx } from "../config/db";
 import { HTTPException } from "hono/http-exception";
 import type { PaginationInput } from "@iffe/shared";
 
@@ -71,7 +71,7 @@ export class TransactionService {
       }
     }
 
-    return prisma.$transaction(async (tx: any) => {
+    return withTx(async (tx: any) => {
       const txn = await tx.transaction.create({ data: { ...data, status: "pending" } });
       return txn;
     });
@@ -81,7 +81,7 @@ export class TransactionService {
     const txn = await this.getById(id);
     if (txn.status !== "pending") throw new HTTPException(400, { message: "Transaction is not pending" });
 
-    return prisma.$transaction(async (tx: any) => {
+    return withTx(async (tx: any) => {
       const updated = await tx.transaction.update({ where: { id }, data: { status: "completed", processedBy } });
 
       // Update account balance
@@ -107,7 +107,7 @@ export class TransactionService {
     if (txn.status !== "completed")
       throw new HTTPException(400, { message: "Only completed transactions can be reversed" });
 
-    return prisma.$transaction(async (tx: any) => {
+    return withTx(async (tx: any) => {
       const updated = await tx.transaction.update({ where: { id }, data: { status: "reversed", processedBy } });
 
       // Reverse the balance change

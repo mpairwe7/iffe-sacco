@@ -1,4 +1,4 @@
-import { prisma } from "../config/db";
+import { prisma, withTx } from "../config/db";
 import type { PaginationInput } from "@iffe/shared";
 
 export class TransactionRepository {
@@ -46,7 +46,7 @@ export class TransactionRepository {
     status?: string;
     processedBy?: string;
   }) {
-    return prisma.$transaction(async (tx) => {
+    return withTx(async (tx) => {
       const txn = await tx.transaction.create({ data: { ...data, status: data.status || "pending" } });
 
       // Auto-update account balance for completed transactions
@@ -66,7 +66,7 @@ export class TransactionRepository {
   }
 
   async updateStatus(id: string, status: string, processedBy?: string) {
-    return prisma.$transaction(async (tx) => {
+    return withTx(async (tx) => {
       const txn = await tx.transaction.findUniqueOrThrow({ where: { id } });
       const updated = await tx.transaction.update({ where: { id }, data: { status, processedBy } });
 

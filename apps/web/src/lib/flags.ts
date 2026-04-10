@@ -27,9 +27,18 @@ const DEFAULTS: Record<FlagName, boolean> = {
   /**
    * When true, financial mutations route through the double-entry ledger
    * (Phase 1). When false, legacy direct-balance updates continue to run.
-   * Flip this on after backfill reconciliation reports zero variance.
+   *
+   * **Flipped to `true` in Phase 9.6** — the backfill + reconcile sequence
+   * completed with zero variance against production Neon (see
+   * `docs/phases.md` → `ae3f484` for the verification). Any new deposit,
+   * withdrawal, loan disbursement, loan repayment, or pledge payment
+   * routed through the workflow runtime will now post balanced journal
+   * entries alongside the legacy `Account.balance` projection.
+   *
+   * Override via Edge Config key `flag:ledgerEnabled` if you need to
+   * kill-switch back to `false` without a deploy.
    */
-  ledgerEnabled: false,
+  ledgerEnabled: true,
   /** WebAuthn passkey enrolment + login (Phase 2). */
   passkeyAuth: false,
   /** AI-gateway fraud scoring on high-value transactions (Phase 7). */

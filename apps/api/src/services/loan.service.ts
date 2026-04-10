@@ -1,4 +1,4 @@
-import { prisma } from "../config/db";
+import { prisma, withTx } from "../config/db";
 import { HTTPException } from "hono/http-exception";
 import { LOAN_INTEREST_RATES } from "@iffe/shared";
 import type { CreateLoanInput, LoanType, MemberLoanApplicationInput, PaginationInput } from "@iffe/shared";
@@ -156,7 +156,7 @@ export class LoanService {
   }
 
   async approve(id: string, approvedBy: string) {
-    return prisma.$transaction(async (tx) => {
+    return withTx(async (tx) => {
       const loan = await this.getLoanForProcessing(tx, id);
       if (loan.status !== "pending") throw new HTTPException(400, { message: "Loan is not pending approval" });
 
@@ -226,7 +226,7 @@ export class LoanService {
   }
 
   async recordRepayment(id: string, amount: number, processedBy: string, accountId?: string) {
-    return prisma.$transaction(async (tx) => {
+    return withTx(async (tx) => {
       const loan = await this.getLoanForProcessing(tx, id);
       if (!["active", "overdue"].includes(loan.status)) throw new HTTPException(400, { message: "Loan is not active" });
 

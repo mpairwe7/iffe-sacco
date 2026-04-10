@@ -3,7 +3,7 @@ import { HTTPException } from "hono/http-exception";
 import { zValidator } from "@hono/zod-validator";
 import { paginationSchema } from "@iffe/shared";
 import type { Prisma } from "@prisma/client";
-import { prisma } from "../config/db";
+import { prisma, withTx } from "../config/db";
 import { authMiddleware, requireRole, type AuthEnv } from "../middleware/auth";
 import { writeAuditLog } from "../utils/audit";
 import { z } from "zod/v4";
@@ -89,7 +89,7 @@ withdrawRequests.patch("/:id/approve", requireRole("admin", "staff"), async (c) 
   const id = c.req.param("id");
   const user = c.get("user");
 
-  const result = await prisma.$transaction(async (tx: Prisma.TransactionClient) => {
+  const result = await withTx(async (tx: Prisma.TransactionClient) => {
     const existing = await tx.withdrawRequest.findUnique({ where: { id } });
     if (!existing) throw new HTTPException(404, { message: "Withdrawal request not found" });
     if (existing.status !== "pending")

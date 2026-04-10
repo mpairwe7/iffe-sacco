@@ -1,5 +1,5 @@
 import { MemberRepository } from "../repositories/member.repository";
-import { prisma } from "../config/db";
+import { prisma, withTx } from "../config/db";
 import { HTTPException } from "hono/http-exception";
 import type {
   Account,
@@ -41,7 +41,7 @@ export class MemberService {
     const existing = await prisma.member.findFirst({ where: { email: input.email } });
     if (existing) throw new HTTPException(409, { message: "A member with this email already exists" });
 
-    return prisma.$transaction(async (tx) => {
+    return withTx(async (tx) => {
       const member = await tx.member.create({
         data: {
           memberId: await getNextMemberNumber(tx),

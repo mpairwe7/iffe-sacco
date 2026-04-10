@@ -15,7 +15,7 @@
  *     be resumed or compensated by an operator.
  */
 // @ts-nocheck
-import { prisma } from "../config/db";
+import { prisma, withTx } from "../config/db";
 import { logger } from "../utils/logger";
 
 export interface StepContext {
@@ -72,7 +72,7 @@ export async function runWorkflow<I, O>(
         data: { runId: run.id, name, status: "running", input: null },
       });
       try {
-        const result = await prisma.$transaction(async (tx) => fn(tx));
+        const result = await withTx(async (tx) => fn(tx));
         await prisma.workflowStep.update({
           where: { id: step.id },
           data: {

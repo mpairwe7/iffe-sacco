@@ -76,7 +76,10 @@ function formatSupportStatus(status: MemberSupportStatus) {
     case "received":
       return "Received";
     case "requested":
-      return "Requested";
+      // DB enum stays `requested` (stable identifier); display label is
+      // "Pending" to match the operations/finance vocabulary on the
+      // original requirements sheet.
+      return "Pending";
     default:
       return "Not Received";
   }

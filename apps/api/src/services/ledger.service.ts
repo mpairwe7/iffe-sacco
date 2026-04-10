@@ -13,7 +13,7 @@
 import type { PrismaClient } from "@prisma/client";
 import { assertBalanced, JournalEntry, Money } from "@iffe/ledger";
 import type { JournalEntry as LedgerEntry } from "@iffe/ledger";
-import { prisma } from "../config/db";
+import { prisma, withTx } from "../config/db";
 import { logger } from "../utils/logger";
 
 export interface PostJournalResult {
@@ -81,7 +81,9 @@ export async function postJournal(entry: LedgerEntry, tx?: Tx): Promise<PostJour
   if (tx) {
     entryId = await runner(tx);
   } else {
-    entryId = await prisma.$transaction(runner);
+    // No outer transaction — run through the WebSocket-backed write
+    // client. HTTP mode would throw "Transactions are not supported".
+    entryId = await withTx(runner);
   }
 
   logger.info(
