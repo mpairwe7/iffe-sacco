@@ -1,0 +1,33 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "crons": [
+    {
+      "path": "/api/v1/cron/accrue-savings-interest",
+      "schedule": "0 1 * * *"
+    },
+    {
+      "path": "/api/v1/cron/accrue-loan-interest",
+      "schedule": "0 2 * * *"
+    },
+    {
+      "path": "/api/v1/cron/detect-overdue-loans",
+      "schedule": "0 3 * * *"
+    },
+    {
+      "path": "/api/v1/cron/reconcile",
+      "schedule": "30 3 * * *"
+    },
+    {
+      "path": "/api/v1/cron/pledge-reconciliation",
+      "schedule": "0 4 * * *"
+    },
+    {
+      "path": "/api/v1/cron/gc",
+      "schedule": "0 * * * *"
+    },
+    {
+      "path": "/api/v1/cron/month-end-close",
+      "schedule": "0 4 1 * *"
+    }
+  ]
+}
