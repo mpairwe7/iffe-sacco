@@ -5,6 +5,9 @@ import { signSessionToken } from "../utils/jwt";
 import { getSessionExpiryDate } from "../utils/session";
 import { env } from "../config/env";
 import { HTTPException } from "hono/http-exception";
+import { passwordResetEmail, sendEmail } from "./email.service";
+import { recordFailedLogin, recordSuccessfulLogin } from "../middleware/account-lockout";
+import { logger } from "../utils/logger";
 import type {
   LoginInput,
   PasswordResetRequestResponse,
@@ -121,11 +124,19 @@ export class AuthService {
       },
     });
 
-    if (!user) throw new HTTPException(401, { message: "Invalid email or password" });
+    if (!user) {
+      recordFailedLogin(input.email);
+      throw new HTTPException(401, { message: "Invalid email or password" });
+    }
     if (!user.isActive) throw new HTTPException(403, { message: "Account is deactivated" });
 
     const valid = await comparePassword(input.password, user.password);
-    if (!valid) throw new HTTPException(401, { message: "Invalid email or password" });
+    if (!valid) {
+      recordFailedLogin(input.email);
+      throw new HTTPException(401, { message: "Invalid email or password" });
+    }
+
+    recordSuccessfulLogin(input.email);
 
     const lastLogin = new Date();
     const updatedUser = await prisma.user.update({
@@ -245,7 +256,32 @@ export class AuthService {
     ]);
 
     const resetUrl = buildPasswordResetLink(token);
-    console.info(`[PASSWORD_RESET] ${user.email}: ${resetUrl}`);
+
+    // Fetch the name for the email template
+    const recipient = await prisma.user.findUnique({
+      where: { id: user.id },
+      select: { name: true, email: true },
+    });
+
+    if (recipient) {
+      try {
+        const message = passwordResetEmail({
+          name: recipient.name,
+          resetUrl,
+          expiresAt,
+        });
+        message.to = recipient.email;
+        await sendEmail(message);
+      } catch (err) {
+        logger.error(
+          { err: err instanceof Error ? err.message : String(err) },
+          "failed to send password reset email",
+        );
+        // Non-fatal: we still return the (debug) url in dev mode; in prod
+        // the user can ask support to resend.
+      }
+    }
+
     return { resetUrl, expiresAt };
   }
 

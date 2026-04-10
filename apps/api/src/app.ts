@@ -10,6 +10,7 @@ import { cors } from "hono/cors";
 import { secureHeaders } from "hono/secure-headers";
 import { errorHandler } from "./middleware/error-handler";
 import { requestContext } from "./middleware/request-id";
+import { csrfProtect, csrfTokenIssuer } from "./middleware/csrf";
 import { healthRoutes } from "./routes/health.routes";
 import { authRoutes } from "./routes/auth.routes";
 import { memberRoutes } from "./routes/member.routes";
@@ -35,6 +36,10 @@ const app = new Hono().basePath("/api/v1");
 // ===== Global Middleware =====
 app.use("*", requestContext);
 app.use("*", secureHeaders());
+// CSRF token issued on every authenticated read; verified on every mutation.
+// Login / register / password reset are explicitly opted out via c.set("csrf:skip").
+app.use("*", csrfTokenIssuer);
+app.use("*", csrfProtect);
 app.use("*", cors({
   origin: (origin) => {
     const allowed = (process.env.CORS_ORIGIN || "http://localhost:3000").split(",");

@@ -29,14 +29,21 @@ docs/           Comprehensive documentation
 | **Staff** | `/dashboard` | Member management, transaction processing |
 | **Member** | `/portal` | Self-service savings, loans, deposits, withdrawals |
 
-### Default Credentials
+### First-Run Credentials
 
-| Role | Email | Password |
-|------|-------|----------|
-| Admin | admin@iffeds.org | password123 |
-| Chairman | chairman@iffeds.org | chairman123 |
-| Staff | staff@iffeds.org | password123 |
-| Member | john@example.com | password123 |
+The seed script provisions role accounts and writes the generated passwords
+to a file that is **not** committed to source control:
+
+```bash
+bun run db:seed
+cat apps/api/prisma/.first-run-credentials.json   # gitignored; delete after first login
+```
+
+Every generated password must be rotated at first login — the login flow
+forces a change on accounts flagged `mustChangePassword: true`. Do not
+share these credentials outside of the initial handover channel.
+
+Never commit seeded credentials to source, CLAUDE.md, issues, or PR bodies.
 
 ## Documentation
 
