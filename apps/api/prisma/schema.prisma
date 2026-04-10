@@ -82,9 +82,9 @@ model Member {
   joinDate    DateTime @default(now())
   userId      String?  @unique
   shareCount  Int      @default(0)
-  weddingSupportStatus    String   @default("not_received") // received | not_received
+  weddingSupportStatus    String   @default("not_received") // received | requested | not_received
   weddingSupportDebt      Decimal  @default(0) @db.Decimal(15, 2)
-  condolenceSupportStatus String   @default("not_received") // received | not_received
+  condolenceSupportStatus String   @default("not_received") // received | requested | not_received
   condolenceSupportDebt   Decimal  @default(0) @db.Decimal(15, 2)
   remarks                 String?
 
