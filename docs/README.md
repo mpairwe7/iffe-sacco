@@ -58,12 +58,26 @@ diagnosis steps, resolution actions, and post-incident tasks.
 | API endpoints              | 130+                                                                                |
 | Workspace packages         | 4 (shared, ledger, assistant + web/api apps)                                        |
 | Prisma models              | 29                                                                                  |
+| GL chart of accounts       | 23 (added `OPENING_BALANCE_EQUITY` in `ae3f484`)                                    |
 | Phase 1 ledger tables      | 6 (GlAccount, JournalEntry, JournalLine, IdempotencyKey, WorkflowRun, WorkflowStep) |
 | Phase 8 AI + notifications | 6 tables                                                                            |
 | Phase 9 auth               | 2 tables (Passkey, WebAuthnChallenge)                                               |
-| Cron jobs (Vercel)         | 7                                                                                   |
+| Cron jobs (Vercel)         | 7 (all daily or less frequent — Hobby plan constraint)                              |
 | Runbooks                   | 6                                                                                   |
-| Documentation pages        | 15+                                                                                 |
+| Documentation pages        | 17+                                                                                 |
+
+## Live production state
+
+|                           | Value                                                                                                                                            |
+| ------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------ |
+| Production URL            | https://iffe-sacco.vercel.app                                                                                                                    |
+| Current commit on `main`  | `a837b41`                                                                                                                                        |
+| Prisma migrations applied | All 7 (through Phase 9)                                                                                                                          |
+| Ledger journal entries    | 47 posted (29 legacy backfills + 18 opening balances)                                                                                            |
+| Trial balance             | Debits 71,270,000 UGX = Credits 71,270,000 UGX · variance 0 · balanced                                                                           |
+| Per-account variances     | 0 across 20 accounts                                                                                                                             |
+| `ledgerEnabled` flag      | `false` — rollout gate passed, safe to flip                                                                                                      |
+| Pending env vars          | `ALLOWED_ORIGINS`, `APP_BASE_URL`, `CREDENTIALS_KEK`, `CRON_SECRET`, `SENTRY_DSN` (Phase 2/4 hardening — non-blocking for current functionality) |
 
 ## Tech stack
 

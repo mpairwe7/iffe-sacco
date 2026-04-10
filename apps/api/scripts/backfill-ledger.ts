@@ -196,10 +196,7 @@ async function main() {
         where: { memberAccountId: acc.id },
         _sum: { debit: true, credit: true },
       });
-      const ledger = Money.sub(
-        Money.fromDb(agg._sum.credit ?? "0"),
-        Money.fromDb(agg._sum.debit ?? "0"),
-      );
+      const ledger = Money.sub(Money.fromDb(agg._sum.credit ?? "0"), Money.fromDb(agg._sum.debit ?? "0"));
       const diff = Money.sub(direct, ledger);
       if (Money.isZero(diff)) continue;
 
@@ -306,10 +303,7 @@ async function main() {
         where: { memberAccountId: acc.id },
         _sum: { debit: true, credit: true },
       });
-      const ledger = Money.sub(
-        Money.fromDb(agg._sum.credit ?? "0"),
-        Money.fromDb(agg._sum.debit ?? "0"),
-      );
+      const ledger = Money.sub(Money.fromDb(agg._sum.credit ?? "0"), Money.fromDb(agg._sum.debit ?? "0"));
       const diff = Money.sub(direct, ledger);
       if (!Money.isZero(diff)) {
         logger.warn(

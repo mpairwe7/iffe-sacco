@@ -55,9 +55,10 @@ per-layout server-session guards:
 
 ## Phase history
 
-The repo went through ten production-readiness phases. Each phase is a
-single commit on `main`; every one is additive and behind a feature
-flag where applicable.
+The repo went through ten production-readiness phases plus a chain
+of production hotfixes after the first Vercel deploy. Each phase is
+a single commit on `main`; every one is additive and behind a
+feature flag where applicable.
 
 | Phase | SHA       | Title                          | Scope                                                                    |
 | ----- | --------- | ------------------------------ | ------------------------------------------------------------------------ |
@@ -74,8 +75,29 @@ flag where applicable.
 | 9.1   | `08ad026` | Wire latent primitives         | Locale-aware layout, mounted providers, a11y fixes                       |
 | 9.2   | `862260e` | CI pipeline fixes              | Typecheck + lint + test + build green end-to-end                         |
 
-Full chronological details with lines-changed counts:
+Post-9.2 production hotfixes (applied on top of the phase chain):
+
+| SHA       | Title                                                                |
+| --------- | -------------------------------------------------------------------- |
+| `99b6cff` | Move `vercel.json` under `apps/web`; `/cron/gc` → daily (Hobby plan) |
+| `146f99d` | Fix Next 16 proxy matcher export name (`proxyConfig` → `config`)     |
+| `ae3f484` | Backfill script: WebSocket adapter + opening-balance reconciliation  |
+| `0055ef0` | Replace batch `$transaction` with HTTP-safe alternatives             |
+| `a837b41` | `/favicon.ico` rewrite to `/favicon.png`                             |
+
+Full chronological details with commit walk-throughs:
 [`docs/phases.md`](./docs/phases.md).
+
+## Production deployment state
+
+|                          |                                                                 |
+| ------------------------ | --------------------------------------------------------------- |
+| **Production URL**       | https://iffe-sacco.vercel.app                                   |
+| **Current commit**       | `a837b41`                                                       |
+| **Deployment ID**        | `dpl_Ft6o5Av8h3Mwe3d2N2NvsrjEy6NP`                              |
+| **Prisma migrations**    | All 7 applied (including Phase 1/8/9 additions)                 |
+| **Ledger state**         | 47 journal entries posted · trial balance balanced · 0 variance |
+| **`ledgerEnabled` flag** | `false` — safe to flip (backfill + reconcile pass cleanly)      |
 
 ## Pipeline verification
 
