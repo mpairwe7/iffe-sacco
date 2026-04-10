@@ -142,9 +142,14 @@ export class MemberService {
     const accountIds = member.accounts.map((account) => account.id);
     const transactionWhere = accountIds.length > 0 ? { accountId: { in: accountIds } } : undefined;
 
+    // Parallel reads via Promise.all instead of prisma.$transaction([...]).
+    // The API runs on Vercel Functions with PrismaNeonHttp which cannot
+    // do multi-statement transactions in either callback or batch form.
+    // These are all read-only SELECTs — atomicity isn't required
+    // (dashboard data tolerates being milliseconds apart across queries).
     const [recentTransactions, firstDeposit, latestDeposit, totalDeposits, totalWithdrawals, monthlySubscriptionTotal] =
       accountIds.length > 0
-        ? await prisma.$transaction([
+        ? await Promise.all([
             prisma.transaction.findMany({
               where: transactionWhere,
               orderBy: { createdAt: "desc" },

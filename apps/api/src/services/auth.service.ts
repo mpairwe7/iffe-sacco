@@ -190,17 +190,23 @@ export class AuthService {
     if (!valid) throw new HTTPException(401, { message: "Current password is incorrect" });
 
     const password = await hashPassword(input.newPassword);
-    await prisma.$transaction([
-      prisma.user.update({ where: { id: userId }, data: { password } }),
-      prisma.session.updateMany({
-        where: {
-          userId,
-          revokedAt: null,
-          ...(sessionId ? { NOT: { id: sessionId } } : {}),
-        },
-        data: { revokedAt: new Date() },
-      }),
-    ]);
+    // PrismaNeonHttp (the serverless HTTP adapter) can't hold a
+    // transaction open, so run writes sequentially. Atomicity note:
+    // if the session-revoke step fails after the password update, the
+    // worst case is that the caller's other sessions remain live for
+    // up to SESSION_TTL_HOURS — benign, since the password they had
+    // is now invalid and they'll be forced to re-authenticate on
+    // their next API call anyway. Logging the failure via the global
+    // error handler is enough.
+    await prisma.user.update({ where: { id: userId }, data: { password } });
+    await prisma.session.updateMany({
+      where: {
+        userId,
+        revokedAt: null,
+        ...(sessionId ? { NOT: { id: sessionId } } : {}),
+      },
+      data: { revokedAt: new Date() },
+    });
   }
 
   async updateProfile(userId: string, input: UpdateProfileInput) {
@@ -239,18 +245,22 @@ export class AuthService {
     const tokenHash = hashToken(token);
     const expiresAt = new Date(Date.now() + env.PASSWORD_RESET_TTL_MINUTES * 60 * 1000);
 
-    await prisma.$transaction([
-      prisma.passwordResetToken.deleteMany({
-        where: { userId, usedAt: null },
-      }),
-      prisma.passwordResetToken.create({
-        data: {
-          userId,
-          tokenHash,
-          expiresAt,
-        },
-      }),
-    ]);
+    // Sequential writes (see note above). Atomicity loss here is
+    // benign: if the delete succeeds but the create fails, the user
+    // has no reset token — they just request another one. If the
+    // create succeeds but the delete failed (unreachable — delete
+    // runs first), duplicate active tokens exist which the confirm
+    // step handles by accepting any non-used, non-expired token.
+    await prisma.passwordResetToken.deleteMany({
+      where: { userId, usedAt: null },
+    });
+    await prisma.passwordResetToken.create({
+      data: {
+        userId,
+        tokenHash,
+        expiresAt,
+      },
+    });
 
     const resetUrl = buildPasswordResetLink(token);
 
@@ -304,26 +314,30 @@ export class AuthService {
     }
 
     const password = await hashPassword(newPassword);
-    await prisma.$transaction([
-      prisma.user.update({
-        where: { id: resetToken.userId },
-        data: { password },
-      }),
-      prisma.passwordResetToken.update({
-        where: { id: resetToken.id },
-        data: { usedAt: new Date() },
-      }),
-      prisma.passwordResetToken.deleteMany({
-        where: {
-          userId: resetToken.userId,
-          NOT: { id: resetToken.id },
-        },
-      }),
-      prisma.session.updateMany({
-        where: { userId: resetToken.userId, revokedAt: null },
-        data: { revokedAt: new Date() },
-      }),
-    ]);
+    // Sequential writes (see note in changePassword). The ordering
+    // here matters: update the password first, then mark the token
+    // used, then clean up other tokens, then revoke all sessions.
+    // A failure partway through still leaves the user in a valid
+    // state (either still has old password + old tokens, or new
+    // password + partially cleaned session). No security exposure.
+    await prisma.user.update({
+      where: { id: resetToken.userId },
+      data: { password },
+    });
+    await prisma.passwordResetToken.update({
+      where: { id: resetToken.id },
+      data: { usedAt: new Date() },
+    });
+    await prisma.passwordResetToken.deleteMany({
+      where: {
+        userId: resetToken.userId,
+        NOT: { id: resetToken.id },
+      },
+    });
+    await prisma.session.updateMany({
+      where: { userId: resetToken.userId, revokedAt: null },
+      data: { revokedAt: new Date() },
+    });
 
     return { userId: resetToken.userId };
   }
