@@ -16,6 +16,9 @@
     "build:web": "bun run --filter web build",
     "build:api": "bun run --filter api build",
     "lint": "bun run --filter '*' lint",
+    "test": "bun run test:web && bun run test:api",
+    "test:web": "bun run --filter web test",
+    "test:api": "bun run --filter @iffe/api test",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "typecheck": "bun run --filter '*' typecheck",
@@ -26,9 +29,12 @@
     "db:seed": "bun run --filter api db:seed",
     "db:seed:sql": "cd apps/api && bunx prisma db execute --stdin < prisma/seed.sql",
     "clean": "rm -rf node_modules apps/*/node_modules packages/*/node_modules apps/web/.next apps/api/dist",
-    "clean:build": "rm -rf apps/web/.next apps/api/dist"
+    "clean:build": "rm -rf apps/web/.next apps/api/dist",
+    "prepare": "husky"
   },
   "devDependencies": {
+    "husky": "^9.1.7",
+    "lint-staged": "^16.0.0",
     "prettier": "^3"
   },
   "engines": {

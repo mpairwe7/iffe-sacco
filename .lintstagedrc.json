@@ -1,0 +1,11 @@
+{
+  "*.{ts,tsx}": [
+    "prettier --write"
+  ],
+  "apps/web/src/**/*.{ts,tsx}": [
+    "bash -c 'cd apps/web && bunx eslint --fix --max-warnings=0'"
+  ],
+  "*.{json,md,yml,yaml,css}": [
+    "prettier --write"
+  ]
+}

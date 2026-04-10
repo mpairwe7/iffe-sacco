@@ -9,6 +9,8 @@ import { Hono } from "hono";
 import { cors } from "hono/cors";
 import { secureHeaders } from "hono/secure-headers";
 import { errorHandler } from "./middleware/error-handler";
+import { requestContext } from "./middleware/request-id";
+import { healthRoutes } from "./routes/health.routes";
 import { authRoutes } from "./routes/auth.routes";
 import { memberRoutes } from "./routes/member.routes";
 import { transactionRoutes } from "./routes/transaction.routes";
@@ -31,6 +33,7 @@ import { applicationRoutes } from "./routes/application.routes";
 const app = new Hono().basePath("/api/v1");
 
 // ===== Global Middleware =====
+app.use("*", requestContext);
 app.use("*", secureHeaders());
 app.use("*", cors({
   origin: (origin) => {
@@ -47,6 +50,7 @@ app.use("*", cors({
 }));
 
 // ===== Routes =====
+app.route("/health", healthRoutes);
 app.route("/auth", authRoutes);
 app.route("/members", memberRoutes);
 app.route("/transactions", transactionRoutes);
@@ -65,13 +69,6 @@ app.route("/withdraw-requests", withdrawRequestRoutes);
 app.route("/payment-gateways", paymentGatewayRoutes);
 app.route("/audit-logs", auditLogRoutes);
 app.route("/applications", applicationRoutes);
-
-// ===== Health Check =====
-app.get("/health", (c) => c.json({
-  status: "ok",
-  timestamp: new Date().toISOString(),
-  version: "1.0.0",
-}));
 
 // ===== Error Handler =====
 app.onError(errorHandler);

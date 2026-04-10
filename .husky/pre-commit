@@ -1,0 +1,4 @@
+#!/usr/bin/env sh
+# Runs lint-staged on staged files before every commit.
+# Skip with --no-verify only in genuine emergencies.
+bunx lint-staged
