@@ -60,10 +60,11 @@ export function LoginForm() {
                 autoComplete="email"
                 {...register("email")}
                 aria-invalid={!!errors.email}
+                aria-describedby={errors.email ? "email-error" : undefined}
                 className={`w-full pl-12 pr-4 py-3.5 bg-white/60 dark:bg-white/5 border rounded-lg text-sm text-text placeholder:text-text-light focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary focus:bg-white/80 dark:focus:bg-white/10 ${errors.email ? "border-danger" : "border-white/40 dark:border-white/10"}`}
               />
             </div>
-            {errors.email && <p className="text-xs text-danger mt-1.5" role="alert">{errors.email.message}</p>}
+            {errors.email && <p id="email-error" className="text-xs text-danger mt-1.5" role="alert">{errors.email.message}</p>}
           </div>
 
           <div>
@@ -77,18 +78,21 @@ export function LoginForm() {
                 autoComplete="current-password"
                 {...register("password")}
                 aria-invalid={!!errors.password}
+                aria-describedby={errors.password ? "password-error" : undefined}
                 className={`w-full pl-12 pr-12 py-3.5 bg-white/60 dark:bg-white/5 border rounded-lg text-sm text-text placeholder:text-text-light focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary focus:bg-white/80 dark:focus:bg-white/10 ${errors.password ? "border-danger" : "border-white/40 dark:border-white/10"}`}
               />
               <button
                 type="button"
                 onClick={() => setShowPassword(!showPassword)}
+                aria-label={showPassword ? "Hide password" : "Show password"}
+                aria-pressed={showPassword}
                 className="absolute right-4 top-1/2 -translate-y-1/2 text-text-light hover:text-text"
                 tabIndex={-1}
               >
-                {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+                {showPassword ? <EyeOff className="w-5 h-5" aria-hidden="true" /> : <Eye className="w-5 h-5" aria-hidden="true" />}
               </button>
             </div>
-            {errors.password && <p className="text-xs text-danger mt-1.5" role="alert">{errors.password.message}</p>}
+            {errors.password && <p id="password-error" className="text-xs text-danger mt-1.5" role="alert">{errors.password.message}</p>}
           </div>
 
           <div className="flex items-center justify-between">

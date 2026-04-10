@@ -1,8 +1,12 @@
-import type { Metadata, Viewport } from "next";
+import type { Metadata } from "next";
 import { Inter } from "next/font/google";
+import { cookies, headers } from "next/headers";
 import "./globals.css";
 import { Providers } from "@/components/providers";
 import { ServiceWorkerRegister } from "@/components/sw-register";
+import { OfflineBanner } from "@/components/offline-banner";
+import { resolveLocale } from "@/i18n/config";
+import { getMessages } from "@/i18n/get-messages";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -81,16 +85,30 @@ export const viewport = {
   ],
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  // Resolve the active locale from cookie → Accept-Language → default.
+  // Done once per request in the server layout so every page inherits a
+  // consistent locale without re-reading the cookie on the client.
+  const cookieStore = await cookies();
+  const headersList = await headers();
+  const locale = resolveLocale({
+    cookie: cookieStore.get("iffe-locale")?.value,
+    acceptLanguage: headersList.get("accept-language"),
+  });
+  const messages = await getMessages(locale);
+
   return (
-    <html lang="en" className={`${inter.variable} h-full antialiased`} suppressHydrationWarning>
+    <html lang={locale} className={`${inter.variable} h-full antialiased`} suppressHydrationWarning>
       <body className="min-h-full flex flex-col font-sans">
         <a href="#main-content" className="skip-to-content">Skip to content</a>
-        <Providers>{children}</Providers>
+        <Providers locale={locale} messages={messages}>
+          <OfflineBanner />
+          {children}
+        </Providers>
         <ServiceWorkerRegister />
       </body>
     </html>

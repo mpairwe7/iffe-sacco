@@ -23,10 +23,12 @@ a single engineer can land in a half-day.
 
 ## 2. Accessible form fields
 
-**Pattern:** `<Field id="…" label="…" error={…}>{child input}</Field>`
+**Pattern:** `<FormField label="…" error={…} icon={Mail} {...register("email")} />`
 
-`Field` wires label + `aria-describedby` + `aria-invalid` automatically
-so every form gets WCAG 2.1 AA compliance without touching each input.
+The existing `components/ui/form-field.tsx` already wires label +
+`aria-invalid` + `aria-describedby` + icon slot + glass styling. Use
+it consistently in place of raw `<label>` + `<input>` pairs so every
+form gets WCAG 2.1 AA compliance without touching each input.
 
 **Where to apply (prioritize high-traffic forms):**
 1. `/login` — the single most-used form

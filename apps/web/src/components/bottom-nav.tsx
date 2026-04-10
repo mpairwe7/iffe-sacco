@@ -6,7 +6,6 @@ import { useAuthStore } from "@/stores/auth-store";
 import type { Role } from "@iffe/shared";
 import {
   LayoutDashboard,
-  Wallet,
   CreditCard,
   ArrowLeftRight,
   Heart,
@@ -24,7 +23,7 @@ interface NavTab {
 }
 
 const memberTabs: NavTab[] = [
-  { label: "Home", href: "/portal/savings", icon: LayoutDashboard, match: ["/portal/savings"] },
+  { label: "Home", href: "/portal/dashboard", icon: LayoutDashboard, match: ["/portal/dashboard"] },
   { label: "Loans", href: "/portal/loans", icon: CreditCard, match: ["/portal/loans"] },
   { label: "Transact", href: "/portal/deposits", icon: ArrowLeftRight, match: ["/portal/deposits", "/portal/withdrawals", "/portal/transactions"] },
   { label: "Welfare", href: "/portal/welfare", icon: Heart, match: ["/portal/welfare"] },
@@ -44,6 +43,13 @@ const chairmanTabs: NavTab[] = [
   { label: "Reports", href: "/admin/reports", icon: ClipboardList, match: ["/admin/reports"] },
 ];
 
+const staffTabs: NavTab[] = [
+  { label: "Dashboard", href: "/staff", icon: LayoutDashboard, match: ["/staff"] },
+  { label: "Members", href: "/admin/members", icon: Users, match: ["/admin/members"] },
+  { label: "Queue", href: "/admin/applications", icon: ClipboardList, match: ["/admin/applications", "/admin/deposit-requests", "/admin/withdraw-requests"] },
+  { label: "Finance", href: "/admin/transactions", icon: ArrowLeftRight, match: ["/admin/transactions", "/admin/loans", "/admin/expenses"] },
+];
+
 export function BottomNav() {
   const pathname = usePathname();
   const role = useAuthStore((s) => s.user?.role) as Role | undefined;
@@ -51,7 +57,8 @@ export function BottomNav() {
   const tabs =
     role === "member" ? memberTabs :
     role === "chairman" ? chairmanTabs :
-    (role === "admin" || role === "staff") ? adminTabs :
+    role === "staff" ? staffTabs :
+    role === "admin" ? adminTabs :
     memberTabs;
 
   return (
@@ -66,6 +73,7 @@ export function BottomNav() {
             <Link
               key={tab.href}
               href={tab.href}
+              aria-current={isActive ? "page" : undefined}
               className={cn(
                 "flex flex-1 flex-col items-center justify-center gap-0.5 text-[10px] font-semibold transition-colors relative",
                 isActive
