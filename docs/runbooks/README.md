@@ -11,7 +11,7 @@ steps, and resolution actions.
 | [Prisma migration rollback](./prisma-rollback.md) | Deploy fails mid-migration or broken migration in prod |
 | [Secrets rotation](./secrets-rotation.md) | Quarterly cadence or after suspected leak |
 | [PITR restore](./pitr-restore.md) | Data loss or corruption requiring point-in-time recovery |
-| [Stuck workflow](./stuck-workflow.md) | WDK run stays in `running` past expected duration |
+| [Stuck workflow](./stuck-workflow.md) | Workflow run stays in `running` past expected duration |
 | [Ledger imbalance](./ledger-imbalance.md) | `sum(debits) ≠ sum(credits)` alert fires |
 | [Auth incident](./auth-incident.md) | Suspicious login spike, BotID blocks surge |
 
