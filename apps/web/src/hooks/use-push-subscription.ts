@@ -22,11 +22,19 @@ import { apiClient } from "@/lib/api-client";
 
 type Status = "loading" | "unsupported" | "denied" | "unsubscribed" | "subscribing" | "subscribed";
 
-function urlBase64ToUint8Array(base64String: string): Uint8Array {
+/**
+ * Decode a URL-safe base64 string into an ArrayBuffer-backed Uint8Array.
+ *
+ * Explicitly allocates an ArrayBuffer (not SharedArrayBuffer) so the
+ * return type is `Uint8Array<ArrayBuffer>`, which satisfies the
+ * `BufferSource` constraint on `PushManager.subscribe({ applicationServerKey })`.
+ */
+function urlBase64ToUint8Array(base64String: string): Uint8Array<ArrayBuffer> {
   const padding = "=".repeat((4 - (base64String.length % 4)) % 4);
   const base64 = (base64String + padding).replaceAll("-", "+").replaceAll("_", "/");
   const raw = atob(base64);
-  const output = new Uint8Array(raw.length);
+  const buffer = new ArrayBuffer(raw.length);
+  const output = new Uint8Array(buffer);
   for (let i = 0; i < raw.length; i += 1) output[i] = raw.charCodeAt(i);
   return output;
 }
