@@ -68,16 +68,15 @@ diagnosis steps, resolution actions, and post-incident tasks.
 
 ## Live production state
 
-|                           | Value                                                                                                                                            |
-| ------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------ |
-| Production URL            | https://iffe-sacco.vercel.app                                                                                                                    |
-| Current commit on `main`  | `a837b41`                                                                                                                                        |
-| Prisma migrations applied | All 7 (through Phase 9)                                                                                                                          |
-| Ledger journal entries    | 47 posted (29 legacy backfills + 18 opening balances)                                                                                            |
-| Trial balance             | Debits 71,270,000 UGX = Credits 71,270,000 UGX · variance 0 · balanced                                                                           |
-| Per-account variances     | 0 across 20 accounts                                                                                                                             |
-| `ledgerEnabled` flag      | `false` — rollout gate passed, safe to flip                                                                                                      |
-| Pending env vars          | `ALLOWED_ORIGINS`, `APP_BASE_URL`, `CREDENTIALS_KEK`, `CRON_SECRET`, `SENTRY_DSN` (Phase 2/4 hardening — non-blocking for current functionality) |
+|                           | Value                                                                                                                                                  |
+| ------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| Production URL            | https://iffe-sacco.vercel.app                                                                                                                          |
+| Current commit on `main`  | `24a5bb4` (Phase 11 — workflow retry idempotency)                                                                                                      |
+| Prisma migrations applied | All 9 (through `20260410_phase11_workflow_attempts`)                                                                                                   |
+| Ledger coverage           | Every money-moving write path routed through `postJournal` (deposit, withdraw, loan disburse/repay, manual approval, pledge payment, interest accrual) |
+| `ledgerEnabled` flag      | **true** (flipped in Phase 9.6, `bb5d181`)                                                                                                             |
+| Workflow retry semantics  | Failed runs auto-retry on next call; stale runs (≥5 min) auto-recover; completion marker atomic with business writes (Phase 11)                        |
+| Pending env vars          | `ALLOWED_ORIGINS`, `APP_BASE_URL`, `CREDENTIALS_KEK`, `CRON_SECRET`, `SENTRY_DSN` (Phase 2/4 hardening — non-blocking for current functionality)       |
 
 ## Tech stack
 
@@ -105,20 +104,25 @@ diagnosis steps, resolution actions, and post-incident tasks.
 
 ## Phase deliverables (one-liners)
 
-| Phase | Delivered                                                                                                                                          |
-| ----- | -------------------------------------------------------------------------------------------------------------------------------------------------- |
-| 0     | CI pipeline, Sentry + Pino, real `/health`, Husky, env scaffolding                                                                                 |
-| 1     | `@iffe/ledger`, double-entry journal, idempotency, WDK-style workflows, backfill + reconcile scripts                                               |
-| 2     | CORS fail-closed, CSRF double-submit, envelope encryption for credentials, account lockout, Resend email                                           |
-| 3     | 7 Vercel Crons, ledger-backed reports (trial balance, balance sheet, income statement, general ledger, loan aging, member statement)               |
-| 4     | OpenTelemetry bootstrap, runbooks (PITR, stuck workflow, auth incident), observability charter                                                     |
-| 5     | `fast-check` property tests for Money + Journal invariants, mocked-Prisma interest service test, Playwright E2E config + smoke tests               |
-| 6     | `<EmptyState>`, `<AnnouncerProvider>`, Cache Components helpers, PWA offline baseline                                                              |
-| 7     | GDPR export + delete endpoints, fraud scoring scaffold, compliance charter                                                                         |
-| 8     | `@iffe/assistant` package, streaming chat endpoint, notification dispatcher (in-app + push + email), anomaly inbox, bounded-SSE realtime dashboard |
-| 9     | IndexedDB offline mutation queue, English + Luganda i18n with minimal ICU formatter, passkey (WebAuthn) enrol + login                              |
-| 9.1   | Mount I18nProvider + AnnouncerProvider, dynamic `<html lang>`, OfflineBanner in layout, a11y fixes, bundle analyzer                                |
-| 9.2   | Full CI pipeline verified green locally — typecheck 0 errors, tests pass, Prettier clean, web Next 16 build 25.3s, 44 routes                       |
+| Phase   | Delivered                                                                                                                                          |
+| ------- | -------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 0       | CI pipeline, Sentry + Pino, real `/health`, Husky, env scaffolding                                                                                 |
+| 1       | `@iffe/ledger`, double-entry journal, idempotency, WDK-style workflows, backfill + reconcile scripts                                               |
+| 2       | CORS fail-closed, CSRF double-submit, envelope encryption for credentials, account lockout, Resend email                                           |
+| 3       | 7 Vercel Crons, ledger-backed reports (trial balance, balance sheet, income statement, general ledger, loan aging, member statement)               |
+| 4       | OpenTelemetry bootstrap, runbooks (PITR, stuck workflow, auth incident), observability charter                                                     |
+| 5       | `fast-check` property tests for Money + Journal invariants, mocked-Prisma interest service test, Playwright E2E config + smoke tests               |
+| 6       | `<EmptyState>`, `<AnnouncerProvider>`, Cache Components helpers, PWA offline baseline                                                              |
+| 7       | GDPR export + delete endpoints, fraud scoring scaffold, compliance charter                                                                         |
+| 8       | `@iffe/assistant` package, streaming chat endpoint, notification dispatcher (in-app + push + email), anomaly inbox, bounded-SSE realtime dashboard |
+| 9       | IndexedDB offline mutation queue, English + Luganda i18n with minimal ICU formatter, passkey (WebAuthn) enrol + login                              |
+| 9.1     | Mount I18nProvider + AnnouncerProvider, dynamic `<html lang>`, OfflineBanner in layout, a11y fixes, bundle analyzer                                |
+| 9.2     | Full CI pipeline verified green locally — typecheck 0 errors, tests pass, Prettier clean, web Next 16 build 25.3s, 44 routes                       |
+| 9.3–9.6 | Second `PrismaNeon` WebSocket client + `withTx()` helper, schema refinement, UX polish, `ledgerEnabled` default flipped to `true`                  |
+| 10      | Deposit + withdraw request approvals routed through `depositWorkflow` / `withdrawWorkflow` (idempotent journal posting)                            |
+| 10.1    | Loan disbursement (state-machine-aware) + loan repayment routed through dedicated workflows                                                        |
+| 10.2    | Manual transaction approval posts journal directly (row exists); new pledge payment workflow + `POST /welfare/pledges/:id/payment` endpoint        |
+| 11      | Workflow runtime retry idempotency — failed/stale runs auto-recover, `completesRun` flag makes run completion atomic with business writes          |
 
 ## BFF (Backend-for-Frontend) coverage
 

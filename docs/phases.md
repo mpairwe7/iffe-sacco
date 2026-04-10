@@ -13,21 +13,26 @@ flag is flipped.
 
 ## At a glance
 
-| Phase | SHA       | Title                                        | Files | Lines         |
-| ----- | --------- | -------------------------------------------- | ----- | ------------- |
-| 0     | `2669459` | Foundation & Safety Net                      | 23    | +794 −18      |
-| 1     | `90fd427` | Ledger & Financial Correctness               | 27    | +2,500 −64    |
-| 2     | `92de12c` | Security Hardening                           | 15    | +1,068 −63    |
-| 3     | `8de086a` | Automation & Reconciliation                  | 5     | +698          |
-| 4     | `374609e` | Observability & Ops                          | 6     | +471 −1       |
-| 5     | `fb92510` | Testing                                      | 9     | +418          |
-| 6     | `549f291` | UX & Performance primitives                  | 5     | +415          |
-| 7     | `ba500ac` | Compliance & Advanced                        | 4     | +514          |
-| 8     | `eec776d` | AI Assistant & Real-time Notifications       | 20    | +2,246        |
-| 9     | `3886860` | Offline Queue, i18n (EN + Luganda), Passkeys | 19    | +1,396 −6     |
-| 9.1   | `08ad026` | Wire latent primitives into app shell        | 8     | +95 −121      |
-| 9.1.x | `adc3476` | Fix push subscription Uint8Array type        | 1     | +10 −2        |
-| 9.2   | `862260e` | CI pipeline fixes + Prettier format pass     | 211   | +6,743 −3,571 |
+| Phase   | SHA       | Title                                                 | Files | Lines         |
+| ------- | --------- | ----------------------------------------------------- | ----- | ------------- |
+| 0       | `2669459` | Foundation & Safety Net                               | 23    | +794 −18      |
+| 1       | `90fd427` | Ledger & Financial Correctness                        | 27    | +2,500 −64    |
+| 2       | `92de12c` | Security Hardening                                    | 15    | +1,068 −63    |
+| 3       | `8de086a` | Automation & Reconciliation                           | 5     | +698          |
+| 4       | `374609e` | Observability & Ops                                   | 6     | +471 −1       |
+| 5       | `fb92510` | Testing                                               | 9     | +418          |
+| 6       | `549f291` | UX & Performance primitives                           | 5     | +415          |
+| 7       | `ba500ac` | Compliance & Advanced                                 | 4     | +514          |
+| 8       | `eec776d` | AI Assistant & Real-time Notifications                | 20    | +2,246        |
+| 9       | `3886860` | Offline Queue, i18n (EN + Luganda), Passkeys          | 19    | +1,396 −6     |
+| 9.1     | `08ad026` | Wire latent primitives into app shell                 | 8     | +95 −121      |
+| 9.1.x   | `adc3476` | Fix push subscription Uint8Array type                 | 1     | +10 −2        |
+| 9.2     | `862260e` | CI pipeline fixes + Prettier format pass              | 211   | +6,743 −3,571 |
+| 9.3–9.6 | `bb5d181` | WebSocket writes, schema refinement, ledger default   | 19    | +183 −44      |
+| 10      | `3495ce1` | Deposit + withdraw approvals via ledger workflows     | 4     | +230 −57      |
+| 10.1    | `5d155f3` | Loan disbursement + repayment via ledger workflows    | 1     | +173 −24      |
+| 10.2    | `30dda41` | Transaction approval + pledge payment ledger coverage | 3     | +271          |
+| 11      | `24a5bb4` | Workflow retry idempotency                            | 10    | +1,118 −514   |
 
 Plus six untracked-WIP checkpoint commits landed after Phase 9.2:
 per-role dashboard layouts, `/logout` route handler, `/staff` role,
@@ -528,14 +533,222 @@ Added a `next.config.ts` rewrite mapping `/favicon.ico` →
 `/favicon.png`. Modern browsers accept PNG bytes as a favicon
 regardless of the URL's extension.
 
+## Phase 9.3–9.6 — WebSocket writes, schema refinement, ledger default
+
+**Commit**: `bb5d181`
+
+Rolled the tech debt flagged at the end of Phase 9.2's `0055ef0` hotfix
+into a single shippable. The HTTP Neon adapter cannot hold a Prisma
+`$transaction` — every multi-statement write path had to move to a
+WebSocket-backed client.
+
+- **9.3** — Second Prisma client (`PrismaNeon` via WebSocket) exposed
+  as `withTx(fn)` from `config/db.ts`. The HTTP client stays as the
+  default for reads + single writes; `withTx` is the escape hatch for
+  anything that needs true atomicity. The remaining 13 callback-form
+  `$transaction` call sites flagged in Phase 9.2 were migrated to
+  `withTx`.
+- **9.4** — Widened `Member.weddingSupportDebt` / `condolenceSupportDebt`
+  to `Decimal(12,2)` and added the `weddingSupportDebt === 0 when
+status === not_received` refinement on the Zod schema (see
+  `packages/shared/src/schemas.ts` `enforceWelfareDebtRule`).
+- **9.5** — UX polish: CommandPalette keyboard shortcuts, breadcrumb
+  home icon, theme-toggle SSR stability, bottom-nav active state, and
+  a dozen other small fixes from the production deploy feedback round.
+- **9.6** — Flipped `ledgerEnabled` default from `false` to `true` in
+  `apps/api/src/config/flags.ts`. The backfill + reconcile runs in
+  Phase 9.2's `ae3f484` hotfix verified the trial balance was clean
+  and every member account's legacy balance matched the ledger
+  position, so the flag flip is a no-op on correctness and a yes-op
+  on future writes — subsequent deposits/withdrawals post to the
+  journal instead of direct-balance-only.
+
+## Phase 10 — Deposit + withdraw approvals via ledger workflows
+
+**Commit**: `3495ce1`
+
+`deposit-request.routes.ts` and `withdraw-request.routes.ts` both
+ran the direct-balance path even with `ledgerEnabled=true` —
+Phase 9.6's flag flip didn't actually route anything through the
+workflow runtime. This phase closes that gap.
+
+- Both approval endpoints now call `runWorkflow(depositWorkflow, ...)`
+  / `runWorkflow(withdrawWorkflow, ...)` when the flag is on. The
+  workflow posts a balanced journal entry AND updates
+  `Account.balance` + creates the `Transaction` row atomically inside
+  a single Prisma transaction.
+- Idempotency keys tied to the request row id
+  (`deposit-request:{id}`, `withdraw-request:{id}`) — replayed
+  approvals short-circuit to the cached output.
+- Legacy direct-balance path preserved as the `LEDGER_ENABLED=false`
+  fallback for kill-switch purposes.
+- New `flags` module (`apps/api/src/config/flags.ts`) and
+  `mapMethodToLedgerSource` helper (`apps/api/src/utils/payment-method.ts`)
+  extracted so downstream phases can share them.
+
+## Phase 10.1 — Loan disbursement + repayment via ledger workflows
+
+**Commit**: `5d155f3`
+
+Same pattern as Phase 10 but for `loan.service.ts`. Two tricky bits:
+
+1. **State-machine mismatch**: `loanDisbursementWorkflow` expected the
+   loan in `approved` state, but the legacy `approve()` went directly
+   `pending → active`. Fixed by refactoring `approve()` to first
+   transition `pending → approved` via `updateMany` (race-safe), then
+   run the workflow.
+2. **Double-disbursement on workflow retry**: `postJournal` is
+   idempotent on its key but the follow-on `account.update` and
+   `transaction.create` weren't. Added a pre-check in `approve()`
+   that looks for existing
+   `transaction-approval:${id}:txn` / `loan_disbursement` references
+   before running the workflow, so a retried approval is a no-op.
+
+`recordRepayment()` was simpler — single call to
+`loanRepaymentWorkflow` with the payment split into principal +
+interest components inside the workflow.
+
+## Phase 10.2 — Transaction approval + pledge payment ledger coverage
+
+**Commit**: `30dda41`
+
+Closes the last two write paths that still bypassed the ledger even
+with `ledgerEnabled=true`:
+
+- **Manual transaction approval** (`transaction.service.ts`
+  `approve()`): admin clicks "approve" on a pending deposit /
+  withdrawal. Cannot call `depositWorkflow` here because the
+  `Transaction` row already exists from the earlier `create()` call —
+  running the workflow would create a duplicate row. Instead, posts
+  a journal entry directly via `postJournal()` and updates the
+  existing row's `journalEntryId`. Deposit / withdrawal types
+  supported; `transfer`, `fee`, `interest_credit`,
+  `loan_disbursement`, `loan_repayment` fall through to legacy
+  direct-balance (they have their own dedicated paths elsewhere or
+  are rare admin uses kept on legacy).
+- **Pledge payment** (`welfare.service.ts` `recordPledgePayment()`):
+  brand new method + new `POST /welfare/pledges/:id/payment`
+  endpoint. Admin/staff records that a member has paid toward their
+  welfare pledge. Routes through `pledgePaymentWorkflow` which posts
+  `Dr cash/mobile_money/bank / Cr pledge income` and increments
+  `pledge.paidAmount` + `welfareProgram.raisedAmount`.
+
+After this phase every write path that moves money goes through the
+ledger — see the ledger coverage table in Phase 11.
+
+## Phase 11 — Workflow retry idempotency
+
+**Commit**: `24a5bb4`
+
+Closes the latent retry gaps in the workflow runtime that had been
+flagged as non-blocking at the end of Phase 10.2. Three concrete
+problems:
+
+1. **Failed runs were stuck.** `runWorkflow` only handled `completed`
+   (return cached) and `running` (throw). A row in state `failed`
+   fell through to `prisma.workflowRun.create(...)` which tripped
+   the unique-constraint on `idempotencyKey` and made retries
+   impossible without operator SQL.
+2. **Stale running runs were stuck forever.** A crashed executor
+   left its `WorkflowRun` row in `running` with no TTL — the next
+   call threw "already running" indefinitely.
+3. **"Committed but not marked" race.** The step's Prisma
+   transaction committed business writes (ledger + account +
+   transaction row), but the subsequent `workflowRun.update({ status:
+"completed" })` was a separate Prisma call. If it failed (network
+   blip, timeout), the row stayed in `running` even though the
+   ledger had advanced. A manual retry from that state would
+   double-apply the non-idempotent follow-on writes (account balance
+   increment, pledge `paidAmount` recalculation, etc.) because only
+   the journal entry itself was key-idempotent.
+
+**Runtime rewrite** (`apps/api/src/workflows/runtime.ts`):
+
+- Four explicit prior-run states:
+  - `completed` — return cached output verbatim (same as before).
+  - `running + age < STALE_RUN_MS` — refuse concurrent execution.
+  - `running + age ≥ 5 min` — take it over: mark the stale row as
+    failed and fall through to the retry branch.
+  - `failed` — reuse the row, bump `attempts`, reset fields, and
+    re-execute. Safe because the previous attempt's business writes
+    were inside a `withTx` that rolled back on failure.
+- New `StepRunOptions.completesRun` flag on `ctx.run(name, fn, opts)`.
+  When set, the step's Prisma transaction ALSO updates the
+  `WorkflowRun` row to `status: completed` + `output` — business
+  writes and the completion marker now share one atomic commit.
+  There is no window where the ledger has advanced but the run row
+  still says `running`.
+- Defensive post-handler check: if the run is already `completed`
+  by the time control leaves the handler, a post-commit throw can't
+  flip it back to `failed`.
+- Step bookkeeping updates (`workflow_steps.status`) are now
+  best-effort — failures there log and continue rather than
+  masking a successful run.
+
+**Schema** (`WorkflowRun`):
+
+- New `attempts Int @default(1)` column.
+- New composite index `(status, startedAt)` for the stale-run
+  scan the runbook uses.
+- Migration `20260410_phase11_workflow_attempts` applied via
+  `prisma migrate deploy`.
+
+**Workflow opt-ins**: all seven money-moving workflows now pass
+`{ completesRun: true }` on their sole `ctx.run(...)` call:
+
+| Workflow               | Idempotency key pattern                                  |
+| ---------------------- | -------------------------------------------------------- |
+| `depositWorkflow`      | `deposit-request:{id}` (or `deposit:{ctx.runId}` inline) |
+| `withdrawWorkflow`     | `withdraw-request:{id}`                                  |
+| `loanDisbursementWf`   | `loan-disbursement:{id}`                                 |
+| `loanRepaymentWf`      | `loan-repayment:{id}:{ts}`                               |
+| `pledgePaymentWf`      | `pledge-payment:{id}:{ts}`                               |
+| `loanInterestAccrual`  | `loan-interest-accrual:{id}:{asOf}`                      |
+| `savingsInterestAccru` | `savings-interest-accrual:{id}:{asOf}`                   |
+
+**Tests** (`apps/api/src/workflows/__tests__/runtime.test.ts`, 6 cases,
+all green under `bun test`):
+
+1. First-try success → handler runs once, row `completed`, `attempts=1`.
+2. Completed replay → cached output, handler NOT re-invoked.
+3. Retry after failure → same row reused, `attempts=2`, second attempt
+   succeeds.
+4. Concurrent fresh run → throws "already running", row untouched.
+5. Stale-run takeover → takes over the row, bumps `attempts`, completes.
+6. `completesRun` atomicity → the handler observes `running` inside the
+   step tx and `completed` immediately after, proving the status flip
+   is part of the same commit.
+
+Prisma + `withTx` are mocked via `mock.module`; the in-memory store
+simulates Prisma rollback by snapshotting before the callback and
+restoring on throw.
+
+**Ledger coverage after Phase 11**:
+
+| Write path                                     | Mechanism                                               | Phase |
+| ---------------------------------------------- | ------------------------------------------------------- | ----- |
+| Member-initiated deposit request → approval    | `depositWorkflow`                                       | 10    |
+| Member-initiated withdraw request → approval   | `withdrawWorkflow`                                      | 10    |
+| Loan disbursement                              | `loanDisbursementWorkflow` (state-machine-aware)        | 10.1  |
+| Loan repayment                                 | `loanRepaymentWorkflow`                                 | 10.1  |
+| Manual transaction approval (deposit/withdraw) | Direct `postJournal` (row already exists from `create`) | 10.2  |
+| Pledge payment                                 | `pledgePaymentWorkflow`                                 | 10.2  |
+| Daily loan interest accrual                    | `accrueLoanInterestWorkflow` (cron)                     | 1     |
+| Daily savings interest accrual                 | `accrueSavingsInterestWorkflow` (cron)                  | 1     |
+
+Every write path is guarded by `flags.ledgerEnabled` with a legacy
+direct-balance fallback, and every workflow is retry-safe on its
+idempotency key.
+
 ## Production deployment state
 
 |                              | Value                                                                                                                                            |
 | ---------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------ |
-| Current `main` head          | `a837b41`                                                                                                                                        |
-| Production deployment        | `dpl_Ft6o5Av8h3Mwe3d2N2NvsrjEy6NP` — commit `a837b41`                                                                                            |
+| Current `main` head          | `24a5bb4`                                                                                                                                        |
+| Production deployment        | `dpl_HpuseMToPfyL1wkFP2NgYEgcs8Ja` — commit `24a5bb4`                                                                                            |
 | Production URL               | https://iffe-sacco.vercel.app                                                                                                                    |
-| Prisma migrations applied    | All 7 (through Phase 9)                                                                                                                          |
-| Ledger state                 | 47 journal entries posted, trial balance balanced to 0                                                                                           |
-| `ledgerEnabled` feature flag | **still false** — safe to flip but not yet flipped                                                                                               |
+| Prisma migrations applied    | All 9 (through Phase 11 `20260410_phase11_workflow_attempts`)                                                                                    |
+| Ledger state                 | All write paths routed through `postJournal`; trial balance last verified at `0` variance during Phase 9.2's `ae3f484` backfill                  |
+| `ledgerEnabled` feature flag | **true** (flipped in Phase 9.6 `bb5d181`)                                                                                                        |
+| Workflow retry state         | Failed runs auto-retry on next call; stale runs (≥5 min) auto-recover; completion marker is atomic with business writes                          |
 | Missing env vars             | `ALLOWED_ORIGINS`, `APP_BASE_URL`, `CREDENTIALS_KEK`, `CRON_SECRET`, `SENTRY_DSN` (Phase 2/4 hardening — non-blocking for current functionality) |
