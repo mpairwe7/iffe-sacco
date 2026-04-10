@@ -1,6 +1,20 @@
 import { z } from "zod/v4";
 import { LOAN_TYPES } from "./constants";
 
+// ===== Money =====
+// Money is sent over the wire as a decimal string (never a JS number) so that
+// float rounding can't silently corrupt amounts. This regex accepts up to
+// 14 integer digits and 4 fractional digits (matches Prisma Decimal(18, 4)).
+export const moneyString = z
+  .string()
+  .regex(/^-?\d{1,14}(\.\d{1,4})?$/, "Amount must be a decimal string with at most 4 decimal places")
+  .refine((s) => s !== "-0" && s !== "-", "Invalid amount");
+
+export const positiveMoneyString = moneyString.refine(
+  (s) => !s.startsWith("-") && s !== "0" && s !== "0.0" && s !== "0.00",
+  "Amount must be positive",
+);
+
 // ===== Auth =====
 export const loginSchema = z.object({
   email: z.email("Valid email required"),

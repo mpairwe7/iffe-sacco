@@ -1,0 +1,24 @@
+{
+  "name": "@iffe/ledger",
+  "version": "0.1.0",
+  "private": true,
+  "main": "./src/index.ts",
+  "types": "./src/index.ts",
+  "exports": {
+    ".": "./src/index.ts",
+    "./money": "./src/money.ts",
+    "./gl-accounts": "./src/gl-accounts.ts",
+    "./journal": "./src/journal.ts"
+  },
+  "scripts": {
+    "lint": "tsc --noEmit",
+    "test": "bun test"
+  },
+  "dependencies": {
+    "@iffe/shared": "workspace:*",
+    "decimal.js-light": "^2.5.1"
+  },
+  "devDependencies": {
+    "typescript": "^5"
+  }
+}

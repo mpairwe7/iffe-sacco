@@ -16,12 +16,15 @@
     "db:push": "bunx prisma db push",
     "db:studio": "bunx prisma studio",
     "db:seed": "bun run prisma/seed.ts",
+    "ledger:backfill": "bun run scripts/backfill-ledger.ts",
+    "ledger:backfill:dry": "bun run scripts/backfill-ledger.ts --dry-run",
     "test": "bun test",
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
     "@hono/node-server": "^1.19.11",
     "@hono/zod-validator": "^0.5",
+    "@iffe/ledger": "workspace:*",
     "@iffe/shared": "workspace:*",
     "@neondatabase/serverless": "^1.0.2",
     "@prisma/adapter-neon": "^7.5.0",

@@ -144,49 +144,60 @@ model Account {
 
 // ===== TRANSACTION =====
 model Transaction {
-  id          String   @id @default(uuid())
-  accountId   String
-  type        String   // deposit | withdrawal | transfer | loan_repayment | loan_disbursement | interest_credit | fee
-  amount      Decimal  @db.Decimal(15, 2)
-  description String?
-  method      String   @default("cash") // cash | mobile_money | bank_transfer | cheque | internal
-  reference   String?
-  status      String   @default("pending") // pending | completed | rejected | reversed
-  processedBy String?
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  id                String   @id @default(uuid())
+  accountId         String
+  type              String   // deposit | withdrawal | transfer | loan_repayment | loan_disbursement | interest_credit | fee
+  amount            Decimal  @db.Decimal(18, 4)
+  description       String?
+  method            String   @default("cash") // cash | mobile_money | bank_transfer | cheque | internal
+  reference         String?
+  externalReference String?  // upstream payment gateway ref
+  idempotencyKey    String?  @unique
+  journalEntryId    String?  // backlink to double-entry journal (Phase 1+)
+  reversalOfId      String?  // if this is a reversal, points to original
+  status            String   @default("pending") // pending | completed | rejected | reversed
+  processedBy       String?
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
 
-  account Account @relation(fields: [accountId], references: [id], onDelete: Cascade)
+  account       Account       @relation(fields: [accountId], references: [id], onDelete: Cascade)
+  journalEntry  JournalEntry? @relation(fields: [journalEntryId], references: [id])
 
   @@index([accountId])
   @@index([type])
   @@index([status])
   @@index([createdAt])
+  @@index([journalEntryId])
   @@map("transactions")
 }
 
 // ===== LOAN =====
 model Loan {
-  id              String   @id @default(uuid())
-  memberId        String
-  type            String   // business | personal | emergency | education | housing
-  amount          Decimal  @db.Decimal(15, 2)
-  balance         Decimal  @default(0) @db.Decimal(15, 2)
-  interestRate    Decimal  @db.Decimal(5, 2)
-  term            Int      // months
-  monthlyPayment  Decimal  @default(0) @db.Decimal(15, 2)
-  nextPaymentDate DateTime?
-  status          String   @default("pending") // pending | approved | active | paid | overdue | defaulted | rejected
-  approvedBy      String?
-  disbursedAt     DateTime?
-  createdAt       DateTime @default(now())
-  updatedAt       DateTime @updatedAt
+  id                 String   @id @default(uuid())
+  memberId           String
+  type               String   // business | personal | emergency | education | housing
+  amount             Decimal  @db.Decimal(18, 4)
+  balance            Decimal  @default(0) @db.Decimal(18, 4)
+  interestRate       Decimal  @db.Decimal(7, 4)
+  interestAccrued    Decimal  @default(0) @db.Decimal(18, 4)
+  lateFeesAccrued    Decimal  @default(0) @db.Decimal(18, 4)
+  term               Int      // months
+  monthlyPayment     Decimal  @default(0) @db.Decimal(18, 4)
+  nextPaymentDate    DateTime?
+  lastAccrualAt      DateTime?
+  overdueSince       DateTime?
+  status             String   @default("pending") // pending | approved | active | paid | overdue | defaulted | rejected
+  approvedBy         String?
+  disbursedAt        DateTime?
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
 
   member Member @relation(fields: [memberId], references: [id], onDelete: Cascade)
 
   @@index([memberId])
   @@index([status])
   @@index([nextPaymentDate])
+  @@index([overdueSince])
   @@map("loans")
 }
 
@@ -227,18 +238,22 @@ model WelfareProgram {
 
 // ===== PLEDGE =====
 model Pledge {
-  id        String   @id @default(uuid())
-  programId String
-  memberId  String
-  amount    Decimal  @db.Decimal(15, 2)
-  status    String   @default("pledged") // pledged | paid | cancelled
-  createdAt DateTime @default(now())
+  id         String    @id @default(uuid())
+  programId  String
+  memberId   String
+  amount     Decimal   @db.Decimal(18, 4)
+  paidAmount Decimal   @default(0) @db.Decimal(18, 4)
+  paidAt     DateTime?
+  status     String    @default("pledged") // pledged | partially_paid | paid | cancelled
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt @default(now())
 
   program WelfareProgram @relation(fields: [programId], references: [id], onDelete: Cascade)
   member  Member         @relation(fields: [memberId], references: [id], onDelete: Cascade)
 
   @@index([programId])
   @@index([memberId])
+  @@index([status])
   @@map("pledges")
 }
 
@@ -400,4 +415,127 @@ model Setting {
   value String
 
   @@map("settings")
+}
+
+// ===================================================================
+// LEDGER (Phase 1 — double-entry bookkeeping)
+// ===================================================================
+
+// Chart of accounts. Seeded from packages/ledger/src/gl-accounts.ts at
+// app boot; never mutated at runtime except by admin migrations.
+model GlAccount {
+  code        String   @id
+  name        String
+  type        String   // ASSET | LIABILITY | EQUITY | INCOME | EXPENSE
+  normal      String   // DEBIT | CREDIT
+  parentCode  String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  lines JournalLine[]
+
+  @@index([type])
+  @@map("gl_accounts")
+}
+
+// Append-only journal. Every row represents one atomic accounting event.
+// idempotencyKey is unique — replays of the same logical operation return
+// the existing entry instead of creating a duplicate.
+model JournalEntry {
+  id             String   @id @default(uuid())
+  occurredAt     DateTime @default(now())
+  postedAt       DateTime @default(now())
+  idempotencyKey String   @unique
+  description   String
+  metadata       Json?
+  workflowRunId  String?
+  createdBy      String
+  reversedById   String?  @unique
+  createdAt      DateTime @default(now())
+
+  lines          JournalLine[]
+  transactions   Transaction[]
+  reversedBy     JournalEntry? @relation("JournalReversal", fields: [reversedById], references: [id])
+  reverses       JournalEntry? @relation("JournalReversal")
+
+  @@index([occurredAt])
+  @@index([workflowRunId])
+  @@map("journal_entries")
+}
+
+// Individual debit or credit line within a journal entry. Exactly one of
+// debit or credit is non-zero per row. Sum(debit) == sum(credit) is
+// enforced at the application layer (enforced via JournalEntryBuilder).
+model JournalLine {
+  id              String   @id @default(uuid())
+  entryId         String
+  accountCode     String   // GL account code
+  memberAccountId String?  // optional link to member's Account
+  debit           Decimal  @default(0) @db.Decimal(18, 4)
+  credit          Decimal  @default(0) @db.Decimal(18, 4)
+  currency        String   @default("UGX")
+  createdAt       DateTime @default(now())
+
+  entry   JournalEntry @relation(fields: [entryId], references: [id], onDelete: Cascade)
+  account GlAccount    @relation(fields: [accountCode], references: [code])
+
+  @@index([entryId])
+  @@index([accountCode])
+  @@index([memberAccountId])
+  @@map("journal_lines")
+}
+
+// HTTP-level idempotency dedupe. POST requests with an Idempotency-Key
+// header hit this table first; a replay with the same key + route returns
+// the cached response body.
+model IdempotencyKey {
+  key          String   @id
+  routeHash    String
+  requestHash  String
+  responseBody Json?
+  statusCode   Int?
+  userId       String?
+  createdAt    DateTime @default(now())
+  expiresAt    DateTime
+
+  @@index([expiresAt])
+  @@map("idempotency_keys")
+}
+
+// Workflow runs (Phase 1). Lightweight crash-safe saga log that sits in
+// front of WDK-style workflows until Vercel Workflow DevKit integration
+// lands. Each step is logged so a resumption can pick up where it left off.
+model WorkflowRun {
+  id             String   @id @default(uuid())
+  type           String   // deposit | withdrawal | loan_disbursement | ...
+  status         String   @default("running") // running | completed | failed | compensated
+  idempotencyKey String   @unique
+  input          Json
+  output         Json?
+  error          String?
+  startedBy      String
+  startedAt      DateTime @default(now())
+  finishedAt     DateTime?
+  steps          WorkflowStep[]
+
+  @@index([status])
+  @@index([type])
+  @@map("workflow_runs")
+}
+
+model WorkflowStep {
+  id          String   @id @default(uuid())
+  runId       String
+  name        String
+  status      String   // running | completed | failed
+  input       Json?
+  output      Json?
+  error       String?
+  startedAt   DateTime @default(now())
+  finishedAt  DateTime?
+
+  run WorkflowRun @relation(fields: [runId], references: [id], onDelete: Cascade)
+
+  @@index([runId])
+  @@map("workflow_steps")
 }
