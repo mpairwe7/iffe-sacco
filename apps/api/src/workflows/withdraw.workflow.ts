@@ -44,78 +44,82 @@ function creditAccountFor(dest: WithdrawInput["destinationOfFunds"]) {
 export const withdrawWorkflow = defineWorkflow<WithdrawInput, WithdrawOutput>({
   type: "withdrawal",
   handler: async (input, ctx) => {
-    return ctx.run("execute", async (tx) => {
-      const account = await tx.account.findUnique({ where: { id: input.memberAccountId } });
-      if (!account) throw new Error(`Account not found: ${input.memberAccountId}`);
-      if (account.status !== "active") throw new Error(`Account ${account.accountNo} is ${account.status}`);
+    return ctx.run(
+      "execute",
+      async (tx) => {
+        const account = await tx.account.findUnique({ where: { id: input.memberAccountId } });
+        if (!account) throw new Error(`Account not found: ${input.memberAccountId}`);
+        if (account.status !== "active") throw new Error(`Account ${account.accountNo} is ${account.status}`);
 
-      const amount = Money.of(input.amount);
-      if (Money.isZero(amount) || Money.isNegative(amount)) {
-        throw new Error("Withdrawal amount must be positive");
-      }
+        const amount = Money.of(input.amount);
+        if (Money.isZero(amount) || Money.isNegative(amount)) {
+          throw new Error("Withdrawal amount must be positive");
+        }
 
-      const currentBalance = Money.fromDb(account.balance);
-      if (Money.lt(currentBalance, amount)) {
-        throw new Error(
-          `Insufficient funds: balance=${Money.toString(currentBalance)} amount=${Money.toString(amount)}`,
-        );
-      }
+        const currentBalance = Money.fromDb(account.balance);
+        if (Money.lt(currentBalance, amount)) {
+          throw new Error(
+            `Insufficient funds: balance=${Money.toString(currentBalance)} amount=${Money.toString(amount)}`,
+          );
+        }
 
-      const debitAccount = memberLiabilityAccountFor(account.type);
-      const creditAccount = creditAccountFor(input.destinationOfFunds);
+        const debitAccount = memberLiabilityAccountFor(account.type);
+        const creditAccount = creditAccountFor(input.destinationOfFunds);
 
-      const entry = JournalEntry.builder({
-        description: input.description ?? `Withdrawal from ${account.accountNo}`,
-        idempotencyKey: `withdraw:${ctx.runId}`,
-        createdBy: input.processedBy,
-        workflowRunId: ctx.runId,
-        metadata: {
-          method: input.method,
-          destinationOfFunds: input.destinationOfFunds,
-          accountNo: account.accountNo,
-          memberId: account.memberId,
-        },
-      })
-        .debit(debitAccount.code, amount, { memberAccountId: account.id })
-        .credit(creditAccount.code, amount, { memberAccountId: account.id })
-        .build();
+        const entry = JournalEntry.builder({
+          description: input.description ?? `Withdrawal from ${account.accountNo}`,
+          idempotencyKey: `withdraw:${ctx.runId}`,
+          createdBy: input.processedBy,
+          workflowRunId: ctx.runId,
+          metadata: {
+            method: input.method,
+            destinationOfFunds: input.destinationOfFunds,
+            accountNo: account.accountNo,
+            memberId: account.memberId,
+          },
+        })
+          .debit(debitAccount.code, amount, { memberAccountId: account.id })
+          .credit(creditAccount.code, amount, { memberAccountId: account.id })
+          .build();
 
-      const { entryId } = await postJournal(entry, tx);
+        const { entryId } = await postJournal(entry, tx);
 
-      await tx.account.update({
-        where: { id: account.id },
-        data: {
-          balance: { decrement: Money.toString(amount) as any },
-          lastActivity: new Date(),
-        },
-      });
+        await tx.account.update({
+          where: { id: account.id },
+          data: {
+            balance: { decrement: Money.toString(amount) as any },
+            lastActivity: new Date(),
+          },
+        });
 
-      const txnRow = await tx.transaction.create({
-        data: {
-          accountId: account.id,
-          type: "withdrawal",
-          amount: Money.toString(amount) as any,
-          description: input.description,
-          method: input.method,
-          reference: input.reference,
-          idempotencyKey: `withdraw:${ctx.runId}:txn`,
+        const txnRow = await tx.transaction.create({
+          data: {
+            accountId: account.id,
+            type: "withdrawal",
+            amount: Money.toString(amount) as any,
+            description: input.description,
+            method: input.method,
+            reference: input.reference,
+            idempotencyKey: `withdraw:${ctx.runId}:txn`,
+            journalEntryId: entryId,
+            status: "completed",
+            processedBy: input.processedBy,
+          },
+          select: { id: true },
+        });
+
+        const fresh = await tx.account.findUnique({
+          where: { id: account.id },
+          select: { balance: true },
+        });
+
+        return {
+          transactionId: txnRow.id,
           journalEntryId: entryId,
-          status: "completed",
-          processedBy: input.processedBy,
-        },
-        select: { id: true },
-      });
-
-      const fresh = await tx.account.findUnique({
-        where: { id: account.id },
-        select: { balance: true },
-      });
-
-      return {
-        transactionId: txnRow.id,
-        journalEntryId: entryId,
-        newBalance: Money.toString(Money.fromDb(fresh!.balance)),
-      };
-    });
+          newBalance: Money.toString(Money.fromDb(fresh!.balance)),
+        };
+      },
+      { completesRun: true },
+    );
   },
 });

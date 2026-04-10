@@ -47,75 +47,83 @@ function debitAccountFor(source: DepositInput["sourceOfFunds"]) {
 export const depositWorkflow = defineWorkflow<DepositInput, DepositOutput>({
   type: "deposit",
   handler: async (input, ctx) => {
-    return ctx.run("execute", async (tx) => {
-      const account = await tx.account.findUnique({
-        where: { id: input.memberAccountId },
-      });
-      if (!account) throw new Error(`Account not found: ${input.memberAccountId}`);
-      if (account.status !== "active") throw new Error(`Account ${account.accountNo} is ${account.status}`);
+    // completesRun: marks workflow run `completed` inside the same tx
+    // as the ledger writes — eliminates the race where the business
+    // commit lands but the status update fails, leaving the row stuck
+    // in `running` and forcing a manual retry.
+    return ctx.run(
+      "execute",
+      async (tx) => {
+        const account = await tx.account.findUnique({
+          where: { id: input.memberAccountId },
+        });
+        if (!account) throw new Error(`Account not found: ${input.memberAccountId}`);
+        if (account.status !== "active") throw new Error(`Account ${account.accountNo} is ${account.status}`);
 
-      const amount = Money.of(input.amount);
-      if (Money.isZero(amount) || Money.isNegative(amount)) {
-        throw new Error("Deposit amount must be positive");
-      }
+        const amount = Money.of(input.amount);
+        if (Money.isZero(amount) || Money.isNegative(amount)) {
+          throw new Error("Deposit amount must be positive");
+        }
 
-      const debitAccount = debitAccountFor(input.sourceOfFunds);
-      const creditAccount = memberLiabilityAccountFor(account.type);
+        const debitAccount = debitAccountFor(input.sourceOfFunds);
+        const creditAccount = memberLiabilityAccountFor(account.type);
 
-      const entry = JournalEntry.builder({
-        description: input.description ?? `Deposit to ${account.accountNo}`,
-        idempotencyKey: `deposit:${ctx.runId}`,
-        createdBy: input.processedBy,
-        workflowRunId: ctx.runId,
-        metadata: {
-          method: input.method,
-          sourceOfFunds: input.sourceOfFunds,
-          accountNo: account.accountNo,
-          memberId: account.memberId,
-        },
-      })
-        .debit(debitAccount.code, amount, { memberAccountId: account.id })
-        .credit(creditAccount.code, amount, { memberAccountId: account.id })
-        .build();
+        const entry = JournalEntry.builder({
+          description: input.description ?? `Deposit to ${account.accountNo}`,
+          idempotencyKey: `deposit:${ctx.runId}`,
+          createdBy: input.processedBy,
+          workflowRunId: ctx.runId,
+          metadata: {
+            method: input.method,
+            sourceOfFunds: input.sourceOfFunds,
+            accountNo: account.accountNo,
+            memberId: account.memberId,
+          },
+        })
+          .debit(debitAccount.code, amount, { memberAccountId: account.id })
+          .credit(creditAccount.code, amount, { memberAccountId: account.id })
+          .build();
 
-      const { entryId } = await postJournal(entry, tx);
+        const { entryId } = await postJournal(entry, tx);
 
-      // Projection update — keep legacy Account.balance in sync for existing readers.
-      await tx.account.update({
-        where: { id: account.id },
-        data: {
-          balance: { increment: Money.toString(amount) as any },
-          lastActivity: new Date(),
-        },
-      });
+        // Projection update — keep legacy Account.balance in sync for existing readers.
+        await tx.account.update({
+          where: { id: account.id },
+          data: {
+            balance: { increment: Money.toString(amount) as any },
+            lastActivity: new Date(),
+          },
+        });
 
-      const txnRow = await tx.transaction.create({
-        data: {
-          accountId: account.id,
-          type: "deposit",
-          amount: Money.toString(amount) as any,
-          description: input.description,
-          method: input.method,
-          reference: input.reference,
-          externalReference: input.externalReference,
-          idempotencyKey: `deposit:${ctx.runId}:txn`,
+        const txnRow = await tx.transaction.create({
+          data: {
+            accountId: account.id,
+            type: "deposit",
+            amount: Money.toString(amount) as any,
+            description: input.description,
+            method: input.method,
+            reference: input.reference,
+            externalReference: input.externalReference,
+            idempotencyKey: `deposit:${ctx.runId}:txn`,
+            journalEntryId: entryId,
+            status: "completed",
+            processedBy: input.processedBy,
+          },
+          select: { id: true },
+        });
+
+        const fresh = await tx.account.findUnique({
+          where: { id: account.id },
+          select: { balance: true },
+        });
+
+        return {
+          transactionId: txnRow.id,
           journalEntryId: entryId,
-          status: "completed",
-          processedBy: input.processedBy,
-        },
-        select: { id: true },
-      });
-
-      const fresh = await tx.account.findUnique({
-        where: { id: account.id },
-        select: { balance: true },
-      });
-
-      return {
-        transactionId: txnRow.id,
-        journalEntryId: entryId,
-        newBalance: Money.toString(Money.fromDb(fresh!.balance)),
-      };
-    });
+          newBalance: Money.toString(Money.fromDb(fresh!.balance)),
+        };
+      },
+      { completesRun: true },
+    );
   },
 });

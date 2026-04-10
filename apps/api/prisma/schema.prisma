@@ -517,10 +517,12 @@ model WorkflowRun {
   startedBy      String
   startedAt      DateTime @default(now())
   finishedAt     DateTime?
+  attempts       Int      @default(1) // Phase 11: incremented on retry after failure / stale takeover
   steps          WorkflowStep[]
 
   @@index([status])
   @@index([type])
+  @@index([status, startedAt]) // Phase 11: supports stale-run scans
   @@map("workflow_runs")
 }
 
