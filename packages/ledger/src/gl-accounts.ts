@@ -50,6 +50,7 @@ export const GL_ACCOUNTS = {
   // EQUITY
   SHARE_CAPITAL: A("3000", "Share capital (members)", "EQUITY", "CREDIT"),
   RETAINED_EARNINGS: A("3100", "Retained earnings", "EQUITY", "CREDIT"),
+  OPENING_BALANCE_EQUITY: A("3200", "Opening balance equity (pre-ledger)", "EQUITY", "CREDIT"),
 
   // INCOME
   INTEREST_INCOME_LOANS: A("4000", "Interest income — loans", "INCOME", "CREDIT"),
