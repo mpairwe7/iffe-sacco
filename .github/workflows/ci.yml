@@ -53,7 +53,7 @@ jobs:
             packages/*/node_modules
           key: bun-${{ runner.os }}-${{ hashFiles('bun.lock') }}
       - run: bun install --frozen-lockfile
-      - run: bun run --filter api db:generate
+      - run: bun run --filter @iffe/api db:generate
       - run: bun run typecheck
 
   lint:
@@ -95,7 +95,7 @@ jobs:
             packages/*/node_modules
           key: bun-${{ runner.os }}-${{ hashFiles('bun.lock') }}
       - run: bun install --frozen-lockfile
-      - run: bun run --filter api db:generate
+      - run: bun run --filter @iffe/api db:generate
       - run: bun run test
         env:
           NODE_ENV: test
@@ -147,7 +147,7 @@ jobs:
             packages/*/node_modules
           key: bun-${{ runner.os }}-${{ hashFiles('bun.lock') }}
       - run: bun install --frozen-lockfile
-      - run: bun run --filter api db:generate
+      - run: bun run --filter @iffe/api db:generate
       - run: bun run build
         env:
           NODE_ENV: production
