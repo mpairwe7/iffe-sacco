@@ -3,9 +3,15 @@ import { HTTPException } from "hono/http-exception";
 import { zValidator } from "@hono/zod-validator";
 import { paginationSchema } from "@iffe/shared";
 import type { Prisma } from "@prisma/client";
+import { Money } from "@iffe/ledger";
 import { prisma, withTx } from "../config/db";
+import { flags } from "../config/flags";
 import { authMiddleware, requireRole, type AuthEnv } from "../middleware/auth";
 import { writeAuditLog } from "../utils/audit";
+import { logger } from "../utils/logger";
+import { mapMethodToLedgerSource } from "../utils/payment-method";
+import { runWorkflow } from "../workflows/runtime";
+import { withdrawWorkflow } from "../workflows/withdraw.workflow";
 import { z } from "zod/v4";
 
 const withdrawRequests = new Hono<AuthEnv>();
@@ -89,49 +95,88 @@ withdrawRequests.patch("/:id/approve", requireRole("admin", "staff"), async (c) 
   const id = c.req.param("id");
   const user = c.get("user");
 
-  const result = await withTx(async (tx: Prisma.TransactionClient) => {
-    const existing = await tx.withdrawRequest.findUnique({ where: { id } });
-    if (!existing) throw new HTTPException(404, { message: "Withdrawal request not found" });
-    if (existing.status !== "pending")
-      throw new HTTPException(400, { message: "Withdrawal request has already been processed" });
+  // Step 1 — validate + sufficient-balance pre-check outside any
+  // transaction so a clean 400 comes back before any workflow run
+  // row is opened. The workflow also performs the balance check
+  // atomically inside its step.
+  const existing = await prisma.withdrawRequest.findUnique({ where: { id } });
+  if (!existing) throw new HTTPException(404, { message: "Withdrawal request not found" });
+  if (existing.status !== "pending") {
+    throw new HTTPException(400, { message: "Withdrawal request has already been processed" });
+  }
 
-    const req = await tx.withdrawRequest.update({
-      where: { id },
-      data: { status: "approved", processedBy: user.id },
-    });
+  const account = await prisma.account.findUnique({ where: { id: existing.accountId } });
+  if (!account || Number(account.balance) < Number(existing.amount)) {
+    throw new HTTPException(400, { message: "Insufficient balance" });
+  }
 
-    // Check sufficient balance inside the transaction
-    const account = await tx.account.findUnique({ where: { id: req.accountId } });
-    if (!account || Number(account.balance) < Number(req.amount)) {
-      throw new HTTPException(400, { message: "Insufficient balance" });
-    }
+  let result: typeof existing;
 
-    // Create actual withdrawal transaction
-    await tx.transaction.create({
-      data: {
-        accountId: req.accountId,
-        type: "withdrawal",
-        amount: req.amount,
-        method: req.method,
-        description: req.reason || "Approved withdrawal request",
-        status: "completed",
+  if (flags.ledgerEnabled) {
+    // Phase 10 path: route through the withdraw workflow so the
+    // ledger gets a balanced Dr member-liability / Cr cash entry
+    // alongside the projection. Workflow is idempotent on key.
+    logger.info(
+      { event: "withdraw_request.approve.workflow", withdrawRequestId: id, amount: existing.amount },
+      "approving withdrawal request via ledger workflow",
+    );
+    await runWorkflow(withdrawWorkflow, {
+      idempotencyKey: `withdraw-request:${id}`,
+      startedBy: user.id,
+      input: {
+        memberAccountId: existing.accountId,
+        amount: Money.toString(Money.fromDb(existing.amount)),
+        method: existing.method,
+        description: existing.reason || "Approved withdrawal request",
         processedBy: user.id,
+        destinationOfFunds: mapMethodToLedgerSource(existing.method),
       },
     });
 
-    // Decrement account balance
-    await tx.account.update({
-      where: { id: req.accountId },
-      data: { balance: { decrement: req.amount }, lastActivity: new Date() },
+    result = await prisma.withdrawRequest.update({
+      where: { id },
+      data: { status: "approved", processedBy: user.id },
     });
-
-    return req;
-  });
+  } else {
+    logger.warn(
+      { event: "withdraw_request.approve.legacy", withdrawRequestId: id },
+      "approving withdrawal request via legacy direct-balance path (LEDGER_ENABLED=false)",
+    );
+    result = await withTx(async (tx: Prisma.TransactionClient) => {
+      const req = await tx.withdrawRequest.update({
+        where: { id },
+        data: { status: "approved", processedBy: user.id },
+      });
+      // Re-check inside the tx in case the balance moved since the
+      // pre-check above.
+      const currentAccount = await tx.account.findUnique({ where: { id: req.accountId } });
+      if (!currentAccount || Number(currentAccount.balance) < Number(req.amount)) {
+        throw new HTTPException(400, { message: "Insufficient balance" });
+      }
+      await tx.transaction.create({
+        data: {
+          accountId: req.accountId,
+          type: "withdrawal",
+          amount: req.amount,
+          method: req.method,
+          description: req.reason || "Approved withdrawal request",
+          status: "completed",
+          processedBy: user.id,
+        },
+      });
+      await tx.account.update({
+        where: { id: req.accountId },
+        data: { balance: { decrement: req.amount }, lastActivity: new Date() },
+      });
+      return req;
+    });
+  }
 
   await writeAuditLog(c, {
     action: "withdraw_request_approved",
     entity: "withdraw_request",
     entityId: result.id,
+    details: { ledgerEnabled: flags.ledgerEnabled, amount: result.amount },
   });
   return c.json({ success: true, data: result });
 });

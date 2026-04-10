@@ -3,9 +3,15 @@ import { HTTPException } from "hono/http-exception";
 import { zValidator } from "@hono/zod-validator";
 import { paginationSchema } from "@iffe/shared";
 import type { Prisma } from "@prisma/client";
+import { Money } from "@iffe/ledger";
 import { prisma, withTx } from "../config/db";
+import { flags } from "../config/flags";
 import { authMiddleware, requireRole, type AuthEnv } from "../middleware/auth";
 import { writeAuditLog } from "../utils/audit";
+import { logger } from "../utils/logger";
+import { mapMethodToLedgerSource } from "../utils/payment-method";
+import { runWorkflow } from "../workflows/runtime";
+import { depositWorkflow } from "../workflows/deposit.workflow";
 import { z } from "zod/v4";
 
 const depositRequests = new Hono<AuthEnv>();
@@ -92,43 +98,87 @@ depositRequests.patch("/:id/approve", requireRole("admin", "staff"), async (c) =
   const id = c.req.param("id");
   const user = c.get("user");
 
-  const result = await withTx(async (tx: Prisma.TransactionClient) => {
-    const existing = await tx.depositRequest.findUnique({ where: { id } });
-    if (!existing) throw new HTTPException(404, { message: "Deposit request not found" });
-    if (existing.status !== "pending")
-      throw new HTTPException(400, { message: "Deposit request has already been processed" });
+  // Step 1 — validate outside any transaction. Cheap reads; a clean
+  // 404/400 before we touch the ledger is worth more than atomicity
+  // on the entire approve operation.
+  const existing = await prisma.depositRequest.findUnique({ where: { id } });
+  if (!existing) throw new HTTPException(404, { message: "Deposit request not found" });
+  if (existing.status !== "pending") {
+    throw new HTTPException(400, { message: "Deposit request has already been processed" });
+  }
 
-    const req = await tx.depositRequest.update({
-      where: { id },
-      data: { status: "approved", processedBy: user.id },
-    });
+  let result: typeof existing;
 
-    // Create corresponding transaction
-    await tx.transaction.create({
-      data: {
-        accountId: req.accountId,
-        type: "deposit",
-        amount: req.amount,
-        method: req.method,
-        description: req.description || "Approved deposit request",
-        status: "completed",
+  if (flags.ledgerEnabled) {
+    // Phase 10 path: route through the deposit workflow so the ledger
+    // gets a balanced journal entry (Dr cash / Cr member savings)
+    // alongside the Account.balance projection and Transaction row.
+    // The workflow is idempotent on its idempotencyKey — a retried
+    // approval is a no-op for the ledger and still flips the request
+    // status below.
+    logger.info(
+      { event: "deposit_request.approve.workflow", depositRequestId: id, amount: existing.amount },
+      "approving deposit request via ledger workflow",
+    );
+    await runWorkflow(depositWorkflow, {
+      idempotencyKey: `deposit-request:${id}`,
+      startedBy: user.id,
+      input: {
+        memberAccountId: existing.accountId,
+        amount: Money.toString(Money.fromDb(existing.amount)),
+        method: existing.method,
+        description: existing.description || "Approved deposit request",
         processedBy: user.id,
+        sourceOfFunds: mapMethodToLedgerSource(existing.method),
       },
     });
 
-    // Update account balance
-    await tx.account.update({
-      where: { id: req.accountId },
-      data: { balance: { increment: req.amount }, lastActivity: new Date() },
+    // Flip the request status. The workflow has already written the
+    // Account, Journal, and Transaction rows — this single update is
+    // the only piece of work not atomic with the workflow post. If it
+    // fails, a retried approval succeeds because the workflow
+    // idempotency key short-circuits and the status update runs fresh.
+    result = await prisma.depositRequest.update({
+      where: { id },
+      data: { status: "approved", processedBy: user.id },
     });
-
-    return req;
-  });
+  } else {
+    // Legacy kill-switch path. Reachable via LEDGER_ENABLED=false env.
+    // Identical to pre-Phase-10 behaviour: Transaction + Account
+    // balance + request status change in one DB transaction.
+    logger.warn(
+      { event: "deposit_request.approve.legacy", depositRequestId: id },
+      "approving deposit request via legacy direct-balance path (LEDGER_ENABLED=false)",
+    );
+    result = await withTx(async (tx: Prisma.TransactionClient) => {
+      const req = await tx.depositRequest.update({
+        where: { id },
+        data: { status: "approved", processedBy: user.id },
+      });
+      await tx.transaction.create({
+        data: {
+          accountId: req.accountId,
+          type: "deposit",
+          amount: req.amount,
+          method: req.method,
+          description: req.description || "Approved deposit request",
+          status: "completed",
+          processedBy: user.id,
+        },
+      });
+      await tx.account.update({
+        where: { id: req.accountId },
+        data: { balance: { increment: req.amount }, lastActivity: new Date() },
+      });
+      return req;
+    });
+  }
 
   await writeAuditLog(c, {
     action: "deposit_request_approved",
     entity: "deposit_request",
     entityId: result.id,
+    details: { ledgerEnabled: flags.ledgerEnabled, amount: result.amount },
   });
   return c.json({ success: true, data: result });
 });
