@@ -12,7 +12,6 @@ import {
   LayoutDashboard,
   Users,
   Banknote,
-  Wallet,
   Receipt,
   CreditCard,
   ClipboardList,
@@ -20,7 +19,6 @@ import {
   Heart,
   UserCog,
   Settings,
-  HelpCircle,
   ChevronDown,
   LogOut,
   X,
@@ -30,6 +28,8 @@ import {
   ArrowUpFromLine,
   FileBarChart,
   Percent,
+  ScrollText,
+  Info,
 } from "lucide-react";
 
 interface SidebarProps {
@@ -56,28 +56,12 @@ const navItems: NavItem[] = [
 
   // Member Portal Section
   { label: "", href: undefined, icon: LayoutDashboard, divider: true, section: "Member Portal", roles: ["member"] },
-  {
-    label: "My Savings",
-    icon: Wallet,
-    roles: ["member"],
-    children: [
-      { label: "My Accounts", href: "/portal/savings" },
-      { label: "Deposit Funds", href: "/portal/deposits" },
-      { label: "Withdraw Funds", href: "/portal/withdrawals" },
-    ],
-  },
-  {
-    label: "My Loans",
-    icon: CreditCard,
-    roles: ["member"],
-    children: [
-      { label: "Loan Overview", href: "/portal/loans" },
-      { label: "Apply for Loan", href: "/portal/loans?action=apply" },
-    ],
-  },
-  { label: "My Transactions", href: "/portal/transactions", icon: Wallet, roles: ["member"] },
+  { label: "My Account", href: "/portal/account", icon: UserCog, roles: ["member"] },
+  { label: "Transactions", href: "/portal/transactions", icon: ArrowLeftRight, roles: ["member"] },
   { label: "Social Welfare", href: "/portal/welfare", icon: Heart, roles: ["member"] },
-  { label: "Help & Support", href: "/portal/help", icon: HelpCircle, roles: ["member"] },
+  { label: "Remarks", href: "/portal/remarks", icon: ScrollText, roles: ["member"] },
+  { label: "SACCO Info", href: "/portal/sacco-info", icon: Info, roles: ["member"] },
+  { label: "Settings", href: "/portal/settings", icon: Settings, roles: ["member"] },
 
   // Administration Section
   {

@@ -1,55 +1,104 @@
 "use client";
 
-import { useState } from "react";
-import { Heart, Loader2, X } from "lucide-react";
-import { toast } from "sonner";
-import { useWelfarePrograms, useCreatePledge, useMyPledges } from "@/hooks/use-welfare";
+import { Heart, Gift, HeartHandshake, Scale } from "lucide-react";
+import { Skeleton } from "@/components/ui/skeleton";
+import { useMyMemberDashboard } from "@/hooks/use-members";
 import { formatCurrency } from "@/lib/utils";
-import { StatSkeleton, CardSkeleton } from "@/components/ui/skeleton";
-import type { Pledge, WelfareProgram } from "@iffe/shared";
+import { cn } from "@/lib/utils";
+import type { MemberSupportStatus } from "@iffe/shared";
+
+function formatSupportStatus(status: MemberSupportStatus) {
+  switch (status) {
+    case "received":
+      return "Received";
+    case "requested":
+      return "Pending";
+    default:
+      return "Not Received";
+  }
+}
+
+function getSupportTone(status: MemberSupportStatus) {
+  switch (status) {
+    case "received":
+      return "text-success";
+    case "requested":
+      return "text-warning";
+    default:
+      return "text-text";
+  }
+}
+
+function SupportCard({
+  title,
+  description,
+  icon: Icon,
+  status,
+  totalDebt,
+}: {
+  title: string;
+  description: string;
+  icon: React.ElementType;
+  status: MemberSupportStatus;
+  totalDebt: number;
+}) {
+  return (
+    <div className="bg-white dark:bg-gray-950 border border-gray-200 dark:border-gray-800 shadow-sm rounded-xl p-6">
+      <div className="flex items-center gap-3 mb-4">
+        <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center">
+          <Icon className="w-5 h-5 text-primary" />
+        </div>
+        <div>
+          <h3 className="text-base font-bold text-gray-900 dark:text-white">{title}</h3>
+          <p className="text-xs text-text-muted">{description}</p>
+        </div>
+      </div>
+
+      <div className="grid grid-cols-2 gap-4">
+        <div className="rounded-xl border border-border/60 bg-surface-alt/40 p-4">
+          <p className="text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Status</p>
+          <p className={cn("text-lg font-semibold mt-2", getSupportTone(status))}>{formatSupportStatus(status)}</p>
+        </div>
+        <div className="rounded-xl border border-border/60 bg-surface-alt/40 p-4">
+          <p className="text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Total Debt</p>
+          <p className="text-lg font-semibold text-text mt-2">{formatCurrency(totalDebt)}</p>
+        </div>
+      </div>
+    </div>
+  );
+}
 
 export default function WelfarePage() {
-  const { data, isLoading } = useWelfarePrograms();
-  const { data: myPledges } = useMyPledges();
-  const createPledge = useCreatePledge();
+  const { data, isLoading, error, refetch } = useMyMemberDashboard();
 
-  const programs: WelfareProgram[] = data?.data ?? [];
-  const pledges: Pledge[] = myPledges ?? [];
-  const totalPledged = pledges.reduce((sum, pledge) => sum + Number(pledge.amount || 0), 0);
-  const totalRaised = programs.reduce((sum, program) => sum + Number(program.raisedAmount || 0), 0);
-
-  const [pledgeDialogOpen, setPledgeDialogOpen] = useState(false);
-  const [selectedProgramId, setSelectedProgramId] = useState<string>("");
-  const [pledgeAmount, setPledgeAmount] = useState("");
-  const [pledging, setPledging] = useState(false);
-
-  function openPledgeDialog(programId: string) {
-    setSelectedProgramId(programId);
-    setPledgeAmount("");
-    setPledgeDialogOpen(true);
+  if (isLoading) {
+    return (
+      <div className="space-y-6">
+        <Skeleton className="h-12 w-80" />
+        <Skeleton className="h-24 rounded-xl" />
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <Skeleton className="h-44 rounded-xl" />
+          <Skeleton className="h-44 rounded-xl" />
+        </div>
+      </div>
+    );
   }
 
-  async function handlePledge() {
-    const amount = parseFloat(pledgeAmount);
-    if (!amount || amount < 1000) {
-      toast.error("Minimum pledge is USh 1,000");
-      return;
-    }
-    setPledging(true);
-    try {
-      await createPledge.mutateAsync({
-        programId: selectedProgramId,
-        amount,
-      });
-      toast.success("Pledge submitted successfully!");
-      setPledgeDialogOpen(false);
-    } catch (err: unknown) {
-      const message = err instanceof Error ? err.message : "Failed to create pledge";
-      toast.error(message);
-    } finally {
-      setPledging(false);
-    }
+  if (error || !data) {
+    return (
+      <div className="bg-white dark:bg-gray-950 border border-gray-200 dark:border-gray-800 shadow-sm rounded-xl p-12 text-center">
+        <p className="text-text-muted">
+          {error instanceof Error ? error.message : "Your welfare details could not be loaded."}
+        </p>
+        <button type="button" onClick={() => refetch()} className="text-primary font-medium hover:underline mt-3">
+          Retry
+        </button>
+      </div>
+    );
   }
+
+  const { socialWelfare } = data;
+  const totalDebt = socialWelfare.weddings.totalDebt + socialWelfare.condolences.totalDebt;
 
   return (
     <div className="space-y-6">
@@ -58,149 +107,42 @@ export default function WelfarePage() {
           <Heart className="w-5 h-5 text-danger" />
         </div>
         <div>
-          <h1 className="text-xl font-bold text-gray-900 dark:text-white">Social Welfare Programs</h1>
-          <p className="text-text-muted text-sm">Support your community through welfare contributions</p>
+          <h1 className="text-xl font-bold text-gray-900 dark:text-white">Social Welfare</h1>
+          <p className="text-text-muted text-sm">Your standing on weddings, condolences, and overall welfare debt.</p>
         </div>
       </div>
 
-      {isLoading ? (
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-          <StatSkeleton />
-          <StatSkeleton />
-          <StatSkeleton />
-        </div>
-      ) : (
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-          <div className="bg-white dark:bg-gray-950 border border-gray-200 dark:border-gray-800 shadow-sm rounded-xl p-5">
-            <p className="text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider">
-              Active Programs
-            </p>
-            <p className="text-xl font-bold text-gray-900 dark:text-white mt-1">
-              {programs.filter((p) => p.status === "active").length}
-            </p>
+      <section className="bg-white dark:bg-gray-950 border border-gray-200 dark:border-gray-800 shadow-sm rounded-xl p-6">
+        <div className="flex items-center gap-3">
+          <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center">
+            <Scale className="w-5 h-5 text-primary" />
           </div>
-          <div className="bg-white dark:bg-gray-950 border border-gray-200 dark:border-gray-800 shadow-sm rounded-xl p-5">
+          <div className="flex-1">
             <p className="text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider">
-              My Total Pledges
+              Total Welfare Debt
             </p>
-            <p className="text-2xl font-bold text-primary mt-1">{formatCurrency(totalPledged)}</p>
-          </div>
-          <div className="bg-white dark:bg-gray-950 border border-gray-200 dark:border-gray-800 shadow-sm rounded-xl p-5">
-            <p className="text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Total Raised</p>
-            <p className="text-2xl font-bold text-success mt-1">{formatCurrency(totalRaised)}</p>
+            <p className="text-2xl font-bold text-gray-900 dark:text-white mt-1">{formatCurrency(totalDebt)}</p>
+            <p className="text-xs text-text-muted mt-1">Sum of outstanding wedding and condolence contributions.</p>
           </div>
         </div>
-      )}
+      </section>
 
-      {isLoading ? (
-        <div className="grid md:grid-cols-2 gap-6">
-          <CardSkeleton />
-          <CardSkeleton />
-          <CardSkeleton />
-          <CardSkeleton />
-        </div>
-      ) : (
-        <div className="grid md:grid-cols-2 gap-6">
-          {programs.length === 0 ? (
-            <div className="bg-white dark:bg-gray-950 border border-gray-200 dark:border-gray-800 shadow-sm rounded-xl p-8 text-center col-span-full">
-              <p className="text-text-muted">No welfare programs available at this time.</p>
-            </div>
-          ) : (
-            programs.map((program) => {
-              const progress = program.targetAmount > 0 ? (program.raisedAmount / program.targetAmount) * 100 : 0;
-              return (
-                <div
-                  key={program.id}
-                  className="bg-white dark:bg-gray-950 border border-gray-200 dark:border-gray-800 shadow-sm rounded-xl p-6"
-                >
-                  <div className="flex items-center justify-between mb-3">
-                    <h3 className="font-bold text-gray-900 dark:text-white">{program.name}</h3>
-                    <span
-                      className={`text-xs font-medium px-2.5 py-1 rounded-full ${
-                        program.status === "active"
-                          ? "text-success bg-success/15"
-                          : program.status === "completed"
-                            ? "text-info bg-info/10"
-                            : "text-warning bg-warning/15"
-                      }`}
-                    >
-                      {program.status.charAt(0).toUpperCase() + program.status.slice(1)}
-                    </span>
-                  </div>
-                  <p className="text-sm text-text-muted mb-4">{program.description}</p>
-                  <div className="flex items-center justify-between text-sm mb-2">
-                    <span className="text-text-muted">{program.contributorCount} contributors</span>
-                    <span className="font-medium text-text">{Math.round(progress)}% funded</span>
-                  </div>
-                  <div className="h-2 bg-surface-alt rounded-full mb-2">
-                    <div
-                      className="h-full bg-primary rounded-full transition-all"
-                      style={{ width: `${Math.min(progress, 100)}%` }}
-                    />
-                  </div>
-                  <div className="flex items-center justify-between text-sm mb-4">
-                    <span className="text-text-muted">{formatCurrency(program.raisedAmount)} raised</span>
-                    <span className="text-text-muted">of {formatCurrency(program.targetAmount)}</span>
-                  </div>
-                  <button
-                    onClick={() => openPledgeDialog(program.id)}
-                    disabled={program.status !== "active"}
-                    className="w-full inline-flex items-center justify-center gap-2 px-4 py-2.5 text-sm font-medium text-white bg-primary rounded-lg hover:bg-primary-dark transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-                  >
-                    <Heart className="w-4 h-4" /> Make a Pledge
-                  </button>
-                </div>
-              );
-            })
-          )}
-        </div>
-      )}
-
-      {/* Pledge Dialog */}
-      {pledgeDialogOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center">
-          <div className="absolute inset-0 bg-black/50" onClick={() => setPledgeDialogOpen(false)} />
-          <div className="relative bg-white dark:bg-gray-950 border border-gray-200 dark:border-gray-800 shadow-sm rounded-xl p-6 w-full max-w-md mx-4 space-y-4">
-            <div className="flex items-center justify-between">
-              <h3 className="text-lg font-bold text-gray-900 dark:text-white">Make a Pledge</h3>
-              <button onClick={() => setPledgeDialogOpen(false)} className="p-1 hover:bg-surface-alt rounded-lg">
-                <X className="w-5 h-5 text-text-muted" />
-              </button>
-            </div>
-            <p className="text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider">
-              {programs.find((p) => p.id === selectedProgramId)?.name}
-            </p>
-            <div>
-              <label className="block text-sm font-medium text-text mb-2">Pledge Amount (USh)</label>
-              <input
-                type="number"
-                min="1000"
-                step="1000"
-                placeholder="Enter amount (min 1,000)"
-                value={pledgeAmount}
-                onChange={(e) => setPledgeAmount(e.target.value)}
-                className="w-full px-4 py-2.5 bg-white/60 border border-white/40 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
-              />
-            </div>
-            <div className="flex gap-3">
-              <button
-                onClick={() => setPledgeDialogOpen(false)}
-                className="flex-1 px-4 py-2.5 text-sm font-medium text-text border border-border rounded-lg hover:bg-surface-alt transition-colors"
-              >
-                Cancel
-              </button>
-              <button
-                onClick={handlePledge}
-                disabled={pledging}
-                className="flex-1 inline-flex items-center justify-center gap-2 px-4 py-2.5 text-sm font-medium text-white bg-primary rounded-lg hover:bg-primary-dark transition-colors disabled:opacity-50"
-              >
-                {pledging ? <Loader2 className="w-4 h-4 animate-spin" /> : <Heart className="w-4 h-4" />}
-                Confirm Pledge
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <SupportCard
+          title="Weddings"
+          description="Contributions toward member weddings."
+          icon={Gift}
+          status={socialWelfare.weddings.status}
+          totalDebt={socialWelfare.weddings.totalDebt}
+        />
+        <SupportCard
+          title="Condolences"
+          description="Contributions toward member condolences."
+          icon={HeartHandshake}
+          status={socialWelfare.condolences.status}
+          totalDebt={socialWelfare.condolences.totalDebt}
+        />
+      </div>
     </div>
   );
 }

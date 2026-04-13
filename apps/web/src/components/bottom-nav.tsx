@@ -4,7 +4,16 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useAuthStore } from "@/stores/auth-store";
 import type { Role } from "@iffe/shared";
-import { LayoutDashboard, CreditCard, ArrowLeftRight, Heart, Users, ClipboardList, Receipt } from "lucide-react";
+import {
+  LayoutDashboard,
+  CreditCard,
+  ArrowLeftRight,
+  Heart,
+  Users,
+  ClipboardList,
+  Receipt,
+  UserCog,
+} from "lucide-react";
 import { cn } from "@/lib/utils";
 
 interface NavTab {
@@ -16,13 +25,8 @@ interface NavTab {
 
 const memberTabs: NavTab[] = [
   { label: "Home", href: "/portal/dashboard", icon: LayoutDashboard, match: ["/portal/dashboard"] },
-  { label: "Loans", href: "/portal/loans", icon: CreditCard, match: ["/portal/loans"] },
-  {
-    label: "Transact",
-    href: "/portal/deposits",
-    icon: ArrowLeftRight,
-    match: ["/portal/deposits", "/portal/withdrawals", "/portal/transactions"],
-  },
+  { label: "Account", href: "/portal/account", icon: UserCog, match: ["/portal/account"] },
+  { label: "Transactions", href: "/portal/transactions", icon: ArrowLeftRight, match: ["/portal/transactions"] },
   { label: "Welfare", href: "/portal/welfare", icon: Heart, match: ["/portal/welfare"] },
 ];
 
