@@ -17,6 +17,7 @@ import {
   X,
 } from "lucide-react";
 import { cn, formatCurrency, formatDate } from "@/lib/utils";
+import { ComingSoon } from "@/components/ui/coming-soon";
 import type { MemberDashboard, MemberSupportStatus } from "@iffe/shared";
 
 interface MemberDashboardViewProps {
@@ -176,7 +177,7 @@ function MemberProfileContent({ dashboard }: { dashboard: MemberDashboard }) {
 }
 
 function AccountDetailsContent({ dashboard }: { dashboard: MemberDashboard }) {
-  const { accounts, member, totals } = dashboard;
+  const { accounts, member } = dashboard;
 
   return (
     <>
@@ -222,7 +223,6 @@ function AccountDetailsContent({ dashboard }: { dashboard: MemberDashboard }) {
       )}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-6">
         <InfoField label="No. of Shares" value={String(member.shareCount)} />
-        <InfoField label="Outstanding Debt" value={formatCurrency(totals.outstandingLoanBalance)} />
       </div>
     </>
   );
@@ -352,15 +352,13 @@ function SharesContent({ dashboard }: { dashboard: MemberDashboard }) {
   );
 }
 
-function OutstandingDebtContent({ dashboard }: { dashboard: MemberDashboard }) {
+function OutstandingDebtContent() {
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-      <InfoField label="Outstanding Balance" value={formatCurrency(dashboard.totals.outstandingLoanBalance)} />
-      <InfoField
-        label="Active Loans"
-        value={`${dashboard.totals.activeLoanCount} loan${dashboard.totals.activeLoanCount === 1 ? "" : "s"}`}
-      />
-    </div>
+    <ComingSoon
+      variant="inline"
+      title="Loans are coming soon"
+      description="You'll be able to track outstanding balances and active loans here once the loans module is live."
+    />
   );
 }
 
@@ -384,71 +382,68 @@ interface TileConfig {
   content: (dashboard: MemberDashboard) => React.ReactNode;
 }
 
-function buildTiles(dashboard: MemberDashboard): TileConfig[] {
-  const { totals, transactionSummary, recentTransactions, accounts, socialWelfare, member } = dashboard;
-  const totalWelfareDebt = socialWelfare.weddings.totalDebt + socialWelfare.condolences.totalDebt;
-
+function buildTiles(): TileConfig[] {
   return [
     {
       id: "total-balance",
       title: "Total Balance",
-      summary: `${formatCurrency(totals.totalBalance)} across ${totals.accountCount} account${totals.accountCount === 1 ? "" : "s"}`,
+      summary: "Your balance across all accounts",
       icon: Wallet,
       content: (d) => <TotalBalanceContent dashboard={d} />,
     },
     {
       id: "shares",
       title: "No. of Shares",
-      summary: `${totals.shareCount.toLocaleString()} shares on record`,
+      summary: "Your share holdings with IFFE",
       icon: Banknote,
       content: (d) => <SharesContent dashboard={d} />,
     },
     {
       id: "outstanding-debt",
       title: "Outstanding Debt",
-      summary: `${formatCurrency(totals.outstandingLoanBalance)} · ${totals.activeLoanCount} active loan${totals.activeLoanCount === 1 ? "" : "s"}`,
+      summary: "Coming soon",
       icon: Banknote,
-      content: (d) => <OutstandingDebtContent dashboard={d} />,
+      content: () => <OutstandingDebtContent />,
     },
     {
       id: "monthly-subscription",
       title: "Monthly Subscription",
-      summary: `${formatCurrency(transactionSummary.monthlySubscriptionTotal)} · ${recentTransactions.length} recent activity`,
+      summary: "Your monthly subscription contribution",
       icon: Banknote,
       content: (d) => <MonthlySubscriptionContent dashboard={d} />,
     },
     {
       id: "member-profile",
       title: "Member Profile",
-      summary: "Personal and membership details",
+      summary: "Your personal and membership details",
       icon: UserRound,
       content: (d) => <MemberProfileContent dashboard={d} />,
     },
     {
       id: "account-details",
       title: "Account Details",
-      summary: `${accounts.length} account${accounts.length === 1 ? "" : "s"} on file`,
+      summary: "All your accounts on file",
       icon: Wallet,
       content: (d) => <AccountDetailsContent dashboard={d} />,
     },
     {
       id: "transactions",
       title: "Transactions",
-      summary: `${recentTransactions.length} recent · ${formatCurrency(transactionSummary.totalDeposits)} total deposits`,
+      summary: "Your recent deposits and withdrawals",
       icon: Banknote,
       content: (d) => <TransactionsContent dashboard={d} />,
     },
     {
       id: "social-welfare",
       title: "Social Welfare",
-      summary: `Weddings: ${formatSupportStatus(socialWelfare.weddings.status)} · Condolences: ${formatSupportStatus(socialWelfare.condolences.status)} · Debt: ${formatCurrency(totalWelfareDebt)}`,
+      summary: "Weddings, condolences, and welfare debt",
       icon: HeartHandshake,
       content: (d) => <SocialWelfareContent dashboard={d} />,
     },
     {
       id: "remarks",
       title: "Remarks",
-      summary: member.remarks ? "Notes recorded · tap to view" : "No remarks recorded",
+      summary: "Staff notes on your account",
       icon: ScrollText,
       content: (d) => <RemarksContent dashboard={d} />,
     },
@@ -584,7 +579,7 @@ export function MemberDashboardView({ dashboard, variant }: MemberDashboardViewP
   );
 
   if (variant === "member") {
-    const tiles = buildTiles(dashboard);
+    const tiles = buildTiles();
     const activeTile = tiles.find((t) => t.id === activeTileId) ?? null;
 
     return (
@@ -628,11 +623,18 @@ export function MemberDashboardView({ dashboard, variant }: MemberDashboardViewP
           value={totals.shareCount.toLocaleString()}
           hint="Captured from member records"
         />
-        <SummaryCard
-          title="Outstanding Debt"
-          value={formatCurrency(totals.outstandingLoanBalance)}
-          hint={`${totals.activeLoanCount} active loan${totals.activeLoanCount === 1 ? "" : "s"}`}
-        />
+        <div className="bg-white dark:bg-gray-950 border border-dashed border-primary/30 shadow-sm rounded-xl p-5 flex flex-col justify-between">
+          <div>
+            <p className="text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+              Outstanding Debt
+            </p>
+            <p className="text-2xl font-bold text-gray-900 dark:text-white mt-2">—</p>
+            <p className="text-sm text-text-muted mt-1">Loans module not yet available</p>
+          </div>
+          <span className="inline-flex items-center self-start mt-3 px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest bg-primary/15 text-primary">
+            Coming Soon
+          </span>
+        </div>
         <SummaryCard
           title="Monthly Subscription"
           value={formatCurrency(transactionSummary.monthlySubscriptionTotal)}
@@ -689,7 +691,6 @@ export function MemberDashboardView({ dashboard, variant }: MemberDashboardViewP
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-6">
             <InfoField label="No. of Shares" value={String(member.shareCount)} />
-            <InfoField label="Outstanding Debt" value={formatCurrency(totals.outstandingLoanBalance)} />
           </div>
         </SectionCard>
 

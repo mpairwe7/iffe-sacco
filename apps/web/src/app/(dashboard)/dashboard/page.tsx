@@ -1,34 +1,30 @@
 "use client";
 
-import { Users, Coins, Banknote, TrendingUp, Calendar, ArrowUpRight, ArrowDownRight } from "lucide-react";
+import { Users, Coins, Banknote, ArrowUpRight, ArrowDownRight } from "lucide-react";
 import { StatCard } from "@/components/stat-card";
-import { DepositsWithdrawalsChart, ExpenseChart, LoanChart } from "@/components/dashboard-charts";
+import { DepositsWithdrawalsChart, ExpenseChart } from "@/components/dashboard-charts";
+import { ComingSoon } from "@/components/ui/coming-soon";
 import Link from "next/link";
 import {
   useDashboardStats,
   useRecentTransactions,
-  useUpcomingPayments,
   useMonthlyTransactions,
   useExpenseBreakdown,
-  useLoanTrends,
 } from "@/hooks/use-dashboard";
 import { useAuthStore } from "@/stores/auth-store";
 import { formatCurrency, formatDate } from "@/lib/utils";
 import { Skeleton } from "@/components/ui/skeleton";
-import type { Transaction, Loan, DashboardStats } from "@iffe/shared";
+import type { Transaction, DashboardStats } from "@iffe/shared";
 
 export default function DashboardPage() {
   const statsQuery = useDashboardStats();
   const recentQuery = useRecentTransactions(5);
-  const upcomingQuery = useUpcomingPayments(7);
   const { data: monthlyTxData } = useMonthlyTransactions(12);
   const { data: expenseBreakdown } = useExpenseBreakdown();
-  const { data: loanTrends } = useLoanTrends(12);
   const user = useAuthStore((s) => s.user);
 
   const stats = statsQuery.data as DashboardStats | undefined;
   const recentTransactions = (recentQuery.data || []) as Transaction[];
-  const upcomingPayments = (upcomingQuery.data || []) as Loan[];
 
   return (
     <div className="space-y-8">
@@ -76,14 +72,17 @@ export default function DashboardPage() {
               icon={Banknote}
               color="warning"
             />
-            <StatCard
-              title="Active Loans"
-              value={stats ? formatCurrency(Number(stats.activeLoanAmount)) : "—"}
-              change={stats ? `${stats.activeLoans} active loans` : undefined}
-              changeType="neutral"
-              icon={TrendingUp}
-              color="info"
-            />
+            <div className="bg-white dark:bg-gray-950 border border-dashed border-primary/30 shadow-sm rounded-xl p-5 flex flex-col justify-between">
+              <div>
+                <p className="text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                  Active Loans
+                </p>
+                <p className="text-2xl font-bold text-gray-900 dark:text-white mt-2">—</p>
+              </div>
+              <span className="inline-flex items-center self-start mt-3 px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest bg-primary/15 text-primary">
+                Coming Soon
+              </span>
+            </div>
           </>
         )}
       </div>
@@ -98,58 +97,18 @@ export default function DashboardPage() {
 
       <div className="grid lg:grid-cols-3 gap-6">
         <div className="lg:col-span-2">
-          <LoanChart trendsData={loanTrends || []} />
+          <ComingSoon
+            variant="card"
+            title="Loan Activity"
+            description="Disbursement and repayment trends will appear here once the loans module is live."
+          />
         </div>
 
-        {/* Upcoming Payments */}
-        <div className="bg-white dark:bg-gray-950 border border-gray-200 dark:border-gray-800 shadow-sm rounded-xl p-6">
-          <div className="flex items-center justify-between mb-6">
-            <div>
-              <h3 className="text-base font-bold text-gray-900 dark:text-white">Upcoming Payments</h3>
-              <p className="text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider">
-                Due in the next 7 days
-              </p>
-            </div>
-            <Link href="/admin/loans" className="text-sm text-primary font-medium hover:underline">
-              View All
-            </Link>
-          </div>
-          <div className="space-y-4">
-            {upcomingQuery.isLoading ? (
-              Array.from({ length: 3 }).map((_, i) => (
-                <div key={i} className="flex items-center gap-4 p-3 rounded-lg bg-surface-alt">
-                  <Skeleton className="w-10 h-10 rounded-full" />
-                  <div className="flex-1">
-                    <Skeleton className="h-4 w-28 mb-1" />
-                    <Skeleton className="h-3 w-40" />
-                  </div>
-                  <Skeleton className="h-4 w-20" />
-                </div>
-              ))
-            ) : upcomingPayments.length === 0 ? (
-              <p className="text-sm text-text-muted text-center py-4">No upcoming payments</p>
-            ) : (
-              upcomingPayments.map((payment) => (
-                <div key={payment.id} className="flex items-center gap-4 p-3 rounded-lg bg-surface-alt">
-                  <div className="w-10 h-10 rounded-full bg-warning/15 flex items-center justify-center">
-                    <Calendar className="w-5 h-5 text-warning" />
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <p className="text-sm font-medium text-text truncate">
-                      {payment.member ? `${payment.member.firstName} ${payment.member.lastName}` : "—"}
-                    </p>
-                    <p className="text-xs text-text-muted">
-                      {payment.type} &middot; Due {payment.nextPaymentDate ? formatDate(payment.nextPaymentDate) : "—"}
-                    </p>
-                  </div>
-                  <span className="text-sm font-semibold text-text whitespace-nowrap">
-                    {formatCurrency(Number(payment.monthlyPayment))}
-                  </span>
-                </div>
-              ))
-            )}
-          </div>
-        </div>
+        <ComingSoon
+          variant="card"
+          title="Upcoming Payments"
+          description="Loans due in the next 7 days will be listed here once the loans module is live."
+        />
       </div>
 
       {/* Recent Transactions */}

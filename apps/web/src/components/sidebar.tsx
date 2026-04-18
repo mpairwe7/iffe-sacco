@@ -52,7 +52,7 @@ const navItems: NavItem[] = [
   { label: "Admin Dashboard", href: "/dashboard", icon: LayoutDashboard, roles: ["admin"] },
   { label: "Staff Dashboard", href: "/staff", icon: LayoutDashboard, roles: ["staff"] },
   { label: "Chairman Dashboard", href: "/chairman", icon: LayoutDashboard, roles: ["chairman"] },
-  { label: "My Dashboard", href: "/portal/dashboard", icon: LayoutDashboard, roles: ["member"] },
+  { label: "Dashboard", href: "/portal/dashboard", icon: LayoutDashboard, roles: ["member"] },
 
   // Member Portal Section
   { label: "", href: undefined, icon: LayoutDashboard, divider: true, section: "Member Portal", roles: ["member"] },

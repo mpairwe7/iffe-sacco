@@ -8,7 +8,16 @@ import { apiClient } from "@/lib/api-client";
 import { toast } from "sonner";
 import { formatCurrency } from "@/lib/utils";
 
-const reports = [
+interface ReportLink {
+  title: string;
+  desc: string;
+  icon: typeof FileText;
+  color: string;
+  href: string;
+  comingSoon?: boolean;
+}
+
+const reports: ReportLink[] = [
   {
     title: "Account Statement",
     desc: "Generate detailed account statements for any member",
@@ -29,6 +38,7 @@ const reports = [
     icon: TrendingUp,
     color: "warning",
     href: "/admin/reports?type=loans",
+    comingSoon: true,
   },
   {
     title: "Loan Due Report",
@@ -36,6 +46,7 @@ const reports = [
     icon: BarChart3,
     color: "danger",
     href: "/admin/reports?type=loan-due",
+    comingSoon: true,
   },
   {
     title: "Transaction Report",
@@ -145,19 +156,45 @@ export default function ReportsPage() {
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-        {reports.map((report) => (
-          <Link
-            key={report.title}
-            href={report.href}
-            className="group bg-white dark:bg-gray-950 border border-gray-200 dark:border-gray-800 shadow-sm rounded-xl p-6 hover:shadow-lg hover:border-primary/20 transition-all hover:-translate-y-0.5"
-          >
-            <div className={`w-12 h-12 rounded-xl flex items-center justify-center mb-4 ${colorMap[report.color]}`}>
-              <report.icon className="w-6 h-6" />
-            </div>
-            <h3 className="font-semibold text-text mb-1 group-hover:text-primary transition-colors">{report.title}</h3>
-            <p className="text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider">{report.desc}</p>
-          </Link>
-        ))}
+        {reports.map((report) => {
+          if (report.comingSoon) {
+            return (
+              <div
+                key={report.title}
+                className="relative bg-white dark:bg-gray-950 border border-dashed border-primary/30 shadow-sm rounded-xl p-6 opacity-80"
+                aria-disabled="true"
+              >
+                <span className="absolute top-3 right-3 inline-flex items-center px-2 py-0.5 rounded-full text-[9px] font-bold uppercase tracking-widest bg-primary/15 text-primary">
+                  Coming Soon
+                </span>
+                <div className={`w-12 h-12 rounded-xl flex items-center justify-center mb-4 ${colorMap[report.color]}`}>
+                  <report.icon className="w-6 h-6" />
+                </div>
+                <h3 className="font-semibold text-text mb-1">{report.title}</h3>
+                <p className="text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                  {report.desc}
+                </p>
+              </div>
+            );
+          }
+          return (
+            <Link
+              key={report.title}
+              href={report.href}
+              className="group bg-white dark:bg-gray-950 border border-gray-200 dark:border-gray-800 shadow-sm rounded-xl p-6 hover:shadow-lg hover:border-primary/20 transition-all hover:-translate-y-0.5"
+            >
+              <div className={`w-12 h-12 rounded-xl flex items-center justify-center mb-4 ${colorMap[report.color]}`}>
+                <report.icon className="w-6 h-6" />
+              </div>
+              <h3 className="font-semibold text-text mb-1 group-hover:text-primary transition-colors">
+                {report.title}
+              </h3>
+              <p className="text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                {report.desc}
+              </p>
+            </Link>
+          );
+        })}
       </div>
 
       {/* Quick Report Generator */}
@@ -195,7 +232,6 @@ export default function ReportsPage() {
             >
               <option value="statement">Account Statement</option>
               <option value="transactions">Transaction Report</option>
-              <option value="loans">Loan Report</option>
               <option value="expenses">Expense Report</option>
               <option value="revenue">Revenue Report</option>
             </select>
