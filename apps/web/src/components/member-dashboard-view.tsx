@@ -7,15 +7,69 @@ import {
   ArrowLeftRight,
   ArrowUpFromLine,
   Banknote,
+  Coins,
   HeartHandshake,
   Pencil,
+  Receipt,
   ScrollText,
   UserRound,
   Wallet,
 } from "lucide-react";
 import { cn, formatCurrency, formatDate } from "@/lib/utils";
 import { SectionCard as BannerCard } from "@/components/section-card";
-import type { MemberDashboard, MemberSupportStatus } from "@iffe/shared";
+import type { MemberDashboard, MemberSupportStatus, Transaction } from "@iffe/shared";
+
+function formatRelative(input: string | Date) {
+  const date = typeof input === "string" ? new Date(input) : input;
+  const now = new Date();
+  const diffMs = now.getTime() - date.getTime();
+  if (diffMs < 0) return formatDate(date);
+
+  const minutes = Math.floor(diffMs / 60_000);
+  if (minutes < 1) return "Just now";
+  if (minutes < 60) return `${minutes} min ago`;
+
+  const startOfToday = new Date(now.getFullYear(), now.getMonth(), now.getDate()).getTime();
+  const startOfDate = new Date(date.getFullYear(), date.getMonth(), date.getDate()).getTime();
+  const dayDiff = Math.round((startOfToday - startOfDate) / 86_400_000);
+  if (dayDiff === 0) return "Today";
+  if (dayDiff === 1) return "Yesterday";
+  if (dayDiff < 7) return `${dayDiff} days ago`;
+  if (dayDiff < 14) return "Last week";
+  if (dayDiff < 30) return `${Math.floor(dayDiff / 7)} weeks ago`;
+  if (dayDiff < 60) return "Last month";
+  if (dayDiff < 365) return `${Math.floor(dayDiff / 30)} months ago`;
+  return formatDate(date);
+}
+
+type TransactionVisual = {
+  tone: "success" | "warning" | "info" | "neutral";
+  Icon: React.ElementType;
+};
+
+function getTransactionVisual(type: Transaction["type"]): TransactionVisual {
+  switch (type) {
+    case "deposit":
+    case "interest_credit":
+      return { tone: "success", Icon: ArrowDownToLine };
+    case "withdrawal":
+      return { tone: "warning", Icon: ArrowUpFromLine };
+    case "loan_disbursement":
+    case "loan_repayment":
+      return { tone: "info", Icon: Coins };
+    case "fee":
+    case "transfer":
+    default:
+      return { tone: "neutral", Icon: Receipt };
+  }
+}
+
+const TX_TONE_CLASSES: Record<TransactionVisual["tone"], string> = {
+  success: "bg-success/15 text-success",
+  warning: "bg-warning/15 text-warning",
+  info: "bg-info/15 text-info",
+  neutral: "bg-text-muted/15 text-text-muted",
+};
 
 interface MemberDashboardViewProps {
   dashboard: MemberDashboard;
@@ -278,11 +332,18 @@ function TransactionsPreview({ dashboard }: { dashboard: MemberDashboard }) {
         const isOutflow =
           transaction.type === "withdrawal" || transaction.type === "loan_repayment" || transaction.type === "fee";
         const label = transaction.type.replace(/_/g, " ").replace(/\b\w/g, (char) => char.toUpperCase());
+        const { tone, Icon } = getTransactionVisual(transaction.type);
         return (
-          <li key={transaction.id} className="py-2.5 flex items-center justify-between gap-3">
-            <div className="min-w-0">
+          <li key={transaction.id} className="py-3 flex items-center gap-3">
+            <span
+              className={cn("w-10 h-10 rounded-full flex items-center justify-center shrink-0", TX_TONE_CLASSES[tone])}
+              aria-hidden="true"
+            >
+              <Icon className="w-4 h-4" />
+            </span>
+            <div className="flex-1 min-w-0">
               <p className="text-sm font-semibold text-text truncate">{label}</p>
-              <p className="text-xs text-text-muted">{formatDate(transaction.createdAt)}</p>
+              <p className="text-xs text-text-muted">{formatRelative(transaction.createdAt)}</p>
             </div>
             <p className={cn("text-sm font-bold tabular-nums shrink-0", isOutflow ? "text-warning" : "text-success")}>
               {isOutflow ? "-" : "+"} {formatCurrency(transaction.amount)}
@@ -346,17 +407,35 @@ function RemarksPreview({ dashboard }: { dashboard: MemberDashboard }) {
       </div>
     );
   }
-  return <p className="text-sm leading-6 text-text whitespace-pre-wrap line-clamp-6">{remarks}</p>;
+  const lines = remarks
+    .split(/\r?\n+/)
+    .map((line) => line.trim())
+    .filter(Boolean);
+  if (lines.length <= 1) {
+    return <p className="text-sm leading-6 text-text whitespace-pre-wrap line-clamp-6">{remarks}</p>;
+  }
+  return (
+    <ul className="space-y-2.5">
+      {lines.slice(0, 4).map((line, index) => (
+        <li key={index} className="flex items-start gap-3">
+          <span className="mt-1.5 w-1.5 h-1.5 rounded-full bg-primary shrink-0" aria-hidden="true" />
+          <p className="text-sm leading-6 text-text line-clamp-2">{line}</p>
+        </li>
+      ))}
+    </ul>
+  );
 }
 
 function DetailsLink({ href, label }: { href: string; label: string }) {
   return (
-    <Link
-      href={href}
-      className="mt-4 inline-flex items-center justify-center w-full sm:w-auto px-4 py-2.5 text-sm font-semibold text-white bg-primary rounded-lg hover:bg-primary-dark"
-    >
-      {label}
-    </Link>
+    <div className="mt-4 flex justify-center">
+      <Link
+        href={href}
+        className="inline-flex items-center justify-center px-5 py-2 text-sm font-semibold text-white bg-primary rounded-full hover:bg-primary-dark shadow-sm"
+      >
+        {label}
+      </Link>
+    </div>
   );
 }
 
@@ -364,32 +443,6 @@ export function MemberDashboardView({ dashboard, variant }: MemberDashboardViewP
   const { member, accounts, recentTransactions, transactionSummary, totals, socialWelfare, pledges } = dashboard;
   const name = `${member.firstName} ${member.lastName}`;
   const statusLabel = member.status.charAt(0).toUpperCase() + member.status.slice(1);
-
-  const memberActions = (
-    <div className="flex flex-wrap items-center gap-3">
-      <Link
-        href="/portal/deposits"
-        className="inline-flex items-center gap-2 px-4 py-2.5 text-sm font-medium text-white bg-primary rounded-lg hover:bg-primary-dark"
-      >
-        <ArrowDownToLine className="w-4 h-4" />
-        Deposit
-      </Link>
-      <Link
-        href="/portal/withdrawals"
-        className="inline-flex items-center gap-2 px-4 py-2.5 text-sm font-medium text-text border border-border rounded-lg hover:bg-surface-alt"
-      >
-        <ArrowUpFromLine className="w-4 h-4" />
-        Withdraw
-      </Link>
-      <Link
-        href="/portal/transactions"
-        className="inline-flex items-center gap-2 px-4 py-2.5 text-sm font-medium text-text border border-border rounded-lg hover:bg-surface-alt"
-      >
-        <Banknote className="w-4 h-4" />
-        Transactions
-      </Link>
-    </div>
-  );
 
   const header = (
     <div className="flex items-start justify-between flex-wrap gap-4">
@@ -428,7 +481,7 @@ export function MemberDashboardView({ dashboard, variant }: MemberDashboardViewP
         >
           {statusLabel}
         </span>
-        {variant === "admin" ? (
+        {variant === "admin" && (
           <Link
             href={`/admin/members/${member.id}/edit`}
             className="inline-flex items-center gap-2 px-4 py-2.5 text-sm font-medium text-white bg-primary rounded-lg hover:bg-primary-dark"
@@ -436,8 +489,6 @@ export function MemberDashboardView({ dashboard, variant }: MemberDashboardViewP
             <Pencil className="w-4 h-4" />
             Edit
           </Link>
-        ) : (
-          memberActions
         )}
       </div>
     </div>
