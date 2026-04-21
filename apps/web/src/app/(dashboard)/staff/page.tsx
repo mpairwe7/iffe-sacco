@@ -1,276 +1,175 @@
 "use client";
 
 import Link from "next/link";
-import { ArrowDownToLine, ArrowUpFromLine, ClipboardCheck, ClipboardList, Coins, Users, Wallet } from "lucide-react";
+import {
+  ArrowDownToLine,
+  Coins,
+  Heart,
+  HeartHandshake,
+  PiggyBank,
+  Plus,
+  ScrollText,
+  Users,
+  Wallet,
+} from "lucide-react";
 import { StatCard } from "@/components/stat-card";
+import { SectionCard } from "@/components/section-card";
 import { Skeleton } from "@/components/ui/skeleton";
-import { useApplications } from "@/hooks/use-applications";
+import { AccountsPreview } from "@/components/staff/accounts-preview";
+import { AddRemarkModal } from "@/components/staff/add-remark-modal";
+import { QueuePills } from "@/components/staff/queue-pills";
+import { RecentRemarksFeed } from "@/components/staff/recent-remarks-feed";
+import { RecentTransactionsList } from "@/components/staff/recent-transactions-list";
+import { WelfareSummary } from "@/components/staff/welfare-summary";
 import { useDashboardStats, useRecentTransactions } from "@/hooks/use-dashboard";
-import { useDepositRequests } from "@/hooks/use-deposit-requests";
-import { useWithdrawRequests } from "@/hooks/use-withdraw-requests";
-import { formatCurrency, formatDate } from "@/lib/utils";
-import type { Application, DashboardStats, DepositRequest, Transaction, WithdrawRequest } from "@iffe/shared";
+import { useMembers } from "@/hooks/use-members";
+import { useAuthStore } from "@/stores/auth-store";
+import { formatCurrency } from "@/lib/utils";
+import type { DashboardStats, Member, Transaction } from "@iffe/shared";
 
-function QueueListCard({
-  title,
-  href,
-  emptyMessage,
-  children,
-}: {
-  title: string;
-  href: string;
-  emptyMessage: string;
-  children: React.ReactNode;
-}) {
-  return (
-    <section className="bg-white dark:bg-gray-950 border border-gray-200 dark:border-gray-800 shadow-sm rounded-xl p-6">
-      <div className="flex items-center justify-between gap-3 mb-4">
-        <h2 className="text-base font-bold text-gray-900 dark:text-white">{title}</h2>
-        <Link href={href} className="text-sm text-primary font-medium hover:underline">
-          Open queue
-        </Link>
-      </div>
-      <div className="space-y-3">{children || <p className="text-sm text-text-muted">{emptyMessage}</p>}</div>
-    </section>
-  );
+function startOfToday() {
+  const d = new Date();
+  d.setHours(0, 0, 0, 0);
+  return d.getTime();
 }
 
 export default function StaffDashboardPage() {
+  const user = useAuthStore((s) => s.user);
   const statsQuery = useDashboardStats();
-  const recentQuery = useRecentTransactions(6);
-  const applicationsQuery = useApplications({ status: "pending", limit: 5, sortBy: "createdAt", sortOrder: "desc" });
-  const depositsQuery = useDepositRequests({ limit: 10, sortBy: "createdAt", sortOrder: "desc" });
-  const withdrawalsQuery = useWithdrawRequests({ limit: 10, sortBy: "createdAt", sortOrder: "desc" });
+  const recentTxQuery = useRecentTransactions(50);
+  const membersQuery = useMembers({ limit: 500 });
 
   const stats = statsQuery.data as DashboardStats | undefined;
-  const recentTransactions = (recentQuery.data || []) as Transaction[];
-  const pendingApplications = (applicationsQuery.data?.data || []) as Application[];
-  const pendingDeposits = ((depositsQuery.data?.data || []) as DepositRequest[])
-    .filter((item) => item.status === "pending")
-    .slice(0, 5);
-  const pendingWithdrawals = ((withdrawalsQuery.data?.data || []) as WithdrawRequest[])
-    .filter((item) => item.status === "pending")
-    .slice(0, 5);
+  const recentTransactions = (recentTxQuery.data ?? []) as Transaction[];
+  const members = (membersQuery.data?.data ?? []) as Member[];
+
+  const todayStart = startOfToday();
+  const depositsToday = recentTransactions
+    .filter(
+      (tx) => tx.type === "deposit" && tx.status === "completed" && new Date(tx.createdAt).getTime() >= todayStart,
+    )
+    .reduce((sum, tx) => sum + Number(tx.amount ?? 0), 0);
+
+  const totalShares = members.reduce((sum, member) => sum + Number(member.shareCount ?? 0), 0);
+
+  const pendingWelfareCount = members.reduce((count, member) => {
+    const wedding = member.weddingSupportStatus === "requested" ? 1 : 0;
+    const condolence = member.condolenceSupportStatus === "requested" ? 1 : 0;
+    return count + wedding + condolence;
+  }, 0);
+
+  const firstName = user?.name ? user.name.split(" ")[0] : "Staff";
+  const kpiLoading = statsQuery.isLoading || membersQuery.isLoading;
 
   return (
     <div className="space-y-8">
       <div className="flex items-start justify-between flex-wrap gap-4">
         <div>
-          <p className="text-xs font-bold uppercase tracking-[0.18em] text-primary mb-1">Staff Operations</p>
-          <h1 className="text-xl font-bold text-gray-900 dark:text-white">Staff Dashboard</h1>
+          <p className="text-xs font-bold uppercase tracking-[0.18em] text-primary mb-1">Staff Dashboard</p>
+          <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
+            Welcome, {firstName} <span aria-hidden>👋</span>
+          </h1>
           <p className="text-text-muted mt-1">
-            Work the approval queues, keep money movement moving, and monitor day-to-day member service activity.
+            Snapshot of member activity, money movement, and social welfare for today.
           </p>
-        </div>
-        <div className="flex flex-wrap gap-3">
-          <Link
-            href="/admin/applications"
-            className="inline-flex items-center gap-2 px-4 py-2.5 text-sm font-medium text-white bg-primary rounded-lg hover:bg-primary-dark"
-          >
-            <ClipboardList className="w-4 h-4" />
-            Applications
-          </Link>
-          <Link
-            href="/admin/deposit-requests"
-            className="inline-flex items-center gap-2 px-4 py-2.5 text-sm font-medium text-text border border-border rounded-lg hover:bg-surface-alt"
-          >
-            <ArrowDownToLine className="w-4 h-4" />
-            Deposits
-          </Link>
-          <Link
-            href="/admin/withdraw-requests"
-            className="inline-flex items-center gap-2 px-4 py-2.5 text-sm font-medium text-text border border-border rounded-lg hover:bg-surface-alt"
-          >
-            <ArrowUpFromLine className="w-4 h-4" />
-            Withdrawals
-          </Link>
         </div>
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
-        {statsQuery.isLoading ? (
+        {kpiLoading ? (
           Array.from({ length: 4 }).map((_, index) => <Skeleton key={index} className="h-28 rounded-xl" />)
         ) : (
           <>
             <StatCard
-              title="Pending Applications"
-              value={String(applicationsQuery.data?.total ?? 0)}
-              change="Waiting for approval or rejection"
-              changeType="neutral"
-              icon={ClipboardCheck}
+              title="Total Members"
+              value={(stats?.totalMembers ?? members.length).toLocaleString()}
+              change="All registered members"
+              changeType="positive"
+              icon={Users}
               color="primary"
             />
             <StatCard
-              title="Pending Money Requests"
-              value={String(stats?.pendingRequests ?? 0)}
-              change="Deposits and withdrawals pending review"
-              changeType="neutral"
+              title="Deposits Today"
+              value={formatCurrency(depositsToday)}
+              change="Completed deposits since midnight"
+              changeType="positive"
               icon={Wallet}
-              color="warning"
+              color="success"
             />
             <StatCard
-              title="Active Members"
-              value={String(stats?.totalMembers ?? 0)}
-              change="Current members requiring service support"
-              changeType="positive"
-              icon={Users}
+              title="Total Shares"
+              value={totalShares.toLocaleString()}
+              change="Across all members"
+              changeType="neutral"
+              icon={Coins}
               color="info"
             />
             <StatCard
-              title="Savings Under Care"
-              value={formatCurrency(stats?.totalSavings ?? 0)}
-              change="Active account balances across the SACCO"
-              changeType="positive"
-              icon={Coins}
-              color="success"
+              title="Pending Welfare"
+              value={pendingWelfareCount.toLocaleString()}
+              change="Members with active requests"
+              changeType={pendingWelfareCount > 0 ? "negative" : "neutral"}
+              icon={HeartHandshake}
+              color="warning"
             />
           </>
         )}
       </div>
 
-      <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
-        <QueueListCard
-          title="Application Queue"
-          href="/admin/applications"
-          emptyMessage="No pending applications right now."
-        >
-          {applicationsQuery.isLoading ? (
-            Array.from({ length: 4 }).map((_, index) => <Skeleton key={index} className="h-16 rounded-xl" />)
-          ) : pendingApplications.length === 0 ? (
-            <p className="text-sm text-text-muted">No pending applications right now.</p>
-          ) : (
-            pendingApplications.map((application) => (
-              <Link
-                key={application.id}
-                href={`/admin/applications/${application.id}`}
-                className="block rounded-xl border border-border/60 px-4 py-3 hover:bg-surface-alt/60"
-              >
-                <p className="text-sm font-semibold text-text">{application.fullName}</p>
-                <p className="text-xs text-text-muted mt-1">
-                  {application.phone} · Submitted {formatDate(application.createdAt)}
-                </p>
-              </Link>
-            ))
-          )}
-        </QueueListCard>
+      <QueuePills />
 
-        <QueueListCard
-          title="Pending Deposit Requests"
-          href="/admin/deposit-requests"
-          emptyMessage="No pending deposit requests."
+      <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
+        <SectionCard
+          title="Accounts"
+          subtitle="View and manage all member accounts"
+          drillHref="/admin/savings-accounts"
+          drillLabel="Open accounts"
+          icon={<PiggyBank className="w-4 h-4" />}
         >
-          {depositsQuery.isLoading ? (
-            Array.from({ length: 4 }).map((_, index) => <Skeleton key={index} className="h-16 rounded-xl" />)
-          ) : pendingDeposits.length === 0 ? (
-            <p className="text-sm text-text-muted">No pending deposit requests.</p>
-          ) : (
-            pendingDeposits.map((request) => (
-              <div key={request.id} className="rounded-xl border border-border/60 px-4 py-3">
-                <div className="flex items-start justify-between gap-4">
-                  <div>
-                    <p className="text-sm font-semibold text-text">
-                      {request.account?.member
-                        ? `${request.account.member.firstName} ${request.account.member.lastName}`
-                        : "Member deposit"}
-                    </p>
-                    <p className="text-xs text-text-muted mt-1">
-                      {request.method.replace(/_/g, " ")} · {formatDate(request.createdAt)}
-                    </p>
-                  </div>
-                  <p className="text-sm font-semibold text-success">{formatCurrency(request.amount)}</p>
-                </div>
-              </div>
-            ))
-          )}
-        </QueueListCard>
+          <AccountsPreview />
+        </SectionCard>
 
-        <QueueListCard
-          title="Pending Withdrawal Requests"
-          href="/admin/withdraw-requests"
-          emptyMessage="No pending withdrawal requests."
+        <SectionCard
+          title="Transactions"
+          subtitle="Record deposits, withdrawals and view activity"
+          drillHref="/admin/transactions"
+          drillLabel="Open transactions"
+          icon={<Wallet className="w-4 h-4" />}
+          action={
+            <Link
+              href="/admin/transactions/create?type=deposit"
+              className="inline-flex items-center gap-2 px-3 py-2 text-sm font-semibold text-white bg-success rounded-lg hover:bg-success/90"
+            >
+              <Plus className="w-4 h-4" />
+              <ArrowDownToLine className="w-3.5 h-3.5" />
+              Add Deposit
+            </Link>
+          }
         >
-          {withdrawalsQuery.isLoading ? (
-            Array.from({ length: 4 }).map((_, index) => <Skeleton key={index} className="h-16 rounded-xl" />)
-          ) : pendingWithdrawals.length === 0 ? (
-            <p className="text-sm text-text-muted">No pending withdrawal requests.</p>
-          ) : (
-            pendingWithdrawals.map((request) => (
-              <div key={request.id} className="rounded-xl border border-border/60 px-4 py-3">
-                <div className="flex items-start justify-between gap-4">
-                  <div>
-                    <p className="text-sm font-semibold text-text">
-                      {request.account?.member
-                        ? `${request.account.member.firstName} ${request.account.member.lastName}`
-                        : "Member withdrawal"}
-                    </p>
-                    <p className="text-xs text-text-muted mt-1">
-                      {request.method.replace(/_/g, " ")} · {formatDate(request.createdAt)}
-                    </p>
-                  </div>
-                  <p className="text-sm font-semibold text-warning">{formatCurrency(request.amount)}</p>
-                </div>
-              </div>
-            ))
-          )}
-        </QueueListCard>
+          <RecentTransactionsList limit={5} />
+        </SectionCard>
+
+        <SectionCard
+          title="Social Welfare"
+          subtitle="Manage member welfare contributions and debts"
+          drillHref="/admin/welfare"
+          drillLabel="Open welfare"
+          icon={<Heart className="w-4 h-4" />}
+        >
+          <WelfareSummary />
+        </SectionCard>
+
+        <SectionCard
+          title="Remarks"
+          subtitle="Notes recorded on member profiles"
+          drillHref="/admin/members"
+          drillLabel="Open members"
+          icon={<ScrollText className="w-4 h-4" />}
+          action={<AddRemarkModal />}
+        >
+          <RecentRemarksFeed limit={6} />
+        </SectionCard>
       </div>
-
-      <section className="bg-white dark:bg-gray-950 border border-gray-200 dark:border-gray-800 shadow-sm rounded-xl p-6">
-        <div className="flex items-center justify-between gap-3 mb-4">
-          <div>
-            <h2 className="text-base font-bold text-gray-900 dark:text-white">Recent Finance Activity</h2>
-            <p className="text-sm text-text-muted">
-              Latest completed and pending transactions touching member accounts.
-            </p>
-          </div>
-          <Link href="/admin/transactions" className="text-sm text-primary font-medium hover:underline">
-            Open transactions
-          </Link>
-        </div>
-
-        <div className="divide-y divide-border">
-          {recentQuery.isLoading ? (
-            Array.from({ length: 5 }).map((_, index) => <Skeleton key={index} className="h-16 rounded-xl my-2" />)
-          ) : recentTransactions.length === 0 ? (
-            <div className="py-6 text-sm text-text-muted">No recent transactions found.</div>
-          ) : (
-            recentTransactions.map((transaction) => {
-              const isOutflow =
-                transaction.type === "withdrawal" ||
-                transaction.type === "loan_repayment" ||
-                transaction.type === "fee";
-
-              return (
-                <div key={transaction.id} className="py-4 flex items-start justify-between gap-4">
-                  <div>
-                    <p className="text-sm font-medium text-text">
-                      {transaction.account?.member
-                        ? `${transaction.account.member.firstName} ${transaction.account.member.lastName}`
-                        : "Member transaction"}
-                    </p>
-                    <p className="text-xs text-text-muted mt-1">
-                      {transaction.type.replace(/_/g, " ")} · {transaction.account?.accountNo || "No account"} ·{" "}
-                      {formatDate(transaction.createdAt)}
-                    </p>
-                  </div>
-                  <div className="text-right">
-                    <p
-                      className={
-                        isOutflow ? "text-sm font-semibold text-warning" : "text-sm font-semibold text-success"
-                      }
-                    >
-                      {isOutflow ? "-" : "+"} {formatCurrency(transaction.amount)}
-                    </p>
-                    <p className="text-xs text-text-muted mt-1">
-                      {transaction.status.charAt(0).toUpperCase() + transaction.status.slice(1)}
-                    </p>
-                  </div>
-                </div>
-              );
-            })
-          )}
-        </div>
-      </section>
     </div>
   );
 }

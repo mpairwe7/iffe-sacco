@@ -355,6 +355,14 @@ export function Sidebar({ open, onClose }: SidebarProps) {
           })}
         </nav>
 
+        {/* Motto ribbon */}
+        <div className="px-4 py-3 border-t border-gray-200 dark:border-gray-800 bg-gradient-to-r from-primary/5 via-primary/10 to-primary/5">
+          <p className="text-[11px] font-black tracking-[0.15em] text-primary uppercase text-center">
+            Obwegasi Mu Kwisanga
+          </p>
+          <p className="text-[10px] italic text-text-muted text-center mt-0.5">&ldquo;Unity of Consensus&rdquo;</p>
+        </div>
+
         {/* Logout */}
         <div className="px-3 py-3 border-t border-gray-200 dark:border-gray-800">
           <button
