@@ -5,7 +5,7 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
-export function formatCurrency(amount: number, currency = "USh") {
+export function formatCurrency(amount: number, currency = "UGX") {
   return `${currency} ${amount.toLocaleString()}`;
 }
 

@@ -21,6 +21,7 @@ import type { MemberDashboard, MemberSupportStatus, Transaction } from "@iffe/sh
 
 function formatRelative(input: string | Date) {
   const date = typeof input === "string" ? new Date(input) : input;
+  if (Number.isNaN(date.getTime())) return "\u2014";
   const now = new Date();
   const diffMs = now.getTime() - date.getTime();
   if (diffMs < 0) return formatDate(date);

@@ -33,15 +33,23 @@ function startOfToday() {
   return d.getTime();
 }
 
+const MEMBER_FETCH_LIMIT = 500;
+
+function formatCappedCount(value: number, capped: boolean) {
+  return capped ? `${value.toLocaleString()}+` : value.toLocaleString();
+}
+
 export default function StaffDashboardPage() {
   const user = useAuthStore((s) => s.user);
   const statsQuery = useDashboardStats();
   const recentTxQuery = useRecentTransactions(50);
-  const membersQuery = useMembers({ limit: 500 });
+  const membersQuery = useMembers({ limit: MEMBER_FETCH_LIMIT });
 
   const stats = statsQuery.data as DashboardStats | undefined;
   const recentTransactions = (recentTxQuery.data ?? []) as Transaction[];
   const members = (membersQuery.data?.data ?? []) as Member[];
+  const membersTotal = membersQuery.data?.total ?? members.length;
+  const membersCapped = membersTotal > members.length;
 
   const todayStart = startOfToday();
   const depositsToday = recentTransactions
@@ -60,6 +68,27 @@ export default function StaffDashboardPage() {
 
   const firstName = user?.name ? user.name.split(" ")[0] : "Staff";
   const kpiLoading = statsQuery.isLoading || membersQuery.isLoading;
+  const pageError = statsQuery.error || membersQuery.error;
+
+  if (pageError && !statsQuery.isLoading && !membersQuery.isLoading) {
+    return (
+      <div className="bg-white dark:bg-gray-950 border border-gray-200 dark:border-gray-800 shadow-sm rounded-xl p-12 text-center">
+        <p className="text-text-muted">
+          {pageError instanceof Error ? pageError.message : "The staff dashboard could not be loaded."}
+        </p>
+        <button
+          type="button"
+          onClick={() => {
+            statsQuery.refetch();
+            membersQuery.refetch();
+          }}
+          className="text-primary font-medium hover:underline mt-3"
+        >
+          Retry
+        </button>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-8">
@@ -82,7 +111,7 @@ export default function StaffDashboardPage() {
           <>
             <StatCard
               title="Total Members"
-              value={(stats?.totalMembers ?? members.length).toLocaleString()}
+              value={(stats?.totalMembers ?? membersTotal).toLocaleString()}
               change="All registered members"
               changeType="positive"
               icon={Users}
@@ -98,16 +127,22 @@ export default function StaffDashboardPage() {
             />
             <StatCard
               title="Total Shares"
-              value={totalShares.toLocaleString()}
-              change="Across all members"
+              value={formatCappedCount(totalShares, membersCapped)}
+              change={
+                membersCapped ? `Sampled from ${members.length} of ${membersTotal} members` : "Across all members"
+              }
               changeType="neutral"
               icon={Coins}
               color="info"
             />
             <StatCard
               title="Pending Welfare"
-              value={pendingWelfareCount.toLocaleString()}
-              change="Members with active requests"
+              value={formatCappedCount(pendingWelfareCount, membersCapped)}
+              change={
+                membersCapped
+                  ? `Sampled from ${members.length} of ${membersTotal} members`
+                  : "Members with active requests"
+              }
               changeType={pendingWelfareCount > 0 ? "negative" : "neutral"}
               icon={HeartHandshake}
               color="warning"

@@ -32,16 +32,17 @@ export function AccountsPreview() {
 
   return (
     <div className="space-y-4">
-      <label className="relative block">
-        <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-text-muted" />
+      <div className="relative">
+        <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-text-muted" aria-hidden="true" />
         <input
           type="search"
           value={search}
           onChange={(event) => setSearch(event.target.value)}
           placeholder="Search by name or account no..."
+          aria-label="Search accounts"
           className="w-full pl-9 pr-3 py-2.5 text-sm border border-border rounded-lg bg-surface-alt/40 focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary"
         />
-      </label>
+      </div>
 
       <div className="overflow-x-auto">
         <table className="w-full text-sm">

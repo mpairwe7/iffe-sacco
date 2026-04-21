@@ -8,6 +8,8 @@ import { useWithdrawRequests } from "@/hooks/use-withdraw-requests";
 import { cn } from "@/lib/utils";
 import type { DepositRequest, WithdrawRequest } from "@iffe/shared";
 
+const REQUEST_FETCH_LIMIT = 100;
+
 interface PillProps {
   href: string;
   count: number;
@@ -15,9 +17,11 @@ interface PillProps {
   icon: React.ReactNode;
   tone: "primary" | "success" | "warning";
   loading?: boolean;
+  capped?: boolean;
 }
 
-function Pill({ href, count, label, icon, tone, loading }: PillProps) {
+function Pill({ href, count, label, icon, tone, loading, capped }: PillProps) {
+  const display = loading ? "—" : capped ? `${count.toLocaleString()}+` : count.toLocaleString();
   return (
     <Link
       href={href}
@@ -27,11 +31,12 @@ function Pill({ href, count, label, icon, tone, loading }: PillProps) {
         tone === "success" && "border-success/30 bg-success/5 text-success hover:bg-success/10",
         tone === "warning" && "border-warning/30 bg-warning/5 text-warning hover:bg-warning/10",
       )}
+      title={capped ? `${count}+ pending (sampled from ${REQUEST_FETCH_LIMIT} most recent)` : undefined}
     >
       <span className="w-7 h-7 rounded-full bg-white dark:bg-gray-950 flex items-center justify-center shadow-sm">
         {icon}
       </span>
-      <span className="font-bold tabular-nums">{loading ? "—" : count}</span>
+      <span className="font-bold tabular-nums">{display}</span>
       <span className="text-text-muted">{label}</span>
     </Link>
   );
@@ -39,15 +44,15 @@ function Pill({ href, count, label, icon, tone, loading }: PillProps) {
 
 export function QueuePills() {
   const applicationsQuery = useApplications({ status: "pending", limit: 1 });
-  const depositsQuery = useDepositRequests({ limit: 100 });
-  const withdrawalsQuery = useWithdrawRequests({ limit: 100 });
+  const depositsQuery = useDepositRequests({ limit: REQUEST_FETCH_LIMIT });
+  const withdrawalsQuery = useWithdrawRequests({ limit: REQUEST_FETCH_LIMIT });
 
-  const pendingDeposits = ((depositsQuery.data?.data ?? []) as DepositRequest[]).filter(
-    (item) => item.status === "pending",
-  ).length;
-  const pendingWithdrawals = ((withdrawalsQuery.data?.data ?? []) as WithdrawRequest[]).filter(
-    (item) => item.status === "pending",
-  ).length;
+  const depositData = (depositsQuery.data?.data ?? []) as DepositRequest[];
+  const withdrawalData = (withdrawalsQuery.data?.data ?? []) as WithdrawRequest[];
+  const pendingDeposits = depositData.filter((item) => item.status === "pending").length;
+  const pendingWithdrawals = withdrawalData.filter((item) => item.status === "pending").length;
+  const depositsCapped = (depositsQuery.data?.total ?? 0) > depositData.length;
+  const withdrawalsCapped = (withdrawalsQuery.data?.total ?? 0) > withdrawalData.length;
 
   return (
     <div className="flex flex-wrap items-center gap-3">
@@ -67,6 +72,7 @@ export function QueuePills() {
         icon={<ArrowDownToLine className="w-3.5 h-3.5" />}
         tone="success"
         loading={depositsQuery.isLoading}
+        capped={depositsCapped}
       />
       <Pill
         href="/admin/withdraw-requests"
@@ -75,6 +81,7 @@ export function QueuePills() {
         icon={<ArrowUpFromLine className="w-3.5 h-3.5" />}
         tone="warning"
         loading={withdrawalsQuery.isLoading}
+        capped={withdrawalsCapped}
       />
     </div>
   );
