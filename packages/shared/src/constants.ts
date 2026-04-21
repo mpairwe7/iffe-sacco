@@ -54,6 +54,11 @@ export const AUTH_COOKIE_NAMES = {
   SESSION: "iffe-session",
 } as const;
 
+// Fixed per-event welfare contribution amount (UGX). Every wedding or
+// condolence event the SACCO supports carries this as the expected
+// amount each member owes toward the welfare pot.
+export const EXPECTED_WELFARE_AMOUNT = 30_000;
+
 export const WELFARE_STATUS = ["active", "completed", "paused"] as const;
 export const PLEDGE_STATUS = ["pledged", "paid", "cancelled"] as const;
 export const BANK_ACCOUNT_STATUS = ["active", "inactive"] as const;
