@@ -940,7 +940,7 @@ async function main() {
     { key: "tagline", value: "Empowering Financial Freedom" },
     { key: "email", value: "info@iffeds.org" },
     { key: "phone", value: "+256 700 000 000" },
-    { key: "currency", value: "USh" },
+    { key: "currency", value: "UGX" },
     { key: "currency_code", value: "UGX" },
     { key: "date_format", value: "Y-m-d" },
     { key: "language", value: "en" },

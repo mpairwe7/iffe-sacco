@@ -84,7 +84,7 @@ export function CreateWelfareModal({ open, onOpenChange }: Props) {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-text mb-2">Target Amount (USh)</label>
+              <label className="block text-sm font-medium text-text mb-2">Target Amount (UGX)</label>
               <input
                 type="number"
                 step="1000"

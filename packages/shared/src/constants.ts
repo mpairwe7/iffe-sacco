@@ -1,4 +1,4 @@
-export const CURRENCY = "USh";
+export const CURRENCY = "UGX";
 export const CURRENCY_CODE = "UGX";
 export const DEFAULT_COUNTRY = "UG";
 export const DEFAULT_LANGUAGE = "en";

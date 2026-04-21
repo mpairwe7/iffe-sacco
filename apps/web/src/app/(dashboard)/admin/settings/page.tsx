@@ -23,7 +23,7 @@ const defaultSettings: SettingsState = {
   tagline: "Empowering Financial Freedom",
   email: "info@iffeds.org",
   phone: "+256 700 000 000",
-  currency: "USh",
+  currency: "UGX",
   dateFormat: "Y-m-d",
   language: "English",
   timezone: "Africa/Kampala (UTC+3)",
@@ -192,7 +192,7 @@ export default function SettingsPage() {
                     onChange={(e) => update("currency", e.target.value)}
                     className="w-full px-4 py-2.5 bg-white/60 border border-white/40 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
                   >
-                    <option value="USh">Uganda Shilling (USh)</option>
+                    <option value="UGX">Uganda Shilling (UGX)</option>
                     <option value="KES">Kenya Shilling (KES)</option>
                     <option value="TZS">Tanzania Shilling (TZS)</option>
                     <option value="USD">US Dollar (USD)</option>

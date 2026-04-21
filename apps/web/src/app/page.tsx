@@ -157,7 +157,7 @@ export default function HomePage() {
               {/* Stats Row - Glass */}
               <div className="glass-card flex items-center gap-6 sm:gap-8 mt-14 p-6 rounded-xl max-w-lg">
                 {[
-                  { value: "USh 2.5B+", label: "Total Savings" },
+                  { value: "UGX 2.5B+", label: "Total Savings" },
                   { value: "1,000+", label: "Members" },
                   { value: "98%", label: "Satisfaction" },
                 ].map((stat, i) => (
@@ -188,7 +188,7 @@ export default function HomePage() {
                     </div>
                     <div className="flex-1">
                       <div className="text-sm text-text-muted">Total Balance</div>
-                      <div className="text-xl font-bold text-text">USh 4,250,000</div>
+                      <div className="text-xl font-bold text-text">UGX 4,250,000</div>
                     </div>
                     <div className="text-sm font-semibold text-success bg-success/10 px-3 py-1 rounded-full">
                       +12.5%
@@ -198,14 +198,14 @@ export default function HomePage() {
                   <div className="grid grid-cols-2 gap-4">
                     <div className="glass-subtle rounded-xl p-4">
                       <div className="text-xs text-text-muted mb-1">Savings</div>
-                      <div className="text-lg font-bold text-primary">USh 2.8M</div>
+                      <div className="text-lg font-bold text-primary">UGX 2.8M</div>
                       <div className="mt-3 h-2 bg-primary/15 rounded-full overflow-hidden">
                         <div className="h-full w-3/4 bg-gradient-to-r from-primary to-primary-light rounded-full" />
                       </div>
                     </div>
                     <div className="glass-subtle rounded-xl p-4">
                       <div className="text-xs text-text-muted mb-1">Loan Balance</div>
-                      <div className="text-lg font-bold text-secondary">USh 1.4M</div>
+                      <div className="text-lg font-bold text-secondary">UGX 1.4M</div>
                       <div className="mt-3 h-2 bg-secondary/15 rounded-full overflow-hidden">
                         <div className="h-full w-1/2 bg-gradient-to-r from-secondary to-secondary-light rounded-full" />
                       </div>
@@ -433,7 +433,7 @@ export default function HomePage() {
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-6">
             {[
               { value: "1,000+", label: "Active Members" },
-              { value: "USh 2.5B", label: "Total Savings" },
+              { value: "UGX 2.5B", label: "Total Savings" },
               { value: "500+", label: "Loans Disbursed" },
               { value: "12+", label: "Years of Service" },
             ].map((stat) => (

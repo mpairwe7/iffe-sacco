@@ -87,7 +87,7 @@ const helpArticles = [
       "Navigate to Social Welfare from the sidebar.",
       "Browse available welfare programs and their progress.",
       "Click 'Make a Pledge' on any active program to contribute.",
-      "Enter your pledge amount (minimum USh 1,000) and confirm.",
+      "Enter your pledge amount (minimum UGX 1,000) and confirm.",
       "Your pledge will be recorded and the program progress updated.",
     ],
   },

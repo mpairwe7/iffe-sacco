@@ -11,7 +11,7 @@ import { formatCurrency, formatDate } from "@/lib/utils";
 
 const depositSchema = z.object({
   accountId: z.string().min(1, "Please select an account"),
-  amount: z.number().min(1000, "Minimum deposit is USh 1,000"),
+  amount: z.number().min(1000, "Minimum deposit is UGX 1,000"),
   method: z.string().min(1, "Please select a payment method"),
   description: z.string().optional(),
 });
@@ -88,7 +88,7 @@ export default function MemberDepositsPage() {
             {errors.accountId && <p className="text-xs text-danger mt-1">{errors.accountId.message}</p>}
           </div>
           <div>
-            <label className="block text-sm font-medium text-text mb-2">Amount (USh)</label>
+            <label className="block text-sm font-medium text-text mb-2">Amount (UGX)</label>
             <input
               type="number"
               inputMode="numeric"
@@ -181,7 +181,7 @@ export default function MemberDepositsPage() {
           <div className="bg-primary/5 border border-primary/20 rounded-xl p-6">
             <h3 className="font-semibold text-primary mb-2">Deposit Information</h3>
             <ul className="text-sm text-text-muted space-y-2">
-              <li>&#8226; Minimum deposit: USh 1,000</li>
+              <li>&#8226; Minimum deposit: UGX 1,000</li>
               <li>&#8226; Mobile Money deposits are typically processed within hours</li>
               <li>&#8226; All deposits require admin verification</li>
               <li>&#8226; Bank transfers may take 1-2 business days</li>

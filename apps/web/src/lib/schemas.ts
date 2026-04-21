@@ -78,7 +78,7 @@ export const transactionSchema = z.object({
   type: z.enum(["deposit", "withdraw", "transfer", "loan_repayment"]),
   member: z.string().min(1, "Please select a member"),
   account: z.string().min(1, "Please select an account"),
-  amount: z.number().min(1000, "Minimum amount is USh 1,000"),
+  amount: z.number().min(1000, "Minimum amount is UGX 1,000"),
   method: z.string().default("cash"),
   date: z.string().optional(),
   description: z.string().optional(),

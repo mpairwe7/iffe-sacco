@@ -4,7 +4,7 @@ import { useState } from "react";
 import * as Dialog from "@radix-ui/react-dialog";
 import { X } from "lucide-react";
 import { useUpdateMember } from "@/hooks/use-members";
-import { cn, formatCurrency } from "@/lib/utils";
+import { cn, formatCurrency, formatDate } from "@/lib/utils";
 import type { WelfareKind } from "@/components/welfare/welfare-tabs";
 import type { WelfareEvent } from "@/components/welfare/welfare-events-table";
 import { EXPECTED_WELFARE_AMOUNT } from "@iffe/shared";
@@ -109,6 +109,9 @@ export function EditWelfareEventModal({ open, onOpenChange, kind, event }: EditW
                 </p>
                 <p className="text-xs text-text-muted">
                   {event.member.memberId} · {event.member.phone}
+                </p>
+                <p className="text-xs text-text-muted mt-1">
+                  Event date: <span className="font-semibold text-text">{formatDate(event.eventDate)}</span>
                 </p>
               </div>
 

@@ -60,8 +60,10 @@ export class MemberService {
           shareCount: input.shareCount ?? 0,
           weddingSupportStatus: input.weddingSupportStatus,
           weddingSupportDebt: input.weddingSupportDebt ?? 0,
+          weddingEventDate: input.weddingEventDate ? new Date(input.weddingEventDate) : null,
           condolenceSupportStatus: input.condolenceSupportStatus,
           condolenceSupportDebt: input.condolenceSupportDebt ?? 0,
+          condolenceEventDate: input.condolenceEventDate ? new Date(input.condolenceEventDate) : null,
           remarks: input.remarks,
           status: "pending",
         },
@@ -98,8 +100,14 @@ export class MemberService {
     if ("weddingSupportDebt" in data && data.weddingSupportDebt !== undefined) {
       payload.weddingSupportDebt = Number(data.weddingSupportDebt);
     }
+    if ("weddingEventDate" in data) {
+      payload.weddingEventDate = data.weddingEventDate ? new Date(String(data.weddingEventDate)) : null;
+    }
     if ("condolenceSupportDebt" in data && data.condolenceSupportDebt !== undefined) {
       payload.condolenceSupportDebt = Number(data.condolenceSupportDebt);
+    }
+    if ("condolenceEventDate" in data) {
+      payload.condolenceEventDate = data.condolenceEventDate ? new Date(String(data.condolenceEventDate)) : null;
     }
     if ("remarks" in data) {
       payload.remarks = data.remarks ? String(data.remarks) : null;
@@ -230,8 +238,10 @@ export class MemberService {
         shareCount: member.shareCount ?? 0,
         weddingSupportStatus: member.weddingSupportStatus as "received" | "requested" | "not_received",
         weddingSupportDebt: toNumber(member.weddingSupportDebt),
+        weddingEventDate: toIsoString(member.weddingEventDate),
         condolenceSupportStatus: member.condolenceSupportStatus as "received" | "requested" | "not_received",
         condolenceSupportDebt: toNumber(member.condolenceSupportDebt),
+        condolenceEventDate: toIsoString(member.condolenceEventDate),
         remarks: member.remarks,
         clan: member.clan,
         totem: member.totem,

@@ -11,7 +11,7 @@ import { formatCurrency, formatDate } from "@/lib/utils";
 
 const withdrawalSchema = z.object({
   accountId: z.string().min(1, "Please select an account"),
-  amount: z.number().min(5000, "Minimum withdrawal is USh 5,000"),
+  amount: z.number().min(5000, "Minimum withdrawal is UGX 5,000"),
   method: z.string().min(1, "Please select a withdrawal method"),
   description: z.string().optional(),
 });
@@ -88,7 +88,7 @@ export default function MemberWithdrawalsPage() {
             {errors.accountId && <p className="text-xs text-danger mt-1">{errors.accountId.message}</p>}
           </div>
           <div>
-            <label className="block text-sm font-medium text-text mb-2">Amount (USh)</label>
+            <label className="block text-sm font-medium text-text mb-2">Amount (UGX)</label>
             <input
               type="number"
               inputMode="numeric"
@@ -189,10 +189,10 @@ export default function MemberWithdrawalsPage() {
           <div className="bg-warning/5 border border-warning/20 rounded-xl p-6">
             <h3 className="font-semibold text-warning mb-2">Withdrawal Policy</h3>
             <ul className="text-sm text-text-muted space-y-2">
-              <li>&#8226; Minimum withdrawal: USh 5,000</li>
-              <li>&#8226; Maximum daily withdrawal: USh 5,000,000</li>
+              <li>&#8226; Minimum withdrawal: UGX 5,000</li>
+              <li>&#8226; Maximum daily withdrawal: UGX 5,000,000</li>
               <li>&#8226; Fixed deposits have early withdrawal penalties</li>
-              <li>&#8226; A minimum balance of USh 10,000 must be maintained</li>
+              <li>&#8226; A minimum balance of UGX 10,000 must be maintained</li>
             </ul>
           </div>
         </div>

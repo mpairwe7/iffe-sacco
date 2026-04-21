@@ -112,7 +112,7 @@ function TransactionForm() {
             {errors.account && <p className="text-xs text-danger mt-1">{errors.account.message}</p>}
           </div>
           <div>
-            <label className="block text-sm font-medium text-text mb-2">Amount (USh) *</label>
+            <label className="block text-sm font-medium text-text mb-2">Amount (UGX) *</label>
             <input
               type="number"
               min="0"

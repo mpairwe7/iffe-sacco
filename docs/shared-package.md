@@ -101,7 +101,7 @@ All schemas use **Zod v4** and export both the schema and inferred TypeScript ty
 
 | Constant              | Value                                                             | Usage                   |
 | --------------------- | ----------------------------------------------------------------- | ----------------------- |
-| `CURRENCY`            | `"USh"`                                                           | Display currency symbol |
+| `CURRENCY`            | `"UGX"`                                                           | Display currency symbol |
 | `CURRENCY_CODE`       | `"UGX"`                                                           | ISO currency code       |
 | `DEFAULT_COUNTRY`     | `"UG"`                                                            | Default country code    |
 | `ACCOUNT_TYPES`       | `["savings", "current", "fixed_deposit"]`                         | Account type options    |

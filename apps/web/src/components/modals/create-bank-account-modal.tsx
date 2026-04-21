@@ -112,7 +112,7 @@ export function CreateBankAccountModal({ open, onOpenChange }: Props) {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-text mb-2">Opening Balance (USh)</label>
+              <label className="block text-sm font-medium text-text mb-2">Opening Balance (UGX)</label>
               <input
                 type="number"
                 step="1"

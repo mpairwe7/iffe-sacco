@@ -66,7 +66,7 @@ export function DepositsWithdrawalsChart({ monthlyData }: { monthlyData: Monthly
             <ul>
               {monthlyData.map((d) => (
                 <li key={d.month}>
-                  {d.label}: Deposits USh {d.deposits.toLocaleString()}, Withdrawals USh{" "}
+                  {d.label}: Deposits UGX {d.deposits.toLocaleString()}, Withdrawals UGX{" "}
                   {d.withdrawals.toLocaleString()}
                 </li>
               ))}
@@ -95,7 +95,7 @@ export function DepositsWithdrawalsChart({ monthlyData }: { monthlyData: Monthly
                 }
               />
               <Tooltip
-                formatter={(value) => `USh ${Number(value || 0).toLocaleString()}`}
+                formatter={(value) => `UGX ${Number(value || 0).toLocaleString()}`}
                 contentStyle={{
                   borderRadius: 8,
                   border: `1px solid ${c.tooltipBorder}`,
@@ -194,7 +194,7 @@ export function LoanChart({ trendsData }: { trendsData: LoanPoint[] }) {
             <ul>
               {trendsData.map((d) => (
                 <li key={d.month}>
-                  {d.label}: Disbursed USh {d.disbursed.toLocaleString()}, Repaid USh {d.repaid.toLocaleString()}
+                  {d.label}: Disbursed UGX {d.disbursed.toLocaleString()}, Repaid UGX {d.repaid.toLocaleString()}
                 </li>
               ))}
             </ul>
@@ -212,7 +212,7 @@ export function LoanChart({ trendsData }: { trendsData: LoanPoint[] }) {
                 }
               />
               <Tooltip
-                formatter={(value) => `USh ${Number(value || 0).toLocaleString()}`}
+                formatter={(value) => `UGX ${Number(value || 0).toLocaleString()}`}
                 contentStyle={{
                   borderRadius: 8,
                   border: `1px solid ${c.tooltipBorder}`,

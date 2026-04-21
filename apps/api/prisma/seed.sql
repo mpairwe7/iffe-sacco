@@ -238,7 +238,7 @@ INSERT INTO settings (id, key, value) VALUES
 ('s02', 'tagline', 'Empowering Financial Freedom'),
 ('s03', 'email', 'info@iffeds.org'),
 ('s04', 'phone', '+256 700 000 000'),
-('s05', 'currency', 'USh'),
+('s05', 'currency', 'UGX'),
 ('s06', 'currency_code', 'UGX'),
 ('s07', 'date_format', 'Y-m-d'),
 ('s08', 'language', 'en'),

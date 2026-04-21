@@ -45,8 +45,10 @@ export interface Member {
   shareCount: number;
   weddingSupportStatus: MemberSupportStatus;
   weddingSupportDebt: number;
+  weddingEventDate?: string | null;
   condolenceSupportStatus: MemberSupportStatus;
   condolenceSupportDebt: number;
+  condolenceEventDate?: string | null;
   remarks?: string | null;
   clan?: string | null;
   totem?: string | null;

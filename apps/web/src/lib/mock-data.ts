@@ -561,9 +561,9 @@ export const savingsAccounts: SavingsAccount[] = [
 
 export const dashboardStats: DashboardStats = {
   totalMembers: 1247,
-  totalDeposits: "USh 2.5B",
-  totalWithdrawals: "USh 890M",
-  activeLoans: "USh 1.2B",
+  totalDeposits: "UGX 2.5B",
+  totalWithdrawals: "UGX 890M",
+  activeLoans: "UGX 1.2B",
   membersChange: "+12 this month",
   depositsChange: "+8.3% vs last month",
   withdrawalsChange: "+3.2% vs last month",

@@ -13,11 +13,18 @@ interface AddWelfareEventModalProps {
   defaultKind: WelfareKind;
 }
 
+function todayIso() {
+  const d = new Date();
+  const pad = (n: number) => String(n).padStart(2, "0");
+  return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
+}
+
 export function AddWelfareEventModal({ defaultKind }: AddWelfareEventModalProps) {
   const [open, setOpen] = useState(false);
   const [kind, setKind] = useState<WelfareKind>(defaultKind);
   const [search, setSearch] = useState("");
   const [selected, setSelected] = useState<Member | null>(null);
+  const [eventDate, setEventDate] = useState(todayIso());
   const [error, setError] = useState<string | null>(null);
 
   const { data, isLoading } = useMembers({ limit: 20, search: search.trim() || undefined });
@@ -29,6 +36,7 @@ export function AddWelfareEventModal({ defaultKind }: AddWelfareEventModalProps)
     setKind(defaultKind);
     setSearch("");
     setSelected(null);
+    setEventDate(todayIso());
     setError(null);
   }
 
@@ -43,12 +51,25 @@ export function AddWelfareEventModal({ defaultKind }: AddWelfareEventModalProps)
       setError("Select a member first.");
       return;
     }
+    if (!eventDate) {
+      setError("Choose an event date.");
+      return;
+    }
     setError(null);
     try {
+      const isoDate = new Date(`${eventDate}T00:00:00`).toISOString();
       const payload =
         kind === "wedding"
-          ? { weddingSupportStatus: "requested" as const, weddingSupportDebt: EXPECTED_WELFARE_AMOUNT }
-          : { condolenceSupportStatus: "requested" as const, condolenceSupportDebt: EXPECTED_WELFARE_AMOUNT };
+          ? {
+              weddingSupportStatus: "requested" as const,
+              weddingSupportDebt: EXPECTED_WELFARE_AMOUNT,
+              weddingEventDate: isoDate,
+            }
+          : {
+              condolenceSupportStatus: "requested" as const,
+              condolenceSupportDebt: EXPECTED_WELFARE_AMOUNT,
+              condolenceEventDate: isoDate,
+            };
       await updateMember.mutateAsync({ id: selected.id, data: payload });
       handleOpenChange(false);
     } catch (err) {
@@ -181,6 +202,23 @@ export function AddWelfareEventModal({ defaultKind }: AddWelfareEventModalProps)
                   </div>
                 </div>
               )}
+            </div>
+
+            <div>
+              <label
+                htmlFor="event-date-input"
+                className="block text-xs font-semibold text-text-muted uppercase tracking-wider mb-1"
+              >
+                Event date
+              </label>
+              <input
+                id="event-date-input"
+                type="date"
+                value={eventDate}
+                onChange={(ev) => setEventDate(ev.target.value)}
+                max={todayIso()}
+                className="w-full px-3 py-2.5 text-sm border border-border rounded-lg bg-white dark:bg-gray-950 focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary"
+              />
             </div>
 
             <div className="rounded-lg border border-border bg-surface-alt/30 px-4 py-3 text-sm text-text-muted">

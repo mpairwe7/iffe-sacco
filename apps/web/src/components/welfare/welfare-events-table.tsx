@@ -39,6 +39,7 @@ function getInitials(member: Member) {
 function buildEvent(member: Member, kind: WelfareKind): WelfareEvent | null {
   const statusField = kind === "wedding" ? "weddingSupportStatus" : "condolenceSupportStatus";
   const debtField = kind === "wedding" ? "weddingSupportDebt" : "condolenceSupportDebt";
+  const dateField = kind === "wedding" ? "weddingEventDate" : "condolenceEventDate";
   const status = member[statusField];
   if (status === "not_received") return null;
 
@@ -47,13 +48,17 @@ function buildEvent(member: Member, kind: WelfareKind): WelfareEvent | null {
   const received = Math.max(0, Math.min(expected, expected - debt));
   const pending = Math.max(0, expected - received);
 
+  // Prefer the dedicated event date; fall back to member.updatedAt for
+  // legacy rows created before the event-date columns existed.
+  const eventDate = member[dateField] || member.updatedAt;
+
   return {
     member,
     status,
     expected,
     received,
     pending,
-    eventDate: member.updatedAt,
+    eventDate,
   };
 }
 
