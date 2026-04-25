@@ -34,45 +34,53 @@ import { useAuthStore } from "@/stores/auth-store";
 import { useRouter } from "next/navigation";
 
 // ── Zod Schema ──────────────────────────────────────────────────────
+// Every fillable field is required. Dynamic arrays (spouses, children,
+// other relatives) start empty — but if the applicant adds an entry,
+// every field on that entry must be filled.
 const placeSchema = z.object({
   district: z.string().min(1, "District is required"),
-  county: z.string().optional(),
-  subCounty: z.string().optional(),
-  parish: z.string().optional(),
-  village: z.string().optional(),
+  county: z.string().min(1, "County is required"),
+  subCounty: z.string().min(1, "Sub-county is required"),
+  parish: z.string().min(1, "Parish is required"),
+  village: z.string().min(1, "Village is required"),
 });
 
-const parentSchema = z.object({
-  name: z.string().min(1, "Name is required"),
-  district: z.string().optional(),
-  village: z.string().optional(),
-  phone: z.string().optional(),
-  email: z.string().optional(),
-  alive: z.boolean().default(true),
-  diedBeforeOrAfterJoining: z.string().optional(),
-});
+const parentSchema = z
+  .object({
+    name: z.string().min(1, "Name is required"),
+    district: z.string().min(1, "District is required"),
+    village: z.string().min(1, "Village is required"),
+    phone: z.string().min(10, "Valid phone number is required"),
+    email: z.string().email("Valid email is required"),
+    alive: z.boolean().default(true),
+    diedBeforeOrAfterJoining: z.string().optional(),
+  })
+  .refine((d) => d.alive || (d.diedBeforeOrAfterJoining && d.diedBeforeOrAfterJoining.length > 0), {
+    message: "Please indicate before or after joining",
+    path: ["diedBeforeOrAfterJoining"],
+  });
 
 const spouseSchema = z.object({
-  name: z.string().optional(),
-  fatherName: z.string().optional(),
+  name: z.string().min(1, "Name is required"),
+  fatherName: z.string().min(1, "Father's name is required"),
   fatherAlive: z.boolean().default(true),
-  motherName: z.string().optional(),
+  motherName: z.string().min(1, "Mother's name is required"),
   motherAlive: z.boolean().default(true),
-  contact: z.string().optional(),
-  address: z.string().optional(),
+  contact: z.string().min(10, "Valid contact is required"),
+  address: z.string().min(1, "Address is required"),
 });
 
 const childSchema = z.object({
-  name: z.string().optional(),
-  sex: z.string().optional(),
-  contact: z.string().optional(),
+  name: z.string().min(1, "Name is required"),
+  sex: z.string().min(1, "Please select sex"),
+  contact: z.string().min(10, "Valid contact is required"),
 });
 
 const relativeSchema = z.object({
-  fullName: z.string().optional(),
-  relationship: z.string().optional(),
-  location: z.string().optional(),
-  contact: z.string().optional(),
+  fullName: z.string().min(1, "Full name is required"),
+  relationship: z.string().min(1, "Relationship is required"),
+  location: z.string().min(1, "Location is required"),
+  contact: z.string().min(10, "Valid contact is required"),
 });
 
 const applicationSchema = z
@@ -100,7 +108,7 @@ const applicationSchema = z
     children: z.array(childSchema).default([]),
     otherRelatives: z.array(relativeSchema).default([]),
     // Step 5
-    applicationLetterName: z.string().optional(),
+    applicationLetterName: z.string().min(1, "Application letter is required"),
     password: z.string().min(8, "Password must be at least 8 characters"),
     confirmPassword: z.string(),
     terms: z.boolean().refine((value) => value, "You must accept the terms and conditions"),
@@ -130,8 +138,8 @@ const STEP_FIELDS: (keyof ApplicationFormInput)[][] = [
   ["fullName", "phone", "dateOfBirth", "sex", "email", "clan", "totem"],
   ["birthPlace", "ancestralPlace", "residencePlace"],
   ["occupation", "placeOfWork", "qualifications"],
-  ["fatherInfo", "motherInfo"],
-  ["password", "confirmPassword", "terms", "reaffirmation"],
+  ["fatherInfo", "motherInfo", "spouses", "children", "otherRelatives"],
+  ["applicationLetterName", "password", "confirmPassword", "terms", "reaffirmation"],
 ];
 
 // ── Animation variants ──────────────────────────────────────────────
@@ -219,7 +227,7 @@ function PlaceFields({
         <FormField
           key={f}
           label={labels[f]}
-          required={f === "district"}
+          required
           {...register(`${prefix}.${f}`)}
           error={getNestedErrorMessage(errors, [prefix, f])}
           placeholder={labels[f]}
@@ -253,6 +261,7 @@ function ParentFields({
         {parentFields.map((field) => (
           <FormField
             key={field}
+            type={field === "email" ? "email" : field === "phone" ? "tel" : "text"}
             label={
               field === "name"
                 ? "Name"
@@ -264,7 +273,7 @@ function ParentFields({
                       ? "Phone"
                       : "Email"
             }
-            required={field === "name"}
+            required
             {...register(`${prefix}.${field}`)}
             error={getNestedErrorMessage(errors, [prefix, field])}
             placeholder={
@@ -433,7 +442,7 @@ export default function RegisterPage() {
       return;
     }
     setSelectedFileName(file.name);
-    form.setValue("applicationLetterName", file.name);
+    form.setValue("applicationLetterName", file.name, { shouldValidate: true, shouldDirty: true });
   };
 
   // ── Submit ───────────────────────────────────────────────────────
@@ -471,10 +480,33 @@ export default function RegisterPage() {
   // ── Render ──────────────────────────────────────────────────────
   // ═════════════════════════════════════════════════════════════════
   return (
-    <div className="glass-card rounded-xl p-6 sm:p-8 shadow-xl w-full max-w-2xl mx-auto">
+    <div className="relative glass-card rounded-2xl p-6 sm:p-8 shadow-xl w-full max-w-2xl mx-auto overflow-hidden">
+      {/* Top accent bar — subtle nod to the dashboard's deep-green identity */}
+      <div className="absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-primary-dark via-primary to-success" />
+
+      {/* Decorative leaf accent in the corner */}
+      <svg
+        aria-hidden="true"
+        viewBox="0 0 100 100"
+        className="pointer-events-none absolute -bottom-6 -right-6 w-32 h-32 text-primary/10"
+      >
+        <path fill="currentColor" d="M50 5C25 5 5 25 5 50c0 12 6 24 14 32 4-22 22-40 44-44-3-19-13-33-13-33z" />
+        <path fill="currentColor" opacity="0.6" d="M55 35c-8 4-15 11-19 19l-8 8c10-2 19-7 26-14s12-16 14-26l-13 13z" />
+      </svg>
+
       {/* Header */}
-      <h2 className="text-2xl font-bold text-text text-center">Membership Application</h2>
-      <p className="text-text-muted text-center mt-1 mb-6 text-sm">IBDA Member Bio Data Form</p>
+      <div className="relative flex flex-col items-center">
+        <div className="inline-flex items-center justify-center w-12 h-12 rounded-xl bg-gradient-to-br from-primary to-primary-dark shadow-lg shadow-primary/25 mb-3">
+          <FileText className="w-6 h-6 text-white" aria-hidden="true" />
+        </div>
+        <h2 className="text-2xl sm:text-3xl font-extrabold text-text text-center tracking-tight">
+          Membership Application
+        </h2>
+        <p className="text-text-muted text-center mt-1 mb-5 text-sm">IBDA Member Bio Data Form</p>
+        <div className="mb-6 px-4 py-2 rounded-full bg-primary/8 border border-primary/15 text-xs sm:text-sm text-text-muted">
+          <span className="text-danger font-bold">*</span> All fields are required
+        </div>
+      </div>
 
       {/* ── Stepper ──────────────────────────────────────────────── */}
       <div className="mb-8">
@@ -680,25 +712,25 @@ export default function RegisterPage() {
                           <thead>
                             <tr className="text-left text-text-muted border-b border-white/20">
                               <th scope="col" className="pb-2 pr-2">
-                                Name
+                                Name<span className="text-danger ml-0.5">*</span>
                               </th>
                               <th scope="col" className="pb-2 pr-2">
-                                Father
+                                Father<span className="text-danger ml-0.5">*</span>
                               </th>
                               <th scope="col" className="pb-2 pr-2 w-10">
                                 F. Alive
                               </th>
                               <th scope="col" className="pb-2 pr-2">
-                                Mother
+                                Mother<span className="text-danger ml-0.5">*</span>
                               </th>
                               <th scope="col" className="pb-2 pr-2 w-10">
                                 M. Alive
                               </th>
                               <th scope="col" className="pb-2 pr-2">
-                                Contact
+                                Contact<span className="text-danger ml-0.5">*</span>
                               </th>
                               <th scope="col" className="pb-2 pr-2">
-                                Address
+                                Address<span className="text-danger ml-0.5">*</span>
                               </th>
                               <th scope="col" className="pb-2 w-8" />
                             </tr>
@@ -792,13 +824,13 @@ export default function RegisterPage() {
                           <thead>
                             <tr className="text-left text-text-muted border-b border-white/20">
                               <th scope="col" className="pb-2 pr-2">
-                                Name
+                                Name<span className="text-danger ml-0.5">*</span>
                               </th>
                               <th scope="col" className="pb-2 pr-2 w-28">
-                                Sex
+                                Sex<span className="text-danger ml-0.5">*</span>
                               </th>
                               <th scope="col" className="pb-2 pr-2">
-                                Contact
+                                Contact<span className="text-danger ml-0.5">*</span>
                               </th>
                               <th scope="col" className="pb-2 w-8" />
                             </tr>
@@ -860,16 +892,16 @@ export default function RegisterPage() {
                           <thead>
                             <tr className="text-left text-text-muted border-b border-white/20">
                               <th scope="col" className="pb-2 pr-2">
-                                Full Name
+                                Full Name<span className="text-danger ml-0.5">*</span>
                               </th>
                               <th scope="col" className="pb-2 pr-2">
-                                Relationship
+                                Relationship<span className="text-danger ml-0.5">*</span>
                               </th>
                               <th scope="col" className="pb-2 pr-2">
-                                Location
+                                Location<span className="text-danger ml-0.5">*</span>
                               </th>
                               <th scope="col" className="pb-2 pr-2">
-                                Contact
+                                Contact<span className="text-danger ml-0.5">*</span>
                               </th>
                               <th scope="col" className="pb-2 w-8" />
                             </tr>
@@ -934,10 +966,20 @@ export default function RegisterPage() {
                 <div className="space-y-5">
                   {/* File upload */}
                   <div>
-                    <label className="block text-sm font-medium text-text mb-2">Application Letter</label>
+                    <label className="block text-sm font-medium text-text mb-2">
+                      Application Letter<span className="text-danger ml-0.5">*</span>
+                    </label>
                     <div className="relative">
-                      <label className="flex flex-col items-center justify-center gap-2 py-6 px-4 border-2 border-dashed border-white/40 dark:border-white/15 rounded-lg cursor-pointer hover:bg-white/20 dark:hover:bg-white/5 transition-colors">
-                        <Upload className="w-8 h-8 text-text-light" />
+                      <label
+                        className={`flex flex-col items-center justify-center gap-2 py-6 px-4 border-2 border-dashed rounded-lg cursor-pointer transition-colors ${
+                          errors.applicationLetterName
+                            ? "border-danger/60 hover:bg-danger/5"
+                            : "border-white/40 dark:border-white/15 hover:bg-white/20 dark:hover:bg-white/5"
+                        }`}
+                      >
+                        <Upload
+                          className={`w-8 h-8 ${errors.applicationLetterName ? "text-danger" : "text-text-light"}`}
+                        />
                         {selectedFileName ? (
                           <span className="text-sm text-primary font-medium">{selectedFileName}</span>
                         ) : (
@@ -947,11 +989,17 @@ export default function RegisterPage() {
                           type="file"
                           accept=".pdf,.doc,.docx"
                           aria-label="Upload application letter"
+                          aria-invalid={!!errors.applicationLetterName}
                           onChange={handleFileChange}
                           className="hidden"
                         />
                       </label>
                     </div>
+                    {errors.applicationLetterName && (
+                      <p className="text-xs text-danger mt-1.5" role="alert">
+                        {errors.applicationLetterName.message}
+                      </p>
+                    )}
                   </div>
 
                   {/* Password fields */}
