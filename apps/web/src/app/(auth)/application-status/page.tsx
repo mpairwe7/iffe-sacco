@@ -163,11 +163,15 @@ export default function ApplicationStatusPage() {
         </div>
       )}
 
-      {/* Back to login link */}
+      {/* Back to login link — must hit /logout (not /login) so the session
+          cookie is cleared. Otherwise the proxy redirects an authenticated
+          member to /portal/dashboard, and the dashboard layout sends them
+          right back to /application-status because their application is
+          not yet approved — making the link appear unresponsive. */}
       <p className="text-center text-sm text-text-muted mt-8">
-        <Link href="/login" className="font-semibold text-primary hover:text-primary-dark">
+        <a href="/logout" className="inline-block px-3 py-2 font-semibold text-primary hover:text-primary-dark">
           Back to Sign In
-        </Link>
+        </a>
       </p>
     </div>
   );

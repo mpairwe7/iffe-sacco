@@ -2,12 +2,11 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { Menu, X, Shield, Users, Briefcase, ChevronDown } from "lucide-react";
+import { Menu, X, ArrowRight } from "lucide-react";
 import { ThemeToggle } from "@/components/theme-toggle";
 
 export function MobileNav() {
   const [open, setOpen] = useState(false);
-  const [loginOpen, setLoginOpen] = useState(false);
 
   return (
     <div className="lg:hidden flex items-center gap-1">
@@ -51,39 +50,15 @@ export function MobileNav() {
             >
               Contact
             </a>
-            <div className="pt-4 border-t border-border space-y-2">
-              <button
-                onClick={() => setLoginOpen(!loginOpen)}
-                className="w-full flex items-center justify-between px-5 py-2.5 text-sm font-semibold text-white bg-primary rounded-lg"
+            <div className="pt-4 border-t border-border">
+              <Link
+                href="/login"
+                onClick={() => setOpen(false)}
+                className="w-full flex items-center justify-center gap-2 px-5 py-2.5 text-sm font-semibold text-white bg-primary rounded-lg hover:bg-primary-dark transition-all shadow-lg shadow-primary/25"
               >
                 Login
-                <ChevronDown className={`w-4 h-4 transition-transform ${loginOpen ? "rotate-180" : ""}`} />
-              </button>
-              {loginOpen && (
-                <div className="bg-surface-alt rounded-lg overflow-hidden border border-border">
-                  <Link
-                    href="/login?portal=admin"
-                    onClick={() => setOpen(false)}
-                    className="flex items-center gap-3 px-5 py-3 text-sm font-medium text-text hover:bg-white border-b border-border"
-                  >
-                    <Shield className="w-4 h-4 text-primary" /> Admin Portal
-                  </Link>
-                  <Link
-                    href="/login?portal=member"
-                    onClick={() => setOpen(false)}
-                    className="flex items-center gap-3 px-5 py-3 text-sm font-medium text-text hover:bg-white border-b border-border"
-                  >
-                    <Users className="w-4 h-4 text-info" /> Member Portal
-                  </Link>
-                  <Link
-                    href="/login?portal=staff"
-                    onClick={() => setOpen(false)}
-                    className="flex items-center gap-3 px-5 py-3 text-sm font-medium text-text hover:bg-white"
-                  >
-                    <Briefcase className="w-4 h-4 text-text-muted" /> Staff Portal
-                  </Link>
-                </div>
-              )}
+                <ArrowRight className="w-4 h-4" />
+              </Link>
             </div>
           </div>
         </div>

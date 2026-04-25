@@ -1,22 +1,8 @@
 /* eslint-disable @next/next/no-img-element */
 import Link from "next/link";
 import { ThemeToggle } from "@/components/theme-toggle";
-import {
-  Shield,
-  Wallet,
-  Smartphone,
-  ArrowRight,
-  Users,
-  Briefcase,
-  Phone,
-  Mail,
-  MapPin,
-  TrendingUp,
-  Lock,
-  Sparkles,
-} from "lucide-react";
+import { Shield, Wallet, Smartphone, ArrowRight, Phone, Mail, MapPin, TrendingUp, Lock, Sparkles } from "lucide-react";
 import { MobileNav } from "@/components/mobile-nav";
-import { LoginDropdown } from "@/components/login-dropdown";
 
 const jsonLd = {
   "@context": "https://schema.org",
@@ -93,7 +79,13 @@ export default function HomePage() {
             {/* Theme + CTA */}
             <div className="hidden lg:flex items-center gap-3">
               <ThemeToggle className="text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-800" />
-              <LoginDropdown />
+              <Link
+                href="/login"
+                className="inline-flex items-center gap-2 px-5 py-2.5 text-sm font-semibold text-white bg-primary rounded-lg hover:bg-primary-dark transition-all shadow-lg shadow-primary/25"
+              >
+                Login
+                <ArrowRight className="w-4 h-4" />
+              </Link>
             </div>
 
             <MobileNav />
@@ -368,60 +360,24 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* Portals / Services Section */}
+      {/* Access Section — single unified login */}
       <section id="services" className="py-20 lg:py-32 mesh-gradient relative">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-          <div className="text-center max-w-2xl mx-auto mb-16">
-            <div className="glass-subtle inline-flex items-center gap-2 px-5 py-2.5 text-primary text-sm font-semibold rounded-full mb-4">
-              Access Portals
-            </div>
-            <h2 className="text-3xl sm:text-4xl font-extrabold text-text">Our Portals</h2>
-            <p className="mt-4 text-text-muted text-lg">Seamless access for every stakeholder.</p>
+        <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 text-center">
+          <div className="glass-subtle inline-flex items-center gap-2 px-5 py-2.5 text-primary text-sm font-semibold rounded-full mb-4">
+            <Lock className="w-4 h-4" /> Secure Access
           </div>
-          <div className="grid md:grid-cols-3 gap-8">
-            {[
-              {
-                icon: Shield,
-                title: "Admin Portal",
-                desc: "Manage system operations, users, and reports.",
-                gradient: "from-primary to-primary-dark",
-                portal: "admin",
-              },
-              {
-                icon: Users,
-                title: "Member Portal",
-                desc: "Check balances, request loans, and track savings.",
-                gradient: "from-info to-blue-700",
-                portal: "member",
-              },
-              {
-                icon: Briefcase,
-                title: "Staff Portal",
-                desc: "Process requests and manage member services.",
-                gradient: "from-accent to-gray-800",
-                portal: "staff",
-              },
-            ].map((portal) => (
-              <Link
-                key={portal.title}
-                href={`/login?portal=${portal.portal}`}
-                className="group glass-card rounded-xl overflow-hidden hover:-translate-y-2"
-              >
-                <div className={`h-1.5 bg-gradient-to-r ${portal.gradient}`} />
-                <div className="p-8">
-                  <div
-                    className={`w-16 h-16 rounded-xl bg-gradient-to-br ${portal.gradient} flex items-center justify-center mb-6 shadow-lg group-hover:scale-110 transition-transform`}
-                  >
-                    <portal.icon className="w-8 h-8 text-white" />
-                  </div>
-                  <h3 className="text-xl font-bold text-text mb-2">{portal.title}</h3>
-                  <p className="text-text-muted mb-6">{portal.desc}</p>
-                  <span className="inline-flex items-center gap-2 text-primary font-semibold text-sm group-hover:gap-3 transition-all">
-                    Login <ArrowRight className="w-4 h-4" />
-                  </span>
-                </div>
-              </Link>
-            ))}
+          <h2 className="text-3xl sm:text-4xl font-extrabold text-text">Access Your Account</h2>
+          <p className="mt-4 text-text-muted text-lg">
+            Members, staff, and administrators all sign in from the same place. Choose your role on the login page.
+          </p>
+          <div className="mt-10">
+            <Link
+              href="/login"
+              className="group inline-flex items-center gap-2 px-10 py-4 text-base font-semibold text-white bg-gradient-to-r from-primary to-primary-dark rounded-xl shadow-xl shadow-primary/30 hover:shadow-2xl hover:shadow-primary/40 hover:-translate-y-1"
+            >
+              Login
+              <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+            </Link>
           </div>
         </div>
       </section>

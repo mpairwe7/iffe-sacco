@@ -4,17 +4,44 @@ import Link from "next/link";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Eye, EyeOff, Mail, Lock, ArrowRight, ArrowLeft, Loader2 } from "lucide-react";
+import {
+  Eye,
+  EyeOff,
+  Mail,
+  Lock,
+  ArrowRight,
+  ArrowLeft,
+  Loader2,
+  User,
+  Briefcase,
+  Shield,
+  CheckCircle2,
+} from "lucide-react";
 import { toast } from "sonner";
 import { loginSchema, type LoginInput } from "@/lib/schemas";
 import { useLogin } from "@/hooks/use-auth";
 import { useAuthStore } from "@/stores/auth-store";
 import { SecurityBadge } from "@/components/ui/security-badge";
 import { useRouter } from "next/navigation";
-import { getDefaultRouteForRole } from "@/lib/role-routes";
+import { getDefaultRouteForRole, type AppRole } from "@/lib/role-routes";
+
+type UserType = "member" | "staff" | "admin";
+
+const USER_TYPES: Array<{ id: UserType; label: string; sub: string; icon: typeof User }> = [
+  { id: "member", label: "Member", sub: "Access your account", icon: User },
+  { id: "staff", label: "Staff", sub: "Access staff panel", icon: Briefcase },
+  { id: "admin", label: "Admin", sub: "Access admin panel", icon: Shield },
+];
+
+function roleGroup(role: AppRole): UserType {
+  if (role === "member") return "member";
+  if (role === "admin") return "admin";
+  return "staff"; // staff + chairman
+}
 
 export function LoginForm() {
   const [showPassword, setShowPassword] = useState(false);
+  const [userType, setUserType] = useState<UserType>("member");
   const router = useRouter();
   const login = useLogin();
   const setAuth = useAuthStore((s) => s.setAuth);
@@ -35,7 +62,13 @@ export function LoginForm() {
         remember: data.remember ?? false,
       });
       setAuth(result.user);
-      toast.success("Welcome back!");
+      const actual = roleGroup(result.user.role);
+      if (actual === userType) {
+        toast.success("Welcome back!");
+      } else {
+        const actualLabel = USER_TYPES.find((u) => u.id === actual)?.label ?? actual;
+        toast.info(`Signed in as ${actualLabel}. Redirecting to your portal.`);
+      }
       router.push(getDefaultRouteForRole(result.user.role));
     } catch (err: unknown) {
       const message = err instanceof Error ? err.message : "Login failed";
@@ -53,10 +86,43 @@ export function LoginForm() {
         Back to Home
       </Link>
       <div className="glass-card rounded-xl p-8 shadow-xl">
-        <h2 className="text-2xl font-bold text-text text-center">Welcome Back</h2>
-        <p className="text-text-muted text-center mt-2 mb-8">Sign in to your account</p>
+        <h2 className="text-2xl font-bold text-text text-center">Login to Your Account</h2>
+        <p className="text-text-muted text-center mt-2 mb-8">Select your user type and enter your credentials</p>
 
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
+          <div>
+            <span className="block text-sm font-medium text-text mb-3">Select User Type</span>
+            <div className="grid grid-cols-3 gap-2" role="radiogroup" aria-label="User type">
+              {USER_TYPES.map((opt) => {
+                const Icon = opt.icon;
+                const active = userType === opt.id;
+                return (
+                  <button
+                    type="button"
+                    key={opt.id}
+                    role="radio"
+                    aria-checked={active}
+                    onClick={() => setUserType(opt.id)}
+                    className={`relative flex flex-col items-center gap-2 p-3 sm:p-4 rounded-lg border text-center transition-all ${
+                      active
+                        ? "border-primary bg-primary/10 text-primary shadow-sm"
+                        : "border-border bg-white/60 dark:bg-white/5 text-text-muted hover:border-primary/40 hover:text-text"
+                    }`}
+                  >
+                    {active && (
+                      <CheckCircle2 className="absolute top-1.5 right-1.5 w-4 h-4 text-primary" aria-hidden="true" />
+                    )}
+                    <Icon className="w-5 h-5 sm:w-6 sm:h-6" aria-hidden="true" />
+                    <div>
+                      <div className="text-sm font-semibold">{opt.label}</div>
+                      <div className="text-[10px] leading-tight text-text-muted">{opt.sub}</div>
+                    </div>
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+
           <div>
             <label htmlFor="email" className="block text-sm font-medium text-text mb-2">
               Email Address
