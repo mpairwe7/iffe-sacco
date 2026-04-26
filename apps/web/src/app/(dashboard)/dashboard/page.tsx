@@ -35,15 +35,37 @@ import { cn } from "@/lib/utils";
 import type { Application, Expense, Transaction, DashboardStats, PaginatedResponse } from "@iffe/shared";
 
 // ─── Live clock for the date card (client-only after mount) ─────────
-// Subscribe to a 60s tick via useSyncExternalStore so the snapshot is
-// driven by an external source — avoids setState-in-effect and prevents
-// SSR/CSR hydration mismatches on the locale-formatted output.
-function subscribeNow(cb: () => void) {
-  const id = setInterval(cb, 60_000);
-  return () => clearInterval(id);
+// useSyncExternalStore requires getSnapshot to return a stable, cached
+// value between subscription notifications. Returning Date.now() on each
+// call would change every render and trigger React error #185 (infinite
+// re-render). The module-level `nowEpoch` cache is only mutated when the
+// shared interval ticks; getSnapshot just reads the cached value.
+let nowEpoch = 0;
+let nowIntervalId: ReturnType<typeof setInterval> | null = null;
+const nowListeners = new Set<() => void>();
+
+function tickNow() {
+  nowEpoch = Date.now();
+  for (const l of nowListeners) l();
 }
-const getNowSnapshot = () => Date.now();
+
+function subscribeNow(cb: () => void) {
+  if (nowEpoch === 0) nowEpoch = Date.now();
+  nowListeners.add(cb);
+  if (nowIntervalId === null) {
+    nowIntervalId = setInterval(tickNow, 60_000);
+  }
+  return () => {
+    nowListeners.delete(cb);
+    if (nowListeners.size === 0 && nowIntervalId !== null) {
+      clearInterval(nowIntervalId);
+      nowIntervalId = null;
+    }
+  };
+}
+const getNowSnapshot = () => nowEpoch;
 const getNowServerSnapshot = () => 0;
+
 function useNow(): Date | null {
   const epoch = useSyncExternalStore(subscribeNow, getNowSnapshot, getNowServerSnapshot);
   return epoch ? new Date(epoch) : null;
