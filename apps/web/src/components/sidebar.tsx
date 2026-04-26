@@ -30,6 +30,7 @@ import {
   Percent,
   ScrollText,
   Info,
+  Shield,
 } from "lucide-react";
 
 interface SidebarProps {
@@ -354,6 +355,24 @@ export function Sidebar({ open, onClose }: SidebarProps) {
             );
           })}
         </nav>
+
+        {/* Admin role info card — visible only to admin role */}
+        {role === "admin" && (
+          <div className="px-3 pb-3">
+            <div className="rounded-xl border border-primary/20 bg-primary/5 p-3.5">
+              <div className="flex items-center gap-2 mb-1.5">
+                <div className="w-7 h-7 rounded-lg bg-primary/15 flex items-center justify-center">
+                  <Shield className="w-4 h-4 text-primary" />
+                </div>
+                <span className="text-xs font-bold text-gray-900 dark:text-white">Admin Role</span>
+              </div>
+              <p className="text-[11px] leading-snug text-text-muted">
+                You have full visibility across the system. You can only approve new member applications and
+                expenditures.
+              </p>
+            </div>
+          </div>
+        )}
 
         {/* Motto ribbon */}
         <div className="px-4 py-3 border-t border-gray-200 dark:border-gray-800 bg-gradient-to-r from-primary/5 via-primary/10 to-primary/5">
