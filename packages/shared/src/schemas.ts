@@ -167,9 +167,13 @@ export const changePasswordSchema = z.object({
 });
 
 // ===== Pagination =====
+// Cap raised to 500 so admin/staff dashboards can fetch every member in
+// one round-trip for welfare aggregations (the shared schema is used by
+// the members list, which requires admin/staff/chairman auth — there is
+// no public exposure to abuse).
 export const paginationSchema = z.object({
   page: z.coerce.number().min(1).default(1),
-  limit: z.coerce.number().min(1).max(100).default(20),
+  limit: z.coerce.number().min(1).max(500).default(20),
   search: z.string().optional(),
   sortBy: z.string().optional(),
   sortOrder: z.enum(["asc", "desc"]).default("desc"),
