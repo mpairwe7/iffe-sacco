@@ -42,7 +42,17 @@ const app = new Hono().basePath("/api/v1");
 
 // ===== Global Middleware =====
 app.use("*", requestContext);
-app.use("*", secureHeaders());
+// Hono's default secureHeaders() sets X-Content-Type-Options, X-Frame-Options,
+// X-XSS-Protection, and Referrer-Policy. HSTS is opt-in — enable it so the
+// API matches the web app's posture (2-year max-age, includeSubDomains,
+// preload). nginx + Cloudflare already terminate TLS in front of us; this
+// header tells any direct caller that the only valid scheme is https.
+app.use(
+  "*",
+  secureHeaders({
+    strictTransportSecurity: "max-age=63072000; includeSubDomains; preload",
+  }),
+);
 // CSRF token issued on every authenticated read; verified on every mutation.
 // Login / register / password reset are explicitly opted out via c.set("csrf:skip").
 app.use("*", csrfTokenIssuer);
