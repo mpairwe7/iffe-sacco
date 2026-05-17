@@ -37,30 +37,23 @@ jobs:
           # workflow_dispatch fall back to the dispatched ref.
           ref: ${{ github.event.workflow_run.head_sha || github.ref }}
 
-      - name: Configure SSH
+      - name: Configure SSH key + known_hosts
         env:
           DEPLOY_SSH_KEY: ${{ secrets.DEPLOY_SSH_KEY }}
-          DEPLOY_HOST: ${{ secrets.DEPLOY_HOST }}
           DEPLOY_HOST_KEY: ${{ secrets.DEPLOY_HOST_KEY }}
         run: |
           mkdir -p ~/.ssh && chmod 700 ~/.ssh
           printf '%s\n' "$DEPLOY_SSH_KEY"  > ~/.ssh/deploy_key
           printf '%s\n' "$DEPLOY_HOST_KEY" > ~/.ssh/known_hosts
           chmod 600 ~/.ssh/deploy_key ~/.ssh/known_hosts
-          cat > ~/.ssh/config <<EOF
-          Host iffe-deploy
-            HostName $DEPLOY_HOST
-            User iffe
-            IdentityFile ~/.ssh/deploy_key
-            IdentitiesOnly yes
-            UserKnownHostsFile ~/.ssh/known_hosts
-            StrictHostKeyChecking yes
-          EOF
-          chmod 600 ~/.ssh/config
 
       - name: Sync source tree to /home/iffe/IFFE
+        env:
+          DEPLOY_HOST: ${{ secrets.DEPLOY_HOST }}
         run: |
+          SSH_OPTS="-i $HOME/.ssh/deploy_key -o UserKnownHostsFile=$HOME/.ssh/known_hosts -o IdentitiesOnly=yes -o StrictHostKeyChecking=yes"
           rsync -az --delete \
+            -e "ssh $SSH_OPTS" \
             --exclude node_modules \
             --exclude .next \
             --exclude dist \
@@ -71,11 +64,18 @@ jobs:
             --exclude '.env.local' \
             --exclude '.env.production' \
             --exclude '.git' \
-            ./ iffe-deploy:/home/iffe/IFFE/
+            ./ "iffe@${DEPLOY_HOST}:/home/iffe/IFFE/"
 
       - name: Install, migrate, build, restart on the VPS
+        env:
+          DEPLOY_HOST: ${{ secrets.DEPLOY_HOST }}
         run: |
-          ssh iffe-deploy 'bash /home/iffe/IFFE/scripts/deploy-vps.sh'
+          ssh -i "$HOME/.ssh/deploy_key" \
+              -o UserKnownHostsFile="$HOME/.ssh/known_hosts" \
+              -o IdentitiesOnly=yes \
+              -o StrictHostKeyChecking=yes \
+              "iffe@${DEPLOY_HOST}" \
+              'bash /home/iffe/IFFE/scripts/deploy-vps.sh'
 
       - name: Smoke-test the live site through Cloudflare
         run: |
