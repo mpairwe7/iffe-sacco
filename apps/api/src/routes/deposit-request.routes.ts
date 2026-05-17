@@ -7,6 +7,7 @@ import { Money } from "@iffe/ledger";
 import { prisma, withTx } from "../config/db";
 import { flags } from "../config/flags";
 import { authMiddleware, requireRole, type AuthEnv } from "../middleware/auth";
+import { requireEmptyBody } from "../middleware/empty-body";
 import { writeAuditLog } from "../utils/audit";
 import { logger } from "../utils/logger";
 import { mapMethodToLedgerSource } from "../utils/payment-method";
@@ -94,7 +95,7 @@ depositRequests.post("/", requireRole("member"), zValidator("json", createSchema
   return c.json({ success: true, data: req }, 201);
 });
 
-depositRequests.patch("/:id/approve", requireRole("staff"), async (c) => {
+depositRequests.patch("/:id/approve", requireRole("staff"), requireEmptyBody, async (c) => {
   const id = c.req.param("id");
   const user = c.get("user");
 
@@ -183,7 +184,7 @@ depositRequests.patch("/:id/approve", requireRole("staff"), async (c) => {
   return c.json({ success: true, data: result });
 });
 
-depositRequests.patch("/:id/reject", requireRole("staff"), async (c) => {
+depositRequests.patch("/:id/reject", requireRole("staff"), requireEmptyBody, async (c) => {
   const id = c.req.param("id");
   const user = c.get("user");
   const existing = await prisma.depositRequest.findUnique({ where: { id } });

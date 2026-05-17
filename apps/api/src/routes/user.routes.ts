@@ -4,6 +4,7 @@ import { createUserSchema, updateUserSchema, paginationSchema } from "@iffe/shar
 import { prisma } from "../config/db";
 import { hashPassword } from "../utils/password";
 import { authMiddleware, requireRole } from "../middleware/auth";
+import { requireEmptyBody } from "../middleware/empty-body";
 import { HTTPException } from "hono/http-exception";
 import { writeAuditLog } from "../utils/audit";
 
@@ -123,7 +124,7 @@ users.put("/:id", zValidator("json", updateUserSchema), async (c) => {
   return c.json({ success: true, data: user });
 });
 
-users.patch("/:id/deactivate", async (c) => {
+users.patch("/:id/deactivate", requireEmptyBody, async (c) => {
   const user = await prisma.user.update({
     where: { id: c.req.param("id") },
     data: { isActive: false },
@@ -137,7 +138,7 @@ users.patch("/:id/deactivate", async (c) => {
   return c.json({ success: true, data: user });
 });
 
-users.patch("/:id/activate", async (c) => {
+users.patch("/:id/activate", requireEmptyBody, async (c) => {
   const user = await prisma.user.update({
     where: { id: c.req.param("id") },
     data: { isActive: true },

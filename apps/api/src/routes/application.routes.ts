@@ -4,6 +4,7 @@ import { zValidator } from "@hono/zod-validator";
 import { createApplicationSchema, reviewApplicationSchema, paginationSchema } from "@iffe/shared";
 import { ApplicationService } from "../services/application.service";
 import { authMiddleware, requireRole } from "../middleware/auth";
+import { requireEmptyBody } from "../middleware/empty-body";
 import { writeAuditLog } from "../utils/audit";
 
 const applications = new Hono();
@@ -65,7 +66,7 @@ applications.get("/:id", authMiddleware, requireRole("admin", "staff"), async (c
 });
 
 // Admin: approve application
-applications.put("/:id/approve", authMiddleware, requireRole("admin"), async (c) => {
+applications.put("/:id/approve", authMiddleware, requireRole("admin"), requireEmptyBody, async (c) => {
   const user = c.get("user" as any);
   const result = await service.approve(c.req.param("id"), user.id);
   await writeAuditLog(c, {
