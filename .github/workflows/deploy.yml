@@ -1,0 +1,93 @@
+name: Deploy to VPS
+
+# Run after CI completes on main. Skip if CI failed.
+on:
+  workflow_run:
+    workflows: ["CI"]
+    branches: [main]
+    types: [completed]
+  # Manual override — useful for re-running after fixing the VPS
+  # without pushing a new commit.
+  workflow_dispatch:
+
+# Never run two deploys in parallel, and never cancel a deploy mid-flight
+# (a half-restarted API + half-built web is the worst possible state).
+concurrency:
+  group: deploy-vps
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+jobs:
+  deploy:
+    name: Push & rebuild on iffeds.org
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    # workflow_run fires for both success and failure; only deploy on success.
+    # workflow_dispatch has no workflow_run context, so allow it through.
+    if: ${{ github.event_name == 'workflow_dispatch' || github.event.workflow_run.conclusion == 'success' }}
+
+    steps:
+      - name: Checkout the exact commit CI tested
+        uses: actions/checkout@v4
+        with:
+          # workflow_run fires from the default branch's workflow file but
+          # the head_sha points at the commit that was tested. For
+          # workflow_dispatch fall back to the dispatched ref.
+          ref: ${{ github.event.workflow_run.head_sha || github.ref }}
+
+      - name: Configure SSH
+        env:
+          DEPLOY_SSH_KEY: ${{ secrets.DEPLOY_SSH_KEY }}
+          DEPLOY_HOST: ${{ secrets.DEPLOY_HOST }}
+          DEPLOY_HOST_KEY: ${{ secrets.DEPLOY_HOST_KEY }}
+        run: |
+          mkdir -p ~/.ssh && chmod 700 ~/.ssh
+          printf '%s\n' "$DEPLOY_SSH_KEY"  > ~/.ssh/deploy_key
+          printf '%s\n' "$DEPLOY_HOST_KEY" > ~/.ssh/known_hosts
+          chmod 600 ~/.ssh/deploy_key ~/.ssh/known_hosts
+          cat > ~/.ssh/config <<EOF
+          Host iffe-deploy
+            HostName $DEPLOY_HOST
+            User iffe
+            IdentityFile ~/.ssh/deploy_key
+            IdentitiesOnly yes
+            UserKnownHostsFile ~/.ssh/known_hosts
+            StrictHostKeyChecking yes
+          EOF
+          chmod 600 ~/.ssh/config
+
+      - name: Sync source tree to /home/iffe/IFFE
+        run: |
+          rsync -az --delete \
+            --exclude node_modules \
+            --exclude .next \
+            --exclude dist \
+            --exclude .vercel \
+            --exclude .turbo \
+            --exclude api-bundle \
+            --exclude '.env' \
+            --exclude '.env.local' \
+            --exclude '.env.production' \
+            --exclude '.git' \
+            ./ iffe-deploy:/home/iffe/IFFE/
+
+      - name: Install, migrate, build, restart on the VPS
+        run: |
+          ssh iffe-deploy 'bash /home/iffe/IFFE/scripts/deploy-vps.sh'
+
+      - name: Smoke-test the live site through Cloudflare
+        run: |
+          set -e
+          for attempt in 1 2 3 4 5; do
+            body=$(curl -fsS -m 10 https://iffeds.org/api/v1/health || true)
+            if echo "$body" | grep -q '"status":"ok"'; then
+              echo "Live health OK: $body"
+              exit 0
+            fi
+            echo "attempt $attempt: not ready yet, retrying in 5s..."
+            sleep 5
+          done
+          echo "Live health failed after 5 attempts" >&2
+          exit 1
