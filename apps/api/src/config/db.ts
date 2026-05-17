@@ -27,15 +27,27 @@
  */
 import { PrismaClient } from "@prisma/client";
 import { PrismaNeonHttp, PrismaNeon } from "@prisma/adapter-neon";
+import { PrismaPg } from "@prisma/adapter-pg";
 
 const globalForPrisma = globalThis as unknown as {
   prisma: PrismaClient;
   writePrisma: PrismaClient;
 };
 
+// Non-Neon Postgres (self-hosted, RDS, etc.) doesn't speak Neon's HTTP/WS
+// protocol — use the standard pg adapter instead. Prisma 7 requires
+// every client to be constructed with a driver adapter.
+function isNeonUrl(url: string): boolean {
+  return /neon\.tech|\.neon\./i.test(url);
+}
+
 function createHttpPrismaClient() {
   const connectionString = process.env.DATABASE_URL;
   if (!connectionString) throw new Error("DATABASE_URL not set");
+  if (!isNeonUrl(connectionString)) {
+    const adapter = new PrismaPg({ connectionString });
+    return new PrismaClient({ adapter });
+  }
   // PrismaNeonHttp takes the connection string directly (NOT the neon() SQL
   // function). It calls neon() internally in its connect() method.
   const adapter = new PrismaNeonHttp(connectionString);
@@ -45,6 +57,10 @@ function createHttpPrismaClient() {
 function createWsPrismaClient() {
   const connectionString = process.env.DATABASE_URL;
   if (!connectionString) throw new Error("DATABASE_URL not set");
+  if (!isNeonUrl(connectionString)) {
+    const adapter = new PrismaPg({ connectionString });
+    return new PrismaClient({ adapter });
+  }
   // PrismaNeon takes a PoolConfig OBJECT (not a Pool instance). It
   // creates its own pool internally. Required for $transaction support.
   const adapter = new PrismaNeon({ connectionString });
