@@ -3,7 +3,17 @@ import type { PrismaClient } from "@prisma/client";
 
 type DbClient = PrismaClient | Prisma.TransactionClient;
 
-async function getNextSequenceValue(db: DbClient, sequenceName: "member_number_seq" | "account_number_seq") {
+// Sequence names are spliced into raw SQL via Prisma.raw(), which bypasses
+// parameterization. The TypeScript union below is a compile-time check only —
+// any caller bypassing the type (JS, dynamic dispatch) could otherwise execute
+// arbitrary SQL. Enforce the allowlist at runtime too.
+const ALLOWED_SEQUENCES = new Set(["member_number_seq", "account_number_seq"] as const);
+type AllowedSequence = "member_number_seq" | "account_number_seq";
+
+async function getNextSequenceValue(db: DbClient, sequenceName: AllowedSequence) {
+  if (!ALLOWED_SEQUENCES.has(sequenceName)) {
+    throw new Error(`Refusing to splice unknown sequence name into raw SQL: ${sequenceName}`);
+  }
   const result = await db.$queryRaw<Array<{ value: bigint | number }>>(
     Prisma.sql`SELECT nextval(${Prisma.raw(`'${sequenceName}'`)})::bigint AS value`,
   );
