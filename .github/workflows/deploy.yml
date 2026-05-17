@@ -37,15 +37,33 @@ jobs:
           # workflow_dispatch fall back to the dispatched ref.
           ref: ${{ github.event.workflow_run.head_sha || github.ref }}
 
-      - name: Configure SSH key + known_hosts
+      - name: Configure SSH key + pin host fingerprint
         env:
           DEPLOY_SSH_KEY: ${{ secrets.DEPLOY_SSH_KEY }}
-          DEPLOY_HOST_KEY: ${{ secrets.DEPLOY_HOST_KEY }}
+          DEPLOY_HOST: ${{ secrets.DEPLOY_HOST }}
+          # Fingerprint is public information — pin it in code so every
+          # deploy verifies the host key against this known value before
+          # trusting the live key from ssh-keyscan. Update only if you
+          # intentionally rebuild the VPS.
+          EXPECTED_FP: SHA256:aARL3B4WSb4cDTNKgeEwRLoezzhxy3vjuLdDRXWyunA
         run: |
           mkdir -p ~/.ssh && chmod 700 ~/.ssh
-          printf '%s\n' "$DEPLOY_SSH_KEY"  > ~/.ssh/deploy_key
-          printf '%s\n' "$DEPLOY_HOST_KEY" > ~/.ssh/known_hosts
-          chmod 600 ~/.ssh/deploy_key ~/.ssh/known_hosts
+          printf '%s\n' "$DEPLOY_SSH_KEY" > ~/.ssh/deploy_key
+          chmod 600 ~/.ssh/deploy_key
+
+          HOST=$(printf '%s' "$DEPLOY_HOST" | tr -d '[:space:]')
+          KEY=$(ssh-keyscan -t ed25519 "$HOST" 2>/dev/null)
+          if [ -z "$KEY" ]; then
+            echo "::error::ssh-keyscan returned no key for the VPS"; exit 1
+          fi
+          ACTUAL_FP=$(printf '%s\n' "$KEY" | ssh-keygen -lf - | awk '{print $2}')
+          if [ "$ACTUAL_FP" != "$EXPECTED_FP" ]; then
+            echo "::error::Host key fingerprint mismatch (expected $EXPECTED_FP, got $ACTUAL_FP) — possible MITM or VPS was rebuilt"
+            exit 1
+          fi
+          printf '%s\n' "$KEY" > ~/.ssh/known_hosts
+          chmod 600 ~/.ssh/known_hosts
+          echo "Host fingerprint verified: $ACTUAL_FP"
 
       - name: Sync source tree to /home/iffe/IFFE
         env:
