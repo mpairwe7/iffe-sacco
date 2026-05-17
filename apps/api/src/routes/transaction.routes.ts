@@ -17,10 +17,19 @@ transactions.get("/", zValidator("query", paginationSchema), async (c) => {
   const status = c.req.query("status");
   const user = c.get("user");
 
-  // Members can only see transactions for their own accounts
+  // Members can only see transactions for their own accounts. A freshly
+  // registered user may not yet be linked to a Member record (memberId is
+  // optional on User) — return an empty page rather than crashing the
+  // Prisma query with an undefined filter value.
   if (user.role === "member") {
+    if (!user.memberId) {
+      return c.json({
+        success: true,
+        data: { data: [], total: 0, page: params.page, limit: params.limit, totalPages: 0 },
+      });
+    }
     const accounts = await prisma.account.findMany({
-      where: { memberId: user.memberId! },
+      where: { memberId: user.memberId },
       select: { id: true },
     });
     const accountIds = accounts.map((a) => a.id);
@@ -54,7 +63,7 @@ transactions.get("/:id", async (c) => {
   return c.json({ success: true, data: txn });
 });
 
-transactions.post("/", requireRole("admin", "staff"), zValidator("json", createTransactionSchema), async (c) => {
+transactions.post("/", requireRole("staff"), zValidator("json", createTransactionSchema), async (c) => {
   const data = c.req.valid("json");
   const user = c.get("user");
   const txn = await service.create({ ...data, processedBy: user.id });
@@ -67,7 +76,7 @@ transactions.post("/", requireRole("admin", "staff"), zValidator("json", createT
   return c.json({ success: true, data: txn }, 201);
 });
 
-transactions.patch("/:id/approve", requireRole("admin"), async (c) => {
+transactions.patch("/:id/approve", requireRole("staff"), async (c) => {
   const user = c.get("user");
   const txn = await service.approve(c.req.param("id"), user.id);
   await writeAuditLog(c, {
@@ -78,7 +87,7 @@ transactions.patch("/:id/approve", requireRole("admin"), async (c) => {
   return c.json({ success: true, data: txn });
 });
 
-transactions.patch("/:id/reject", requireRole("admin"), async (c) => {
+transactions.patch("/:id/reject", requireRole("staff"), async (c) => {
   const user = c.get("user");
   const txn = await service.reject(c.req.param("id"), user.id);
   await writeAuditLog(c, {
@@ -89,7 +98,7 @@ transactions.patch("/:id/reject", requireRole("admin"), async (c) => {
   return c.json({ success: true, data: txn });
 });
 
-transactions.patch("/:id/reverse", requireRole("admin"), async (c) => {
+transactions.patch("/:id/reverse", requireRole("staff"), async (c) => {
   const user = c.get("user");
   const txn = await service.reverse(c.req.param("id"), user.id);
   await writeAuditLog(c, {
