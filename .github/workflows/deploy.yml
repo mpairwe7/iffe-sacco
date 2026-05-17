@@ -51,6 +51,7 @@ jobs:
         env:
           DEPLOY_HOST: ${{ secrets.DEPLOY_HOST }}
         run: |
+          DEPLOY_HOST_CLEAN=$(printf '%s' "$DEPLOY_HOST" | tr -d '[:space:]')
           SSH_OPTS="-i $HOME/.ssh/deploy_key -o UserKnownHostsFile=$HOME/.ssh/known_hosts -o IdentitiesOnly=yes -o StrictHostKeyChecking=yes"
           rsync -az --delete \
             -e "ssh $SSH_OPTS" \
@@ -64,17 +65,18 @@ jobs:
             --exclude '.env.local' \
             --exclude '.env.production' \
             --exclude '.git' \
-            ./ "iffe@${DEPLOY_HOST}:/home/iffe/IFFE/"
+            ./ "iffe@${DEPLOY_HOST_CLEAN}:/home/iffe/IFFE/"
 
       - name: Install, migrate, build, restart on the VPS
         env:
           DEPLOY_HOST: ${{ secrets.DEPLOY_HOST }}
         run: |
+          DEPLOY_HOST_CLEAN=$(printf '%s' "$DEPLOY_HOST" | tr -d '[:space:]')
           ssh -i "$HOME/.ssh/deploy_key" \
               -o UserKnownHostsFile="$HOME/.ssh/known_hosts" \
               -o IdentitiesOnly=yes \
               -o StrictHostKeyChecking=yes \
-              "iffe@${DEPLOY_HOST}" \
+              "iffe@${DEPLOY_HOST_CLEAN}" \
               'bash /home/iffe/IFFE/scripts/deploy-vps.sh'
 
       - name: Smoke-test the live site through Cloudflare
