@@ -4,7 +4,12 @@ import { NextRequest } from "next/server";
 import { AUTH_SESSION_COOKIE } from "./lib/auth-cookie-names.ts";
 import { proxy, config } from "./proxy.ts";
 
-const secret = new TextEncoder().encode("dev-jwt-secret-not-for-production");
+// Sign with whatever secret the proxy will verify against in this environment.
+// Locally JWT_SECRET is usually unset → both sides fall through to the dev
+// default. In CI, the workflow sets JWT_SECRET=ci-test-secret-do-not-use-in-production;
+// hardcoding the dev string here made every token fail verification in CI
+// and routed every test through the unauthenticated code path.
+const secret = new TextEncoder().encode(process.env.JWT_SECRET || "dev-jwt-secret-not-for-production");
 
 async function createToken(role, expiresAt = Math.floor(Date.now() / 1000) + 60 * 60) {
   return new SignJWT({ role, sid: "session-1", sub: "user-1" })
