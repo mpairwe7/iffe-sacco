@@ -8,6 +8,7 @@ import {
   useRejectTransaction,
 } from "@/hooks/use-transactions";
 import { useServerTable } from "@/hooks/use-server-table";
+import { useAuthStore } from "@/stores/auth-store";
 import { formatCurrency, formatDate } from "@/lib/utils";
 import { Wallet, ArrowUpRight, ArrowDownRight, Check, X } from "lucide-react";
 import { toast } from "sonner";
@@ -20,6 +21,8 @@ export default function TransactionsPage() {
   const statsQuery = useTransactionStats();
   const approveMutation = useApproveTransaction();
   const rejectMutation = useRejectTransaction();
+  const role = useAuthStore((s) => s.user?.role);
+  const canWrite = role === "staff";
 
   const transactionsResponse = query.data;
   const transactions = (transactionsResponse?.data || []) as TransactionRow[];
@@ -120,7 +123,7 @@ export default function TransactionsPage() {
       label: "Actions",
       sortable: false,
       render: (row: TransactionRow) => {
-        if (row.status !== "pending") return null;
+        if (row.status !== "pending" || !canWrite) return null;
         const busy = approveMutation.isPending || rejectMutation.isPending;
         return (
           <div className="flex items-center gap-1">
@@ -192,8 +195,8 @@ export default function TransactionsPage() {
         description="All deposits, withdrawals, and transfers"
         columns={columns}
         data={transactions}
-        addHref="/admin/transactions/create"
-        addLabel="New Transaction"
+        addHref={canWrite ? "/admin/transactions/create" : undefined}
+        addLabel={canWrite ? "New Transaction" : undefined}
         searchPlaceholder="Search transactions..."
         isLoading={query.isLoading}
         error={query.error}

@@ -44,7 +44,7 @@ loans.get("/:id", async (c) => {
   return c.json({ success: true, data: loan });
 });
 
-loans.post("/", requireRole("admin", "staff"), zValidator("json", createLoanSchema), async (c) => {
+loans.post("/", requireRole("staff"), zValidator("json", createLoanSchema), async (c) => {
   const data = c.req.valid("json");
   const loan = await service.create(data);
   await writeAuditLog(c, {
@@ -74,7 +74,7 @@ loans.post("/apply", requireRole("member"), zValidator("json", memberLoanApplica
   return c.json({ success: true, data: loan }, 201);
 });
 
-loans.patch("/:id/approve", requireRole("admin"), async (c) => {
+loans.patch("/:id/approve", requireRole("staff"), async (c) => {
   const user = c.get("user");
   const loan = await service.approve(c.req.param("id"), user.id);
   await writeAuditLog(c, {
@@ -85,7 +85,7 @@ loans.patch("/:id/approve", requireRole("admin"), async (c) => {
   return c.json({ success: true, data: loan });
 });
 
-loans.patch("/:id/reject", requireRole("admin"), async (c) => {
+loans.patch("/:id/reject", requireRole("staff"), async (c) => {
   const loan = await service.reject(c.req.param("id"));
   await writeAuditLog(c, {
     action: "loan_rejected",
@@ -100,7 +100,7 @@ const repaySchema = z.object({
   accountId: z.string().uuid().optional(),
 });
 
-loans.patch("/:id/repay", requireRole("admin", "staff"), zValidator("json", repaySchema), async (c) => {
+loans.patch("/:id/repay", requireRole("staff"), zValidator("json", repaySchema), async (c) => {
   const { amount, accountId } = c.req.valid("json");
   const user = c.get("user");
   const loan = await service.recordRepayment(c.req.param("id"), amount, user.id, accountId);

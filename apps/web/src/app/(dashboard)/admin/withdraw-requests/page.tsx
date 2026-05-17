@@ -10,6 +10,7 @@ import {
   useWithdrawRequests,
 } from "@/hooks/use-withdraw-requests";
 import { useServerTable } from "@/hooks/use-server-table";
+import { useAuthStore } from "@/stores/auth-store";
 import { formatCurrency, formatDate } from "@/lib/utils";
 import { toast } from "sonner";
 import type { WithdrawRequest } from "@iffe/shared";
@@ -21,6 +22,8 @@ export default function WithdrawRequestsPage() {
   const { data, isLoading, error, refetch } = useWithdrawRequests(table.params);
   const approveTransaction = useApproveWithdrawRequest();
   const rejectTransaction = useRejectWithdrawRequest();
+  const role = useAuthStore((s) => s.user?.role);
+  const canDecide = role === "staff";
 
   const [confirmAction, setConfirmAction] = useState<{ type: "approve" | "reject"; id: string } | null>(null);
 
@@ -98,7 +101,7 @@ export default function WithdrawRequestsPage() {
       label: "Actions",
       sortable: false,
       render: (row: WithdrawRow) =>
-        row.status === "pending" ? (
+        row.status === "pending" && canDecide ? (
           <div className="flex items-center gap-1">
             <button
               onClick={() => setConfirmAction({ type: "approve", id: row.id })}

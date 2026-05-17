@@ -38,11 +38,17 @@ interface SidebarProps {
   onClose: () => void;
 }
 
+interface NavChild {
+  label: string;
+  href: string;
+  roles?: Role[];
+}
+
 interface NavItem {
   label: string;
   href?: string;
   icon: React.ElementType;
-  children?: { label: string; href: string }[];
+  children?: NavChild[];
   divider?: boolean;
   section?: string;
   roles: Role[];
@@ -95,7 +101,7 @@ const navItems: NavItem[] = [
     icon: ArrowLeftRight,
     roles: ["admin", "staff", "chairman"],
     children: [
-      { label: "New Transaction", href: "/admin/transactions/create" },
+      { label: "New Transaction", href: "/admin/transactions/create", roles: ["staff"] },
       { label: "Transaction History", href: "/admin/transactions" },
     ],
   },
@@ -104,7 +110,7 @@ const navItems: NavItem[] = [
     icon: ArrowDownToLine,
     roles: ["admin", "staff"],
     children: [
-      { label: "Deposit Money", href: "/admin/transactions/create?type=deposit" },
+      { label: "Deposit Money", href: "/admin/transactions/create?type=deposit", roles: ["staff"] },
       { label: "Deposit Requests", href: "/admin/deposit-requests" },
     ],
   },
@@ -113,7 +119,7 @@ const navItems: NavItem[] = [
     icon: ArrowUpFromLine,
     roles: ["admin", "staff"],
     children: [
-      { label: "Withdraw Money", href: "/admin/transactions/create?type=withdraw" },
+      { label: "Withdraw Money", href: "/admin/transactions/create?type=withdraw", roles: ["staff"] },
       { label: "Withdraw Requests", href: "/admin/withdraw-requests" },
     ],
   },
@@ -162,8 +168,12 @@ export function Sidebar({ open, onClose }: SidebarProps) {
           if (item.label === "Members" && role !== "admin") {
             return { ...item, children: item.children?.filter((c) => c.href !== "/admin/members/create") };
           }
+          if (item.children) {
+            return { ...item, children: item.children.filter((c) => !c.roles || c.roles.includes(role)) };
+          }
           return item;
-        }),
+        })
+        .filter((item) => !item.children || item.children.length > 0),
     [role],
   );
 

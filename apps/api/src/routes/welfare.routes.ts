@@ -105,29 +105,24 @@ const pledgePaymentSchema = z.object({
   method: z.string().default("cash"),
 });
 
-welfare.post(
-  "/pledges/:id/payment",
-  requireRole("admin", "staff"),
-  zValidator("json", pledgePaymentSchema),
-  async (c) => {
-    const pledgeId = c.req.param("id");
-    const { amount, method } = c.req.valid("json");
-    const user = c.get("user");
+welfare.post("/pledges/:id/payment", requireRole("staff"), zValidator("json", pledgePaymentSchema), async (c) => {
+  const pledgeId = c.req.param("id");
+  const { amount, method } = c.req.valid("json");
+  const user = c.get("user");
 
-    const updated = await service.recordPledgePayment(pledgeId, amount, method, user.id);
-    await writeAuditLog(c, {
-      action: "pledge_payment_recorded",
-      entity: "pledge",
-      entityId: pledgeId,
-      details: {
-        amount,
-        method,
-        paidAmount: updated?.paidAmount,
-        status: updated?.status,
-      },
-    });
-    return c.json({ success: true, data: updated });
-  },
-);
+  const updated = await service.recordPledgePayment(pledgeId, amount, method, user.id);
+  await writeAuditLog(c, {
+    action: "pledge_payment_recorded",
+    entity: "pledge",
+    entityId: pledgeId,
+    details: {
+      amount,
+      method,
+      paidAmount: updated?.paidAmount,
+      status: updated?.status,
+    },
+  });
+  return c.json({ success: true, data: updated });
+});
 
 export { welfare as welfareRoutes };

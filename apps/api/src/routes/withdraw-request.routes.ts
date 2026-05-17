@@ -91,7 +91,7 @@ withdrawRequests.post("/", requireRole("member"), zValidator("json", createSchem
   return c.json({ success: true, data: req }, 201);
 });
 
-withdrawRequests.patch("/:id/approve", requireRole("admin", "staff"), async (c) => {
+withdrawRequests.patch("/:id/approve", requireRole("staff"), async (c) => {
   const id = c.req.param("id");
   const user = c.get("user");
 
@@ -181,7 +181,7 @@ withdrawRequests.patch("/:id/approve", requireRole("admin", "staff"), async (c) 
   return c.json({ success: true, data: result });
 });
 
-withdrawRequests.patch("/:id/reject", requireRole("admin", "staff"), async (c) => {
+withdrawRequests.patch("/:id/reject", requireRole("staff"), async (c) => {
   const id = c.req.param("id");
   const user = c.get("user");
   const existing = await prisma.withdrawRequest.findUnique({ where: { id } });

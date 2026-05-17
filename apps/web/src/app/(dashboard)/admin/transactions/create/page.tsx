@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { ArrowLeft, Send, Loader2 } from "lucide-react";
-import { Suspense } from "react";
+import { Suspense, useEffect } from "react";
 import { useForm, useWatch } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod/v4";
@@ -11,6 +11,7 @@ import { transactionSchema, type TransactionInput } from "@/lib/schemas";
 import { useCreateTransaction } from "@/hooks/use-transactions";
 import { useMembers } from "@/hooks/use-members";
 import { useAccounts } from "@/hooks/use-accounts";
+import { useAuthStore } from "@/stores/auth-store";
 import { toast } from "sonner";
 import type { Member, Account } from "@iffe/shared";
 
@@ -180,6 +181,18 @@ function TransactionForm() {
 }
 
 export default function CreateTransactionPage() {
+  const router = useRouter();
+  const userRole = useAuthStore((s) => s.user?.role);
+
+  useEffect(() => {
+    if (userRole && userRole !== "staff") {
+      toast.error("Only staff can record transactions");
+      router.replace("/admin/transactions");
+    }
+  }, [userRole, router]);
+
+  if (userRole && userRole !== "staff") return null;
+
   return (
     <div className="space-y-6">
       <div className="flex items-center gap-4">

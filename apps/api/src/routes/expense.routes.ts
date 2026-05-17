@@ -28,7 +28,7 @@ expenses.get("/:id", async (c) => {
   return c.json({ success: true, data: expense });
 });
 
-expenses.post("/", requireRole("admin", "staff"), zValidator("json", createExpenseSchema), async (c) => {
+expenses.post("/", requireRole("staff"), zValidator("json", createExpenseSchema), async (c) => {
   const data = c.req.valid("json");
   const expense = await service.create(data);
   await writeAuditLog(c, {
@@ -40,7 +40,7 @@ expenses.post("/", requireRole("admin", "staff"), zValidator("json", createExpen
   return c.json({ success: true, data: expense }, 201);
 });
 
-expenses.put("/:id", requireRole("admin", "staff"), zValidator("json", updateExpenseSchema), async (c) => {
+expenses.put("/:id", requireRole("staff"), zValidator("json", updateExpenseSchema), async (c) => {
   const data = c.req.valid("json");
   const expense = await service.update(c.req.param("id"), data);
   await writeAuditLog(c, {
@@ -72,7 +72,7 @@ expenses.patch("/:id/reject", requireRole("admin", "chairman"), async (c) => {
   return c.json({ success: true, data: expense });
 });
 
-expenses.delete("/:id", requireRole("admin"), async (c) => {
+expenses.delete("/:id", requireRole("staff"), async (c) => {
   await service.delete(c.req.param("id"));
   await writeAuditLog(c, {
     action: "expense_deleted",

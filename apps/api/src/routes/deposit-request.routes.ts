@@ -94,7 +94,7 @@ depositRequests.post("/", requireRole("member"), zValidator("json", createSchema
   return c.json({ success: true, data: req }, 201);
 });
 
-depositRequests.patch("/:id/approve", requireRole("admin", "staff"), async (c) => {
+depositRequests.patch("/:id/approve", requireRole("staff"), async (c) => {
   const id = c.req.param("id");
   const user = c.get("user");
 
@@ -183,7 +183,7 @@ depositRequests.patch("/:id/approve", requireRole("admin", "staff"), async (c) =
   return c.json({ success: true, data: result });
 });
 
-depositRequests.patch("/:id/reject", requireRole("admin", "staff"), async (c) => {
+depositRequests.patch("/:id/reject", requireRole("staff"), async (c) => {
   const id = c.req.param("id");
   const user = c.get("user");
   const existing = await prisma.depositRequest.findUnique({ where: { id } });

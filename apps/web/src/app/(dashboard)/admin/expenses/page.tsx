@@ -7,6 +7,7 @@ import { CreateExpenseModal } from "@/components/modals/create-expense-modal";
 import { EditExpenseModal } from "@/components/modals/edit-expense-modal";
 import { useExpenses, useExpenseStats, useDeleteExpense, useApproveExpense } from "@/hooks/use-expenses";
 import { useServerTable } from "@/hooks/use-server-table";
+import { useAuthStore } from "@/stores/auth-store";
 import { formatCurrency, formatDate } from "@/lib/utils";
 import { Receipt, Pencil, Trash2, Check, Plus } from "lucide-react";
 import { toast } from "sonner";
@@ -22,6 +23,8 @@ export default function ExpensesPage() {
   const statsQuery = useExpenseStats();
   const deleteMutation = useDeleteExpense();
   const approveMutation = useApproveExpense();
+  const role = useAuthStore((s) => s.user?.role);
+  const canWrite = role === "staff";
   const [deleteId, setDeleteId] = useState<string | null>(null);
   const [deleteOpen, setDeleteOpen] = useState(false);
   const [createOpen, setCreateOpen] = useState(false);
@@ -121,23 +124,27 @@ export default function ExpensesPage() {
               <Check className="w-4 h-4" />
             </button>
           )}
-          <button
-            onClick={() => openEdit(row)}
-            className="p-2.5 text-text-muted hover:text-primary rounded-lg hover:bg-primary/10"
-            title="Edit"
-          >
-            <Pencil className="w-4 h-4" />
-          </button>
-          <button
-            onClick={() => {
-              setDeleteId(row.id);
-              setDeleteOpen(true);
-            }}
-            className="p-2.5 text-text-muted hover:text-danger rounded-lg hover:bg-danger/15"
-            title="Delete"
-          >
-            <Trash2 className="w-4 h-4" />
-          </button>
+          {canWrite && (
+            <>
+              <button
+                onClick={() => openEdit(row)}
+                className="p-2.5 text-text-muted hover:text-primary rounded-lg hover:bg-primary/10"
+                title="Edit"
+              >
+                <Pencil className="w-4 h-4" />
+              </button>
+              <button
+                onClick={() => {
+                  setDeleteId(row.id);
+                  setDeleteOpen(true);
+                }}
+                className="p-2.5 text-text-muted hover:text-danger rounded-lg hover:bg-danger/15"
+                title="Delete"
+              >
+                <Trash2 className="w-4 h-4" />
+              </button>
+            </>
+          )}
         </div>
       ),
     },
@@ -155,12 +162,14 @@ export default function ExpensesPage() {
             <p className="text-text-muted text-sm">Track and manage SACCO expenses</p>
           </div>
         </div>
-        <button
-          onClick={() => setCreateOpen(true)}
-          className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-white bg-gradient-to-r from-primary to-primary-dark rounded-lg hover:shadow-lg hover:shadow-primary/20"
-        >
-          <Plus className="w-4 h-4" /> Add Expense
-        </button>
+        {canWrite && (
+          <button
+            onClick={() => setCreateOpen(true)}
+            className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-white bg-gradient-to-r from-primary to-primary-dark rounded-lg hover:shadow-lg hover:shadow-primary/20"
+          >
+            <Plus className="w-4 h-4" /> Add Expense
+          </button>
+        )}
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">

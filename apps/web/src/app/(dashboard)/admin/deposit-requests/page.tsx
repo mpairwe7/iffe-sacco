@@ -5,6 +5,7 @@ import { DataTable } from "@/components/data-table";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { useDepositRequests, useApproveDepositRequest, useRejectDepositRequest } from "@/hooks/use-deposit-requests";
 import { useServerTable } from "@/hooks/use-server-table";
+import { useAuthStore } from "@/stores/auth-store";
 import { formatCurrency, formatDate } from "@/lib/utils";
 import { ArrowDownToLine, Check, X } from "lucide-react";
 import { toast } from "sonner";
@@ -17,6 +18,8 @@ export default function DepositRequestsPage() {
   const query = useDepositRequests(table.params);
   const approveMutation = useApproveDepositRequest();
   const rejectMutation = useRejectDepositRequest();
+  const role = useAuthStore((s) => s.user?.role);
+  const canDecide = role === "staff";
 
   const [confirmAction, setConfirmAction] = useState<{ type: "approve" | "reject"; id: string } | null>(null);
 
@@ -98,7 +101,7 @@ export default function DepositRequestsPage() {
       label: "Actions",
       sortable: false,
       render: (row: DepositRow) => {
-        if (row.status !== "pending") return null;
+        if (row.status !== "pending" || !canDecide) return null;
         return (
           <div className="flex items-center gap-1">
             <button
