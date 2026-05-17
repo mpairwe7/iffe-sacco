@@ -1,6 +1,6 @@
 "use client";
 
-import { useSyncExternalStore } from "react";
+import { useState, useSyncExternalStore } from "react";
 import Link from "next/link";
 import {
   Users,
@@ -21,6 +21,7 @@ import {
 } from "lucide-react";
 import { toast } from "sonner";
 import { Skeleton } from "@/components/ui/skeleton";
+import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { useDashboardStats, useRecentTransactions } from "@/hooks/use-dashboard";
 import {
   useApplications,
@@ -304,17 +305,34 @@ export default function DashboardPage() {
     : "—";
   const timeStr = now ? now.toLocaleTimeString("en-US", { hour: "2-digit", minute: "2-digit" }) : "";
 
+  // Rejection requires a reason and confirmation — mirroring the
+  // /admin/applications and /admin/expenses pages so the audit log
+  // always captures *why* an admin rejected, and a stray click on
+  // the inline Reject icon can't push an irreversible status change.
+  const [rejectAppId, setRejectAppId] = useState<string | null>(null);
+  const [rejectAppReason, setRejectAppReason] = useState("");
+  const [rejectExpId, setRejectExpId] = useState<string | null>(null);
+
   function handleApproveApp(id: string) {
     approveApp.mutate(id, {
       onSuccess: () => toast.success("Application approved"),
       onError: (e) => toast.error(e instanceof Error ? e.message : "Failed to approve"),
     });
   }
-  function handleRejectApp(id: string) {
+  function openRejectApp(id: string) {
+    setRejectAppId(id);
+    setRejectAppReason("");
+  }
+  function confirmRejectApp() {
+    if (!rejectAppId) return;
     rejectApp.mutate(
-      { id },
+      { id: rejectAppId, reason: rejectAppReason.trim() || undefined },
       {
-        onSuccess: () => toast.success("Application rejected"),
+        onSuccess: () => {
+          toast.success("Application rejected");
+          setRejectAppId(null);
+          setRejectAppReason("");
+        },
         onError: (e) => toast.error(e instanceof Error ? e.message : "Failed to reject"),
       },
     );
@@ -325,9 +343,16 @@ export default function DashboardPage() {
       onError: (e) => toast.error(e instanceof Error ? e.message : "Failed to approve"),
     });
   }
-  function handleRejectExp(id: string) {
-    rejectExp.mutate(id, {
-      onSuccess: () => toast.success("Expenditure rejected"),
+  function openRejectExp(id: string) {
+    setRejectExpId(id);
+  }
+  function confirmRejectExp() {
+    if (!rejectExpId) return;
+    rejectExp.mutate(rejectExpId, {
+      onSuccess: () => {
+        toast.success("Expenditure rejected");
+        setRejectExpId(null);
+      },
       onError: (e) => toast.error(e instanceof Error ? e.message : "Failed to reject"),
     });
   }
@@ -469,7 +494,7 @@ export default function DashboardPage() {
                               window.location.href = `/admin/applications?id=${a.id}`;
                             }}
                             onApprove={() => handleApproveApp(a.id)}
-                            onReject={() => handleRejectApp(a.id)}
+                            onReject={() => openRejectApp(a.id)}
                             busy={busy}
                           />
                         </td>
@@ -555,7 +580,7 @@ export default function DashboardPage() {
                               window.location.href = `/admin/expenses?id=${e.id}`;
                             }}
                             onApprove={() => handleApproveExp(e.id)}
-                            onReject={() => handleRejectExp(e.id)}
+                            onReject={() => openRejectExp(e.id)}
                             busy={busy}
                           />
                         </td>
@@ -697,6 +722,48 @@ export default function DashboardPage() {
           </div>
         </SectionCard>
       </div>
+
+      <ConfirmDialog
+        open={rejectAppId !== null}
+        onOpenChange={(open) => {
+          if (!open) {
+            setRejectAppId(null);
+            setRejectAppReason("");
+          }
+        }}
+        title="Reject Application"
+        description=""
+        confirmLabel="Reject"
+        onConfirm={confirmRejectApp}
+        variant="destructive"
+        loading={rejectApp.isPending}
+      >
+        <div className="mt-2 space-y-3">
+          <p className="text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+            Are you sure you want to reject this application? Please provide a reason below.
+          </p>
+          <textarea
+            value={rejectAppReason}
+            onChange={(e) => setRejectAppReason(e.target.value)}
+            placeholder="Reason for rejection (optional)"
+            rows={3}
+            className="w-full px-4 py-3 bg-white/60 dark:bg-white/5 border border-white/40 dark:border-white/10 rounded-lg text-sm text-text placeholder:text-text-light focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary resize-none"
+          />
+        </div>
+      </ConfirmDialog>
+
+      <ConfirmDialog
+        open={rejectExpId !== null}
+        onOpenChange={(open) => {
+          if (!open) setRejectExpId(null);
+        }}
+        title="Reject Expenditure"
+        description="Are you sure you want to reject this expenditure? This cannot be undone."
+        confirmLabel="Reject"
+        onConfirm={confirmRejectExp}
+        variant="destructive"
+        loading={rejectExp.isPending}
+      />
     </div>
   );
 }
