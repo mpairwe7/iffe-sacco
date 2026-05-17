@@ -2,6 +2,7 @@
 import { Hono } from "hono";
 import { zValidator } from "@hono/zod-validator";
 import { authMiddleware, requireRole } from "../middleware/auth";
+import { requireEmptyBody } from "../middleware/empty-body";
 import { writeAuditLog } from "../utils/audit";
 import { paymentGatewayService } from "../services/payment-gateway.service";
 import { z } from "zod/v4";
@@ -74,7 +75,7 @@ paymentGateways.put("/:id", requireRole("admin"), zValidator("json", updateSchem
 });
 
 // PATCH /:id/toggle — toggle active status (admin only)
-paymentGateways.patch("/:id/toggle", requireRole("admin"), async (c) => {
+paymentGateways.patch("/:id/toggle", requireRole("admin"), requireEmptyBody, async (c) => {
   const id = c.req.param("id");
   const gateway = await paymentGatewayService.toggle(id);
   if (!gateway) return c.json({ success: false, message: "Payment gateway not found" }, 404);
