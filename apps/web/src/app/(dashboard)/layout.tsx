@@ -1,5 +1,6 @@
 import { redirect } from "next/navigation";
 import { DashboardShell } from "@/components/dashboard-shell";
+import { ForcePasswordChangeModal } from "@/components/modals/force-password-change-modal";
 import { getRedirectForPath } from "@/lib/role-routes";
 import { getDashboardSession } from "@/lib/server-session";
 
@@ -14,6 +15,19 @@ export default async function DashboardLayout({ children }: { children: React.Re
     // and produce an infinite loop when the JWT is still valid but the
     // DB session has been revoked.
     redirect("/logout");
+  }
+
+  // Temp-password accounts must set a new password before anything else. Render
+  // ONLY the forced-change screen — not the dashboard, whose data fetches are
+  // 403-gated server-side until the flag clears. On success the modal calls
+  // router.refresh(), this layout re-runs with the flag cleared, and the real
+  // dashboard renders.
+  if (user.mustChangePassword) {
+    return (
+      <div className="min-h-screen mesh-gradient">
+        <ForcePasswordChangeModal user={user} />
+      </div>
+    );
   }
 
   const redirectTo = getRedirectForPath(currentPath, user.role);
