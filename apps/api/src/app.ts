@@ -1,5 +1,5 @@
 /**
- * IFFE SACCO API — Hono App Definition
+ * IFFE Bbenhe API — Hono App Definition
  *
  * Separated from index.ts so it can be imported by both the Bun server
  * and the Vercel serverless adapter without triggering Bun.serve().

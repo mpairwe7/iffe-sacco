@@ -46,7 +46,7 @@ export default function HomePage() {
               <div className="w-12 h-12 sm:w-14 sm:h-14 lg:w-16 lg:h-16 rounded-full bg-primary/10 shadow-lg ring-2 ring-primary/30 flex items-center justify-center shrink-0 overflow-hidden">
                 <img
                   src="/logo.png"
-                  alt="IFFE SACCO Logo"
+                  alt="IFFE Bbenhe Logo"
                   className="w-12 h-12 sm:w-14 sm:h-14 lg:w-16 lg:h-16 object-cover rounded-full"
                 />
               </div>
@@ -55,7 +55,7 @@ export default function HomePage() {
                   <span className="text-primary text-2xl sm:text-3xl lg:text-[2.1rem] font-black drop-shadow-sm">
                     IFFE
                   </span>{" "}
-                  <span className="text-gray-900 dark:text-white font-extrabold">SACCO</span>
+                  <span className="text-gray-900 dark:text-white font-extrabold">Bbenhe</span>
                 </span>
                 <p className="hidden sm:block text-[10px] sm:text-[11px] lg:text-xs font-semibold text-gray-500 dark:text-gray-400 tracking-widest uppercase mt-0.5">
                   Empowering Financial Freedom
@@ -435,12 +435,12 @@ export default function HomePage() {
             <div>
               <div className="flex items-center gap-3.5 mb-5">
                 <div className="w-14 h-14 rounded-full bg-primary/10 ring-2 ring-primary/30 shadow-lg flex items-center justify-center shrink-0 overflow-hidden">
-                  <img src="/logo.png" alt="IFFE SACCO" className="w-14 h-14 object-cover rounded-full" />
+                  <img src="/logo.png" alt="IFFE Bbenhe" className="w-14 h-14 object-cover rounded-full" />
                 </div>
                 <div className="leading-tight">
                   <span className="text-2xl font-extrabold">
                     <span className="text-primary font-black">IFFE</span>{" "}
-                    <span className="text-white font-extrabold">SACCO</span>
+                    <span className="text-white font-extrabold">Bbenhe</span>
                   </span>
                   <p className="text-[10px] font-semibold text-gray-400 tracking-widest uppercase mt-0.5">
                     Empowering Financial Freedom

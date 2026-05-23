@@ -1,5 +1,5 @@
 /**
- * Chart of accounts for IFFE SACCO.
+ * Chart of accounts for IFFE Bbenhe.
  *
  * These codes are stable identifiers — do not renumber. Accounting reports
  * (trial balance, balance sheet, income statement) group by the `type`

@@ -31,7 +31,7 @@ function rpConfig() {
   const origin = env.APP_BASE_URL;
   const hostname = new URL(origin).hostname;
   return {
-    rpName: "IFFE SACCO",
+    rpName: "IFFE Bbenhe",
     rpID: hostname,
     origin,
   };

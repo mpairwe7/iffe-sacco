@@ -69,7 +69,7 @@ function PasswordResetPageContent() {
     return (
       <div className="bg-white rounded-xl shadow-xl shadow-black/5 border border-border p-8">
         <h2 className="text-2xl font-bold text-text text-center">Choose a New Password</h2>
-        <p className="text-text-muted text-center mt-2 mb-8">Set a new password for your IFFE SACCO account.</p>
+        <p className="text-text-muted text-center mt-2 mb-8">Set a new password for your IFFE Bbenhe account.</p>
 
         <form onSubmit={handleSubmit(onConfirmReset)} className="space-y-5">
           <div>

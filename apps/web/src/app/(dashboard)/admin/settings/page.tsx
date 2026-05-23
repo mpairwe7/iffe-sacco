@@ -19,7 +19,7 @@ interface SettingsState {
 }
 
 const defaultSettings: SettingsState = {
-  companyName: "IFFE SACCO",
+  companyName: "IFFE Bbenhe",
   tagline: "Empowering Financial Freedom",
   email: "info@iffeds.org",
   phone: "+256 700 000 000",

@@ -3,10 +3,10 @@
 import { Info, MapPin, Mail, Phone, Clock, Building2 } from "lucide-react";
 
 const saccoProfile = {
-  name: "IFFE SACCO",
+  name: "IFFE Bbenhe",
   tagline: "Empowering Financial Freedom",
   about:
-    "IFFE SACCO is a member-owned cooperative that supports its members through savings, loans, and social welfare. Members pool resources to build financial resilience and support each other through key life events.",
+    "IFFE Bbenhe is a member-owned cooperative that supports its members through savings, loans, and social welfare. Members pool resources to build financial resilience and support each other through key life events.",
   email: "info@iffeds.org",
   phone: "+256 700 000 000",
   address: "Kampala, Uganda",

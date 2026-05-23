@@ -249,7 +249,7 @@ export function Sidebar({ open, onClose }: SidebarProps) {
             <div className="w-11 h-11 rounded-full bg-primary/10 ring-2 ring-primary/30 shadow-lg flex items-center justify-center overflow-hidden shrink-0">
               <Image
                 src="/logo.png"
-                alt="IFFE SACCO"
+                alt="IFFE Bbenhe"
                 width={44}
                 height={44}
                 className="w-11 h-11 object-cover rounded-full"
@@ -258,7 +258,7 @@ export function Sidebar({ open, onClose }: SidebarProps) {
             <div className="leading-tight">
               <span className="text-lg font-extrabold">
                 <span className="text-primary font-black">IFFE</span>{" "}
-                <span className="text-gray-900 dark:text-white font-extrabold">SACCO</span>
+                <span className="text-gray-900 dark:text-white font-extrabold">Bbenhe</span>
               </span>
               <p className="text-[9px] font-semibold text-gray-400 dark:text-gray-500 tracking-widest uppercase">
                 Financial Freedom

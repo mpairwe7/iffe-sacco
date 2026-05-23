@@ -94,7 +94,7 @@ export function EditBankAccountModal({ open, onOpenChange, bankAccount }: Props)
                   "w-full px-4 py-2.5 bg-white/60 border border-white/40 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary",
                   errors.accountName && "border-danger/50 focus:ring-danger/20 focus:border-danger",
                 )}
-                placeholder="e.g. IFFE SACCO Main Account"
+                placeholder="e.g. IFFE Bbenhe Main Account"
               />
               {errors.accountName && <p className="text-xs text-danger mt-1">{errors.accountName.message}</p>}
             </div>

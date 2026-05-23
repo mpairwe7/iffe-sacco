@@ -30,7 +30,7 @@ export default function OfflinePage() {
             Go Home
           </Link>
         </div>
-        <p className="mt-10 text-xs text-gray-400">IFFE SACCO — Empowering Financial Freedom</p>
+        <p className="mt-10 text-xs text-gray-400">IFFE Bbenhe — Empowering Financial Freedom</p>
       </div>
     </div>
   );
