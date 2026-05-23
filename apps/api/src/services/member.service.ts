@@ -12,7 +12,9 @@ import type {
   TransactionType,
 } from "@iffe/shared";
 import { INTEREST_RATES } from "@iffe/shared";
+import type { MemberLoginCredentials } from "@iffe/shared";
 import { getNextAccountNumber, getNextMemberNumber } from "../utils/identifiers";
+import { generateTempPassword, hashPassword } from "../utils/password";
 
 const repo = new MemberRepository();
 const ACTIVE_LOAN_STATUSES = ["approved", "active", "overdue", "defaulted"] as const;
@@ -36,15 +38,35 @@ export class MemberService {
     return member;
   }
 
-  async create(input: CreateMemberInput) {
-    // Check for duplicate email
+  async create(input: CreateMemberInput): Promise<{ member: unknown; credentials: MemberLoginCredentials }> {
+    // A staff-created member also gets a login provisioned with a one-time
+    // temporary password (returned to the caller, never stored in plaintext).
+    // Guard both the member-email and user-email uniqueness up front.
     const existing = await prisma.member.findFirst({ where: { email: input.email } });
     if (existing) throw new HTTPException(409, { message: "A member with this email already exists" });
+    const existingUser = await prisma.user.findUnique({ where: { email: input.email } });
+    if (existingUser) throw new HTTPException(409, { message: "A login already exists for this email" });
 
-    return withTx(async (tx) => {
-      const member = await tx.member.create({
+    const tempPassword = generateTempPassword();
+    const hashed = await hashPassword(tempPassword);
+
+    const member = await withTx(async (tx) => {
+      const user = await tx.user.create({
+        data: {
+          name: `${input.firstName} ${input.lastName}`.trim(),
+          email: input.email,
+          phone: input.phone,
+          password: hashed,
+          role: "member",
+          isActive: true,
+          mustChangePassword: true,
+        },
+      });
+
+      const created = await tx.member.create({
         data: {
           memberId: await getNextMemberNumber(tx),
+          userId: user.id,
           firstName: input.firstName,
           lastName: input.lastName,
           email: input.email,
@@ -65,7 +87,7 @@ export class MemberService {
           condolenceSupportDebt: input.condolenceSupportDebt ?? 0,
           condolenceEventDate: input.condolenceEventDate ? new Date(input.condolenceEventDate) : null,
           remarks: input.remarks,
-          status: "pending",
+          status: "active",
         },
       });
 
@@ -74,7 +96,7 @@ export class MemberService {
       await tx.account.create({
         data: {
           accountNo: await getNextAccountNumber(tx, input.accountType),
-          memberId: member.id,
+          memberId: created.id,
           type: input.accountType,
           balance: input.initialDeposit || 0,
           interestRate: rate,
@@ -82,8 +104,10 @@ export class MemberService {
         },
       });
 
-      return member;
+      return created;
     });
+
+    return { member, credentials: { email: input.email, tempPassword } };
   }
 
   async update(id: string, data: Record<string, unknown>) {

@@ -18,6 +18,7 @@ function toUser(user: {
   role: string;
   avatar: string | null;
   isActive: boolean;
+  mustChangePassword?: boolean;
   lastLogin: Date | null;
   createdAt: Date;
 }): User {
@@ -29,6 +30,7 @@ function toUser(user: {
     role: user.role as User["role"],
     avatar: user.avatar,
     isActive: user.isActive,
+    mustChangePassword: user.mustChangePassword ?? false,
     lastLogin: user.lastLogin?.toISOString() || null,
     createdAt: user.createdAt.toISOString(),
   };
@@ -83,6 +85,7 @@ export class AuthService {
         role: true,
         avatar: true,
         isActive: true,
+        mustChangePassword: true,
         lastLogin: true,
         createdAt: true,
       },
@@ -141,6 +144,7 @@ export class AuthService {
         role: true,
         avatar: true,
         isActive: true,
+        mustChangePassword: true,
         lastLogin: true,
         createdAt: true,
       },
@@ -173,6 +177,7 @@ export class AuthService {
         phone: true,
         role: true,
         isActive: true,
+        mustChangePassword: true,
         lastLogin: true,
         createdAt: true,
         avatar: true,
@@ -199,6 +204,29 @@ export class AuthService {
     // their next API call anyway. Logging the failure via the global
     // error handler is enough.
     await prisma.user.update({ where: { id: userId }, data: { password } });
+    await prisma.session.updateMany({
+      where: {
+        userId,
+        revokedAt: null,
+        ...(sessionId ? { NOT: { id: sessionId } } : {}),
+      },
+      data: { revokedAt: new Date() },
+    });
+  }
+
+  // Forced first-login password change. The caller is authenticated with their
+  // temporary password (so no current-password check), and this is only valid
+  // while the account is flagged mustChangePassword. Clears the flag and revokes
+  // other sessions, mirroring changePassword.
+  async setInitialPassword(userId: string, newPassword: string, sessionId?: string) {
+    const user = await prisma.user.findUnique({ where: { id: userId } });
+    if (!user) throw new HTTPException(404, { message: "User not found" });
+    if (!user.mustChangePassword) {
+      throw new HTTPException(400, { message: "No password change is required for this account" });
+    }
+
+    const password = await hashPassword(newPassword);
+    await prisma.user.update({ where: { id: userId }, data: { password, mustChangePassword: false } });
     await prisma.session.updateMany({
       where: {
         userId,

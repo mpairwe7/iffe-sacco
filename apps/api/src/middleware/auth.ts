@@ -4,7 +4,18 @@ import { verifySessionToken } from "../utils/jwt";
 import { prisma } from "../config/db";
 import { getSessionCookie } from "../utils/session";
 
-export type AuthUser = { id: string; role: string; memberId: string | null; sessionId: string };
+export type AuthUser = {
+  id: string;
+  role: string;
+  memberId: string | null;
+  sessionId: string;
+  mustChangePassword: boolean;
+};
+
+// While an account is flagged mustChangePassword (issued a temporary password),
+// every authenticated request is blocked EXCEPT the few endpoints the member
+// needs to escape the state: read their profile, set a new password, log out.
+const PASSWORD_CHANGE_ALLOWED_SUFFIXES = ["/auth/me", "/auth/logout", "/auth/set-initial-password"];
 export type AuthEnv = { Variables: { user: AuthUser } };
 
 export const authMiddleware = createMiddleware<AuthEnv>(async (c, next) => {
@@ -33,6 +44,7 @@ export const authMiddleware = createMiddleware<AuthEnv>(async (c, next) => {
             id: true,
             role: true,
             isActive: true,
+            mustChangePassword: true,
             member: { select: { id: true } },
           },
         },
@@ -58,7 +70,17 @@ export const authMiddleware = createMiddleware<AuthEnv>(async (c, next) => {
       role: dbUser.role,
       memberId: dbUser.member?.id || null,
       sessionId: session.id,
+      mustChangePassword: dbUser.mustChangePassword,
     });
+
+    if (dbUser.mustChangePassword) {
+      const path = c.req.path;
+      const allowed = PASSWORD_CHANGE_ALLOWED_SUFFIXES.some((suffix) => path.endsWith(suffix));
+      if (!allowed) {
+        throw new HTTPException(403, { message: "PASSWORD_CHANGE_REQUIRED" });
+      }
+    }
+
     await next();
   } catch (err) {
     if (err instanceof HTTPException) throw err;

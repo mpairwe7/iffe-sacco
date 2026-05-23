@@ -4,6 +4,7 @@ import type {
   MemberDashboard,
   PaginatedResponse,
   CreateMemberInput,
+  CreateMemberResult,
   UpdateMemberInput,
   PaginationParams,
 } from "@iffe/shared";
@@ -13,7 +14,7 @@ export const membersApi = {
   getMember: (id: string) => apiClient.get<Member>(`/members/${id}`),
   getMyDashboard: () => apiClient.get<MemberDashboard>("/members/me/dashboard"),
   getMemberDashboard: (id: string) => apiClient.get<MemberDashboard>(`/members/${id}/dashboard`),
-  createMember: (data: CreateMemberInput) => apiClient.post<Member>("/members", data),
+  createMember: (data: CreateMemberInput) => apiClient.post<CreateMemberResult>("/members", data),
   updateMember: (id: string, data: UpdateMemberInput) => apiClient.put<Member>(`/members/${id}`, data),
   deleteMember: (id: string) => apiClient.del<void>(`/members/${id}`),
   getMemberStats: () => apiClient.get<Record<string, unknown>>("/members/stats"),

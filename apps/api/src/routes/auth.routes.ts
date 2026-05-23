@@ -6,6 +6,7 @@ import {
   loginSchema,
   registerSchema,
   requestPasswordResetSchema,
+  setInitialPasswordSchema,
   updateProfileSchema,
 } from "@iffe/shared";
 import { AuthService } from "../services/auth.service";
@@ -132,6 +133,20 @@ auth.patch("/change-password", authMiddleware, zValidator("json", changePassword
     entityId: user.id,
   });
   return c.json({ success: true, message: "Password changed successfully" });
+});
+
+// Forced first-login password change for accounts issued a temporary password.
+// Allowed through the mustChangePassword gate in authMiddleware.
+auth.post("/set-initial-password", authMiddleware, zValidator("json", setInitialPasswordSchema), async (c) => {
+  const { newPassword } = c.req.valid("json");
+  const user = c.get("user");
+  await service.setInitialPassword(user.id, newPassword, user.sessionId);
+  await writeAuditLog(c, {
+    action: "set_initial_password",
+    entity: "user",
+    entityId: user.id,
+  });
+  return c.json({ success: true, message: "Password set successfully" });
 });
 
 auth.put("/profile", authMiddleware, zValidator("json", updateProfileSchema), async (c) => {

@@ -11,12 +11,26 @@ export interface User {
   role: Role;
   avatar?: string | null;
   isActive: boolean;
+  /** True when the account holds a temporary password and must set a new one before using the app. */
+  mustChangePassword?: boolean;
   lastLogin?: string | null;
   createdAt: string;
 }
 
 export interface LoginResponse {
   user: User;
+}
+
+/** One-time login credentials surfaced to staff right after they create a member. */
+export interface MemberLoginCredentials {
+  email: string;
+  tempPassword: string;
+}
+
+/** Response from creating a member: the member plus the one-time login to hand over. */
+export interface CreateMemberResult {
+  member: Member;
+  credentials: MemberLoginCredentials;
 }
 
 export interface PasswordResetRequestResponse {
