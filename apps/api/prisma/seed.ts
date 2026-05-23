@@ -1006,6 +1006,18 @@ async function main() {
   }
   console.log("  15 audit logs created");
 
+  // Members and accounts above are inserted with explicit IDs (IFFE-001…,
+  // SAV-0001…) which does NOT advance the Postgres sequences. Realign them to
+  // the highest seeded suffix so the first staff-created member/account uses
+  // the next value instead of colliding (nextval would otherwise restart at 1).
+  await prisma.$executeRawUnsafe(
+    `SELECT setval('member_number_seq', GREATEST((SELECT COALESCE(MAX(CAST(split_part("memberId", '-', 2) AS INTEGER)), 0) FROM members), 1))`,
+  );
+  await prisma.$executeRawUnsafe(
+    `SELECT setval('account_number_seq', GREATEST((SELECT COALESCE(MAX(CAST(split_part("accountNo", '-', 2) AS INTEGER)), 0) FROM accounts), 1))`,
+  );
+  console.log("  sequences realigned (member_number_seq, account_number_seq)");
+
   console.log("\n=== SEED COMPLETE ===");
   console.log("  Login credentials:");
   console.log("  Admin:  admin@iffeds.org / admin123");
