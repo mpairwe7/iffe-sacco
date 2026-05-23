@@ -59,7 +59,13 @@ export async function getDashboardSession() {
     return { user: null, currentPath, application: null as Application | null };
   }
 
-  const application = user.role === "member" ? await fetchApi<Application | null>("/applications/mine") : null;
+  // Skip the application lookup while a temp-password reset is pending: every
+  // endpoint except /auth/me, /auth/logout and /auth/set-initial-password is
+  // 403-gated server-side, so fetching /applications/mine here would throw.
+  const application =
+    user.role === "member" && !user.mustChangePassword
+      ? await fetchApi<Application | null>("/applications/mine")
+      : null;
 
   return { user, currentPath, application };
 }
