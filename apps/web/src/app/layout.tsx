@@ -26,9 +26,9 @@ export const metadata: Metadata = {
     "IFFE Bbenhe Development SACCO (IBDS) — Obwegaisi Mu Kwisanhia (Unity of Consensus). Secure savings, affordable loans, and community-driven financial empowerment in Jinja City, Uganda.",
   keywords:
     "SACCO, savings, loans, finance, cooperative, IFFE, investment, membership, Uganda, Jinja, microfinance, credit union",
-  authors: [{ name: "IFFE Bhenhe Development Association" }],
+  authors: [{ name: "IFFE Bbenhe Development Association" }],
   creator: "IFFE Bbenhe",
-  publisher: "IFFE Bhenhe Development Association",
+  publisher: "IFFE Bbenhe Development Association",
   icons: {
     icon: "/favicon.png",
     apple: "/favicon.png",
