@@ -3,8 +3,8 @@ import type { MetadataRoute } from "next";
 export default function manifest(): MetadataRoute.Manifest {
   return {
     id: "/",
-    name: "IFFE SACCO - Empowering Financial Freedom",
-    short_name: "IFFE SACCO",
+    name: "IFFE Bbenhe - Empowering Financial Freedom",
+    short_name: "IFFE Bbenhe",
     description:
       "A modern savings and credit cooperative in Jinja City, Uganda. Secure savings, affordable loans, and community-driven financial empowerment.",
     start_url: "/",

@@ -51,7 +51,7 @@ export default function ApplicationStatusPage() {
         </div>
         <h2 className="text-xl font-bold text-text mb-2">No Application Found</h2>
         <p className="text-sm text-text-muted mb-6">
-          You have not submitted a membership application yet. Apply now to join IFFE SACCO.
+          You have not submitted a membership application yet. Apply now to join IFFE Bbenhe.
         </p>
         <Link
           href="/register"
@@ -66,7 +66,7 @@ export default function ApplicationStatusPage() {
   return (
     <div className="glass-card rounded-xl p-8 shadow-xl">
       <h2 className="text-2xl font-bold text-text text-center mb-2">Application Status</h2>
-      <p className="text-text-muted text-center text-sm mb-8">Track your IFFE SACCO membership application</p>
+      <p className="text-text-muted text-center text-sm mb-8">Track your IFFE Bbenhe membership application</p>
 
       {/* Status Badge - Large and Centered */}
       <div className="flex flex-col items-center mb-8" aria-live="polite">
@@ -117,7 +117,7 @@ export default function ApplicationStatusPage() {
       {application.status === "pending" && (
         <div className="bg-warning/5 border border-warning/20 rounded-xl p-6 text-center">
           <p className="text-sm text-text">
-            Your application is currently being reviewed by the IFFE SACCO committee. You will be notified once a
+            Your application is currently being reviewed by the IFFE Bbenhe committee. You will be notified once a
             decision has been made.
           </p>
           <p className="text-xs text-text-muted mt-3">This process typically takes 3-5 business days.</p>
@@ -127,7 +127,7 @@ export default function ApplicationStatusPage() {
       {application.status === "approved" && (
         <div className="space-y-4">
           <div className="bg-success/5 border border-success/20 rounded-xl p-6 text-center">
-            <p className="text-sm text-text font-medium">Welcome to IFFE SACCO! Your membership is now active.</p>
+            <p className="text-sm text-text font-medium">Welcome to IFFE Bbenhe! Your membership is now active.</p>
             <p className="text-xs text-text-muted mt-2">You can now access all member services and benefits.</p>
           </div>
           <div className="text-center">

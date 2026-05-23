@@ -892,7 +892,7 @@ async function main() {
     data: [
       {
         bankName: "Stanbic Bank",
-        accountName: "IFFE SACCO Main Account",
+        accountName: "IFFE Bbenhe Main Account",
         accountNo: "9030012345678",
         branch: "Kampala Main",
         balance: 125000000,
@@ -900,7 +900,7 @@ async function main() {
       },
       {
         bankName: "DFCU Bank",
-        accountName: "IFFE SACCO Operations",
+        accountName: "IFFE Bbenhe Operations",
         accountNo: "02012345678",
         branch: "Garden City",
         balance: 45000000,
@@ -908,7 +908,7 @@ async function main() {
       },
       {
         bankName: "Centenary Bank",
-        accountName: "IFFE SACCO Reserve",
+        accountName: "IFFE Bbenhe Reserve",
         accountNo: "34012345678",
         branch: "Entebbe Road",
         balance: 80000000,
@@ -916,7 +916,7 @@ async function main() {
       },
       {
         bankName: "Equity Bank",
-        accountName: "IFFE SACCO Loans",
+        accountName: "IFFE Bbenhe Loans",
         accountNo: "56012345678",
         branch: "Ndeeba",
         balance: 35000000,
@@ -924,7 +924,7 @@ async function main() {
       },
       {
         bankName: "Bank of Africa",
-        accountName: "IFFE SACCO Savings",
+        accountName: "IFFE Bbenhe Savings",
         accountNo: "78012345678",
         branch: "City Square",
         balance: 18000000,
@@ -936,7 +936,7 @@ async function main() {
 
   // ===== SETTINGS (15) =====
   const settings = [
-    { key: "company_name", value: "IFFE SACCO" },
+    { key: "company_name", value: "IFFE Bbenhe" },
     { key: "tagline", value: "Empowering Financial Freedom" },
     { key: "email", value: "info@iffeds.org" },
     { key: "phone", value: "+256 700 000 000" },

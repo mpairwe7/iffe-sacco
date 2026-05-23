@@ -14,7 +14,7 @@ export default function TermsPage() {
         <p>Last updated: March 26, 2026</p>
         <h3 className="text-base font-semibold text-text">1. Acceptance of Terms</h3>
         <p>
-          By accessing and using the IFFE SACCO platform, you agree to be bound by these Terms of Service and all
+          By accessing and using the IFFE Bbenhe platform, you agree to be bound by these Terms of Service and all
           applicable laws and regulations.
         </p>
         <h3 className="text-base font-semibold text-text">2. Account Registration</h3>
@@ -24,7 +24,7 @@ export default function TermsPage() {
         </p>
         <h3 className="text-base font-semibold text-text">3. Financial Services</h3>
         <p>
-          IFFE SACCO provides savings, loan, and transaction services subject to regulatory compliance. All financial
+          IFFE Bbenhe provides savings, loan, and transaction services subject to regulatory compliance. All financial
           transactions are governed by applicable banking and cooperative society laws.
         </p>
         <h3 className="text-base font-semibold text-text">4. Privacy & Data Protection</h3>
@@ -34,7 +34,7 @@ export default function TermsPage() {
         </p>
         <h3 className="text-base font-semibold text-text">5. Limitation of Liability</h3>
         <p>
-          IFFE SACCO shall not be liable for any indirect, incidental, or consequential damages arising from the use of
+          IFFE Bbenhe shall not be liable for any indirect, incidental, or consequential damages arising from the use of
           our services.
         </p>
         <h3 className="text-base font-semibold text-text">6. Governing Law</h3>

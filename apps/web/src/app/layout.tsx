@@ -19,26 +19,26 @@ const siteUrl = "https://iffe-sacco.vercel.app";
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
   title: {
-    default: "IFFE SACCO - Empowering Financial Freedom",
-    template: "%s | IFFE SACCO",
+    default: "IFFE Bbenhe - Empowering Financial Freedom",
+    template: "%s | IFFE Bbenhe",
   },
   description:
     "IFFE Bbenhe Development SACCO (IBDS) — Obwegaisi Mu Kwisanhia (Unity of Consensus). Secure savings, affordable loans, and community-driven financial empowerment in Jinja City, Uganda.",
   keywords:
     "SACCO, savings, loans, finance, cooperative, IFFE, investment, membership, Uganda, Jinja, microfinance, credit union",
-  authors: [{ name: "IFFE Bhenhe Development Association" }],
-  creator: "IFFE SACCO",
-  publisher: "IFFE Bhenhe Development Association",
+  authors: [{ name: "IFFE Bbenhe Development Association" }],
+  creator: "IFFE Bbenhe",
+  publisher: "IFFE Bbenhe Development Association",
   icons: {
     icon: "/favicon.png",
     apple: "/favicon.png",
   },
   openGraph: {
-    title: "IFFE SACCO - Empowering Financial Freedom",
+    title: "IFFE Bbenhe - Empowering Financial Freedom",
     description:
       "Secure savings, affordable loans, and a community in Jinja City, Uganda dedicated to your financial growth.",
     url: siteUrl,
-    siteName: "IFFE SACCO",
+    siteName: "IFFE Bbenhe",
     locale: "en_UG",
     type: "website",
     images: [
@@ -46,13 +46,13 @@ export const metadata: Metadata = {
         url: "/logo.png",
         width: 1168,
         height: 1162,
-        alt: "IFFE SACCO Logo",
+        alt: "IFFE Bbenhe Logo",
       },
     ],
   },
   twitter: {
     card: "summary_large_image",
-    title: "IFFE SACCO - Empowering Financial Freedom",
+    title: "IFFE Bbenhe - Empowering Financial Freedom",
     description: "Secure savings, affordable loans, and financial empowerment in Jinja City, Uganda.",
     images: ["/logo.png"],
   },

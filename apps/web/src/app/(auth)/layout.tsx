@@ -15,7 +15,7 @@ export default function AuthLayout({ children }: { children: React.ReactNode }) 
             <div className="w-28 h-28 sm:w-32 sm:h-32 rounded-full shadow-2xl group-hover:scale-105 transition-transform ring-4 ring-white/50 dark:ring-white/20 bg-white flex items-center justify-center overflow-hidden">
               <img
                 src="/logo.png"
-                alt="IFFE SACCO Logo"
+                alt="IFFE Bbenhe Logo"
                 className="w-28 h-28 sm:w-32 sm:h-32 object-cover rounded-full"
               />
             </div>
@@ -24,7 +24,7 @@ export default function AuthLayout({ children }: { children: React.ReactNode }) 
             <div className="bg-white/90 dark:bg-gray-900/90 backdrop-blur-md rounded-xl px-8 py-4 shadow-lg ring-1 ring-black/5 dark:ring-white/10">
               <span className="text-3xl sm:text-4xl font-extrabold tracking-tight block">
                 <span className="text-primary text-4xl sm:text-5xl font-black">IFFE</span>{" "}
-                <span className="text-gray-900 dark:text-white font-extrabold">SACCO</span>
+                <span className="text-gray-900 dark:text-white font-extrabold">Bbenhe</span>
               </span>
               <p className="text-xs sm:text-sm font-bold text-gray-600 dark:text-gray-300 tracking-widest uppercase mt-1.5">
                 Empowering Financial Freedom

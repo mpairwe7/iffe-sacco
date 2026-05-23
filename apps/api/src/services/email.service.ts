@@ -19,7 +19,7 @@ export interface EmailMessage {
 
 export async function sendEmail(message: EmailMessage): Promise<void> {
   const apiKey = process.env.RESEND_API_KEY;
-  const from = process.env.RESEND_FROM_EMAIL || "IFFE SACCO <no-reply@sacco.example.org>";
+  const from = process.env.RESEND_FROM_EMAIL || "IFFE Bbenhe <no-reply@sacco.example.org>";
 
   if (!apiKey) {
     logger.warn(
@@ -64,7 +64,7 @@ export function passwordResetEmail(params: { name: string; resetUrl: string; exp
   const safeUrl = params.resetUrl;
   return {
     to: "", // filled in by caller
-    subject: "IFFE SACCO — Reset your password",
+    subject: "IFFE Bbenhe — Reset your password",
     text: [
       `Hello ${params.name},`,
       "",
@@ -74,11 +74,11 @@ export function passwordResetEmail(params: { name: string; resetUrl: string; exp
       "",
       "If you did not make this request, you can safely ignore this email.",
       "",
-      "— IFFE SACCO Team",
+      "— IFFE Bbenhe Team",
     ].join("\n"),
     html: `
       <div style="font-family: -apple-system, Segoe UI, Roboto, sans-serif; max-width: 560px; margin: 0 auto;">
-        <h2>Reset your IFFE SACCO password</h2>
+        <h2>Reset your IFFE Bbenhe password</h2>
         <p>Hello ${escapeHtml(params.name)},</p>
         <p>You (or someone using your email address) requested a password reset.</p>
         <p>
@@ -97,7 +97,7 @@ export function passwordResetEmail(params: { name: string; resetUrl: string; exp
 export function applicationApprovedEmail(params: { name: string; memberId: string; loginUrl: string }): EmailMessage {
   return {
     to: "",
-    subject: "Welcome to IFFE SACCO — your application has been approved",
+    subject: "Welcome to IFFE Bbenhe — your application has been approved",
     text: [
       `Hello ${params.name},`,
       "",
@@ -105,11 +105,11 @@ export function applicationApprovedEmail(params: { name: string; memberId: strin
       `Your member ID is: ${params.memberId}`,
       `Log in to your portal: ${params.loginUrl}`,
       "",
-      "— IFFE SACCO Team",
+      "— IFFE Bbenhe Team",
     ].join("\n"),
     html: `
       <div style="font-family: -apple-system, Segoe UI, Roboto, sans-serif; max-width: 560px; margin: 0 auto;">
-        <h2>Welcome to IFFE SACCO</h2>
+        <h2>Welcome to IFFE Bbenhe</h2>
         <p>Hello ${escapeHtml(params.name)},</p>
         <p>Great news — your membership application has been approved.</p>
         <p><strong>Member ID:</strong> ${escapeHtml(params.memberId)}</p>
