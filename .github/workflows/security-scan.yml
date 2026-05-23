@@ -29,6 +29,11 @@ jobs:
     name: Dependency review
     if: github.event_name == 'pull_request'
     runs-on: ubuntu-latest
+    # The Dependency Review API requires the repo's Dependency Graph to be
+    # enabled (Settings → Code security → Dependency graph). Until that is on,
+    # the action errors with "not supported on this repository". Keep the scan
+    # running for visibility but don't let that config gap block every PR.
+    continue-on-error: true
     steps:
       - uses: actions/checkout@v4
       - uses: actions/dependency-review-action@v4
