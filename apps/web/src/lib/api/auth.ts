@@ -17,6 +17,7 @@ export const authApi = {
   getMe: () => apiClient.get<User>("/auth/me"),
   changePassword: (data: { currentPassword: string; newPassword: string }) =>
     apiClient.patch<void>("/auth/change-password", data),
+  setInitialPassword: (data: { newPassword: string }) => apiClient.post<void>("/auth/set-initial-password", data),
   updateProfile: (data: UpdateProfileInput) => apiClient.put<User>("/auth/profile", data),
   requestPasswordReset: (data: RequestPasswordResetInput) =>
     apiClient.post<PasswordResetRequestResponse>("/auth/reset-password", data),

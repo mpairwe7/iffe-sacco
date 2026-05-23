@@ -36,6 +36,14 @@ export function useChangePassword() {
   });
 }
 
+export function useSetInitialPassword() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: (data: { newPassword: string }) => authApi.setInitialPassword(data),
+    onSuccess: () => qc.invalidateQueries({ queryKey: ["auth", "me"] }),
+  });
+}
+
 export function useUpdateProfile() {
   const qc = useQueryClient();
   return useMutation({

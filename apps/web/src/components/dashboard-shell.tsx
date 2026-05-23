@@ -8,6 +8,7 @@ import { Breadcrumb } from "@/components/ui/breadcrumb";
 import { CommandPalette } from "@/components/ui/command-palette";
 import { ScrollToTop } from "@/components/ui/scroll-to-top";
 import { BottomNav } from "@/components/bottom-nav";
+import { ForcePasswordChangeModal } from "@/components/modals/force-password-change-modal";
 import { useAuthStore } from "@/stores/auth-store";
 
 function AuthStateHydrator({ user }: { user: User }) {
@@ -45,6 +46,7 @@ export function DashboardShell({ children, initialUser }: { children: React.Reac
       <BottomNav />
       <CommandPalette />
       <ScrollToTop />
+      {initialUser.mustChangePassword && <ForcePasswordChangeModal user={initialUser} />}
     </div>
   );
 }

@@ -41,16 +41,19 @@ members.get("/:id", requireRole("admin", "staff", "chairman"), async (c) => {
   return c.json({ success: true, data: member });
 });
 
-members.post("/", requireRole("admin"), zValidator("json", createMemberSchema), async (c) => {
+members.post("/", requireRole("admin", "staff"), zValidator("json", createMemberSchema), async (c) => {
   const data = c.req.valid("json");
-  const member = await service.create(data);
+  const { member, credentials } = await service.create(data);
+  const created = member as { id: string; memberId: string };
   await writeAuditLog(c, {
-    action: "member_created",
+    action: "member_login_provisioned",
     entity: "member",
-    entityId: member.id,
-    details: { memberId: member.memberId },
+    entityId: created.id,
+    details: { memberId: created.memberId, loginEmail: credentials.email },
   });
-  return c.json({ success: true, data: member }, 201);
+  // `credentials.tempPassword` is the only place the plaintext temp password is
+  // ever surfaced — staff must hand it to the member; it is never stored.
+  return c.json({ success: true, data: { member, credentials } }, 201);
 });
 
 members.put("/:id", requireRole("admin", "staff"), zValidator("json", updateMemberSchema), async (c) => {

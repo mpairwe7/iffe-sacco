@@ -166,6 +166,13 @@ export const changePasswordSchema = z.object({
   newPassword: z.string().min(8, "Password must be at least 8 characters"),
 });
 
+// Used for the forced first-login password change: the caller is already
+// authenticated (with their temporary password), so no current password is
+// required — only the new one.
+export const setInitialPasswordSchema = z.object({
+  newPassword: z.string().min(8, "Password must be at least 8 characters"),
+});
+
 // ===== Pagination =====
 // Cap raised to 500 so admin/staff dashboards can fetch every member in
 // one round-trip for welfare aggregations (the shared schema is used by
@@ -376,3 +383,4 @@ export type CreatePaymentGatewayInput = z.infer<typeof createPaymentGatewaySchem
 export type UpdatePaymentGatewayInput = z.infer<typeof updatePaymentGatewaySchema>;
 export type CreateApplicationInput = z.infer<typeof createApplicationSchema>;
 export type ReviewApplicationInput = z.infer<typeof reviewApplicationSchema>;
+export type SetInitialPasswordInput = z.infer<typeof setInitialPasswordSchema>;
