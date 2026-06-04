@@ -92,6 +92,9 @@ documents.get("/:id/file", async (c) => {
       "Content-Type": doc.mimeType,
       "Content-Length": String(doc.size),
       "Content-Disposition": `${disposition}; filename*=UTF-8''${safeName}`,
+      // User-uploaded content served inline — stop browsers from MIME-sniffing
+      // it into something executable.
+      "X-Content-Type-Options": "nosniff",
       // Member-owned records — never store in a shared cache.
       "Cache-Control": "private, no-store",
     },

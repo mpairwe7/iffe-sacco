@@ -134,7 +134,18 @@ async function requestFormData<T>(path: string, formData: FormData): Promise<T> 
     credentials: "include",
   });
 
-  const json = (await res.json()) as ApiResponse<T>;
+  // The upload travels through nginx / Cloudflare, which can reject it with a
+  // NON-JSON body (e.g. a 413 "Request Entity Too Large" HTML page) before it
+  // ever reaches the API. Parse defensively so the UI gets a useful message
+  // instead of an opaque "Unexpected token <" JSON error.
+  let json: ApiResponse<T>;
+  try {
+    json = (await res.json()) as ApiResponse<T>;
+  } catch {
+    if (res.status === 413) throw new Error("File is too large to upload.");
+    throw new Error(`Upload failed (HTTP ${res.status}).`);
+  }
+
   if (!res.ok || !json.success) {
     if (res.status === 401) {
       clearAuth();

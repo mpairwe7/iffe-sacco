@@ -65,7 +65,7 @@ export function FileUpload({
   return (
     <div
       role="button"
-      tabIndex={0}
+      tabIndex={disabled ? -1 : 0}
       aria-disabled={disabled}
       onClick={() => !disabled && inputRef.current?.click()}
       onKeyDown={(e) => {
