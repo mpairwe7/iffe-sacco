@@ -7,6 +7,10 @@ dist/
 out/
 *.tsbuildinfo
 
+# Uploaded files (local dev document storage; prod writes outside the repo)
+apps/api/storage/
+storage/
+
 # Environment files
 .env
 .env.local

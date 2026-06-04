@@ -37,6 +37,7 @@ import { withdrawRequestRoutes } from "./routes/withdraw-request.routes";
 import { paymentGatewayRoutes } from "./routes/payment-gateway.routes";
 import { auditLogRoutes } from "./routes/audit-log.routes";
 import { applicationRoutes } from "./routes/application.routes";
+import { documentRoutes } from "./routes/document.routes";
 
 const app = new Hono().basePath("/api/v1");
 
@@ -101,6 +102,7 @@ app.route("/withdraw-requests", withdrawRequestRoutes);
 app.route("/payment-gateways", paymentGatewayRoutes);
 app.route("/audit-logs", auditLogRoutes);
 app.route("/applications", applicationRoutes);
+app.route("/documents", documentRoutes);
 
 // ===== Error Handler =====
 app.onError(errorHandler);

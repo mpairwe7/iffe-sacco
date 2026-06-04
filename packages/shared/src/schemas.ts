@@ -355,6 +355,17 @@ export const reviewApplicationSchema = z.object({
   rejectionReason: z.string().optional(),
 });
 
+// ===== Document (member receipts & signed forms) =====
+// The file itself is sent as multipart/form-data and validated in the route
+// (size + MIME allowlist); this schema covers only the accompanying metadata.
+export const documentTypeEnum = z.enum(["receipt", "signed_form", "other"]);
+
+export const uploadDocumentSchema = z.object({
+  memberId: z.string().min(1, "Member is required"),
+  type: documentTypeEnum.default("receipt"),
+  label: z.string().trim().max(200).optional(),
+});
+
 // ===== Export types =====
 export type LoginInput = z.infer<typeof loginSchema>;
 export type RegisterInput = z.infer<typeof registerSchema>;
@@ -384,3 +395,4 @@ export type UpdatePaymentGatewayInput = z.infer<typeof updatePaymentGatewaySchem
 export type CreateApplicationInput = z.infer<typeof createApplicationSchema>;
 export type ReviewApplicationInput = z.infer<typeof reviewApplicationSchema>;
 export type SetInitialPasswordInput = z.infer<typeof setInitialPasswordSchema>;
+export type UploadDocumentInput = z.infer<typeof uploadDocumentSchema>;

@@ -231,3 +231,26 @@ DATABASE_URL="production-url" bunx prisma migrate deploy
 - [ ] Set up error monitoring (Sentry)
 - [ ] Enable access logging
 - [ ] Regular dependency audits: `bun audit`
+
+## Member document uploads (self-hosted VPS)
+
+The receipts / signed-form feature writes uploaded files to the filesystem and
+streams them back through the API. Two operational requirements on the VPS:
+
+1. **Storage directory** — files are written under `STORAGE_DIR` (production
+   default `/home/iffe/iffe-storage`), deliberately **outside** the rsync deploy
+   tree (`/home/iffe/IFFE`) so `rsync --delete` never wipes uploads on deploy.
+   The API creates it on first write. Override in `apps/api/.env.production` if
+   the service runs as a different user. **Back this directory up** — it is not
+   part of the database backup.
+
+2. **Reverse-proxy body size** — the API caps a single upload at 10 MB, but
+   nginx defaults `client_max_body_size` to 1 MB and will otherwise reject larger
+   uploads with `413 Request Entity Too Large`. Raise it for the block that
+   proxies `/api/v1` to the API (or globally in the `http {}` block):
+
+   ```nginx
+   client_max_body_size 12m;
+   ```
+
+   Then validate and reload: `sudo nginx -t && sudo systemctl reload nginx`.

@@ -114,6 +114,42 @@ async function request<T>(
   return json.data as T;
 }
 
+/**
+ * Multipart upload (FormData). Unlike `request`, this must NOT set a
+ * Content-Type header — the browser sets `multipart/form-data` with the correct
+ * boundary itself. The CSRF token is still double-submitted and the session
+ * cookie rides along via `credentials: "include"`. Offline queueing is skipped
+ * deliberately (file bodies can't be persisted to the IndexedDB queue).
+ */
+async function requestFormData<T>(path: string, formData: FormData): Promise<T> {
+  const url = `${BASE_URL}${path}`;
+  const headers: Record<string, string> = {};
+  const csrf = readCsrfToken();
+  if (csrf) headers["X-CSRF-Token"] = csrf;
+
+  const res = await fetch(url, {
+    method: "POST",
+    headers,
+    body: formData,
+    credentials: "include",
+  });
+
+  const json = (await res.json()) as ApiResponse<T>;
+  if (!res.ok || !json.success) {
+    if (res.status === 401) {
+      clearAuth();
+      if (typeof window !== "undefined" && !path.startsWith("/auth/")) {
+        window.location.replace("/logout");
+      }
+    }
+    const err = new Error(json.message || "Request failed") as Error & { errors?: Record<string, string[]> };
+    err.errors = json.errors;
+    throw err;
+  }
+
+  return json.data as T;
+}
+
 export const apiClient = {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   get: <T>(path: string, params?: Record<string, any>) => request<T>("GET", path, { params }),
@@ -124,4 +160,5 @@ export const apiClient = {
   patch: <T>(path: string, body?: unknown, opts?: { idempotent?: boolean }) =>
     request<T>("PATCH", path, { body, idempotent: opts?.idempotent ?? true }),
   del: <T>(path: string) => request<T>("DELETE", path),
+  postFormData: <T>(path: string, formData: FormData) => requestFormData<T>(path, formData),
 };

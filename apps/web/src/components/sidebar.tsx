@@ -65,6 +65,7 @@ const navItems: NavItem[] = [
   { label: "", href: undefined, icon: LayoutDashboard, divider: true, section: "Member Portal", roles: ["member"] },
   { label: "My Account", href: "/portal/account", icon: UserCog, roles: ["member"] },
   { label: "Transactions", href: "/portal/transactions", icon: ArrowLeftRight, roles: ["member"] },
+  { label: "Receipts", href: "/portal/receipts", icon: Receipt, roles: ["member"] },
   { label: "Social Welfare", href: "/portal/welfare", icon: Heart, roles: ["member"] },
   { label: "Remarks", href: "/portal/remarks", icon: ScrollText, roles: ["member"] },
   { label: "SACCO Info", href: "/portal/sacco-info", icon: Info, roles: ["member"] },
@@ -80,6 +81,7 @@ const navItems: NavItem[] = [
     roles: ["admin", "staff", "chairman"],
   },
   { label: "Applications", href: "/admin/applications", icon: ClipboardList, roles: ["admin", "staff"] },
+  { label: "Documents", href: "/admin/documents", icon: ScrollText, roles: ["admin", "staff"] },
   {
     label: "Members",
     icon: Users,

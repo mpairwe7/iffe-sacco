@@ -27,6 +27,7 @@ const memberTabs: NavTab[] = [
   { label: "Home", href: "/portal/dashboard", icon: LayoutDashboard, match: ["/portal/dashboard"] },
   { label: "Account", href: "/portal/account", icon: UserCog, match: ["/portal/account"] },
   { label: "Transactions", href: "/portal/transactions", icon: ArrowLeftRight, match: ["/portal/transactions"] },
+  { label: "Receipts", href: "/portal/receipts", icon: Receipt, match: ["/portal/receipts"] },
   { label: "Welfare", href: "/portal/welfare", icon: Heart, match: ["/portal/welfare"] },
 ];
 

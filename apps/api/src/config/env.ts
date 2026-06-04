@@ -20,4 +20,10 @@ export const env = {
   PASSWORD_RESET_TTL_MINUTES: Number(process.env.PASSWORD_RESET_TTL_MINUTES || 30),
   AUTH_RATE_LIMIT_WINDOW_MS: Number(process.env.AUTH_RATE_LIMIT_WINDOW_MS || 15 * 60 * 1000),
   AUTH_RATE_LIMIT_MAX_ATTEMPTS: Number(process.env.AUTH_RATE_LIMIT_MAX_ATTEMPTS || 5),
+  // Where uploaded member documents (receipts / signed forms) are written.
+  // MUST live OUTSIDE the rsync deploy tree (/home/iffe/IFFE) so `rsync --delete`
+  // never wipes uploads — hence the absolute prod default under the home dir.
+  // Local dev writes to ./storage (gitignored).
+  STORAGE_DIR:
+    process.env.STORAGE_DIR || (process.env.NODE_ENV === "production" ? "/home/iffe/iffe-storage" : "./storage"),
 } as const;
