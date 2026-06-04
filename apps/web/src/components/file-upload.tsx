@@ -31,6 +31,16 @@ export function FileUpload({
       onError?.(`File is too large (maximum ${maxSizeMb} MB)`);
       return;
     }
+    // The native picker enforces `accept`, but drag-and-drop bypasses it — so
+    // re-check the MIME type here. (Empty type: defer to the server's check.)
+    const allowed = accept
+      .split(",")
+      .map((t) => t.trim())
+      .filter(Boolean);
+    if (allowed.length > 0 && file.type && !allowed.includes(file.type)) {
+      onError?.("Unsupported file type. Upload a JPG, PNG, WEBP or HEIC image, or a PDF.");
+      return;
+    }
     onChange(file);
   }
 

@@ -95,6 +95,9 @@ documents.get("/:id/file", async (c) => {
       // User-uploaded content served inline — stop browsers from MIME-sniffing
       // it into something executable.
       "X-Content-Type-Options": "nosniff",
+      // Defence-in-depth: the stored MIME type is client-reported, so sandbox
+      // the response and forbid active content if a file is opened directly.
+      "Content-Security-Policy": "default-src 'none'; style-src 'unsafe-inline'; sandbox",
       // Member-owned records — never store in a shared cache.
       "Cache-Control": "private, no-store",
     },
