@@ -117,11 +117,34 @@ model Member {
   accounts    Account[]
   loans       Loan[]
   pledges     Pledge[]
+  documents   Document[]
 
   @@index([status])
   @@index([email])
   @@index([memberId])
   @@map("members")
+}
+
+// ===== DOCUMENT (member receipts & signed forms) =====
+// Staff scan/upload a member's receipts and signed forms; the member views them
+// in their Receipts tab. The bytes live on the server filesystem (see
+// STORAGE_DIR); this row is the metadata + pointer (storedName) to the file.
+model Document {
+  id           String   @id @default(uuid())
+  memberId     String
+  type         String   @default("receipt") // receipt | signed_form | other
+  label        String?
+  originalName String // filename as uploaded, shown to the member & used on download
+  storedName   String   @unique // opaque on-disk filename (never trusts client input)
+  mimeType     String
+  size         Int // bytes
+  uploadedBy   String // user id of the staff/admin who uploaded it
+  createdAt    DateTime @default(now())
+
+  member Member @relation(fields: [memberId], references: [id], onDelete: Cascade)
+
+  @@index([memberId])
+  @@map("documents")
 }
 
 // ===== ACCOUNT =====

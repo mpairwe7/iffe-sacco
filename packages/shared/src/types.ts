@@ -86,6 +86,24 @@ export interface Member {
 
 export type MemberSupportStatus = "received" | "requested" | "not_received";
 
+// ===== Document (member receipts & signed forms) =====
+export type DocumentType = "receipt" | "signed_form" | "other";
+
+export interface MemberDocument {
+  id: string;
+  memberId: string;
+  type: DocumentType;
+  label?: string | null;
+  /** Filename as uploaded — shown to the member and used as the download name. */
+  originalName: string;
+  mimeType: string;
+  /** Size in bytes. */
+  size: number;
+  /** User id of the staff/admin who uploaded it. */
+  uploadedBy: string;
+  createdAt: string;
+}
+
 // ===== Account =====
 export type AccountType = "savings" | "current" | "fixed_deposit";
 export type AccountStatus = "active" | "dormant" | "frozen" | "closed";
