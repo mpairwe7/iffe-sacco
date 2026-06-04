@@ -47,14 +47,17 @@ sudo -n /bin/systemctl restart iffe-api
 sudo -n /bin/systemctl restart iffe-web
 
 log "Health probe"
-# API needs a moment to bind :4000 after restart
-for i in 1 2 3 4 5; do
+# The API can take longer than a few seconds to bind :4000 after a cold restart
+# (fresh Bun + Prisma client init), so poll for up to ~60s and exit the moment
+# it's healthy — a fast restart still finishes in a couple of seconds.
+attempts=30
+for i in $(seq 1 "$attempts"); do
   if curl -fsS -m 3 http://127.0.0.1:4000/api/v1/health >/dev/null; then
     curl -fsS http://127.0.0.1:4000/api/v1/health; echo
     break
   fi
+  [ "$i" = "$attempts" ] && fail "API never came back healthy after restart (~60s)"
   sleep 2
-  [ "$i" = 5 ] && fail "API never came back healthy after restart"
 done
 
 log "Deploy complete"
