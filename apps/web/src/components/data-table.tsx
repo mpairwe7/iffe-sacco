@@ -16,6 +16,7 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
+import { getPageWindow } from "@/lib/pagination";
 import { Skeleton } from "@/components/ui/skeleton";
 
 interface Column<T> {
@@ -26,6 +27,10 @@ interface Column<T> {
   sortable?: boolean;
   sortKey?: string;
   hiddenOnMobile?: boolean;
+  /** Clamp the desktop cell width and ellipsize overflow (keeps wide rows from stretching the table). */
+  truncate?: boolean;
+  /** Extra classes for the desktop cell. */
+  cellClassName?: string;
 }
 
 interface DataTableProps<T> {
@@ -351,17 +356,28 @@ export function DataTable<T extends Record<string, any>>({
                     i % 2 === 1 && "bg-gray-50/50 dark:bg-gray-900/30",
                   )}
                 >
-                  {columns.map((col) => (
-                    <td
-                      key={col.key}
-                      className={cn(
-                        "px-6 py-5 text-sm",
-                        col.align === "right" ? "text-right" : col.align === "center" ? "text-center" : "text-left",
-                      )}
-                    >
-                      {col.render ? col.render(row) : String(row[col.key] ?? "")}
-                    </td>
-                  ))}
+                  {columns.map((col) => {
+                    const rawText = col.render ? undefined : String(row[col.key] ?? "");
+                    const content = col.render ? col.render(row) : rawText;
+                    return (
+                      <td
+                        key={col.key}
+                        className={cn(
+                          "px-6 py-5 text-sm",
+                          col.align === "right" ? "text-right" : col.align === "center" ? "text-center" : "text-left",
+                          col.cellClassName,
+                        )}
+                      >
+                        {col.truncate ? (
+                          <span className="block max-w-[16rem] truncate" title={rawText}>
+                            {content}
+                          </span>
+                        ) : (
+                          content
+                        )}
+                      </td>
+                    );
+                  })}
                 </tr>
               ))
             )}
@@ -386,7 +402,9 @@ export function DataTable<T extends Record<string, any>>({
                     <span className="text-xs font-medium text-text-muted uppercase tracking-wider shrink-0">
                       {col.label}
                     </span>
-                    <span className={cn("text-sm text-right", col.align === "right" && "font-semibold")}>
+                    <span
+                      className={cn("text-sm text-right min-w-0 break-words", col.align === "right" && "font-semibold")}
+                    >
                       {col.render ? col.render(row) : String(row[col.key] ?? "")}
                     </span>
                   </div>
@@ -416,7 +434,7 @@ export function DataTable<T extends Record<string, any>>({
               ))}
             </select>
           </div>
-          <div className="flex items-center gap-1">
+          <div className="flex flex-wrap items-center justify-end gap-1">
             <button
               onClick={() => handlePage(Math.max(1, activePage - 1))}
               disabled={activePage === 1}
@@ -425,31 +443,20 @@ export function DataTable<T extends Record<string, any>>({
             >
               <ChevronLeft className="w-4 h-4" />
             </button>
-            {Array.from({ length: Math.min(7, computedTotalPages) }, (_, i) => {
-              let p: number;
-              if (computedTotalPages <= 7) {
-                p = i + 1;
-              } else if (activePage <= 4) {
-                p = i + 1;
-              } else if (activePage >= computedTotalPages - 3) {
-                p = computedTotalPages - 6 + i;
-              } else {
-                p = activePage - 3 + i;
-              }
-              return (
-                <button
-                  key={p}
-                  onClick={() => handlePage(p)}
-                  aria-label={`Page ${p}`}
-                  className={cn(
-                    "w-10 h-10 rounded-lg text-sm font-medium",
-                    p === activePage ? "bg-primary text-white" : "hover:bg-surface-hover text-text-muted",
-                  )}
-                >
-                  {p}
-                </button>
-              );
-            })}
+            {getPageWindow(activePage, computedTotalPages).map((p) => (
+              <button
+                key={p}
+                onClick={() => handlePage(p)}
+                aria-label={`Page ${p}`}
+                aria-current={p === activePage ? "page" : undefined}
+                className={cn(
+                  "w-10 h-10 rounded-lg text-sm font-medium",
+                  p === activePage ? "bg-primary text-white" : "hover:bg-surface-hover text-text-muted",
+                )}
+              >
+                {p}
+              </button>
+            ))}
             <button
               onClick={() => handlePage(Math.min(computedTotalPages, activePage + 1))}
               disabled={activePage === computedTotalPages}

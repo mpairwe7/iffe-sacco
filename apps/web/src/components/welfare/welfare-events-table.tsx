@@ -8,6 +8,7 @@ import { WelfareKpiStrip, type WelfareKpiData } from "@/components/welfare/welfa
 import type { WelfareKind } from "@/components/welfare/welfare-tabs";
 import { useMembers } from "@/hooks/use-members";
 import { cn, formatCurrency, formatDate } from "@/lib/utils";
+import { getPageWindow } from "@/lib/pagination";
 import { EXPECTED_WELFARE_AMOUNT } from "@iffe/shared";
 import type { Member, MemberSupportStatus } from "@iffe/shared";
 
@@ -272,7 +273,7 @@ export function WelfareEventsTable({ kind, showActions = false, onView }: Welfar
             <p className="text-xs text-text-muted">
               Showing {pageStart + 1} to {pageEnd} of {filteredEvents.length} entries
             </p>
-            <div className="flex items-center gap-1">
+            <div className="flex flex-wrap items-center justify-end gap-1">
               <button
                 type="button"
                 onClick={() => setPage((p) => Math.max(1, p - 1))}
@@ -281,8 +282,7 @@ export function WelfareEventsTable({ kind, showActions = false, onView }: Welfar
               >
                 &lt;
               </button>
-              {Array.from({ length: totalPages }).map((_, index) => {
-                const p = index + 1;
+              {getPageWindow(clampedPage, totalPages).map((p) => {
                 const active = p === clampedPage;
                 return (
                   <button

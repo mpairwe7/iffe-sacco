@@ -120,14 +120,21 @@ jobs:
             packages/*/node_modules
           key: bun-${{ runner.os }}-${{ hashFiles('bun.lock') }}
       - run: bun install --frozen-lockfile
+      - run: bun run --filter @iffe/api db:generate
       - run: bun run --filter web test:e2e:install
-      - name: Playwright smoke
-        run: bun run --filter web test:e2e -- --grep @smoke || echo "no smoke-tagged specs yet"
+      # @smoke = the auth/health checks + the /ui-harness layout-resilience specs.
+      # The harness renders shared components with large/edge data and needs no DB
+      # or login, so it runs here on every PR (desktop + mobile projects).
+      - name: Playwright smoke + layout harness
+        run: bun run --filter web test:e2e -- --grep @smoke
         env:
           CI: "1"
-          NODE_ENV: production
+          # next dev → development mode; also lets the /ui-harness route render
+          # (it 404s only when NODE_ENV=production).
+          NODE_ENV: development
           DATABASE_URL: postgresql://stub:stub@localhost:5432/stub
           JWT_SECRET: ci-e2e-secret
+          NEXT_PUBLIC_API_URL: /api/v1
 
   build:
     name: Build

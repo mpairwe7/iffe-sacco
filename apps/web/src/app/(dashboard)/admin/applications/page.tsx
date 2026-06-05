@@ -44,10 +44,12 @@ const columns = [
         .slice(0, 2);
       return (
         <div className="flex items-center gap-3">
-          <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center">
+          <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center shrink-0">
             <span className="text-xs font-bold text-primary">{initials}</span>
           </div>
-          <span className="font-medium text-text">{row.fullName}</span>
+          <span className="font-medium text-text truncate min-w-0" title={row.fullName}>
+            {row.fullName}
+          </span>
         </div>
       );
     },
