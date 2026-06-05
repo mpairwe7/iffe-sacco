@@ -74,6 +74,8 @@ test.describe("@layout real pages survive large datasets", () => {
 
       await page.getByRole("button", { name: "Next page" }).click();
       await expect(page.getByText(/Showing\s+\d+-\d+\s+of\s+500/)).toBeVisible();
+      // Pagination state is persisted in the URL (shareable / survives refresh).
+      await expect(page).toHaveURL(/[?&]page=2(?:&|$)/);
       await expectNoHorizontalOverflow(page, `${c.name} (page 2)`);
     });
   }

@@ -1,6 +1,6 @@
 "use client";
 
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { QueryClient, QueryClientProvider, keepPreviousData } from "@tanstack/react-query";
 import { ThemeProvider } from "next-themes";
 import { Toaster } from "sonner";
 import { TooltipProvider } from "@radix-ui/react-tooltip";
@@ -24,6 +24,9 @@ export function Providers({ children, locale, messages }: ProvidersProps) {
             staleTime: 60 * 1000,
             retry: 1,
             refetchOnWindowFocus: false,
+            // Keep the previous page's rows visible while the next page loads,
+            // instead of flashing the skeleton on every pagination/sort/search.
+            placeholderData: keepPreviousData,
           },
         },
       }),

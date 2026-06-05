@@ -8,7 +8,7 @@ import { WelfareKpiStrip, type WelfareKpiData } from "@/components/welfare/welfa
 import type { WelfareKind } from "@/components/welfare/welfare-tabs";
 import { useMembers } from "@/hooks/use-members";
 import { cn, formatCurrency, formatDate } from "@/lib/utils";
-import { getPageWindow } from "@/lib/pagination";
+import { Pagination } from "@/components/ui/pagination";
 import { EXPECTED_WELFARE_AMOUNT } from "@iffe/shared";
 import type { Member, MemberSupportStatus } from "@iffe/shared";
 
@@ -28,8 +28,6 @@ interface WelfareEventsTableProps {
   showActions?: boolean;
   onView?: (event: WelfareEvent) => void;
 }
-
-const PAGE_SIZE = 7;
 
 function getInitials(member: Member) {
   const first = member.firstName?.[0] ?? "";
@@ -81,6 +79,7 @@ export function WelfareEventsTable({ kind, showActions = false, onView }: Welfar
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState<StatusFilter>("all");
   const [page, setPage] = useState(1);
+  const [pageSize, setPageSize] = useState(10);
 
   const { data, isLoading, error, refetch } = useMembers({ limit: 500 });
   const allMembers = useMemo(() => (data?.data ?? []) as Member[], [data]);
@@ -107,11 +106,10 @@ export function WelfareEventsTable({ kind, showActions = false, onView }: Welfar
     });
   }, [allEvents, search, statusFilter]);
 
-  const totalPages = Math.max(1, Math.ceil(filteredEvents.length / PAGE_SIZE));
+  const totalPages = Math.max(1, Math.ceil(filteredEvents.length / pageSize));
   const clampedPage = Math.min(page, totalPages);
-  const pageStart = (clampedPage - 1) * PAGE_SIZE;
-  const pageRows = filteredEvents.slice(pageStart, pageStart + PAGE_SIZE);
-  const pageEnd = pageStart + pageRows.length;
+  const pageStart = (clampedPage - 1) * pageSize;
+  const pageRows = filteredEvents.slice(pageStart, pageStart + pageSize);
 
   if (error) {
     return (
@@ -269,46 +267,17 @@ export function WelfareEventsTable({ kind, showActions = false, onView }: Welfar
         </div>
 
         {!isLoading && filteredEvents.length > 0 && (
-          <div className="flex flex-col sm:flex-row items-center justify-between gap-3 px-4 py-3 border-t border-border">
-            <p className="text-xs text-text-muted">
-              Showing {pageStart + 1} to {pageEnd} of {filteredEvents.length} entries
-            </p>
-            <div className="flex flex-wrap items-center justify-end gap-1">
-              <button
-                type="button"
-                onClick={() => setPage((p) => Math.max(1, p - 1))}
-                disabled={clampedPage === 1}
-                className="px-3 py-1.5 text-sm font-medium rounded-lg border border-border disabled:opacity-40 disabled:cursor-not-allowed hover:bg-surface-alt/60"
-              >
-                &lt;
-              </button>
-              {getPageWindow(clampedPage, totalPages).map((p) => {
-                const active = p === clampedPage;
-                return (
-                  <button
-                    key={p}
-                    type="button"
-                    onClick={() => setPage(p)}
-                    aria-current={active ? "page" : undefined}
-                    className={cn(
-                      "w-8 h-8 text-sm font-semibold rounded-lg",
-                      active ? "bg-primary text-white" : "text-text hover:bg-surface-alt/60",
-                    )}
-                  >
-                    {p}
-                  </button>
-                );
-              })}
-              <button
-                type="button"
-                onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
-                disabled={clampedPage === totalPages}
-                className="px-3 py-1.5 text-sm font-medium rounded-lg border border-border disabled:opacity-40 disabled:cursor-not-allowed hover:bg-surface-alt/60"
-              >
-                &gt;
-              </button>
-            </div>
-          </div>
+          <Pagination
+            page={clampedPage}
+            totalPages={totalPages}
+            totalItems={filteredEvents.length}
+            perPage={pageSize}
+            onPageChange={setPage}
+            onPerPageChange={(n) => {
+              setPageSize(n);
+              setPage(1);
+            }}
+          />
         )}
       </div>
     </div>

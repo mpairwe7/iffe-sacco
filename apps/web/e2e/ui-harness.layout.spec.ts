@@ -20,10 +20,32 @@ test.describe("@smoke ui-harness layout resilience", () => {
     expect(await numberedPageButtonCount(page)).toBeLessThanOrEqual(7);
 
     // ...and it actually works: Next advances the visible range.
-    await expect(page.getByText(/Showing\s+1-10\s+of\s+1000/)).toBeVisible();
+    const range = page.getByText(/Showing\s+1-10\s+of\s+1000/);
+    await expect(range).toBeVisible();
+    // Range is announced to screen readers.
+    await expect(range).toHaveAttribute("aria-live", "polite");
     await page.getByRole("button", { name: "Next page" }).click();
     await expect(page.getByText(/Showing\s+11-20\s+of\s+1000/)).toBeVisible();
     await expectNoHorizontalOverflow(page, "datatable after next");
+  });
+
+  test("First / Last / jump-to-page navigate correctly", async ({ page }) => {
+    await page.goto("/ui-harness?widget=datatable&rows=1000"); // 100 pages @ 10/page
+    await expect(page.getByText(/Showing\s+1-10\s+of\s+1000/)).toBeVisible();
+
+    await page.getByRole("button", { name: "Last page" }).click();
+    await expect(page.getByText(/Showing\s+991-1000\s+of\s+1000/)).toBeVisible();
+    await expectNoHorizontalOverflow(page, "datatable last page");
+
+    await page.getByRole("button", { name: "First page" }).click();
+    await expect(page.getByText(/Showing\s+1-10\s+of\s+1000/)).toBeVisible();
+    await expectNoHorizontalOverflow(page, "datatable first page");
+
+    const jump = page.getByLabel("Go to page");
+    await jump.fill("50");
+    await jump.press("Enter");
+    await expect(page.getByText(/Showing\s+491-500\s+of\s+1000/)).toBeVisible();
+    await expectNoHorizontalOverflow(page, "datatable jumped");
   });
 
   test("DataTable per-page selector changes the visible range without breaking layout", async ({ page }) => {
