@@ -39,6 +39,7 @@ test.describe("@smoke ui-harness layout resilience", () => {
 
     await page.getByRole("button", { name: "First page" }).click();
     await expect(page.getByText(/Showing\s+1-10\s+of\s+1000/)).toBeVisible();
+    await expectNoHorizontalOverflow(page, "datatable first page");
 
     const jump = page.getByLabel("Go to page");
     await jump.fill("50");

@@ -28,9 +28,9 @@ export function useServerTable(options: UseServerTableOptions = {}) {
 
   // The URL is the source of truth for page / limit / sort / (committed) search.
   const pageParam = Number(searchParams.get(k("page")));
-  const page = Number.isFinite(pageParam) && pageParam >= 1 ? pageParam : (options.initialPage ?? 1);
+  const page = Number.isInteger(pageParam) && pageParam >= 1 ? pageParam : (options.initialPage ?? 1);
   const limitParam = Number(searchParams.get(k("limit")));
-  const limit = Number.isFinite(limitParam) && limitParam >= 1 ? limitParam : (options.initialLimit ?? 10);
+  const limit = Number.isInteger(limitParam) && limitParam >= 1 ? limitParam : (options.initialLimit ?? 10);
   const sortBy = searchParams.get(k("sortBy")) ?? options.initialSortBy ?? null;
   const sortOrderParam = searchParams.get(k("sortOrder"));
   const sortOrder: "asc" | "desc" =
