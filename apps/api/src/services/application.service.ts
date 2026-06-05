@@ -104,12 +104,14 @@ export class ApplicationService {
       if (!application) {
         throw new HTTPException(404, { message: "Application not found" });
       }
-      if (application.status !== "pending") {
-        throw new HTTPException(400, { message: "Only pending applications can be approved" });
+      // Strict two-stage gate: an application must be recommended by staff
+      // before an admin can approve it. Staff alone cannot approve.
+      if (application.status !== "recommended") {
+        throw new HTTPException(400, { message: "Only staff-recommended applications can be approved" });
       }
 
       const claimed = await tx.application.updateMany({
-        where: { id, status: "pending" },
+        where: { id, status: "recommended" },
         data: {
           status: "approved",
           reviewedBy: adminId,
@@ -118,7 +120,7 @@ export class ApplicationService {
       });
 
       if (claimed.count === 0) {
-        throw new HTTPException(409, { message: "Application is no longer pending approval" });
+        throw new HTTPException(409, { message: "Application is no longer awaiting approval" });
       }
 
       let userId = application.userId;
@@ -215,18 +217,69 @@ export class ApplicationService {
     return { ...result, onboarding };
   }
 
+  // Admin may reject (veto) an application at either the pending or the
+  // recommended stage.
   async reject(id: string, adminId: string, reason?: string) {
     const application = await this.getById(id);
+    if (application.status !== "pending" && application.status !== "recommended") {
+      throw new HTTPException(400, { message: "Only pending or recommended applications can be rejected" });
+    }
+
+    const updated = await prisma.application.updateMany({
+      where: { id, status: { in: ["pending", "recommended"] } },
+      data: {
+        status: "rejected",
+        rejectionReason: reason || "Application rejected",
+        reviewedBy: adminId,
+        reviewedAt: new Date(),
+      },
+    });
+
+    if (updated.count === 0) {
+      throw new HTTPException(409, { message: "Application is no longer awaiting review" });
+    }
+
+    return repo.findById(id);
+  }
+
+  // Staff vouches for a pending application and forwards it to the admin for
+  // final approval. Staff cannot approve, only recommend or decline.
+  async recommend(id: string, staffId: string, notes?: string) {
+    const application = await this.getById(id);
     if (application.status !== "pending") {
-      throw new HTTPException(400, { message: "Only pending applications can be rejected" });
+      throw new HTTPException(400, { message: "Only pending applications can be recommended" });
+    }
+
+    const updated = await prisma.application.updateMany({
+      where: { id, status: "pending" },
+      data: {
+        status: "recommended",
+        recommendedBy: staffId,
+        recommendedAt: new Date(),
+        recommendationNotes: notes || null,
+      },
+    });
+
+    if (updated.count === 0) {
+      throw new HTTPException(409, { message: "Application is no longer pending review" });
+    }
+
+    return repo.findById(id);
+  }
+
+  // Staff declines a pending application with a required reason (terminal).
+  async decline(id: string, staffId: string, reason: string) {
+    const application = await this.getById(id);
+    if (application.status !== "pending") {
+      throw new HTTPException(400, { message: "Only pending applications can be declined" });
     }
 
     const updated = await prisma.application.updateMany({
       where: { id, status: "pending" },
       data: {
         status: "rejected",
-        rejectionReason: reason || "Application rejected",
-        reviewedBy: adminId,
+        rejectionReason: reason,
+        reviewedBy: staffId,
         reviewedAt: new Date(),
       },
     });

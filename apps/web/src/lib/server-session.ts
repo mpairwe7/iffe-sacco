@@ -1,7 +1,7 @@
 import { cache } from "react";
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
-import type { Application, User } from "@iffe/shared";
+import type { User } from "@iffe/shared";
 import { canAccessPath, getDefaultRouteForRole, type AppRole } from "@/lib/role-routes";
 
 async function getBaseUrl() {
@@ -55,19 +55,10 @@ export async function getDashboardSession() {
   const currentPath = requestHeaders.get("x-current-path") || "/dashboard";
   const user = await getCurrentUser();
 
-  if (!user) {
-    return { user: null, currentPath, application: null as Application | null };
-  }
-
-  // Skip the application lookup while a temp-password reset is pending: every
-  // endpoint except /auth/me, /auth/logout and /auth/set-initial-password is
-  // 403-gated server-side, so fetching /applications/mine here would throw.
-  const application =
-    user.role === "member" && !user.mustChangePassword
-      ? await fetchApi<Application | null>("/applications/mine")
-      : null;
-
-  return { user, currentPath, application };
+  // Membership status comes straight from /auth/me (user.memberStatus), so the
+  // dashboard layout no longer needs a separate /applications/mine fetch — which
+  // previously threw and crashed the whole layout on any non-OK response.
+  return { user, currentPath };
 }
 
 /**

@@ -13,6 +13,12 @@ export interface User {
   isActive: boolean;
   /** True when the account holds a temporary password and must set a new one before using the app. */
   mustChangePassword?: boolean;
+  /**
+   * Status of the linked Member record, or null when the account has no member
+   * yet (e.g. a self-registered applicant still pending approval). Used by the
+   * dashboard to route not-yet-active members to the application-status page.
+   */
+  memberStatus?: Member["status"] | null;
   lastLogin?: string | null;
   createdAt: string;
 }
@@ -344,7 +350,9 @@ export interface PaymentGateway {
 }
 
 // ===== Application (Membership Application) =====
-export type ApplicationStatus = "pending" | "approved" | "rejected";
+// Lifecycle: pending → recommended (staff vouches) → approved (admin), with a
+// rejected exit at either stage.
+export type ApplicationStatus = "pending" | "recommended" | "approved" | "rejected";
 
 export interface Application {
   id: string;
@@ -398,6 +406,9 @@ export interface Application {
   rejectionReason?: string | null;
   reviewedBy?: string | null;
   reviewedAt?: string | null;
+  recommendedBy?: string | null;
+  recommendedAt?: string | null;
+  recommendationNotes?: string | null;
   userId?: string | null;
   memberId?: string | null;
 

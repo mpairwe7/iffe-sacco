@@ -14,6 +14,8 @@ interface ConfirmDialogProps {
   onConfirm: () => void;
   variant?: "default" | "destructive";
   loading?: boolean;
+  /** Disable the confirm button (e.g. a required field is still empty). */
+  confirmDisabled?: boolean;
   children?: React.ReactNode;
 }
 
@@ -27,6 +29,7 @@ export function ConfirmDialog({
   onConfirm,
   variant = "default",
   loading = false,
+  confirmDisabled = false,
   children,
 }: ConfirmDialogProps) {
   return (
@@ -75,9 +78,9 @@ export function ConfirmDialog({
             </Dialog.Close>
             <button
               onClick={onConfirm}
-              disabled={loading}
+              disabled={loading || confirmDisabled}
               className={cn(
-                "w-full sm:w-auto px-6 py-3 min-h-[44px] text-sm font-semibold text-white rounded-lg disabled:opacity-50",
+                "w-full sm:w-auto px-6 py-3 min-h-[44px] text-sm font-semibold text-white rounded-lg disabled:opacity-50 disabled:cursor-not-allowed",
                 variant === "destructive" ? "bg-danger hover:bg-red-600" : "bg-primary hover:bg-primary-dark",
               )}
             >

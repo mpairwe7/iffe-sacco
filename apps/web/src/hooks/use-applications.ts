@@ -41,6 +41,22 @@ export function useSubmitApplication() {
   });
 }
 
+export function useRecommendApplication() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: ({ id, notes }: { id: string; notes?: string }) => applicationsApi.recommend(id, { notes }),
+    onSuccess: () => qc.invalidateQueries({ queryKey: ["applications"] }),
+  });
+}
+
+export function useDeclineApplication() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: ({ id, reason }: { id: string; reason: string }) => applicationsApi.decline(id, { reason }),
+    onSuccess: () => qc.invalidateQueries({ queryKey: ["applications"] }),
+  });
+}
+
 export function useApproveApplication() {
   const qc = useQueryClient();
   return useMutation({

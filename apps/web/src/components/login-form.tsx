@@ -23,7 +23,7 @@ import { useLogin } from "@/hooks/use-auth";
 import { useAuthStore } from "@/stores/auth-store";
 import { SecurityBadge } from "@/components/ui/security-badge";
 import { useRouter } from "next/navigation";
-import { getDefaultRouteForRole, type AppRole } from "@/lib/role-routes";
+import { getDefaultRouteForRole } from "@/lib/role-routes";
 
 type UserType = "member" | "staff" | "admin";
 
@@ -32,12 +32,6 @@ const USER_TYPES: Array<{ id: UserType; label: string; sub: string; icon: typeof
   { id: "staff", label: "Staff", sub: "Access staff panel", icon: Briefcase },
   { id: "admin", label: "Admin", sub: "Access admin panel", icon: Shield },
 ];
-
-function roleGroup(role: AppRole): UserType {
-  if (role === "member") return "member";
-  if (role === "admin") return "admin";
-  return "staff"; // staff + chairman
-}
 
 export function LoginForm() {
   const [showPassword, setShowPassword] = useState(false);
@@ -60,15 +54,13 @@ export function LoginForm() {
         email: data.email,
         password: data.password,
         remember: data.remember ?? false,
+        // The selected portal "door" is enforced server-side: a sign-in whose
+        // account role doesn't match this is rejected (and lands in catch),
+        // keeping member/staff/admin logins isolated.
+        portal: userType,
       });
       setAuth(result.user);
-      const actual = roleGroup(result.user.role);
-      if (actual === userType) {
-        toast.success("Welcome back!");
-      } else {
-        const actualLabel = USER_TYPES.find((u) => u.id === actual)?.label ?? actual;
-        toast.info(`Signed in as ${actualLabel}. Redirecting to your portal.`);
-      }
+      toast.success("Welcome back!");
       router.push(getDefaultRouteForRole(result.user.role));
     } catch (err: unknown) {
       const message = err instanceof Error ? err.message : "Login failed";

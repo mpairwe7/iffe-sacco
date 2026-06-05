@@ -470,7 +470,6 @@ export default function RegisterPage() {
         email: data.email,
         phone: data.phone,
         password: data.password,
-        role: "member",
       });
       setAuth(result.user);
 

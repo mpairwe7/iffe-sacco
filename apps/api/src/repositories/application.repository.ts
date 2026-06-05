@@ -46,12 +46,13 @@ export class ApplicationRepository {
   }
 
   async countByStatus() {
-    const [pending, approved, rejected, total] = await Promise.all([
+    const [pending, recommended, approved, rejected, total] = await Promise.all([
       prisma.application.count({ where: { status: "pending" } }),
+      prisma.application.count({ where: { status: "recommended" } }),
       prisma.application.count({ where: { status: "approved" } }),
       prisma.application.count({ where: { status: "rejected" } }),
       prisma.application.count(),
     ]);
-    return { pending, approved, rejected, total };
+    return { pending, recommended, approved, rejected, total };
   }
 }

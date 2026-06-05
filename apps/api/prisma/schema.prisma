@@ -418,10 +418,13 @@ model Application {
   applicationLetterName String?
 
   // Workflow
-  status            String   @default("pending") // pending | approved | rejected
+  status            String   @default("pending") // pending | recommended | approved | rejected
   rejectionReason   String?
-  reviewedBy        String?
+  reviewedBy        String?  // admin who approved/rejected (or staff who declined)
   reviewedAt        DateTime?
+  recommendedBy     String?  // staff who recommended the application to the admin
+  recommendedAt     DateTime?
+  recommendationNotes String?
   userId            String?  @unique
   memberId          String?
 

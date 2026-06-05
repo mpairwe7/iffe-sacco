@@ -97,6 +97,19 @@ describe("proxy role redirects", () => {
     expect(response.headers.get("location")).toBe("http://localhost/portal/dashboard");
   });
 
+  it("redirects an authenticated user visiting /register to their dashboard", async () => {
+    const response = await proxy(await createRequest("/register", "admin"));
+
+    expect(response.status).toBe(307);
+    expect(response.headers.get("location")).toBe("http://localhost/dashboard");
+  });
+
+  it("lets an unauthenticated visitor reach /register", async () => {
+    const response = await proxy(await createRequest("/register", null));
+
+    expect(response.status).toBe(200);
+  });
+
   it("redirects an unauthenticated visit to a protected route back to /login", async () => {
     const response = await proxy(await createRequest("/dashboard", null));
 
@@ -112,12 +125,13 @@ describe("proxy role redirects", () => {
     expect(setCookie.toLowerCase()).toContain("max-age=0");
   });
 
-  it("covers staff, chairman, and profile roots in the proxy matcher", () => {
+  it("covers staff, chairman, profile, and register roots in the proxy matcher", () => {
     expect(config.matcher).toContain("/staff");
     expect(config.matcher).toContain("/staff/:path*");
     expect(config.matcher).toContain("/chairman");
     expect(config.matcher).toContain("/chairman/:path*");
     expect(config.matcher).toContain("/profile");
     expect(config.matcher).toContain("/profile/:path*");
+    expect(config.matcher).toContain("/register");
   });
 });

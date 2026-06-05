@@ -20,14 +20,22 @@ export const loginSchema = z.object({
   email: z.email("Valid email required"),
   password: z.string().min(6, "Password must be at least 6 characters"),
   remember: z.boolean().optional().default(false),
+  // The portal "door" the user chose on the login screen. When present the
+  // server rejects the sign-in unless the account's role matches this group,
+  // so member/staff/admin logins stay isolated (no session is created on a
+  // mismatch). Optional for API clients that don't surface a portal choice.
+  portal: z.enum(["member", "staff", "admin"]).optional(),
 });
 
+// NOTE: registration is intentionally member-only. The role is forced to
+// "member" server-side and is NOT accepted from the client — privileged
+// accounts (admin/staff/chairman) are created only via seed or the
+// admin-gated user-management flow.
 export const registerSchema = z.object({
   name: z.string().min(2, "Name must be at least 2 characters"),
   email: z.email("Valid email required"),
   phone: z.string().min(10, "Valid phone number required"),
   password: z.string().min(8, "Password must be at least 8 characters"),
-  role: z.enum(["admin", "chairman", "member", "staff"]).default("member"),
 });
 
 export const requestPasswordResetSchema = z.object({
@@ -355,6 +363,17 @@ export const reviewApplicationSchema = z.object({
   rejectionReason: z.string().optional(),
 });
 
+// Staff recommends a pending application up to the admin for final approval.
+export const recommendApplicationSchema = z.object({
+  notes: z.string().max(1000, "Notes must be 1000 characters or fewer").optional(),
+});
+
+// Staff declines a pending application; a reason is required so the applicant
+// is told why.
+export const declineApplicationSchema = z.object({
+  reason: z.string().min(1, "Reason required").max(1000, "Reason must be 1000 characters or fewer"),
+});
+
 // ===== Document (member receipts & signed forms) =====
 // The file itself is sent as multipart/form-data and validated in the route
 // (size + MIME allowlist); this schema covers only the accompanying metadata.
@@ -394,5 +413,7 @@ export type CreatePaymentGatewayInput = z.infer<typeof createPaymentGatewaySchem
 export type UpdatePaymentGatewayInput = z.infer<typeof updatePaymentGatewaySchema>;
 export type CreateApplicationInput = z.infer<typeof createApplicationSchema>;
 export type ReviewApplicationInput = z.infer<typeof reviewApplicationSchema>;
+export type RecommendApplicationInput = z.infer<typeof recommendApplicationSchema>;
+export type DeclineApplicationInput = z.infer<typeof declineApplicationSchema>;
 export type SetInitialPasswordInput = z.infer<typeof setInitialPasswordSchema>;
 export type UploadDocumentInput = z.infer<typeof uploadDocumentSchema>;

@@ -21,6 +21,7 @@ function toUser(user: {
   mustChangePassword?: boolean;
   lastLogin: Date | null;
   createdAt: Date;
+  member?: { status: string } | null;
 }): User {
   return {
     id: user.id,
@@ -31,10 +32,26 @@ function toUser(user: {
     avatar: user.avatar,
     isActive: user.isActive,
     mustChangePassword: user.mustChangePassword ?? false,
+    memberStatus: (user.member?.status as User["memberStatus"]) ?? null,
     lastLogin: user.lastLogin?.toISOString() || null,
     createdAt: user.createdAt.toISOString(),
   };
 }
+
+// The login portal "door" a role belongs to. Members and admins each get their
+// own; staff and chairman share the staff portal. Mirrors the web login form's
+// roleGroup() so the server can enforce the chosen door.
+function roleGroup(role: string): "member" | "staff" | "admin" {
+  if (role === "member") return "member";
+  if (role === "admin") return "admin";
+  return "staff"; // staff + chairman
+}
+
+const PORTAL_LABELS: Record<"member" | "staff" | "admin", string> = {
+  member: "Member",
+  staff: "Staff",
+  admin: "Admin",
+};
 
 function buildPasswordResetLink(token: string) {
   return `${env.APP_BASE_URL.replace(/\/$/, "")}/password/reset?token=${encodeURIComponent(token)}`;
@@ -75,7 +92,9 @@ export class AuthService {
         email: input.email,
         phone: input.phone,
         password,
-        role: input.role || "member",
+        // Public self-registration is always a member. The role is never taken
+        // from the client; privileged accounts are provisioned out-of-band.
+        role: "member",
       },
       select: {
         id: true,
@@ -130,6 +149,17 @@ export class AuthService {
       throw new HTTPException(401, { message: "Invalid email or password" });
     }
 
+    // Enforce the login portal "door": the credentials are valid, but if the
+    // user picked the wrong portal (e.g. a member trying the Admin door) we
+    // reject WITHOUT creating a session, keeping member/staff/admin isolated.
+    // A wrong-door attempt is not a failed-credential signal, so it doesn't
+    // count toward lockout.
+    if (input.portal && roleGroup(user.role) !== input.portal) {
+      throw new HTTPException(403, {
+        message: `These credentials aren't valid for the ${PORTAL_LABELS[input.portal]} portal. Choose the correct portal and try again.`,
+      });
+    }
+
     recordSuccessfulLogin(input.email);
 
     const lastLogin = new Date();
@@ -181,6 +211,10 @@ export class AuthService {
         lastLogin: true,
         createdAt: true,
         avatar: true,
+        // Surface the linked member's status so the web can route a
+        // not-yet-active member (pending/rejected applicant) to the
+        // application-status page instead of into the member portal.
+        member: { select: { status: true } },
       },
     });
     if (!user) throw new HTTPException(404, { message: "User not found" });
