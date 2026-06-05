@@ -10,7 +10,7 @@ import { recordFailedLogin, recordSuccessfulLogin } from "../middleware/account-
 import { logger } from "../utils/logger";
 import type { LoginInput, PasswordResetRequestResponse, RegisterInput, UpdateProfileInput, User } from "@iffe/shared";
 
-function toUser(user: {
+export function toUser(user: {
   id: string;
   name: string;
   email: string;
@@ -41,7 +41,7 @@ function toUser(user: {
 // The login portal "door" a role belongs to. Members and admins each get their
 // own; staff and chairman share the staff portal. Mirrors the web login form's
 // roleGroup() so the server can enforce the chosen door.
-function roleGroup(role: string): "member" | "staff" | "admin" {
+export function roleGroup(role: string): "member" | "staff" | "admin" {
   if (role === "member") return "member";
   if (role === "admin") return "admin";
   return "staff"; // staff + chairman
@@ -52,6 +52,19 @@ const PORTAL_LABELS: Record<"member" | "staff" | "admin", string> = {
   staff: "Staff",
   admin: "Admin",
 };
+
+// Enforce the login portal "door": if a portal was chosen and the account's
+// role doesn't belong to it, reject (403) — the caller does this BEFORE creating
+// a session, so a member can't enter through the staff/admin door. No portal =>
+// no constraint (API clients that don't surface a door). Pure + exported so the
+// rule is unit-tested directly.
+export function assertPortalAllowed(role: string, portal?: "member" | "staff" | "admin") {
+  if (portal && roleGroup(role) !== portal) {
+    throw new HTTPException(403, {
+      message: `These credentials aren't valid for the ${PORTAL_LABELS[portal]} portal. Choose the correct portal and try again.`,
+    });
+  }
+}
 
 function buildPasswordResetLink(token: string) {
   return `${env.APP_BASE_URL.replace(/\/$/, "")}/password/reset?token=${encodeURIComponent(token)}`;
@@ -149,16 +162,11 @@ export class AuthService {
       throw new HTTPException(401, { message: "Invalid email or password" });
     }
 
-    // Enforce the login portal "door": the credentials are valid, but if the
-    // user picked the wrong portal (e.g. a member trying the Admin door) we
-    // reject WITHOUT creating a session, keeping member/staff/admin isolated.
-    // A wrong-door attempt is not a failed-credential signal, so it doesn't
-    // count toward lockout.
-    if (input.portal && roleGroup(user.role) !== input.portal) {
-      throw new HTTPException(403, {
-        message: `These credentials aren't valid for the ${PORTAL_LABELS[input.portal]} portal. Choose the correct portal and try again.`,
-      });
-    }
+    // Enforce the login portal "door" BEFORE creating a session: a member
+    // trying the Admin door is rejected (403) with no session minted, keeping
+    // member/staff/admin logins isolated. A wrong-door attempt is not a
+    // failed-credential signal, so it doesn't count toward lockout.
+    assertPortalAllowed(user.role, input.portal);
 
     recordSuccessfulLogin(input.email);
 
