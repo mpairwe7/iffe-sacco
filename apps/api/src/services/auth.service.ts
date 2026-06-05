@@ -10,7 +10,7 @@ import { recordFailedLogin, recordSuccessfulLogin } from "../middleware/account-
 import { logger } from "../utils/logger";
 import type { LoginInput, PasswordResetRequestResponse, RegisterInput, UpdateProfileInput, User } from "@iffe/shared";
 
-function toUser(user: {
+export function toUser(user: {
   id: string;
   name: string;
   email: string;
@@ -21,6 +21,7 @@ function toUser(user: {
   mustChangePassword?: boolean;
   lastLogin: Date | null;
   createdAt: Date;
+  member?: { status: string } | null;
 }): User {
   return {
     id: user.id,
@@ -31,9 +32,38 @@ function toUser(user: {
     avatar: user.avatar,
     isActive: user.isActive,
     mustChangePassword: user.mustChangePassword ?? false,
+    memberStatus: (user.member?.status as User["memberStatus"]) ?? null,
     lastLogin: user.lastLogin?.toISOString() || null,
     createdAt: user.createdAt.toISOString(),
   };
+}
+
+// The login portal "door" a role belongs to. Members and admins each get their
+// own; staff and chairman share the staff portal. Mirrors the web login form's
+// roleGroup() so the server can enforce the chosen door.
+export function roleGroup(role: string): "member" | "staff" | "admin" {
+  if (role === "member") return "member";
+  if (role === "admin") return "admin";
+  return "staff"; // staff + chairman
+}
+
+const PORTAL_LABELS: Record<"member" | "staff" | "admin", string> = {
+  member: "Member",
+  staff: "Staff",
+  admin: "Admin",
+};
+
+// Enforce the login portal "door": if a portal was chosen and the account's
+// role doesn't belong to it, reject (403) — the caller does this BEFORE creating
+// a session, so a member can't enter through the staff/admin door. No portal =>
+// no constraint (API clients that don't surface a door). Pure + exported so the
+// rule is unit-tested directly.
+export function assertPortalAllowed(role: string, portal?: "member" | "staff" | "admin") {
+  if (portal && roleGroup(role) !== portal) {
+    throw new HTTPException(403, {
+      message: `These credentials aren't valid for the ${PORTAL_LABELS[portal]} portal. Choose the correct portal and try again.`,
+    });
+  }
 }
 
 function buildPasswordResetLink(token: string) {
@@ -75,7 +105,9 @@ export class AuthService {
         email: input.email,
         phone: input.phone,
         password,
-        role: input.role || "member",
+        // Public self-registration is always a member. The role is never taken
+        // from the client; privileged accounts are provisioned out-of-band.
+        role: "member",
       },
       select: {
         id: true,
@@ -130,6 +162,12 @@ export class AuthService {
       throw new HTTPException(401, { message: "Invalid email or password" });
     }
 
+    // Enforce the login portal "door" BEFORE creating a session: a member
+    // trying the Admin door is rejected (403) with no session minted, keeping
+    // member/staff/admin logins isolated. A wrong-door attempt is not a
+    // failed-credential signal, so it doesn't count toward lockout.
+    assertPortalAllowed(user.role, input.portal);
+
     recordSuccessfulLogin(input.email);
 
     const lastLogin = new Date();
@@ -181,6 +219,10 @@ export class AuthService {
         lastLogin: true,
         createdAt: true,
         avatar: true,
+        // Surface the linked member's status so the web can route a
+        // not-yet-active member (pending/rejected applicant) to the
+        // application-status page instead of into the member portal.
+        member: { select: { status: true } },
       },
     });
     if (!user) throw new HTTPException(404, { message: "User not found" });

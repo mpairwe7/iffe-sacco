@@ -82,6 +82,18 @@ export default function ApplicationStatusPage() {
           </>
         )}
 
+        {application.status === "recommended" && (
+          <>
+            <div className="w-20 h-20 rounded-full bg-info/10 flex items-center justify-center mb-4">
+              <Loader2 className="w-10 h-10 text-info animate-spin" />
+            </div>
+            <span className="inline-flex items-center px-6 py-2.5 rounded-full text-base font-semibold bg-info/10 text-info">
+              <Clock className="w-5 h-5 mr-2" />
+              Under Final Review
+            </span>
+          </>
+        )}
+
         {application.status === "approved" && (
           <>
             <div className="w-20 h-20 rounded-full bg-success/10 flex items-center justify-center mb-4">
@@ -121,6 +133,16 @@ export default function ApplicationStatusPage() {
             decision has been made.
           </p>
           <p className="text-xs text-text-muted mt-3">This process typically takes 3-5 business days.</p>
+        </div>
+      )}
+
+      {application.status === "recommended" && (
+        <div className="bg-info/5 border border-info/20 rounded-xl p-6 text-center">
+          <p className="text-sm text-text">
+            Staff have reviewed your application and recommended it for approval. It is now with the committee for a
+            final decision.
+          </p>
+          <p className="text-xs text-text-muted mt-3">You&apos;ll be notified once a final decision is made.</p>
         </div>
       )}
 

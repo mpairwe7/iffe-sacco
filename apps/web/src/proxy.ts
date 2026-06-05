@@ -2,7 +2,7 @@ import type { NextRequest } from "next/server";
 import { NextResponse } from "next/server";
 import { jwtVerify } from "jose";
 import { AUTH_SESSION_COOKIE } from "@/lib/auth-cookie-names";
-import { getRedirectForPath, type AppRole } from "@/lib/role-routes";
+import { getDefaultRouteForRole, getRedirectForPath, type AppRole } from "@/lib/role-routes";
 
 const sessionSecret = new TextEncoder().encode(process.env.JWT_SECRET || "dev-jwt-secret-not-for-production");
 
@@ -71,15 +71,16 @@ export async function proxy(request: NextRequest) {
   const token = request.cookies.get(AUTH_SESSION_COOKIE)?.value;
   const role = await decodeRole(token);
 
-  // `/login` is the only public page the matcher catches. If an
-  // unauthenticated user lands here, let them through. If an authenticated
-  // user lands here, redirect them to their role's dashboard.
-  if (request.nextUrl.pathname === "/login") {
+  // `/login` and `/register` are the public auth pages the matcher catches. An
+  // unauthenticated user is let through; an authenticated user is sent to their
+  // role's area instead of seeing the auth forms again (a not-yet-active member
+  // ends up on /application-status via the dashboard layout's gate).
+  if (request.nextUrl.pathname === "/login" || request.nextUrl.pathname === "/register") {
     if (role) {
-      return redirectTo(request, getRedirectForPath("/login", role) || "/");
+      return redirectTo(request, getDefaultRouteForRole(role));
     }
-    // Unauthenticated visit to /login — still sweep out any stale cookie
-    // that failed JWT verification, so the login form starts clean.
+    // Unauthenticated visit — still sweep out any stale cookie that failed JWT
+    // verification, so the form starts clean.
     const response = NextResponse.next({ request: { headers: requestHeaders } });
     if (token && !role) {
       clearSessionCookie(response);
@@ -110,6 +111,7 @@ export async function proxy(request: NextRequest) {
 export const config = {
   matcher: [
     "/login",
+    "/register",
     "/dashboard",
     "/dashboard/:path*",
     "/chairman",

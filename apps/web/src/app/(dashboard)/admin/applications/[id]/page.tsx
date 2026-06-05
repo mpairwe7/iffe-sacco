@@ -3,11 +3,18 @@
 import { useState } from "react";
 import Link from "next/link";
 import { useRouter, useParams } from "next/navigation";
-import { useApplication, useApproveApplication, useRejectApplication } from "@/hooks/use-applications";
+import {
+  useApplication,
+  useApproveApplication,
+  useRejectApplication,
+  useRecommendApplication,
+  useDeclineApplication,
+} from "@/hooks/use-applications";
+import { useAuthStore } from "@/stores/auth-store";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { formatDate } from "@/lib/utils";
 import { Skeleton } from "@/components/ui/skeleton";
-import { ArrowLeft, FileText, Check, X, ExternalLink, User, MapPin, Briefcase, Users } from "lucide-react";
+import { ArrowLeft, FileText, Check, X, ThumbsUp, ExternalLink, User, MapPin, Briefcase, Users } from "lucide-react";
 import { toast } from "sonner";
 import type { Application } from "@iffe/shared";
 
@@ -89,15 +96,25 @@ export default function ApplicationDetailPage() {
   const params = useParams();
   const id = params.id as string;
 
+  const role = useAuthStore((s) => s.user?.role);
+  const isStaff = role === "staff";
+  const isAdmin = role === "admin";
+
   const { data, isLoading } = useApplication(id);
   const approveMutation = useApproveApplication();
   const rejectMutation = useRejectApplication();
+  const recommendMutation = useRecommendApplication();
+  const declineMutation = useDeclineApplication();
 
   const [approveOpen, setApproveOpen] = useState(false);
-  const [rejectOpen, setRejectOpen] = useState(false);
-  const [rejectReason, setRejectReason] = useState("");
+  const [recommendOpen, setRecommendOpen] = useState(false);
+  const [recommendNotes, setRecommendNotes] = useState("");
+  // Negative action: staff "decline" or admin "reject".
+  const [negativeOpen, setNegativeOpen] = useState(false);
+  const [negativeReason, setNegativeReason] = useState("");
 
   const app = data as Application | undefined;
+  const negativeLabel = isStaff ? "Decline" : "Reject";
 
   function handleApprove() {
     approveMutation.mutate(id, {
@@ -111,19 +128,45 @@ export default function ApplicationDetailPage() {
     });
   }
 
-  function handleReject() {
-    rejectMutation.mutate(
-      { id, reason: rejectReason || undefined },
+  function handleRecommend() {
+    recommendMutation.mutate(
+      { id, notes: recommendNotes.trim() || undefined },
       {
         onSuccess: () => {
-          toast.success("Application rejected");
+          toast.success("Application recommended to admin");
           router.push("/admin/applications");
         },
-        onError: (err) => {
-          toast.error(err.message || "Failed to reject application");
-        },
+        onError: (err) => toast.error(err.message || "Failed to recommend application"),
       },
     );
+  }
+
+  function handleNegative() {
+    const reason = negativeReason.trim();
+    if (isStaff) {
+      if (!reason) return; // reason required for a staff decline
+      declineMutation.mutate(
+        { id, reason },
+        {
+          onSuccess: () => {
+            toast.success("Application declined");
+            router.push("/admin/applications");
+          },
+          onError: (err) => toast.error(err.message || "Failed to decline application"),
+        },
+      );
+    } else {
+      rejectMutation.mutate(
+        { id, reason: reason || undefined },
+        {
+          onSuccess: () => {
+            toast.success("Application rejected");
+            router.push("/admin/applications");
+          },
+          onError: (err) => toast.error(err.message || "Failed to reject application"),
+        },
+      );
+    }
   }
 
   if (isLoading) {
@@ -162,6 +205,12 @@ export default function ApplicationDetailPage() {
 
   const statusLabel = app.status.charAt(0).toUpperCase() + app.status.slice(1);
 
+  // Role + status determine which actions are available.
+  const canRecommend = isStaff && app.status === "pending";
+  const canApprove = isAdmin && app.status === "recommended";
+  const canNegative =
+    (isStaff && app.status === "pending") || (isAdmin && (app.status === "pending" || app.status === "recommended"));
+
   return (
     <div className="space-y-6">
       {/* Header */}
@@ -187,7 +236,9 @@ export default function ApplicationDetailPage() {
               ? "bg-success/15 text-success"
               : app.status === "rejected"
                 ? "bg-danger/15 text-danger"
-                : "bg-warning/15 text-warning"
+                : app.status === "recommended"
+                  ? "bg-info/15 text-info"
+                  : "bg-warning/15 text-warning"
           }`}
         >
           {statusLabel}
@@ -346,6 +397,15 @@ export default function ApplicationDetailPage() {
         </SectionCard>
       )}
 
+      {/* Staff Recommendation (vouched up to the admin) */}
+      {app.recommendedAt && (
+        <div className="bg-white dark:bg-gray-950 border border-gray-200 dark:border-gray-800 shadow-sm rounded-xl p-6 border-l-4 border-info">
+          <h3 className="text-base font-semibold text-info mb-2">Staff Recommendation</h3>
+          <p className="text-sm text-text">{app.recommendationNotes || "Recommended for approval."}</p>
+          <p className="text-xs text-text-muted mt-2">Recommended on {formatDate(app.recommendedAt)}</p>
+        </div>
+      )}
+
       {/* Rejection Reason (if rejected) */}
       {app.status === "rejected" && app.rejectionReason && (
         <div className="bg-white dark:bg-gray-950 border border-gray-200 dark:border-gray-800 shadow-sm rounded-xl p-6 border-l-4 border-danger">
@@ -355,26 +415,42 @@ export default function ApplicationDetailPage() {
         </div>
       )}
 
-      {/* Action Buttons (only for pending) */}
-      {app.status === "pending" && (
+      {/* Action Buttons — role + status aware */}
+      {(canRecommend || canApprove || canNegative) && (
         <div className="sticky bottom-0 bg-surface/80 backdrop-blur-lg border-t border-border/50 p-4 -mx-4 mt-6 flex gap-3 justify-end">
-          <button
-            onClick={() => {
-              setRejectReason("");
-              setRejectOpen(true);
-            }}
-            className="inline-flex items-center gap-2 px-6 py-3 text-sm font-semibold text-danger border border-danger/30 rounded-lg hover:bg-danger/15 transition-colors"
-          >
-            <X className="w-4 h-4" />
-            Reject
-          </button>
-          <button
-            onClick={() => setApproveOpen(true)}
-            className="inline-flex items-center gap-2 px-6 py-3 text-sm font-semibold text-white bg-gradient-to-r from-success to-emerald-600 rounded-lg hover:shadow-lg hover:shadow-success/20 transition-all"
-          >
-            <Check className="w-4 h-4" />
-            Approve
-          </button>
+          {canNegative && (
+            <button
+              onClick={() => {
+                setNegativeReason("");
+                setNegativeOpen(true);
+              }}
+              className="inline-flex items-center gap-2 px-6 py-3 text-sm font-semibold text-danger border border-danger/30 rounded-lg hover:bg-danger/15 transition-colors"
+            >
+              <X className="w-4 h-4" />
+              {negativeLabel}
+            </button>
+          )}
+          {canRecommend && (
+            <button
+              onClick={() => {
+                setRecommendNotes("");
+                setRecommendOpen(true);
+              }}
+              className="inline-flex items-center gap-2 px-6 py-3 text-sm font-semibold text-white bg-gradient-to-r from-info to-blue-600 rounded-lg hover:shadow-lg hover:shadow-info/20 transition-all"
+            >
+              <ThumbsUp className="w-4 h-4" />
+              Recommend
+            </button>
+          )}
+          {canApprove && (
+            <button
+              onClick={() => setApproveOpen(true)}
+              className="inline-flex items-center gap-2 px-6 py-3 text-sm font-semibold text-white bg-gradient-to-r from-success to-emerald-600 rounded-lg hover:shadow-lg hover:shadow-success/20 transition-all"
+            >
+              <Check className="w-4 h-4" />
+              Approve
+            </button>
+          )}
         </div>
       )}
 
@@ -390,28 +466,60 @@ export default function ApplicationDetailPage() {
         loading={approveMutation.isPending}
       />
 
-      {/* Reject Dialog */}
+      {/* Recommend Dialog with optional notes (staff) */}
       <ConfirmDialog
-        open={rejectOpen}
+        open={recommendOpen}
         onOpenChange={(open) => {
-          setRejectOpen(open);
-          if (!open) setRejectReason("");
+          setRecommendOpen(open);
+          if (!open) setRecommendNotes("");
         }}
-        title="Reject Application"
+        title="Recommend Application"
         description=""
-        confirmLabel="Reject"
-        onConfirm={handleReject}
-        variant="destructive"
-        loading={rejectMutation.isPending}
+        confirmLabel="Recommend"
+        onConfirm={handleRecommend}
+        variant="default"
+        loading={recommendMutation.isPending}
       >
         <div className="mt-2 space-y-3">
           <p className="text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider">
-            Are you sure you want to reject this application? Please provide a reason below.
+            Confirm the applicant meets the requirements, then send them to the admin for final approval. Notes are
+            optional.
           </p>
           <textarea
-            value={rejectReason}
-            onChange={(e) => setRejectReason(e.target.value)}
-            placeholder="Reason for rejection (optional)"
+            value={recommendNotes}
+            onChange={(e) => setRecommendNotes(e.target.value)}
+            placeholder="Notes for the admin (optional)"
+            rows={3}
+            className="w-full px-4 py-3 bg-white/60 dark:bg-white/5 border border-white/40 dark:border-white/10 rounded-lg text-sm text-text placeholder:text-text-light focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary resize-none"
+          />
+        </div>
+      </ConfirmDialog>
+
+      {/* Decline (staff) / Reject (admin) Dialog with reason */}
+      <ConfirmDialog
+        open={negativeOpen}
+        onOpenChange={(open) => {
+          setNegativeOpen(open);
+          if (!open) setNegativeReason("");
+        }}
+        title={`${negativeLabel} Application`}
+        description=""
+        confirmLabel={negativeLabel}
+        onConfirm={handleNegative}
+        variant="destructive"
+        loading={declineMutation.isPending || rejectMutation.isPending}
+        confirmDisabled={isStaff && !negativeReason.trim()}
+      >
+        <div className="mt-2 space-y-3">
+          <p className="text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+            {isStaff
+              ? "Decline this application and tell the applicant why. A reason is required."
+              : "Reject this application. Please provide a reason below."}
+          </p>
+          <textarea
+            value={negativeReason}
+            onChange={(e) => setNegativeReason(e.target.value)}
+            placeholder={isStaff ? "Reason for declining (required)" : "Reason for rejection (optional)"}
             rows={3}
             className="w-full px-4 py-3 bg-white/60 dark:bg-white/5 border border-white/40 dark:border-white/10 rounded-lg text-sm text-text placeholder:text-text-light focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary resize-none"
           />

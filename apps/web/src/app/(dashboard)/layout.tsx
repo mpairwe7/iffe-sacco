@@ -5,7 +5,7 @@ import { getRedirectForPath } from "@/lib/role-routes";
 import { getDashboardSession } from "@/lib/server-session";
 
 export default async function DashboardLayout({ children }: { children: React.ReactNode }) {
-  const { user, currentPath, application } = await getDashboardSession();
+  const { user, currentPath } = await getDashboardSession();
 
   if (!user) {
     // IMPORTANT: route through `/logout` (a route handler, NOT in the
@@ -35,7 +35,11 @@ export default async function DashboardLayout({ children }: { children: React.Re
     redirect(redirectTo);
   }
 
-  if (user.role === "member" && application && application.status !== "approved") {
+  // A member whose membership isn't active yet (pending/rejected applicant, or
+  // no member record) belongs on the application-status page — not in the
+  // portal, whose pages assume an active Member. Staff-created members are
+  // already "active" and pass straight through.
+  if (user.role === "member" && user.memberStatus !== "active") {
     redirect("/application-status");
   }
 

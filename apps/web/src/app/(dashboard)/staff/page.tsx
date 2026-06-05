@@ -3,6 +3,7 @@
 import Link from "next/link";
 import {
   ArrowDownToLine,
+  ClipboardList,
   Coins,
   Heart,
   HeartHandshake,
@@ -23,6 +24,7 @@ import { RecentTransactionsList } from "@/components/staff/recent-transactions-l
 import { WelfareSummary } from "@/components/staff/welfare-summary";
 import { useDashboardStats, useRecentTransactions } from "@/hooks/use-dashboard";
 import { useMembers } from "@/hooks/use-members";
+import { useApplicationStats } from "@/hooks/use-applications";
 import { useAuthStore } from "@/stores/auth-store";
 import { formatCurrency } from "@/lib/utils";
 import type { DashboardStats, Member, Transaction } from "@iffe/shared";
@@ -44,6 +46,8 @@ export default function StaffDashboardPage() {
   const statsQuery = useDashboardStats();
   const recentTxQuery = useRecentTransactions(50);
   const membersQuery = useMembers({ limit: MEMBER_FETCH_LIMIT });
+  const appStatsQuery = useApplicationStats();
+  const pendingApps = (appStatsQuery.data as { pending?: number } | undefined)?.pending ?? 0;
 
   const stats = statsQuery.data as DashboardStats | undefined;
   const recentTransactions = (recentTxQuery.data ?? []) as Transaction[];
@@ -154,6 +158,28 @@ export default function StaffDashboardPage() {
       <QueuePills />
 
       <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
+        <SectionCard
+          title="Membership Applications"
+          subtitle="Review new applications and recommend them to the admin"
+          drillHref="/admin/applications"
+          drillLabel="Open application queue"
+          icon={<ClipboardList className="w-4 h-4" />}
+        >
+          <div className="flex items-center gap-4">
+            <div className="w-12 h-12 rounded-xl bg-warning/10 flex items-center justify-center shrink-0">
+              <ClipboardList className="w-6 h-6 text-warning" />
+            </div>
+            <div>
+              <p className="text-2xl font-bold text-gray-900 dark:text-white">
+                {appStatsQuery.isLoading ? "—" : pendingApps.toLocaleString()}
+              </p>
+              <p className="text-sm text-text-muted">
+                pending application{pendingApps === 1 ? "" : "s"} awaiting your review
+              </p>
+            </div>
+          </div>
+        </SectionCard>
+
         <SectionCard
           title="Accounts"
           subtitle="View and manage all member accounts"

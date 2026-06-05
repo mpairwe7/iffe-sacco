@@ -1,7 +1,13 @@
 // @ts-nocheck
 import { Hono } from "hono";
 import { zValidator } from "@hono/zod-validator";
-import { createApplicationSchema, reviewApplicationSchema, paginationSchema } from "@iffe/shared";
+import {
+  createApplicationSchema,
+  reviewApplicationSchema,
+  recommendApplicationSchema,
+  declineApplicationSchema,
+  paginationSchema,
+} from "@iffe/shared";
 import { ApplicationService } from "../services/application.service";
 import { authMiddleware, requireRole } from "../middleware/auth";
 import { requireEmptyBody } from "../middleware/empty-body";
@@ -65,7 +71,47 @@ applications.get("/:id", authMiddleware, requireRole("admin", "staff"), async (c
   return c.json({ success: true, data: app });
 });
 
-// Admin: approve application
+// Staff: recommend a pending application to the admin for final approval
+applications.put(
+  "/:id/recommend",
+  authMiddleware,
+  requireRole("staff"),
+  zValidator("json", recommendApplicationSchema),
+  async (c) => {
+    const user = c.get("user" as any);
+    const { notes } = c.req.valid("json");
+    const result = await service.recommend(c.req.param("id"), user.id, notes);
+    await writeAuditLog(c, {
+      action: "application_recommended",
+      entity: "application",
+      entityId: c.req.param("id"),
+      details: { notes: notes || null },
+    });
+    return c.json({ success: true, data: result });
+  },
+);
+
+// Staff: decline a pending application (terminal) with a required reason
+applications.put(
+  "/:id/decline",
+  authMiddleware,
+  requireRole("staff"),
+  zValidator("json", declineApplicationSchema),
+  async (c) => {
+    const user = c.get("user" as any);
+    const { reason } = c.req.valid("json");
+    const result = await service.decline(c.req.param("id"), user.id, reason);
+    await writeAuditLog(c, {
+      action: "application_declined",
+      entity: "application",
+      entityId: c.req.param("id"),
+      details: { reason },
+    });
+    return c.json({ success: true, data: result });
+  },
+);
+
+// Admin: approve application (must be staff-recommended first)
 applications.put("/:id/approve", authMiddleware, requireRole("admin"), requireEmptyBody, async (c) => {
   const user = c.get("user" as any);
   const result = await service.approve(c.req.param("id"), user.id);
