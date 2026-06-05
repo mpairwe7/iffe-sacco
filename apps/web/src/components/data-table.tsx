@@ -4,8 +4,6 @@ import { useState, useMemo } from "react";
 import {
   Search,
   Plus,
-  ChevronLeft,
-  ChevronRight,
   ArrowUpDown,
   ArrowUp,
   ArrowDown,
@@ -16,7 +14,7 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
-import { getPageWindow } from "@/lib/pagination";
+import { Pagination } from "@/components/ui/pagination";
 import { Skeleton } from "@/components/ui/skeleton";
 
 interface Column<T> {
@@ -296,7 +294,7 @@ export function DataTable<T extends Record<string, any>>({
 
       {/* Desktop Table */}
       <div className="hidden md:block overflow-x-auto">
-        <table className="w-full" role="grid" aria-label={title}>
+        <table className="w-full" role="table" aria-label={title}>
           <thead className="sticky top-0 z-10 bg-surface">
             <tr className="border-b border-border/50">
               {columns.map((col) => (
@@ -424,57 +422,14 @@ export function DataTable<T extends Record<string, any>>({
 
       {/* Pagination */}
       {computedTotalItems > 0 && (
-        <div className="flex flex-col sm:flex-row items-center justify-between gap-3 px-4 lg:px-6 py-4 border-t border-border/50">
-          <div className="flex items-center gap-3 text-sm text-text-muted">
-            <span>
-              Showing {(activePage - 1) * activePerPage + 1}-{Math.min(activePage * activePerPage, computedTotalItems)}{" "}
-              of {computedTotalItems}
-            </span>
-            <select
-              value={activePerPage}
-              onChange={(e) => handlePerPage(Number(e.target.value))}
-              className="bg-white/60 dark:bg-white/5 border border-white/40 dark:border-white/10 rounded-lg px-2 py-1 text-xs focus:outline-none focus:ring-1 focus:ring-primary/20"
-            >
-              {[10, 25, 50].map((n) => (
-                <option key={n} value={n}>
-                  {n}/page
-                </option>
-              ))}
-            </select>
-          </div>
-          <div className="flex flex-wrap items-center justify-end gap-1">
-            <button
-              onClick={() => handlePage(Math.max(1, activePage - 1))}
-              disabled={activePage === 1}
-              className="p-2.5 rounded-lg hover:bg-surface-hover disabled:opacity-40 disabled:cursor-not-allowed"
-              aria-label="Previous page"
-            >
-              <ChevronLeft className="w-4 h-4" />
-            </button>
-            {getPageWindow(activePage, computedTotalPages).map((p) => (
-              <button
-                key={p}
-                onClick={() => handlePage(p)}
-                aria-label={`Page ${p}`}
-                aria-current={p === activePage ? "page" : undefined}
-                className={cn(
-                  "w-10 h-10 rounded-lg text-sm font-medium",
-                  p === activePage ? "bg-primary text-white" : "hover:bg-surface-hover text-text-muted",
-                )}
-              >
-                {p}
-              </button>
-            ))}
-            <button
-              onClick={() => handlePage(Math.min(computedTotalPages, activePage + 1))}
-              disabled={activePage === computedTotalPages}
-              className="p-2.5 rounded-lg hover:bg-surface-hover disabled:opacity-40 disabled:cursor-not-allowed"
-              aria-label="Next page"
-            >
-              <ChevronRight className="w-4 h-4" />
-            </button>
-          </div>
-        </div>
+        <Pagination
+          page={activePage}
+          totalPages={computedTotalPages}
+          totalItems={computedTotalItems}
+          perPage={activePerPage}
+          onPageChange={handlePage}
+          onPerPageChange={handlePerPage}
+        />
       )}
     </div>
   );
