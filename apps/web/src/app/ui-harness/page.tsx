@@ -14,7 +14,10 @@ export default async function UiHarnessPage({ searchParams }: { searchParams: Pr
   if (process.env.NODE_ENV === "production") notFound();
 
   const sp = await searchParams;
-  const get = (key: string) => (Array.isArray(sp[key]) ? sp[key]?.[0] : sp[key]);
+  const get = (key: string): string | undefined => {
+    const value = sp[key];
+    return Array.isArray(value) ? value[0] : value;
+  };
 
   return (
     <UiHarness

@@ -1,6 +1,9 @@
 import { expect, test } from "@playwright/test";
 import { expectNoHorizontalOverflow, numberedPageButtonCount } from "./helpers";
 
+// Mirrors the DataTable truncated-cell clamp (`max-w-[16rem]` = 256px) plus a 2px tolerance.
+const MAX_CELL_WIDTH_PX = 258;
+
 // Component-level layout resilience. Drives the shared presentational components
 // (via the test-only /ui-harness route) with large + edge-case data. No auth/DB,
 // so it runs in CI on every PR (tagged @smoke). The Playwright projects supply
@@ -38,18 +41,13 @@ test.describe("@smoke ui-harness layout resilience", () => {
       await expectNoHorizontalOverflow(page, "datatable mobile cards");
       return;
     }
-    const nameCell = page
-      .locator('[data-testid="harness-datatable"] table tbody tr')
-      .first()
-      .locator("td")
-      .nth(1)
-      .locator("span");
+    const nameCell = page.locator('[data-testid="truncated-cell"]').first();
     const { scrollWidth, clientWidth } = await nameCell.evaluate((el) => ({
       scrollWidth: el.scrollWidth,
       clientWidth: el.clientWidth,
     }));
     // truncated => content is wider than the (clamped) box, but the box is bounded.
-    expect(clientWidth).toBeLessThanOrEqual(16 * 16 + 2); // max-w-[16rem]
+    expect(clientWidth).toBeLessThanOrEqual(MAX_CELL_WIDTH_PX);
     expect(scrollWidth).toBeGreaterThan(clientWidth); // proves it actually overflowed and was clipped
   });
 

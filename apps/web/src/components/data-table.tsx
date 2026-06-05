@@ -29,6 +29,8 @@ interface Column<T> {
   hiddenOnMobile?: boolean;
   /** Clamp the desktop cell width and ellipsize overflow (keeps wide rows from stretching the table). */
   truncate?: boolean;
+  /** Tooltip text for a truncated cell. Needed only for columns with a custom `render` (otherwise the raw value is used). */
+  truncateTitle?: string | ((row: T) => string);
   /** Extra classes for the desktop cell. */
   cellClassName?: string;
 }
@@ -359,6 +361,8 @@ export function DataTable<T extends Record<string, any>>({
                   {columns.map((col) => {
                     const rawText = col.render ? undefined : String(row[col.key] ?? "");
                     const content = col.render ? col.render(row) : rawText;
+                    const truncateTitle =
+                      typeof col.truncateTitle === "function" ? col.truncateTitle(row) : (col.truncateTitle ?? rawText);
                     return (
                       <td
                         key={col.key}
@@ -369,7 +373,11 @@ export function DataTable<T extends Record<string, any>>({
                         )}
                       >
                         {col.truncate ? (
-                          <span className="block max-w-[16rem] truncate" title={rawText}>
+                          <span
+                            data-testid="truncated-cell"
+                            className="block max-w-[16rem] truncate"
+                            title={truncateTitle}
+                          >
                             {content}
                           </span>
                         ) : (

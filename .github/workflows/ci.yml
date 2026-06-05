@@ -129,7 +129,8 @@ jobs:
         run: bun run --filter web test:e2e -- --grep @smoke
         env:
           CI: "1"
-          # next dev → development mode; also lets the /ui-harness route render
+          # Playwright starts Next.js in development mode (via the webServer block
+          # in playwright.config.ts); this lets the /ui-harness route render
           # (it 404s only when NODE_ENV=production).
           NODE_ENV: development
           DATABASE_URL: postgresql://stub:stub@localhost:5432/stub

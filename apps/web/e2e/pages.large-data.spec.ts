@@ -78,10 +78,28 @@ test.describe("@layout real pages survive large datasets", () => {
     });
   }
 
-  test("members: empty result renders cleanly", async ({ page }) => {
-    await mockPaginatedList(page, "members", { total: 0, makeRow: () => ({}) });
-    await page.goto("/admin/members");
-    await expect(page.getByText(/no\s+(data|members|results)/i)).toBeVisible({ timeout: 15000 });
-    await expectNoHorizontalOverflow(page, "empty members");
-  });
+  const emptyCases = [
+    { name: "members", path: "/admin/members", resource: "members", empty: /no\s+(data|members|results)/i },
+    {
+      name: "transactions",
+      path: "/admin/transactions",
+      resource: "transactions",
+      empty: /no\s+(data|transactions|results)/i,
+    },
+    {
+      name: "applications",
+      path: "/admin/applications",
+      resource: "applications",
+      empty: /no\s+(data|applications|results)/i,
+    },
+  ];
+
+  for (const c of emptyCases) {
+    test(`${c.name}: empty result renders cleanly`, async ({ page }) => {
+      await mockPaginatedList(page, c.resource, { total: 0, makeRow: () => ({}) });
+      await page.goto(c.path);
+      await expect(page.getByText(c.empty)).toBeVisible({ timeout: 15000 });
+      await expectNoHorizontalOverflow(page, `empty ${c.name}`);
+    });
+  }
 });

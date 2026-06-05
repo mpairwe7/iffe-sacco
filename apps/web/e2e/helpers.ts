@@ -38,7 +38,7 @@ interface MockListOptions {
  * synthetic page honoring the `page`/`limit` query params, in the API's standard
  * envelope: `{ success, data: { data, total, page, limit, totalPages } }`.
  */
-export async function mockPaginatedList(page: Page, resource: string, { total, makeRow }: MockListOptions) {
+export async function mockPaginatedList(page: Page, resource: string, { total, makeRow, extra }: MockListOptions) {
   await page.route(`**/api/v1/${resource}**`, async (route) => {
     const url = new URL(route.request().url());
     const p = Number(url.searchParams.get("page") || "1");
@@ -51,7 +51,7 @@ export async function mockPaginatedList(page: Page, resource: string, { total, m
       contentType: "application/json",
       body: JSON.stringify({
         success: true,
-        data: { data, total, page: p, limit, totalPages: Math.max(1, Math.ceil(total / limit)) },
+        data: { data, total, page: p, limit, totalPages: Math.max(1, Math.ceil(total / limit)), ...extra },
       }),
     });
   });
