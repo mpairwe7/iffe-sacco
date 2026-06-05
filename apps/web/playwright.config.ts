@@ -30,6 +30,12 @@ export default defineConfig({
       name: "chromium",
       use: { ...devices["Desktop Chrome"] },
     },
+    {
+      // Layout resilience must hold on small screens too (tables collapse to the
+      // mobile card view; pagination must stay compact).
+      name: "mobile",
+      use: { ...devices["Pixel 5"] },
+    },
   ],
 
   webServer: process.env.PLAYWRIGHT_BASE_URL

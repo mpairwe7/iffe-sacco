@@ -70,6 +70,7 @@ export default function ExpensesPage() {
     {
       key: "description",
       label: "Description",
+      truncate: true,
       render: (row: ExpenseRow) => <span className="font-medium text-text">{row.description}</span>,
     },
     {

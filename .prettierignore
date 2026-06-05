@@ -6,3 +6,9 @@ coverage
 bun.lock
 *.min.js
 *.min.css
+
+# playwright artifacts
+test-results
+playwright-report
+blob-report
+.last-run.json

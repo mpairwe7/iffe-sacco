@@ -31,17 +31,20 @@ const columns = [
       const initials = `${row.firstName?.[0] || ""}${row.lastName?.[0] || ""}`;
       return (
         <div className="flex items-center gap-3">
-          <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center">
+          <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center shrink-0">
             <span className="text-xs font-bold text-primary">{initials}</span>
           </div>
-          <div>
+          <div className="min-w-0">
             <Link
               href={`/admin/members/${row.id}`}
-              className="font-medium text-text hover:text-primary transition-colors"
+              className="block truncate font-medium text-text hover:text-primary transition-colors"
+              title={name}
             >
               {name}
             </Link>
-            <p className="text-xs text-text-muted">{row.email}</p>
+            <p className="text-xs text-text-muted truncate" title={row.email}>
+              {row.email}
+            </p>
           </div>
         </div>
       );

@@ -26,10 +26,10 @@ export function StatCard({ title, value, change, changeType = "positive", icon: 
       aria-label={`${title}: ${value}`}
       className="bg-white dark:bg-gray-950 border border-gray-200 dark:border-gray-800 shadow-sm rounded-xl px-6 py-5 min-h-[110px] hover:-translate-y-0.5"
     >
-      <div className="flex items-start justify-between">
-        <div>
+      <div className="flex items-start justify-between gap-3">
+        <div className="min-w-0">
           <p className="text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider">{title}</p>
-          <p className="text-xl font-bold text-gray-900 dark:text-white mt-1">{value}</p>
+          <p className="text-xl font-bold text-gray-900 dark:text-white mt-1 break-words tabular-nums">{value}</p>
           {change && (
             <p
               className={cn(
@@ -45,7 +45,7 @@ export function StatCard({ title, value, change, changeType = "positive", icon: 
             </p>
           )}
         </div>
-        <div className={cn("w-12 h-12 rounded-xl flex items-center justify-center", colorMap[color])}>
+        <div className={cn("w-12 h-12 rounded-xl flex items-center justify-center shrink-0", colorMap[color])}>
           <Icon className="w-6 h-6" />
         </div>
       </div>

@@ -9,6 +9,7 @@
     "lint": "eslint",
     "test": "bun test src",
     "test:e2e": "playwright test",
+    "test:ct": "playwright test ui-harness.layout.spec.ts",
     "test:e2e:install": "playwright install --with-deps chromium",
     "typecheck": "tsc --noEmit"
   },

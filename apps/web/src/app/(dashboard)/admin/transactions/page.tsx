@@ -62,6 +62,7 @@ export default function TransactionsPage() {
       key: "member",
       label: "Member",
       sortable: false,
+      truncate: true,
       render: (row: TransactionRow) => {
         const firstName = row.account?.member?.firstName || "";
         const lastName = row.account?.member?.lastName || "";
