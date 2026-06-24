@@ -57,6 +57,17 @@ const parentSchema = z
     email: z.string().optional(),
     alive: z.boolean().default(true),
     diedBeforeOrAfterJoining: z.string().optional(),
+    // Substitute named when the parent died before the applicant joined the
+    // SACCO (paper bio-data form §8 "please state the Alternate").
+    alternate: z
+      .object({
+        name: z.string().optional(),
+        district: z.string().optional(),
+        village: z.string().optional(),
+        phone: z.string().optional(),
+        email: z.string().optional(),
+      })
+      .optional(),
   })
   .optional();
 
@@ -122,6 +133,22 @@ type ApplicationFormInput = z.input<typeof applicationSchema>;
 type ApplicationForm = z.output<typeof applicationSchema>;
 type PlaceFieldKey = "district" | "county" | "subCounty" | "parish" | "village";
 type ParentFieldKey = "name" | "district" | "village" | "phone" | "email";
+
+// Shared by the parent block and its (deceased-parent) alternate block.
+const PARENT_FIELD_LABELS: Record<ParentFieldKey, string> = {
+  name: "Name",
+  district: "District",
+  village: "Village",
+  phone: "Phone",
+  email: "Email",
+};
+const PARENT_FIELD_PLACEHOLDERS: Record<ParentFieldKey, string> = {
+  name: "Full name",
+  district: "District",
+  village: "Village",
+  phone: "Phone number",
+  email: "Email address",
+};
 
 // ── Step definitions ────────────────────────────────────────────────
 const STEPS = [
@@ -257,30 +284,10 @@ function ParentFields({
           <FormField
             key={field}
             type={field === "email" ? "email" : field === "phone" ? "tel" : "text"}
-            label={
-              field === "name"
-                ? "Name"
-                : field === "district"
-                  ? "District"
-                  : field === "village"
-                    ? "Village"
-                    : field === "phone"
-                      ? "Phone"
-                      : "Email"
-            }
+            label={PARENT_FIELD_LABELS[field]}
             {...register(`${prefix}.${field}`)}
             error={getNestedErrorMessage(errors, [prefix, field])}
-            placeholder={
-              field === "name"
-                ? "Full name"
-                : field === "district"
-                  ? "District"
-                  : field === "village"
-                    ? "Village"
-                    : field === "phone"
-                      ? "Phone number"
-                      : "Email address"
-            }
+            placeholder={PARENT_FIELD_PLACEHOLDERS[field]}
           />
         ))}
       </div>
@@ -299,7 +306,7 @@ function ParentFields({
           initial={{ opacity: 0, height: 0 }}
           animate={{ opacity: 1, height: "auto" }}
           exit={{ opacity: 0, height: 0 }}
-          className="mt-3"
+          className="mt-3 space-y-4"
         >
           <div>
             <label className="block text-sm font-medium text-text mb-2">If dead, died before or after joining?</label>
@@ -311,6 +318,27 @@ function ParentFields({
               <option value="before">Before joining</option>
               <option value="after">After joining</option>
             </select>
+          </div>
+
+          {/* Alternate — the substitute named when the parent died before the
+              applicant joined the SACCO (paper bio-data form §8). */}
+          <div className="rounded-lg border border-white/30 dark:border-white/10 bg-white/20 dark:bg-white/5 p-4">
+            <p className="text-sm font-semibold text-text">Alternate</p>
+            <p className="text-[11px] text-text-light mt-0.5 mb-3">
+              If they died before you joined the SACCO, state the alternate.
+            </p>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              {parentFields.map((field) => (
+                <FormField
+                  key={field}
+                  type={field === "email" ? "email" : field === "phone" ? "tel" : "text"}
+                  label={PARENT_FIELD_LABELS[field]}
+                  {...register(`${prefix}.alternate.${field}`)}
+                  error={getNestedErrorMessage(errors, [prefix, "alternate", field])}
+                  placeholder={PARENT_FIELD_PLACEHOLDERS[field]}
+                />
+              ))}
+            </div>
           </div>
         </motion.div>
       )}
@@ -383,6 +411,7 @@ export default function RegisterPage() {
         email: "",
         alive: true,
         diedBeforeOrAfterJoining: "",
+        alternate: { name: "", district: "", village: "", phone: "", email: "" },
       },
       motherInfo: {
         name: "",
@@ -392,6 +421,7 @@ export default function RegisterPage() {
         email: "",
         alive: true,
         diedBeforeOrAfterJoining: "",
+        alternate: { name: "", district: "", village: "", phone: "", email: "" },
       },
       spouses: [],
       children: [],

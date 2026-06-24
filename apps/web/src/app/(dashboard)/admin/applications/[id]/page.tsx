@@ -27,6 +27,51 @@ function InfoField({ label, value }: { label: string; value?: string | null }) {
   );
 }
 
+// Renders a parent's submitted details plus, when the parent has died, the
+// named alternate (paper bio-data form \u00a78). Parent info is stored as a free
+// JSON blob, so values are read defensively.
+function ParentInfo({ info }: { info?: Record<string, unknown> | null }) {
+  if (!info) {
+    return (
+      <p className="text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+        No information provided
+      </p>
+    );
+  }
+  const str = (v: unknown) => (v == null ? "" : String(v));
+  const diedWhen = str(info.diedBeforeOrAfterJoining);
+  const diedLabel = diedWhen === "before" ? "Before joining" : diedWhen === "after" ? "After joining" : diedWhen;
+  const alt = (info.alternate as Record<string, unknown> | undefined) ?? undefined;
+  const hasAlternate = !!alt && Object.values(alt).some((v) => str(v).trim().length > 0);
+
+  return (
+    <div className="space-y-4">
+      <div className="grid grid-cols-2 gap-4">
+        <InfoField label="Name" value={str(info.name)} />
+        <InfoField label="District" value={str(info.district)} />
+        <InfoField label="Village" value={str(info.village)} />
+        <InfoField label="Phone" value={str(info.phone)} />
+        <InfoField label="Email" value={str(info.email)} />
+        {diedWhen && <InfoField label="Died" value={diedLabel} />}
+      </div>
+      {hasAlternate && (
+        <div className="rounded-lg border border-border/60 bg-surface-hover/30 p-4">
+          <p className="text-xs font-semibold text-text-muted uppercase tracking-wider mb-3">
+            Alternate (deceased parent)
+          </p>
+          <div className="grid grid-cols-2 gap-4">
+            <InfoField label="Name" value={str(alt?.name)} />
+            <InfoField label="District" value={str(alt?.district)} />
+            <InfoField label="Village" value={str(alt?.village)} />
+            <InfoField label="Phone" value={str(alt?.phone)} />
+            <InfoField label="Email" value={str(alt?.email)} />
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
 function SectionCard({
   title,
   icon: Icon,
@@ -304,34 +349,12 @@ export default function ApplicationDetailPage() {
 
         {/* Father Info */}
         <SectionCard title="Father Information" icon={User}>
-          {app.fatherInfo ? (
-            <div className="grid grid-cols-2 gap-4">
-              <InfoField label="Name" value={String(app.fatherInfo.name ?? "")} />
-              <InfoField label="Clan" value={String(app.fatherInfo.clan ?? "")} />
-              <InfoField label="Totem" value={String(app.fatherInfo.totem ?? "")} />
-              <InfoField label="Origin" value={String(app.fatherInfo.origin ?? "")} />
-            </div>
-          ) : (
-            <p className="text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider">
-              No information provided
-            </p>
-          )}
+          <ParentInfo info={app.fatherInfo} />
         </SectionCard>
 
         {/* Mother Info */}
         <SectionCard title="Mother Information" icon={User}>
-          {app.motherInfo ? (
-            <div className="grid grid-cols-2 gap-4">
-              <InfoField label="Name" value={String(app.motherInfo.name ?? "")} />
-              <InfoField label="Clan" value={String(app.motherInfo.clan ?? "")} />
-              <InfoField label="Totem" value={String(app.motherInfo.totem ?? "")} />
-              <InfoField label="Origin" value={String(app.motherInfo.origin ?? "")} />
-            </div>
-          ) : (
-            <p className="text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider">
-              No information provided
-            </p>
-          )}
+          <ParentInfo info={app.motherInfo} />
         </SectionCard>
 
         {/* Application Letter */}

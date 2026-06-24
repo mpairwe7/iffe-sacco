@@ -298,6 +298,17 @@ const parentInfoSchema = z.object({
   email: z.string().optional(),
   alive: z.boolean().optional(),
   diedBeforeOrAfterJoining: z.string().optional(),
+  // Substitute named when the parent died before the applicant joined the
+  // SACCO (paper bio-data form §8 "please state the Alternate").
+  alternate: z
+    .object({
+      name: z.string().optional(),
+      district: z.string().optional(),
+      village: z.string().optional(),
+      phone: z.string().optional(),
+      email: z.string().optional(),
+    })
+    .optional(),
 });
 
 const spouseSchema = z.object({
