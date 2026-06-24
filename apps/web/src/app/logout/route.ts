@@ -20,13 +20,22 @@ export const runtime = "nodejs";
  * Also callable as a simple navigation target (e.g. a plain link).
  */
 async function handler(request: NextRequest) {
-  const url = new URL(request.url);
-  const target = url.searchParams.get("to") || "/login";
-  // Never allow arbitrary off-site redirects.
-  const safeTarget = target.startsWith("/") ? target : "/login";
+  const target = request.nextUrl.searchParams.get("to") || "/login";
+  // Never allow arbitrary off-site redirects. Only same-origin paths — reject
+  // protocol-relative ("//host") and backslash ("/\host") targets, which start
+  // with "/" yet resolve to another site.
+  const safeTarget =
+    target.startsWith("/") && !target.startsWith("//") && !target.startsWith("/\\") ? target : "/login";
 
-  const response = NextResponse.redirect(new URL(safeTarget, url.origin), {
+  // Emit a *relative* Location and let the browser resolve it against the page's
+  // real (public) URL. Deriving an absolute origin from request.url /
+  // request.nextUrl is fragile behind a proxy: the host can come back as the
+  // internal/localhost address, producing a 303 Location the user's browser
+  // can't reach ("This site can't be reached"). A relative target avoids host
+  // resolution entirely — same approach as the server components' redirect("/…").
+  const response = new NextResponse(null, {
     status: 303,
+    headers: { Location: safeTarget },
   });
 
   response.cookies.set({
