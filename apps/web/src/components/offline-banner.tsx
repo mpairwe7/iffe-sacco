@@ -28,7 +28,7 @@ export function OfflineBanner() {
       <div
         role="status"
         aria-live="polite"
-        className="bg-amber-500/15 text-amber-900 border-b border-amber-500/30 px-4 py-2 text-sm"
+        className="bg-amber-500/15 text-amber-900 dark:text-amber-200 border-b border-amber-500/30 px-4 py-2 text-sm"
       >
         You&apos;re offline.{" "}
         {depth > 0
@@ -42,7 +42,7 @@ export function OfflineBanner() {
     <div
       role="status"
       aria-live="polite"
-      className="bg-blue-500/15 text-blue-900 border-b border-blue-500/30 px-4 py-2 text-sm"
+      className="bg-blue-500/15 text-blue-900 dark:text-blue-200 border-b border-blue-500/30 px-4 py-2 text-sm"
     >
       Syncing {depth} pending action{depth === 1 ? "" : "s"}…
     </div>
