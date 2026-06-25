@@ -16,8 +16,17 @@ export const positiveMoneyString = moneyString.refine(
 );
 
 // ===== Auth =====
+// Single source of truth for new-password rules. Per the member-onboarding
+// decision this is minimum-length only (no complexity), so the UI never
+// advertises requirements the API doesn't enforce. Reused by every flow that
+// SETS a password (register, reset, change, set-initial, admin user create,
+// membership application).
+export const passwordSchema = z.string().min(8, "Password must be at least 8 characters");
+
 export const loginSchema = z.object({
   email: z.email("Valid email required"),
+  // Login validates an EXISTING credential (the server verifies the hash), so it
+  // stays lenient on length to avoid rejecting any pre-existing/seeded account.
   password: z.string().min(6, "Password must be at least 6 characters"),
   remember: z.boolean().optional().default(false),
   // The portal "door" the user chose on the login screen. When present the
@@ -35,7 +44,7 @@ export const registerSchema = z.object({
   name: z.string().min(2, "Name must be at least 2 characters"),
   email: z.email("Valid email required"),
   phone: z.string().min(10, "Valid phone number required"),
-  password: z.string().min(8, "Password must be at least 8 characters"),
+  password: passwordSchema,
 });
 
 export const requestPasswordResetSchema = z.object({
@@ -44,7 +53,7 @@ export const requestPasswordResetSchema = z.object({
 
 export const confirmPasswordResetSchema = z.object({
   token: z.string().min(1, "Reset token required"),
-  newPassword: z.string().min(8, "Password must be at least 8 characters"),
+  newPassword: passwordSchema,
 });
 
 // ===== Member =====
@@ -171,14 +180,14 @@ export const pledgeSchema = z.object({
 // ===== Password =====
 export const changePasswordSchema = z.object({
   currentPassword: z.string().min(1),
-  newPassword: z.string().min(8, "Password must be at least 8 characters"),
+  newPassword: passwordSchema,
 });
 
 // Used for the forced first-login password change: the caller is already
 // authenticated (with their temporary password), so no current password is
 // required — only the new one.
 export const setInitialPasswordSchema = z.object({
-  newPassword: z.string().min(8, "Password must be at least 8 characters"),
+  newPassword: passwordSchema,
 });
 
 // ===== Pagination =====
@@ -216,7 +225,7 @@ export const createUserSchema = z.object({
   name: z.string().min(2, "Name must be at least 2 characters"),
   email: z.email("Valid email required"),
   phone: z.string().min(10, "Valid phone number required"),
-  password: z.string().min(8, "Password must be at least 8 characters"),
+  password: passwordSchema,
   role: z.enum(["admin", "chairman", "staff"]),
 });
 
@@ -366,7 +375,7 @@ export const createApplicationSchema = z.object({
   applicationLetterName: z.string().optional(),
 
   // Account credentials
-  password: z.string().min(8, "Password must be at least 8 characters").optional(),
+  password: passwordSchema.optional(),
 });
 
 export const reviewApplicationSchema = z.object({

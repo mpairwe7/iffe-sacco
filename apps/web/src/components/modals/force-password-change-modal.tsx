@@ -3,11 +3,11 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import * as Dialog from "@radix-ui/react-dialog";
-import { useForm } from "react-hook-form";
+import { useForm, useWatch } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { toast } from "sonner";
-import { KeyRound } from "lucide-react";
+import { KeyRound, Eye, EyeOff, Check } from "lucide-react";
 import type { User } from "@iffe/shared";
 import { useSetInitialPassword } from "@/hooks/use-auth";
 import { useAuthStore } from "@/stores/auth-store";
@@ -39,8 +39,16 @@ export function ForcePasswordChangeModal({ user }: { user: User }) {
   const {
     register,
     handleSubmit,
+    control,
     formState: { errors },
   } = useForm<FormValues>({ resolver: zodResolver(schema) });
+
+  const [showPassword, setShowPassword] = useState(false);
+  // useWatch (not watch()) so the React Compiler can memoize this component.
+  const newPassword = useWatch({ control, name: "newPassword" }) || "";
+  const confirmPassword = useWatch({ control, name: "confirmPassword" }) || "";
+  const longEnough = newPassword.length >= 8;
+  const matches = confirmPassword.length > 0 && newPassword === confirmPassword;
 
   function onSubmit(values: FormValues) {
     setInitialPassword.mutate(
@@ -87,26 +95,45 @@ export function ForcePasswordChangeModal({ user }: { user: User }) {
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
             <div>
               <label className="block text-sm font-medium text-text mb-2">New password</label>
-              <input
-                type="password"
-                autoFocus
-                {...register("newPassword")}
-                className={inputClass(Boolean(errors.newPassword))}
-                placeholder="At least 8 characters"
-              />
+              <div className="relative">
+                <input
+                  type={showPassword ? "text" : "password"}
+                  autoFocus
+                  {...register("newPassword")}
+                  className={cn(inputClass(Boolean(errors.newPassword)), "pr-11")}
+                  placeholder="At least 8 characters"
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword((v) => !v)}
+                  aria-label={showPassword ? "Hide password" : "Show password"}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-text-light hover:text-text"
+                >
+                  {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                </button>
+              </div>
               {errors.newPassword && <p className="text-xs text-danger mt-1">{errors.newPassword.message}</p>}
             </div>
 
             <div>
               <label className="block text-sm font-medium text-text mb-2">Confirm new password</label>
               <input
-                type="password"
+                type={showPassword ? "text" : "password"}
                 {...register("confirmPassword")}
                 className={inputClass(Boolean(errors.confirmPassword))}
                 placeholder="Re-enter your new password"
               />
               {errors.confirmPassword && <p className="text-xs text-danger mt-1">{errors.confirmPassword.message}</p>}
             </div>
+
+            <ul className="space-y-1" aria-live="polite">
+              <li className={cn("flex items-center gap-1.5 text-xs", longEnough ? "text-success" : "text-text-muted")}>
+                <Check className={cn("w-3.5 h-3.5", longEnough ? "opacity-100" : "opacity-30")} /> At least 8 characters
+              </li>
+              <li className={cn("flex items-center gap-1.5 text-xs", matches ? "text-success" : "text-text-muted")}>
+                <Check className={cn("w-3.5 h-3.5", matches ? "opacity-100" : "opacity-30")} /> Passwords match
+              </li>
+            </ul>
 
             <button
               type="submit"

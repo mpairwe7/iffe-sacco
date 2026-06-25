@@ -49,6 +49,14 @@ export function useCreateMember() {
   });
 }
 
+export function useReissueCredentials() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: (id: string) => membersApi.reissueCredentials(id),
+    onSuccess: () => qc.invalidateQueries({ queryKey: ["members"] }),
+  });
+}
+
 export function useUpdateMember() {
   const qc = useQueryClient();
   return useMutation({

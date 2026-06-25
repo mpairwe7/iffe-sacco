@@ -119,6 +119,50 @@ export function applicationApprovedEmail(params: { name: string; memberId: strin
   };
 }
 
+export function memberCredentialsEmail(params: {
+  name: string;
+  loginEmail: string;
+  tempPassword: string;
+  loginUrl: string;
+}): EmailMessage {
+  return {
+    to: "", // filled in by caller
+    subject: "Your IFFE Bbenhe account is ready",
+    text: [
+      `Hello ${params.name},`,
+      "",
+      "An account has been created for you at IFFE Bbenhe. Sign in with these",
+      "one-time details — you'll be asked to set your own password right away:",
+      "",
+      `  Login email: ${params.loginEmail}`,
+      `  Temporary password: ${params.tempPassword}`,
+      "",
+      `Sign in: ${params.loginUrl}`,
+      "",
+      "For your security, please change this temporary password as soon as you sign in.",
+      "",
+      "— IFFE Bbenhe Team",
+    ].join("\n"),
+    html: `
+      <div style="font-family: -apple-system, Segoe UI, Roboto, sans-serif; max-width: 560px; margin: 0 auto;">
+        <h2>Your IFFE Bbenhe account is ready</h2>
+        <p>Hello ${escapeHtml(params.name)},</p>
+        <p>An account has been created for you. Sign in with these one-time details — you'll be asked to set your own password right away:</p>
+        <table style="border-collapse:collapse; margin:16px 0;">
+          <tr><td style="padding:4px 16px 4px 0; color:#666;">Login email</td><td style="font-family:monospace;">${escapeHtml(params.loginEmail)}</td></tr>
+          <tr><td style="padding:4px 16px 4px 0; color:#666;">Temporary password</td><td style="font-family:monospace; letter-spacing:1px;">${escapeHtml(params.tempPassword)}</td></tr>
+        </table>
+        <p>
+          <a href="${params.loginUrl}" style="display:inline-block; padding:12px 20px; background:#006622; color:#fff; border-radius:6px; text-decoration:none;">
+            Sign in
+          </a>
+        </p>
+        <p style="color:#666; font-size:14px;">For your security, please change this temporary password as soon as you sign in.</p>
+      </div>
+    `,
+  };
+}
+
 function escapeHtml(value: string): string {
   return value
     .replaceAll("&", "&amp;")

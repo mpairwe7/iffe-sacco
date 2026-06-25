@@ -17,6 +17,7 @@ import {
 } from "lucide-react";
 import { cn, formatCurrency, formatDate } from "@/lib/utils";
 import { SectionCard as BannerCard } from "@/components/section-card";
+import { MemberResetPasswordButton } from "@/components/members/member-reset-password-button";
 import type { MemberDashboard, MemberSupportStatus, Transaction } from "@iffe/shared";
 
 function formatRelative(input: string | Date) {
@@ -483,13 +484,16 @@ export function MemberDashboardView({ dashboard, variant }: MemberDashboardViewP
           {statusLabel}
         </span>
         {variant === "admin" && (
-          <Link
-            href={`/admin/members/${member.id}/edit`}
-            className="inline-flex items-center gap-2 px-4 py-2.5 text-sm font-medium text-white bg-primary rounded-lg hover:bg-primary-dark"
-          >
-            <Pencil className="w-4 h-4" />
-            Edit
-          </Link>
+          <>
+            <MemberResetPasswordButton memberId={member.id} memberName={name} />
+            <Link
+              href={`/admin/members/${member.id}/edit`}
+              className="inline-flex items-center gap-2 px-4 py-2.5 text-sm font-medium text-white bg-primary rounded-lg hover:bg-primary-dark"
+            >
+              <Pencil className="w-4 h-4" />
+              Edit
+            </Link>
+          </>
         )}
       </div>
     </div>

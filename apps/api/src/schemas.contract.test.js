@@ -1,5 +1,13 @@
 import { describe, expect, it } from "bun:test";
-import { registerSchema, loginSchema, recommendApplicationSchema, declineApplicationSchema } from "@iffe/shared";
+import {
+  registerSchema,
+  loginSchema,
+  recommendApplicationSchema,
+  declineApplicationSchema,
+  passwordSchema,
+  setInitialPasswordSchema,
+  changePasswordSchema,
+} from "@iffe/shared";
 
 const validRegistration = {
   name: "Jane Doe",
@@ -56,5 +64,25 @@ describe("recommend / decline application schemas", () => {
     expect(declineApplicationSchema.safeParse({}).success).toBe(false);
     expect(declineApplicationSchema.safeParse({ reason: "" }).success).toBe(false);
     expect(declineApplicationSchema.safeParse({ reason: "Missing documents" }).success).toBe(true);
+  });
+});
+
+describe("password policy — minimum length only, enforced server-side", () => {
+  it("accepts 8+ characters and rejects shorter", () => {
+    expect(passwordSchema.safeParse("abcd1234").success).toBe(true);
+    expect(passwordSchema.safeParse("abc123").success).toBe(false);
+  });
+
+  it("does not require complexity — a long lowercase-only password is valid", () => {
+    // The UI must not advertise rules the API doesn't enforce: no upper/number/
+    // special requirement, only length.
+    expect(setInitialPasswordSchema.safeParse({ newPassword: "allowercaseok" }).success).toBe(true);
+    expect(setInitialPasswordSchema.safeParse({ newPassword: "short" }).success).toBe(false);
+  });
+
+  it("change-password requires a current password and a valid new one", () => {
+    expect(changePasswordSchema.safeParse({ currentPassword: "x", newPassword: "abcd1234" }).success).toBe(true);
+    expect(changePasswordSchema.safeParse({ currentPassword: "", newPassword: "abcd1234" }).success).toBe(false);
+    expect(changePasswordSchema.safeParse({ currentPassword: "x", newPassword: "short" }).success).toBe(false);
   });
 });

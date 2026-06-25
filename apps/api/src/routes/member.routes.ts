@@ -56,6 +56,24 @@ members.post("/", requireRole("admin", "staff"), zValidator("json", createMember
   return c.json({ success: true, data: { member, credentials } }, 201);
 });
 
+// Re-issue a one-time password for an existing member (lockout recovery). Issues
+// a fresh temp password, forces a change on next login, and revokes the member's
+// current sessions. admin/staff only.
+members.post("/:id/reissue-credentials", requireRole("admin", "staff"), async (c) => {
+  const id = c.req.param("id");
+  const { member, credentials } = await service.reissueTempPassword(id);
+  const updated = member as { id: string; memberId: string };
+  await writeAuditLog(c, {
+    action: "member_credentials_reissued",
+    entity: "member",
+    entityId: updated.id,
+    details: { memberId: updated.memberId, loginEmail: credentials.email },
+  });
+  // `credentials.tempPassword` is the only place the new plaintext temp password
+  // is surfaced — staff relay it; it is never stored.
+  return c.json({ success: true, data: { member, credentials } });
+});
+
 members.put("/:id", requireRole("admin", "staff"), zValidator("json", updateMemberSchema), async (c) => {
   const data = c.req.valid("json");
   const member = await service.update(c.req.param("id"), data);

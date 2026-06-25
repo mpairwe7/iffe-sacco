@@ -15,6 +15,7 @@ export const membersApi = {
   getMyDashboard: () => apiClient.get<MemberDashboard>("/members/me/dashboard"),
   getMemberDashboard: (id: string) => apiClient.get<MemberDashboard>(`/members/${id}/dashboard`),
   createMember: (data: CreateMemberInput) => apiClient.post<CreateMemberResult>("/members", data),
+  reissueCredentials: (id: string) => apiClient.post<CreateMemberResult>(`/members/${id}/reissue-credentials`, {}),
   updateMember: (id: string, data: UpdateMemberInput) => apiClient.put<Member>(`/members/${id}`, data),
   deleteMember: (id: string) => apiClient.del<void>(`/members/${id}`),
   getMemberStats: () => apiClient.get<Record<string, unknown>>("/members/stats"),

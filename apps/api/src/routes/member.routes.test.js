@@ -56,12 +56,15 @@ const dashboardFixture = {
   },
 };
 
+const reissuedCredentials = { email: "sarah@example.com", tempPassword: "NewPass9xy" };
+
 const serviceFns = {
   getAll: mock(async () => ({ data: [], total: 0, page: 1, limit: 20, totalPages: 0 })),
   getStats: mock(async () => ({ active: 0 })),
   getDashboard: mock(async () => dashboardFixture),
   getById: mock(async () => dashboardFixture.member),
   create: mock(async () => dashboardFixture.member),
+  reissueTempPassword: mock(async () => ({ member: dashboardFixture.member, credentials: reissuedCredentials })),
   update: mock(async () => dashboardFixture.member),
   delete: mock(async () => undefined),
 };
@@ -85,6 +88,10 @@ class MockMemberService {
 
   create(...args) {
     return serviceFns.create(...args);
+  }
+
+  reissueTempPassword(...args) {
+    return serviceFns.reissueTempPassword(...args);
   }
 
   update(...args) {
@@ -115,6 +122,10 @@ mock.module("../middleware/auth.ts", () => ({
 
 mock.module("../services/member.service.ts", () => ({
   MemberService: MockMemberService,
+}));
+
+mock.module("../utils/audit.ts", () => ({
+  writeAuditLog: mock(async () => {}),
 }));
 
 const { memberRoutes } = await import("./member.routes.ts");
@@ -168,5 +179,40 @@ describe("/members/me/dashboard", () => {
       message: "Insufficient permissions",
     });
     expect(serviceFns.getDashboard).not.toHaveBeenCalled();
+  });
+});
+
+describe("POST /:id/reissue-credentials — staff lockout recovery", () => {
+  beforeEach(() => {
+    currentUser.id = "user-1";
+    currentUser.role = "admin";
+    currentUser.memberId = null;
+    serviceFns.reissueTempPassword.mockClear();
+  });
+
+  it("returns a fresh one-time password for an admin", async () => {
+    const response = await memberRoutes.request("/member-1/reissue-credentials", { method: "POST" });
+    const body = await response.json();
+
+    expect(response.status).toBe(200);
+    expect(body.success).toBe(true);
+    expect(body.data.credentials).toEqual(reissuedCredentials);
+    expect(serviceFns.reissueTempPassword).toHaveBeenCalledWith("member-1");
+  });
+
+  it("allows staff to re-issue too", async () => {
+    currentUser.role = "staff";
+    const response = await memberRoutes.request("/member-1/reissue-credentials", { method: "POST" });
+
+    expect(response.status).toBe(200);
+    expect(serviceFns.reissueTempPassword).toHaveBeenCalledTimes(1);
+  });
+
+  it("forbids a member from re-issuing credentials", async () => {
+    currentUser.role = "member";
+    const response = await memberRoutes.request("/member-1/reissue-credentials", { method: "POST" });
+
+    expect(response.status).toBe(403);
+    expect(serviceFns.reissueTempPassword).not.toHaveBeenCalled();
   });
 });

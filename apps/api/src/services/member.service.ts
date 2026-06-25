@@ -15,6 +15,9 @@ import { INTEREST_RATES } from "@iffe/shared";
 import type { MemberLoginCredentials } from "@iffe/shared";
 import { getNextAccountNumber, getNextMemberNumber } from "../utils/identifiers";
 import { generateTempPassword, hashPassword } from "../utils/password";
+import { memberCredentialsEmail, sendEmail } from "./email.service";
+import { env } from "../config/env";
+import { logger } from "../utils/logger";
 
 const repo = new MemberRepository();
 const ACTIVE_LOAN_STATUSES = ["approved", "active", "overdue", "defaulted"] as const;
@@ -107,7 +110,68 @@ export class MemberService {
       return created;
     });
 
+    // Best-effort: email the member their one-time credentials when they have an
+    // address. Staff still see the password in the UI (covers no-email members
+    // and mail outages), so delivery never blocks creation.
+    await this.emailCredentials(input.email, `${input.firstName} ${input.lastName}`.trim(), tempPassword);
+
     return { member, credentials: { email: input.email, tempPassword } };
+  }
+
+  /**
+   * Re-issue a one-time temporary password for an existing member's login
+   * (lockout recovery — e.g. the member lost the password before first login).
+   * Sets mustChangePassword, revokes the member's active sessions, emails the
+   * new credentials, and returns them for staff to relay.
+   */
+  async reissueTempPassword(memberId: string): Promise<{ member: unknown; credentials: MemberLoginCredentials }> {
+    const member = await prisma.member.findUnique({ where: { id: memberId } });
+    if (!member) throw new HTTPException(404, { message: "Member not found" });
+    if (!member.userId) {
+      throw new HTTPException(400, { message: "This member has no login account to reset" });
+    }
+    const user = await prisma.user.findUnique({ where: { id: member.userId } });
+    if (!user) throw new HTTPException(400, { message: "This member has no login account to reset" });
+
+    const tempPassword = generateTempPassword();
+    const hashed = await hashPassword(tempPassword);
+
+    await withTx(async (tx) => {
+      await tx.user.update({
+        where: { id: user.id },
+        data: { password: hashed, mustChangePassword: true },
+      });
+      // Revoke active sessions so a lost/forgotten password can't keep a live
+      // session — the member must sign in fresh with the new temp password.
+      await tx.session.updateMany({
+        where: { userId: user.id, revokedAt: null },
+        data: { revokedAt: new Date() },
+      });
+    });
+
+    await this.emailCredentials(user.email, user.name, tempPassword);
+
+    return { member, credentials: { email: user.email, tempPassword } };
+  }
+
+  /** Best-effort credential email; never throws, never logs the password. */
+  private async emailCredentials(loginEmail: string | null | undefined, name: string, tempPassword: string) {
+    if (!loginEmail) return;
+    try {
+      const message = memberCredentialsEmail({
+        name,
+        loginEmail,
+        tempPassword,
+        loginUrl: `${env.APP_BASE_URL.replace(/\/$/, "")}/login`,
+      });
+      message.to = loginEmail;
+      await sendEmail(message);
+    } catch {
+      logger.warn(
+        { event: "member.credentials_email_failed", to: loginEmail },
+        "could not email member credentials (continuing — staff has the password)",
+      );
+    }
   }
 
   async update(id: string, data: Record<string, unknown>) {
