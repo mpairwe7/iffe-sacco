@@ -196,10 +196,10 @@ export function CommandPalette() {
             />
           </div>
           <Command.List className="max-h-80 overflow-y-auto p-2">
-            <Command.Empty className="py-8 text-center text-sm text-gray-500">No results found.</Command.Empty>
+            <Command.Empty className="py-8 text-center text-sm text-text-muted">No results found.</Command.Empty>
 
             {canSearchMembers && searching && (
-              <div className="flex items-center justify-center gap-2 py-4 text-sm text-gray-500">
+              <div className="flex items-center justify-center gap-2 py-4 text-sm text-text-muted">
                 <Loader2 className="w-4 h-4 animate-spin" />
                 Searching members...
               </div>

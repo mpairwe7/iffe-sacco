@@ -299,7 +299,7 @@ export function DashboardHeader({ onToggleSidebar }: DashboardHeaderProps) {
             <div className="absolute right-0 top-full mt-2 w-64 bg-white dark:bg-gray-950 border border-gray-200 dark:border-gray-800 rounded-lg shadow-2xl z-50 overflow-hidden">
               <div className="px-4 py-3 border-b border-gray-200 dark:border-gray-800">
                 <p className="text-sm font-bold text-gray-900 dark:text-white">{user?.name || "User"}</p>
-                <p className="text-xs text-gray-500 truncate">{user?.email || ""}</p>
+                <p className="text-xs text-text-muted truncate">{user?.email || ""}</p>
                 <span className="inline-block mt-1.5 text-[10px] font-bold uppercase tracking-wider text-primary bg-primary/10 px-2 py-0.5 rounded-full">
                   {roleBadge}
                 </span>
