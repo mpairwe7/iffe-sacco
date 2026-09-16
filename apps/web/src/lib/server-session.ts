@@ -3,6 +3,7 @@ import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import type { User } from "@iffe/shared";
 import { canAccessPath, getDefaultRouteForRole, type AppRole } from "@/lib/role-routes";
+import { AUTH_SESSION_COOKIE } from "@/lib/auth-cookie-names";
 
 async function getBaseUrl() {
   const requestHeaders = await headers();
@@ -21,7 +22,7 @@ async function fetchApi<T>(path: string): Promise<T | null> {
   const cookie = requestHeaders.get("cookie");
 
   // Fast path: if there is no session cookie, user is unauthenticated
-  if (!cookie || !cookie.includes("iffe_session")) {
+  if (!cookie || !cookie.includes(AUTH_SESSION_COOKIE)) {
     return null;
   }
 

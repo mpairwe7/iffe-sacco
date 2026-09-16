@@ -2,6 +2,7 @@
 
 import { useState, useSyncExternalStore } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import {
   Users,
   UserPlus,
@@ -275,6 +276,7 @@ function MiniStat({
 // Main page
 // ═════════════════════════════════════════════════════════════════════
 export default function DashboardPage() {
+  const router = useRouter();
   const user = useAuthStore((s) => s.user);
   const now = useNow();
 
@@ -491,7 +493,7 @@ export default function DashboardPage() {
                         <td className="px-4 py-3 text-right">
                           <ActionButtons
                             onView={() => {
-                              window.location.href = `/admin/applications?id=${a.id}`;
+                              router.push(`/admin/applications?id=${a.id}`);
                             }}
                             onApprove={() => handleApproveApp(a.id)}
                             onReject={() => openRejectApp(a.id)}
@@ -577,7 +579,7 @@ export default function DashboardPage() {
                         <td className="px-4 py-3 text-right">
                           <ActionButtons
                             onView={() => {
-                              window.location.href = `/admin/expenses?id=${e.id}`;
+                              router.push(`/admin/expenses?id=${e.id}`);
                             }}
                             onApprove={() => handleApproveExp(e.id)}
                             onReject={() => openRejectExp(e.id)}

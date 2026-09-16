@@ -8,7 +8,10 @@ try {
   for (const line of envFile.split("\n")) {
     const [key, ...vals] = line.split("=");
     if (key && vals.length > 0 && !key.startsWith("#")) {
-      process.env[key.trim()] = vals.join("=").trim();
+      process.env[key.trim()] = vals
+        .join("=")
+        .trim()
+        .replace(/^["']|["']$/g, "");
     }
   }
 } catch {}
