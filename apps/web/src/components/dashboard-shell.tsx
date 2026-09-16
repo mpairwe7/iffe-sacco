@@ -36,7 +36,7 @@ export function DashboardShell({ children, initialUser }: { children: React.Reac
       <Sidebar open={sidebarOpen} onClose={() => setSidebarOpen(false)} />
       <div className="lg:ml-72 flex flex-col min-h-screen relative z-10">
         <DashboardHeader onToggleSidebar={() => setSidebarOpen(true)} />
-        <main id="main-content" className="flex-1 p-4 lg:p-8 has-bottom-nav">
+        <main id="main-content" tabIndex={-1} className="flex-1 p-4 lg:p-8 has-bottom-nav focus:outline-none">
           <Breadcrumb />
           {children}
         </main>

@@ -309,8 +309,12 @@ function ParentFields({
           className="mt-3 space-y-4"
         >
           <div>
-            <label className="block text-sm font-medium text-text mb-2">If dead, died before or after joining?</label>
+            <label htmlFor={`${prefix}-died`} className="block text-sm font-medium text-text mb-2">
+              If dead, died before or after joining?
+            </label>
             <select
+              id={`${prefix}-died`}
+              aria-label="If dead, died before or after joining"
               {...register(`${prefix}.diedBeforeOrAfterJoining`)}
               className="w-full px-4 py-3 bg-white/60 dark:bg-white/5 border border-white/40 dark:border-white/10 rounded-lg text-sm text-text focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
             >
@@ -560,9 +564,9 @@ export default function RegisterPage() {
         <div className="inline-flex items-center justify-center w-12 h-12 rounded-xl bg-gradient-to-br from-primary to-primary-dark shadow-lg shadow-primary/25 mb-3">
           <FileText className="w-6 h-6 text-white" aria-hidden="true" />
         </div>
-        <h2 className="text-2xl sm:text-3xl font-extrabold text-text text-center tracking-tight">
+        <h1 className="text-2xl sm:text-3xl font-extrabold text-text text-center tracking-tight">
           Membership Application
-        </h2>
+        </h1>
         <p className="text-text-muted text-center mt-1 mb-5 text-sm">
           Fill in the essentials &mdash; add the rest now or later from your portal.
         </p>
@@ -587,6 +591,8 @@ export default function RegisterPage() {
               <button
                 key={i}
                 type="button"
+                aria-label={`Step ${i + 1}: ${s.label}`}
+                aria-current={isCurrent ? "step" : undefined}
                 onClick={() => {
                   if (i < step) {
                     setDirection(-1);
@@ -601,7 +607,11 @@ export default function RegisterPage() {
                       : "bg-white/70 dark:bg-white/10 border-border/60 text-text-light"
                 } ${i <= step ? "cursor-pointer" : "cursor-default"}`}
               >
-                {isCompleted ? <Check className="w-4 h-4" /> : <Icon className="w-4 h-4" />}
+                {isCompleted ? (
+                  <Check className="w-4 h-4" aria-hidden="true" />
+                ) : (
+                  <Icon className="w-4 h-4" aria-hidden="true" />
+                )}
               </button>
             );
           })}
@@ -648,10 +658,18 @@ export default function RegisterPage() {
                     />
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                       <div>
-                        <label className="block text-sm font-medium text-text mb-2">
-                          Sex<span className="text-danger ml-0.5">*</span>
+                        <label htmlFor="register-sex" className="block text-sm font-medium text-text mb-2">
+                          Sex
+                          <span className="text-danger ml-0.5" aria-hidden="true">
+                            *
+                          </span>
                         </label>
                         <select
+                          id="register-sex"
+                          aria-label="Sex"
+                          aria-required="true"
+                          aria-invalid={!!errors.sex}
+                          aria-describedby={errors.sex ? "register-sex-error" : undefined}
                           {...register("sex")}
                           className="w-full px-4 py-3 bg-white/60 dark:bg-white/5 border border-white/40 dark:border-white/10 rounded-lg text-sm text-text focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
                         >
@@ -659,7 +677,11 @@ export default function RegisterPage() {
                           <option value="male">Male</option>
                           <option value="female">Female</option>
                         </select>
-                        {errors.sex && <p className="text-sm text-danger mt-1.5">{errors.sex.message}</p>}
+                        {errors.sex && (
+                          <p id="register-sex-error" role="alert" className="text-sm text-danger mt-1.5">
+                            {errors.sex.message}
+                          </p>
+                        )}
                       </div>
                       <FormField
                         label="Clan"
@@ -794,12 +816,14 @@ export default function RegisterPage() {
                                       <tr key={field.id} className="border-b border-white/10">
                                         <td className="py-1.5 pr-2">
                                           <input
+                                            aria-label={`Spouse ${i + 1} name`}
                                             {...register(`spouses.${i}.name`)}
                                             className="w-full px-2 py-1.5 bg-white/40 dark:bg-white/5 border border-white/30 dark:border-white/10 rounded-lg text-sm text-text"
                                           />
                                         </td>
                                         <td className="py-1.5 pr-2">
                                           <input
+                                            aria-label={`Spouse ${i + 1} father's name`}
                                             {...register(`spouses.${i}.fatherName`)}
                                             className="w-full px-2 py-1.5 bg-white/40 dark:bg-white/5 border border-white/30 dark:border-white/10 rounded-lg text-sm text-text"
                                           />
@@ -807,12 +831,14 @@ export default function RegisterPage() {
                                         <td className="py-1.5 pr-2 text-center">
                                           <input
                                             type="checkbox"
+                                            aria-label={`Spouse ${i + 1} father alive`}
                                             {...register(`spouses.${i}.fatherAlive`)}
                                             className="w-4 h-4 rounded border-border text-primary"
                                           />
                                         </td>
                                         <td className="py-1.5 pr-2">
                                           <input
+                                            aria-label={`Spouse ${i + 1} mother's name`}
                                             {...register(`spouses.${i}.motherName`)}
                                             className="w-full px-2 py-1.5 bg-white/40 dark:bg-white/5 border border-white/30 dark:border-white/10 rounded-lg text-sm text-text"
                                           />
@@ -820,18 +846,21 @@ export default function RegisterPage() {
                                         <td className="py-1.5 pr-2 text-center">
                                           <input
                                             type="checkbox"
+                                            aria-label={`Spouse ${i + 1} mother alive`}
                                             {...register(`spouses.${i}.motherAlive`)}
                                             className="w-4 h-4 rounded border-border text-primary"
                                           />
                                         </td>
                                         <td className="py-1.5 pr-2">
                                           <input
+                                            aria-label={`Spouse ${i + 1} contact`}
                                             {...register(`spouses.${i}.contact`)}
                                             className="w-full px-2 py-1.5 bg-white/40 dark:bg-white/5 border border-white/30 dark:border-white/10 rounded-lg text-sm text-text"
                                           />
                                         </td>
                                         <td className="py-1.5 pr-2">
                                           <input
+                                            aria-label={`Spouse ${i + 1} address`}
                                             {...register(`spouses.${i}.address`)}
                                             className="w-full px-2 py-1.5 bg-white/40 dark:bg-white/5 border border-white/30 dark:border-white/10 rounded-lg text-sm text-text"
                                           />
@@ -839,10 +868,11 @@ export default function RegisterPage() {
                                         <td className="py-1.5">
                                           <button
                                             type="button"
+                                            aria-label={`Remove spouse ${i + 1}`}
                                             onClick={() => spousesField.remove(i)}
                                             className="p-1 text-danger hover:bg-danger/10 rounded-lg"
                                           >
-                                            <Trash2 className="w-4 h-4" />
+                                            <Trash2 className="w-4 h-4" aria-hidden="true" />
                                           </button>
                                         </td>
                                       </tr>
@@ -894,12 +924,14 @@ export default function RegisterPage() {
                                       <tr key={field.id} className="border-b border-white/10">
                                         <td className="py-1.5 pr-2">
                                           <input
+                                            aria-label={`Child ${i + 1} name`}
                                             {...register(`children.${i}.name`)}
                                             className="w-full px-2 py-1.5 bg-white/40 dark:bg-white/5 border border-white/30 dark:border-white/10 rounded-lg text-sm text-text"
                                           />
                                         </td>
                                         <td className="py-1.5 pr-2">
                                           <select
+                                            aria-label={`Child ${i + 1} sex`}
                                             {...register(`children.${i}.sex`)}
                                             className="w-full px-2 py-1.5 bg-white/40 dark:bg-white/5 border border-white/30 dark:border-white/10 rounded-lg text-sm text-text"
                                           >
@@ -910,6 +942,7 @@ export default function RegisterPage() {
                                         </td>
                                         <td className="py-1.5 pr-2">
                                           <input
+                                            aria-label={`Child ${i + 1} contact`}
                                             {...register(`children.${i}.contact`)}
                                             className="w-full px-2 py-1.5 bg-white/40 dark:bg-white/5 border border-white/30 dark:border-white/10 rounded-lg text-sm text-text"
                                           />
@@ -917,10 +950,11 @@ export default function RegisterPage() {
                                         <td className="py-1.5">
                                           <button
                                             type="button"
+                                            aria-label={`Remove child ${i + 1}`}
                                             onClick={() => childrenField.remove(i)}
                                             className="p-1 text-danger hover:bg-danger/10 rounded-lg"
                                           >
-                                            <Trash2 className="w-4 h-4" />
+                                            <Trash2 className="w-4 h-4" aria-hidden="true" />
                                           </button>
                                         </td>
                                       </tr>
@@ -965,24 +999,28 @@ export default function RegisterPage() {
                                       <tr key={field.id} className="border-b border-white/10">
                                         <td className="py-1.5 pr-2">
                                           <input
+                                            aria-label={`Relative ${i + 1} full name`}
                                             {...register(`otherRelatives.${i}.fullName`)}
                                             className="w-full px-2 py-1.5 bg-white/40 dark:bg-white/5 border border-white/30 dark:border-white/10 rounded-lg text-sm text-text"
                                           />
                                         </td>
                                         <td className="py-1.5 pr-2">
                                           <input
+                                            aria-label={`Relative ${i + 1} relationship`}
                                             {...register(`otherRelatives.${i}.relationship`)}
                                             className="w-full px-2 py-1.5 bg-white/40 dark:bg-white/5 border border-white/30 dark:border-white/10 rounded-lg text-sm text-text"
                                           />
                                         </td>
                                         <td className="py-1.5 pr-2">
                                           <input
+                                            aria-label={`Relative ${i + 1} location`}
                                             {...register(`otherRelatives.${i}.location`)}
                                             className="w-full px-2 py-1.5 bg-white/40 dark:bg-white/5 border border-white/30 dark:border-white/10 rounded-lg text-sm text-text"
                                           />
                                         </td>
                                         <td className="py-1.5 pr-2">
                                           <input
+                                            aria-label={`Relative ${i + 1} contact`}
                                             {...register(`otherRelatives.${i}.contact`)}
                                             className="w-full px-2 py-1.5 bg-white/40 dark:bg-white/5 border border-white/30 dark:border-white/10 rounded-lg text-sm text-text"
                                           />
@@ -990,10 +1028,11 @@ export default function RegisterPage() {
                                         <td className="py-1.5">
                                           <button
                                             type="button"
+                                            aria-label={`Remove relative ${i + 1}`}
                                             onClick={() => relativesField.remove(i)}
                                             className="p-1 text-danger hover:bg-danger/10 rounded-lg"
                                           >
-                                            <Trash2 className="w-4 h-4" />
+                                            <Trash2 className="w-4 h-4" aria-hidden="true" />
                                           </button>
                                         </td>
                                       </tr>
@@ -1172,7 +1211,7 @@ export default function RegisterPage() {
 
       <p className="text-center text-sm text-text-muted mt-6">
         Already have an account?{" "}
-        <Link href="/login" className="font-semibold text-primary hover:text-primary-dark">
+        <Link href="/login" className="font-semibold text-primary hover:text-primary-dark inline-block py-1">
           Sign In
         </Link>
       </p>

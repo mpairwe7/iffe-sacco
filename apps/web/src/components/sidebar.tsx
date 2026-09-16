@@ -269,6 +269,7 @@ export function Sidebar({ open, onClose }: SidebarProps) {
           </Link>
           <button
             onClick={onClose}
+            aria-label="Close sidebar"
             className="lg:hidden p-1.5 text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800"
           >
             <X className="w-5 h-5" />
@@ -291,7 +292,7 @@ export function Sidebar({ open, onClose }: SidebarProps) {
         </div>
 
         {/* Navigation */}
-        <nav className="flex-1 overflow-y-auto px-3 py-4 space-y-0.5">
+        <nav aria-label="Sidebar navigation" className="flex-1 overflow-y-auto px-3 py-4 space-y-0.5">
           {filteredNavItems.map((item, idx) => {
             if (item.divider) {
               return (
@@ -315,6 +316,7 @@ export function Sidebar({ open, onClose }: SidebarProps) {
                 <div key={item.label}>
                   <button
                     onClick={() => toggleExpand(item.label)}
+                    aria-expanded={isOpen}
                     className={cn(
                       "w-full flex items-center gap-3 px-3 py-3 rounded-lg text-sm font-semibold transition-colors",
                       hasActive

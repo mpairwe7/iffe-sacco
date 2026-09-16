@@ -18,24 +18,33 @@ async function getBaseUrl() {
 
 async function fetchApi<T>(path: string): Promise<T | null> {
   const requestHeaders = await headers();
-  const baseUrl = await getBaseUrl();
   const cookie = requestHeaders.get("cookie");
 
-  const response = await fetch(`${baseUrl}/api/v1${path}`, {
-    headers: cookie ? { cookie } : undefined,
-    cache: "no-store",
-  });
-
-  if (response.status === 401) {
+  // Fast path: if there is no session cookie, user is unauthenticated
+  if (!cookie || !cookie.includes("iffe_session")) {
     return null;
   }
 
-  const json = (await response.json()) as { success: boolean; data?: T; message?: string };
-  if (!response.ok || !json.success) {
-    throw new Error(json.message || "Request failed");
-  }
+  try {
+    const baseUrl = await getBaseUrl();
+    const response = await fetch(`${baseUrl}/api/v1${path}`, {
+      headers: { cookie },
+      cache: "no-store",
+    });
 
-  return (json.data ?? null) as T | null;
+    if (response.status === 401) {
+      return null;
+    }
+
+    const json = (await response.json()) as { success: boolean; data?: T; message?: string };
+    if (!response.ok || !json.success) {
+      return null;
+    }
+
+    return (json.data ?? null) as T | null;
+  } catch {
+    return null;
+  }
 }
 
 /**
@@ -47,7 +56,11 @@ async function fetchApi<T>(path: string): Promise<T | null> {
  * and revoked sessions return 401 which is surfaced as `null`.
  */
 export const getCurrentUser = cache(async () => {
-  return fetchApi<User>("/auth/me");
+  try {
+    return await fetchApi<User>("/auth/me");
+  } catch {
+    return null;
+  }
 });
 
 export async function getDashboardSession() {

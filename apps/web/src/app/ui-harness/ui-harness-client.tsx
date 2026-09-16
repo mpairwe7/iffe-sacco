@@ -28,7 +28,13 @@ type Row = {
 export function UiHarness({ widget, rows, long, bignum, value }: Props) {
   if (widget === "statcard") {
     return (
-      <main className="p-4 grid grid-cols-2 gap-4" data-testid="harness-statcard">
+      <main
+        id="main-content"
+        tabIndex={-1}
+        className="p-4 grid grid-cols-2 gap-4 focus:outline-none"
+        data-testid="harness-statcard"
+      >
+        <h1 className="sr-only">UI Harness - StatCard</h1>
         <StatCard title="Total Savings" value={`UGX ${value}`} icon={Wallet} color="primary" change="vs last month" />
         <StatCard title="Loan Balance" value={formatCurrency(99999999999999)} icon={Wallet} color="info" />
       </main>
@@ -67,7 +73,8 @@ export function UiHarness({ widget, rows, long, bignum, value }: Props) {
   ];
 
   return (
-    <main className="p-4" data-testid="harness-datatable">
+    <main id="main-content" tabIndex={-1} className="p-4 focus:outline-none" data-testid="harness-datatable">
+      <h1 className="sr-only">UI Harness - DataTable</h1>
       <DataTable title="Harness" description="Layout stress test" columns={columns} data={data} />
     </main>
   );

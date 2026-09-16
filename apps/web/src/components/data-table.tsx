@@ -258,9 +258,10 @@ export function DataTable<T extends Record<string, any>>({
         </div>
         <div className="flex items-center gap-2 flex-wrap">
           <div className="relative">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-text-light" />
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-text-light" aria-hidden="true" />
             <input
               type="text"
+              aria-label={searchPlaceholder || "Search table"}
               placeholder={searchPlaceholder}
               value={activeSearch}
               onChange={(e) => handleSearch(e.target.value)}
@@ -271,8 +272,9 @@ export function DataTable<T extends Record<string, any>>({
             onClick={() => exportToCSV(serverSide ? data : filtered, columns, title.toLowerCase().replace(/\s+/g, "-"))}
             className="p-2.5 text-text-muted hover:text-text border border-border/50 rounded-lg hover:bg-surface-hover"
             title="Export CSV"
+            aria-label="Export CSV"
           >
-            <FileSpreadsheet className="w-4 h-4" />
+            <FileSpreadsheet className="w-4 h-4" aria-hidden="true" />
           </button>
           {onAdd ? (
             <button

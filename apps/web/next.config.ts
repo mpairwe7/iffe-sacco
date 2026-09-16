@@ -14,6 +14,8 @@ import path from "node:path";
 // `next/font/google` (used in app/layout.tsx) self-hosts Inter at build time
 // and serves it from /_next/static, so the CSP does NOT need to allow
 // https://fonts.googleapis.com or https://fonts.gstatic.com as origins.
+const isDeployedProd = process.env.VERCEL === "1" || process.env.ENABLE_HSTS === "1";
+
 const csp = [
   "default-src 'self'",
   // Next.js requires 'unsafe-inline' for some style and script edge cases;
@@ -27,15 +29,19 @@ const csp = [
   "form-action 'self'",
   "base-uri 'self'",
   "object-src 'none'",
-  "upgrade-insecure-requests",
+  ...(isDeployedProd ? ["upgrade-insecure-requests"] : []),
 ].join("; ");
 
 const securityHeaders = [
   { key: "Content-Security-Policy", value: csp },
-  {
-    key: "Strict-Transport-Security",
-    value: "max-age=63072000; includeSubDomains; preload",
-  },
+  ...(isDeployedProd
+    ? [
+        {
+          key: "Strict-Transport-Security",
+          value: "max-age=63072000; includeSubDomains; preload",
+        },
+      ]
+    : []),
   { key: "X-Content-Type-Options", value: "nosniff" },
   { key: "X-Frame-Options", value: "DENY" },
   { key: "Referrer-Policy", value: "strict-origin-when-cross-origin" },

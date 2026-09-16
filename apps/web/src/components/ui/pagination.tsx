@@ -62,7 +62,10 @@ export function Pagination({
   }
 
   return (
-    <div className="flex flex-col sm:flex-row items-center justify-between gap-3 px-4 lg:px-6 py-4 border-t border-border/50">
+    <nav
+      aria-label="Pagination"
+      className="flex flex-col sm:flex-row items-center justify-between gap-3 px-4 lg:px-6 py-4 border-t border-border/50"
+    >
       <div className="flex items-center gap-3 text-sm text-text-muted">
         {/* aria-live so screen-reader users hear the range change on navigation. */}
         <span aria-live="polite">
@@ -86,10 +89,10 @@ export function Pagination({
 
       <div className="flex flex-wrap items-center justify-end gap-1">
         <button onClick={() => go(1)} disabled={atFirst} className={ICON_BTN} aria-label="First page">
-          <ChevronsLeft className="w-4 h-4" />
+          <ChevronsLeft className="w-4 h-4" aria-hidden="true" />
         </button>
         <button onClick={() => go(current - 1)} disabled={atFirst} className={ICON_BTN} aria-label="Previous page">
-          <ChevronLeft className="w-4 h-4" />
+          <ChevronLeft className="w-4 h-4" aria-hidden="true" />
         </button>
 
         {getPageWindow(current, pages).map((p) => (
@@ -99,7 +102,7 @@ export function Pagination({
             aria-label={`Page ${p}`}
             aria-current={p === current ? "page" : undefined}
             className={cn(
-              "w-10 h-10 rounded-lg text-sm font-medium",
+              "min-w-[40px] min-h-[40px] rounded-lg text-sm font-medium flex items-center justify-center transition-colors",
               p === current ? "bg-primary text-white" : "hover:bg-surface-hover text-text-muted",
             )}
           >
@@ -108,10 +111,10 @@ export function Pagination({
         ))}
 
         <button onClick={() => go(current + 1)} disabled={atLast} className={ICON_BTN} aria-label="Next page">
-          <ChevronRight className="w-4 h-4" />
+          <ChevronRight className="w-4 h-4" aria-hidden="true" />
         </button>
         <button onClick={() => go(pages)} disabled={atLast} className={ICON_BTN} aria-label="Last page">
-          <ChevronsRight className="w-4 h-4" />
+          <ChevronsRight className="w-4 h-4" aria-hidden="true" />
         </button>
 
         {showJump && pages > 7 && (
@@ -129,6 +132,6 @@ export function Pagination({
           </form>
         )}
       </div>
-    </div>
+    </nav>
   );
 }

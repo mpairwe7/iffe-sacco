@@ -96,14 +96,16 @@ export function BottomNav() {
               href={tab.href}
               aria-current={isActive ? "page" : undefined}
               className={cn(
-                "flex flex-1 flex-col items-center justify-center gap-0.5 text-[10px] font-semibold transition-colors relative",
-                isActive ? "text-primary" : "text-gray-400 dark:text-gray-500 active:text-primary",
+                "flex flex-1 flex-col items-center justify-center gap-0.5 text-[10px] font-semibold transition-colors relative min-h-[44px]",
+                isActive
+                  ? "text-primary font-bold"
+                  : "text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white active:text-primary",
               )}
             >
               {isActive && (
                 <span className="absolute top-0 left-1/2 -translate-x-1/2 w-8 h-0.5 rounded-full bg-primary" />
               )}
-              <tab.icon className={cn("w-5 h-5", isActive && "scale-110")} />
+              <tab.icon className={cn("w-5 h-5", isActive && "scale-110")} aria-hidden="true" />
               <span>{tab.label}</span>
             </Link>
           );

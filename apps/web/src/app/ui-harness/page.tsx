@@ -11,7 +11,7 @@ export const dynamic = "force-dynamic";
 type SearchParams = Record<string, string | string[] | undefined>;
 
 export default async function UiHarnessPage({ searchParams }: { searchParams: Promise<SearchParams> }) {
-  if (process.env.NODE_ENV === "production") notFound();
+  if (process.env.NODE_ENV === "production" && process.env.ENABLE_UI_HARNESS !== "1") notFound();
 
   const sp = await searchParams;
   const get = (key: string): string | undefined => {

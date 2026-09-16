@@ -33,12 +33,12 @@ export function StatCard({ title, value, change, changeType = "positive", icon: 
           {change && (
             <p
               className={cn(
-                "text-xs font-medium mt-2",
+                "text-xs mt-2",
                 changeType === "positive"
-                  ? "text-success"
+                  ? "text-emerald-700 dark:text-emerald-400 font-semibold"
                   : changeType === "negative"
-                    ? "text-danger"
-                    : "text-text-muted",
+                    ? "text-red-700 dark:text-red-400 font-semibold"
+                    : "text-gray-600 dark:text-gray-400 font-medium",
               )}
             >
               {change}

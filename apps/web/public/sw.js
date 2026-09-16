@@ -3,11 +3,21 @@
  * Provides offline support, asset caching, and background sync.
  */
 
-const CACHE_NAME = "iffe-sacco-v1";
+const CACHE_NAME = "iffe-sacco-v2";
 const OFFLINE_URL = "/offline";
 
 // Static assets to pre-cache on install
-const PRECACHE_ASSETS = ["/", "/offline", "/favicon.png", "/logo.png"];
+const PRECACHE_ASSETS = [
+  "/offline",
+  "/favicon.png",
+  "/logo.png",
+  "/icon-192.png",
+  "/icon-512.png",
+  "/icon-192-maskable.png",
+  "/icon-512-maskable.png",
+  "/apple-touch-icon.png",
+  "/og-image.png",
+];
 
 // Install — pre-cache critical assets
 self.addEventListener("install", (event) => {
@@ -27,6 +37,13 @@ self.addEventListener("activate", (event) => {
       .then((keys) => Promise.all(keys.filter((key) => key !== CACHE_NAME).map((key) => caches.delete(key)))),
   );
   self.clients.claim();
+});
+
+// Listen for messages from client (e.g. skipWaiting on update)
+self.addEventListener("message", (event) => {
+  if (event.data && event.data.type === "SKIP_WAITING") {
+    self.skipWaiting();
+  }
 });
 
 // Fetch — network-first for pages/API, cache-first for static assets

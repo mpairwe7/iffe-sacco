@@ -7,7 +7,7 @@ export default function AuthLayout({ children }: { children: React.ReactNode }) 
       {/* Animated Blobs */}
       <div className="blob blob-1 w-[500px] h-[500px] bg-primary/20 -top-40 -left-40" />
 
-      <div className="relative z-10 w-full max-w-2xl">
+      <main id="main-content" tabIndex={-1} className="relative z-10 w-full max-w-2xl focus:outline-none">
         {/* Logo + Brand — solid backing panel for contrast */}
         <div className="text-center mb-8">
           <Link href="/" className="inline-flex flex-col items-center gap-5 group">
@@ -34,7 +34,7 @@ export default function AuthLayout({ children }: { children: React.ReactNode }) 
         </div>
 
         {children}
-      </div>
+      </main>
     </div>
   );
 }

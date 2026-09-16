@@ -48,3 +48,4 @@ npm-debug.log*
 *.tgz
 .cache/
 .vercel
+.env*

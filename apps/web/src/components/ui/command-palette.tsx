@@ -172,8 +172,8 @@ export function CommandPalette() {
   if (!open) return null;
 
   return (
-    <div className="fixed inset-0 z-[100]">
-      <div className="fixed inset-0 bg-black/50 backdrop-blur-sm" onClick={closePalette} />
+    <div className="fixed inset-0 z-[100]" role="dialog" aria-modal="true" aria-label="Command palette">
+      <div className="fixed inset-0 bg-black/50 backdrop-blur-sm" aria-hidden="true" onClick={closePalette} />
       <div className="fixed left-1/2 top-[12%] -translate-x-1/2 w-full max-w-xl px-4">
         <Command
           className="bg-white dark:bg-gray-950 border border-gray-200 dark:border-gray-800 rounded-xl overflow-hidden shadow-2xl"

@@ -78,7 +78,7 @@ export function LoginForm() {
         Back to Home
       </Link>
       <div className="glass-card rounded-xl p-8 shadow-xl">
-        <h2 className="text-2xl font-bold text-text text-center">Login to Your Account</h2>
+        <h1 className="text-2xl font-bold text-text text-center">Login to Your Account</h1>
         <p className="text-text-muted text-center mt-2 mb-8">Select your user type and enter your credentials</p>
 
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
@@ -186,7 +186,10 @@ export function LoginForm() {
               />
               <span className="text-sm text-text-muted">Remember me</span>
             </label>
-            <Link href="/password/reset" className="text-sm font-medium text-primary hover:text-primary-dark">
+            <Link
+              href="/password/reset"
+              className="text-sm font-medium text-primary hover:text-primary-dark inline-block py-1"
+            >
               Forgot Password?
             </Link>
           </div>
@@ -210,7 +213,7 @@ export function LoginForm() {
 
         <p className="text-center text-sm text-text-muted mt-6">
           Don&apos;t have an account?{" "}
-          <Link href="/register" className="font-semibold text-primary hover:text-primary-dark">
+          <Link href="/register" className="font-semibold text-primary hover:text-primary-dark inline-block py-1">
             Create Account
           </Link>
         </p>
