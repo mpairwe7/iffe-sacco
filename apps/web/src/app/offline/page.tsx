@@ -5,7 +5,11 @@ import Link from "next/link";
 
 export default function OfflinePage() {
   return (
-    <div className="min-h-screen flex items-center justify-center bg-white dark:bg-gray-950 px-4">
+    <main
+      id="main-content"
+      tabIndex={-1}
+      className="min-h-screen flex items-center justify-center bg-white dark:bg-gray-950 px-4 focus:outline-none"
+    >
       <div className="text-center max-w-md">
         <div className="w-20 h-20 rounded-full bg-warning/10 flex items-center justify-center mx-auto mb-6">
           <WifiOff className="w-10 h-10 text-warning" />
@@ -32,6 +36,6 @@ export default function OfflinePage() {
         </div>
         <p className="mt-10 text-xs text-gray-400">IFFE Bbenhe — Empowering Financial Freedom</p>
       </div>
-    </div>
+    </main>
   );
 }

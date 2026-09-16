@@ -5,6 +5,7 @@ import "./globals.css";
 import { Providers } from "@/components/providers";
 import { ServiceWorkerRegister } from "@/components/sw-register";
 import { OfflineBanner } from "@/components/offline-banner";
+import { PwaInstallPrompt } from "@/components/pwa-install-prompt";
 import { resolveLocale } from "@/i18n/config";
 import { getMessages } from "@/i18n/get-messages";
 
@@ -57,6 +58,9 @@ export const metadata: Metadata = {
     capable: true,
     statusBarStyle: "black-translucent",
     title: "IFFE SACCO",
+  },
+  other: {
+    "apple-mobile-web-app-capable": "yes",
   },
   formatDetection: {
     telephone: false,
@@ -146,6 +150,7 @@ export default async function RootLayout({
         <Providers locale={locale} messages={messages}>
           <OfflineBanner />
           {children}
+          <PwaInstallPrompt />
         </Providers>
         <ServiceWorkerRegister />
       </body>
