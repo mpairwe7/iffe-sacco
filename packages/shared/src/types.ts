@@ -129,13 +129,7 @@ export interface Account {
 
 // ===== Transaction =====
 export type TransactionType =
-  | "deposit"
-  | "withdrawal"
-  | "transfer"
-  | "loan_repayment"
-  | "loan_disbursement"
-  | "interest_credit"
-  | "fee";
+  "deposit" | "withdrawal" | "transfer" | "loan_repayment" | "loan_disbursement" | "interest_credit" | "fee";
 export type TransactionStatus = "pending" | "completed" | "rejected" | "reversed";
 
 export interface Transaction {

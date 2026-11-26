@@ -5,13 +5,14 @@
 
 ## Secrets to rotate
 
-| Secret              | Store                         | Rotation trigger             | Impact                                       |
-| ------------------- | ----------------------------- | ---------------------------- | -------------------------------------------- |
-| `JWT_SECRET`        | Vercel env (api)              | Quarterly, or suspected leak | All active sessions invalidated              |
-| `CREDENTIALS_KEK`   | Vercel env (api)              | Annually, or suspected leak  | Payment gateway configs must be re-encrypted |
-| `DATABASE_URL`      | Neon + Vercel env             | On Neon role rotation        | Brief connection blip during deploy          |
-| `RESEND_API_KEY`    | Resend dashboard + Vercel env | On leak                      | Password reset emails stop until updated     |
-| `SENTRY_AUTH_TOKEN` | Sentry + Vercel env           | On leak                      | Source map uploads fail                      |
+| Secret              | Store                             | Rotation trigger                          | Impact                                                                     |
+| ------------------- | --------------------------------- | ----------------------------------------- | -------------------------------------------------------------------------- |
+| `JWT_SECRET`        | Vercel env (api)                  | Quarterly, or suspected leak              | All active sessions invalidated                                            |
+| `CREDENTIALS_KEK`   | Vercel env (api)                  | Annually, or suspected leak               | Payment gateway configs must be re-encrypted                               |
+| `DATABASE_URL`      | Neon + Vercel env                 | On Neon role rotation                     | Brief connection blip during deploy                                        |
+| `RESEND_API_KEY`    | Resend dashboard + Vercel env     | On leak                                   | Password reset emails stop until updated                                   |
+| `SMTP_PASS`         | Google App passwords + Vercel env | On leak, or when the mailbox owner leaves | All outbound email stops until updated (SMTP takes precedence over Resend) |
+| `SENTRY_AUTH_TOKEN` | Sentry + Vercel env               | On leak                                   | Source map uploads fail                                                    |
 
 ## Pre-rotation checklist
 

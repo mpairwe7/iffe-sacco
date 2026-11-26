@@ -27,8 +27,7 @@ export default function TransactionsPage() {
   const transactionsResponse = query.data;
   const transactions = (transactionsResponse?.data || []) as TransactionRow[];
   const stats = statsQuery.data as
-    | { total?: number; totalDeposits?: number; totalWithdrawals?: number; pending?: number }
-    | undefined;
+    { total?: number; totalDeposits?: number; totalWithdrawals?: number; pending?: number } | undefined;
 
   function handleApprove(id: string) {
     approveMutation.mutate(id, {

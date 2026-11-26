@@ -70,8 +70,7 @@ export default function SettingsPage() {
           const loaded = { ...defaultSettings };
           for (const s of data) {
             const localKey = Object.entries(settingKeyMap).find(([, apiKey]) => apiKey === s.key)?.[0] as
-              | keyof SettingsState
-              | undefined;
+              keyof SettingsState | undefined;
             if (localKey) {
               loaded[localKey] = s.value;
             }

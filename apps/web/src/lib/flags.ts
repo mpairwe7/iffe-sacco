@@ -17,11 +17,7 @@
  */
 
 export type FlagName =
-  | "ledgerEnabled"
-  | "passkeyAuth"
-  | "fraudScoring"
-  | "pwaOfflineCache"
-  | "cacheComponentsDashboards";
+  "ledgerEnabled" | "passkeyAuth" | "fraudScoring" | "pwaOfflineCache" | "cacheComponentsDashboards";
 
 const DEFAULTS: Record<FlagName, boolean> = {
   /**

@@ -1,14 +1,18 @@
 /**
- * Email service — Resend scaffold.
+ * Email service.
  *
- * When RESEND_API_KEY is set, sends via Resend. Otherwise logs the email
- * contents to the structured logger (dev/test behaviour). Templates are
- * defined here for type-safety and testability; swap to @react-email/components
- * when the design team delivers branded templates.
+ * Transport precedence: SMTP when SMTP_HOST is set, else Resend when
+ * RESEND_API_KEY is set, else log the email contents to the structured logger
+ * (dev/test behaviour). Templates are defined here for type-safety and
+ * testability; swap to @react-email/components when the design team delivers
+ * branded templates.
  */
 // @ts-nocheck
+import nodemailer from "nodemailer";
 import { logger } from "../utils/logger";
 import { env } from "../config/env";
+
+const SMTP_SEND_TIMEOUT_MS = 15_000;
 
 export interface EmailMessage {
   to: string | string[];
@@ -17,7 +21,55 @@ export interface EmailMessage {
   text: string;
 }
 
+async function sendViaSmtp(message: EmailMessage): Promise<void> {
+  const port = Number(process.env.SMTP_PORT || 587);
+  const transport = nodemailer.createTransport({
+    host: process.env.SMTP_HOST,
+    port,
+    secure: port === 465, // implicit TLS on 465; STARTTLS (enforced below) otherwise
+    requireTLS: true, // never send credentials or mail over plaintext
+    auth: { user: process.env.SMTP_USER, pass: process.env.SMTP_PASS },
+    // Phase limits fail fast on unreachable servers; the total send deadline below
+    // keeps credential delivery within the route's 30s serverless request limit.
+    connectionTimeout: 10_000,
+    greetingTimeout: 10_000,
+    socketTimeout: 15_000,
+  });
+
+  let sendTimeout: ReturnType<typeof setTimeout> | undefined;
+  try {
+    // Gmail and most relays rewrite or reject a From that isn't the authenticated account.
+    await Promise.race([
+      transport.sendMail({
+        from: `IFFE Bbenhe <${process.env.SMTP_USER}>`,
+        to: message.to,
+        subject: message.subject,
+        text: message.text,
+        html: message.html,
+      }),
+      new Promise<never>((_, reject) => {
+        sendTimeout = setTimeout(() => {
+          transport.close();
+          reject(new Error(`SMTP send exceeded ${SMTP_SEND_TIMEOUT_MS}ms`));
+        }, SMTP_SEND_TIMEOUT_MS);
+      }),
+    ]);
+  } catch (err) {
+    logger.error(
+      { event: "email.send_failed", transport: "smtp", error: (err as Error).message },
+      "SMTP server rejected email",
+    );
+    throw err;
+  } finally {
+    if (sendTimeout) clearTimeout(sendTimeout);
+  }
+
+  logger.info({ event: "email.sent", transport: "smtp", to: message.to, subject: message.subject }, "email sent");
+}
+
 export async function sendEmail(message: EmailMessage): Promise<void> {
+  if (process.env.SMTP_HOST) return sendViaSmtp(message);
+
   const apiKey = process.env.RESEND_API_KEY;
   const from = process.env.RESEND_FROM_EMAIL || "IFFE Bbenhe <no-reply@sacco.example.org>";
 

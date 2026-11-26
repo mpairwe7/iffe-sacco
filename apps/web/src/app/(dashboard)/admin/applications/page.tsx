@@ -122,8 +122,7 @@ export default function ApplicationsPage() {
   const applicationsResponse = query.data;
   const applications = (applicationsResponse?.data || []) as ApplicationRow[];
   const stats = statsQuery.data as
-    | { total?: number; pending?: number; recommended?: number; approved?: number; rejected?: number }
-    | undefined;
+    { total?: number; pending?: number; recommended?: number; approved?: number; rejected?: number } | undefined;
 
   const negativeLabel = isStaff ? "Decline" : "Reject";
 

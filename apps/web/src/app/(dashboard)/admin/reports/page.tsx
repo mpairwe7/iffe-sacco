@@ -100,7 +100,7 @@ const datePresets = [
     label: "This month",
     fn: () => {
       const now = new Date();
-      const first = new Date(now.getFullYear(), now.getMonth(), 1);
+      const first = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), 1));
       return { from: first.toISOString().split("T")[0], to: now.toISOString().split("T")[0] };
     },
   },
@@ -108,8 +108,8 @@ const datePresets = [
     label: "This quarter",
     fn: () => {
       const now = new Date();
-      const qMonth = Math.floor(now.getMonth() / 3) * 3;
-      const first = new Date(now.getFullYear(), qMonth, 1);
+      const qMonth = Math.floor(now.getUTCMonth() / 3) * 3;
+      const first = new Date(Date.UTC(now.getUTCFullYear(), qMonth, 1));
       return { from: first.toISOString().split("T")[0], to: now.toISOString().split("T")[0] };
     },
   },
@@ -117,8 +117,11 @@ const datePresets = [
 
 export default function ReportsPage() {
   const searchParams = useSearchParams();
-  const today = new Date().toISOString().split("T")[0];
-  const thirtyDaysAgo = new Date(Date.now() - 30 * 86400000).toISOString().split("T")[0];
+  const currentDate = new Date();
+  const thirtyDaysAgoDate = new Date(currentDate);
+  thirtyDaysAgoDate.setUTCDate(thirtyDaysAgoDate.getUTCDate() - 30);
+  const today = currentDate.toISOString().split("T")[0];
+  const thirtyDaysAgo = thirtyDaysAgoDate.toISOString().split("T")[0];
   const [reportType, setReportType] = useState(searchParams.get("type") || "statement");
   const [dateFrom, setDateFrom] = useState(thirtyDaysAgo);
   const [dateTo, setDateTo] = useState(today);

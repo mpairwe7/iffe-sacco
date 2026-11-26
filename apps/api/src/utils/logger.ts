@@ -10,14 +10,16 @@
  */
 import pino, { type Logger } from "pino";
 
-const isProd = process.env.NODE_ENV === "production";
+const deploymentEnv = process.env.VERCEL_ENV || process.env.NODE_ENV || "development";
+const isProd = deploymentEnv === "production";
 const isTest = process.env.NODE_ENV === "test";
+const isVercel = process.env.VERCEL === "1";
 
 export const logger: Logger = pino({
   level: process.env.LOG_LEVEL || (isProd ? "info" : isTest ? "silent" : "debug"),
   base: {
     service: "iffe-api",
-    env: process.env.NODE_ENV || "development",
+    env: deploymentEnv,
   },
   timestamp: pino.stdTimeFunctions.isoTime,
   redact: {
@@ -39,7 +41,7 @@ export const logger: Logger = pino({
     censor: "[REDACTED]",
   },
   transport:
-    !isProd && !isTest
+    !isVercel && !isProd && !isTest
       ? {
           target: "pino-pretty",
           options: {

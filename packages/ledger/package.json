@@ -16,10 +16,10 @@
   },
   "dependencies": {
     "@iffe/shared": "workspace:*",
-    "decimal.js-light": "^2.5.1"
+    "decimal.js-light": "2.5.1"
   },
   "devDependencies": {
-    "fast-check": "^3.23.2",
-    "typescript": "^5"
+    "fast-check": "4.11.0",
+    "typescript": "6.0.2"
   }
 }

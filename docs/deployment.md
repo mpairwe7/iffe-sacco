@@ -16,7 +16,9 @@ The API is bundled as a Next.js API route, enabling single-deployment on Vercel:
 └──────────────────────────────────┘
 ```
 
-A `prebuild.sh` script runs before the build to generate Prisma client and bundle the Hono API into `apps/web/api-bundle/app.mjs`, enabling the API to be served through the Next.js catch-all route at `/api/v1/[...path]`.
+The `apps/web/scripts/prebuild.sh` script runs before `next build` to generate the Prisma client and bundle the Hono API into `apps/web/api-bundle/app.mjs`, enabling the API to be served through the Next.js catch-all route at `/api/v1/[...path]`.
+
+The unified deployment needs Node.js `22.12.0` or newer. SimpleWebAuthn 14 requires Node 22 LTS or newer, and Sentry 11 supports Node 22 starting at `22.12.0`.
 
 ### Split Deployment (Alternative)
 
@@ -33,21 +35,28 @@ A `prebuild.sh` script runs before the build to generate Prisma client and bundl
 
 ### 1. Configure
 
-Create `apps/web/.env.production`:
+Set these values in the Vercel project's **Settings → Environment Variables** for
+Production and Preview. Vercel builds use project environment variables; do not
+create or rely on a local `apps/web/.env.production` file for deployment. Follow
+the [rollout checklist](rollout.md#1-environment-variables) to generate secrets,
+configure the complete environment, and apply database migrations before the
+first production deploy.
 
-```env
-NEXT_PUBLIC_API_URL=/api/v1
-DATABASE_URL=postgresql://...@....neon.tech/neondb?sslmode=require
-JWT_SECRET=<production-secret>
-JWT_REFRESH_SECRET=<production-secret>
-NODE_ENV=production
-```
+| Variable              | Unified deployment value                                           |
+| --------------------- | ------------------------------------------------------------------ |
+| `NEXT_PUBLIC_API_URL` | `/api/v1`                                                          |
+| `DATABASE_URL`        | Pooled NeonDB PostgreSQL connection string                         |
+| `JWT_SECRET`          | Generated production secret                                        |
+| `JWT_REFRESH_SECRET`  | Generated production secret                                        |
+| `APP_BASE_URL`        | Public production URL, for example `https://iffe-sacco.vercel.app` |
+| `NODE_ENV`            | `production`                                                       |
 
-> Note: `NEXT_PUBLIC_API_URL=/api/v1` (relative path) for unified deployment. No CORS needed since API is same-origin.
+> `NEXT_PUBLIC_API_URL=/api/v1` keeps API requests same-origin, so no CORS
+> configuration is needed for the unified deployment.
 
-### 2. prebuild.sh
+### 2. API prebuild
 
-The `prebuild.sh` script prepares the unified build:
+The `scripts/prebuild.sh` script prepares the unified build:
 
 - Runs Prisma client generation from `apps/api`
 - Bundles `apps/api/src/app.ts` into `apps/web/api-bundle/app.mjs` using Bun
@@ -63,7 +72,7 @@ npx vercel --prod
 Or connect the GitHub repo to Vercel:
 
 - **Root Directory**: `apps/web`
-- **Build Command**: `bash prebuild.sh && bun run build`
+- **Build Command**: `bun run build` (runs `scripts/prebuild.sh` before `next build`)
 - **Install Command**: `cd ../.. && bun install`
 - **Output Directory**: `.next`
 
@@ -77,18 +86,19 @@ Running `vercel --prod` from inside `apps/web` can cause path resolution errors 
 
 ### Current Production Project
 
-- **Vercel Project**: `iffe-sacco`
-- **Production Alias**: `https://iffe-sacco.vercel.app`
+- **Vercel Project**: `iffe-sacco` in the **iONA Tech** team
+- **Root Directory**: `apps/web`
+- **Production Alias**: `https://iffe-sacco-mu.vercel.app`
 
 ## Split Deployment (Alternative)
 
 ### Frontend (Vercel)
 
-Create `apps/web/.env.production`:
-
-```env
-NEXT_PUBLIC_API_URL=https://api.iffeds.org/api/v1
-```
+In Vercel **Settings → Environment Variables**, set `NEXT_PUBLIC_API_URL` for
+Production and Preview to the split API URL. Do not rely on a local
+`apps/web/.env.production` file for Vercel builds. The split API's database and
+JWT secrets belong in the backend service's secret store. See the
+[rollout checklist](rollout.md#1-environment-variables) for environment setup.
 
 Deploy:
 
@@ -194,13 +204,14 @@ DATABASE_URL="production-url" bunx prisma migrate deploy
 
 ### Unified Deployment (`apps/web` with bundled API)
 
-| Variable              | Required | Description                                              |
-| --------------------- | -------- | -------------------------------------------------------- |
-| `NEXT_PUBLIC_API_URL` | No       | API base URL (`/api/v1` for unified, full URL for split) |
-| `DATABASE_URL`        | Yes      | NeonDB PostgreSQL connection string                      |
-| `JWT_SECRET`          | Yes      | Secret for access token signing (min 32 chars)           |
-| `JWT_REFRESH_SECRET`  | Yes      | Secret for refresh token signing (min 32 chars)          |
-| `NODE_ENV`            | No       | Environment (default: development)                       |
+| Variable              | Required | Description                                                 |
+| --------------------- | -------- | ----------------------------------------------------------- |
+| `NEXT_PUBLIC_API_URL` | Yes      | API base URL (`/api/v1` for unified, full URL for split)    |
+| `DATABASE_URL`        | Yes      | NeonDB PostgreSQL connection string                         |
+| `JWT_SECRET`          | Yes      | Secret for access token signing (min 32 chars)              |
+| `JWT_REFRESH_SECRET`  | Yes      | Secret for refresh token signing (min 32 chars)             |
+| `APP_BASE_URL`        | Yes      | Public application origin used for WebAuthn and email links |
+| `NODE_ENV`            | No       | Environment (default: development)                          |
 
 ### Split Deployment - Backend (`apps/api`)
 
@@ -217,7 +228,7 @@ DATABASE_URL="production-url" bunx prisma migrate deploy
 
 | Variable              | Required | Description                                          |
 | --------------------- | -------- | ---------------------------------------------------- |
-| `NEXT_PUBLIC_API_URL` | No       | Backend API base URL (full URL for split deployment) |
+| `NEXT_PUBLIC_API_URL` | Yes      | Backend API base URL (full URL for split deployment) |
 
 ## Security Checklist
 

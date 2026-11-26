@@ -145,7 +145,7 @@ export default async function Image() {
           boxShadow: "0 25px 60px rgba(0, 0, 0, 0.45), 0 0 0 12px rgba(241, 196, 15, 0.4)",
         }}
       >
-        { }
+        {}
         <img
           src="https://iffe-sacco.vercel.app/logo.png"
           alt="IFFE Logo"

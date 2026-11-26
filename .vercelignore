@@ -1,0 +1,7 @@
+# `vercel deploy` uploads the working tree and ignores .gitignore. Production
+# env comes from the Vercel project, so local env files must never ship.
+.env
+.env.*
+!.env.example
+# Private documents at the repo root
+/*.pdf

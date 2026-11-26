@@ -30,7 +30,7 @@ IFFE/
 │   │   │   │   ├── providers.tsx   # QueryClient + Theme + Toast + Tooltip
 │   │   │   │   ├── sidebar.tsx     # Role-based dashboard sidebar navigation
 │   │   │   │   ├── data-table.tsx  # Advanced data table (sort, filter, export)
-│   │   │   │   ├── motion.tsx      # Framer Motion wrappers
+│   │   │   │   ├── motion.tsx      # Motion wrappers
 │   │   │   │   └── ...
 │   │   │   ├── hooks/              # TanStack Query hooks
 │   │   │   ├── stores/             # Zustand stores (ui, auth)

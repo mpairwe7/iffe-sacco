@@ -2,12 +2,12 @@
 
 ## Prerequisites
 
-| Tool        | Version | Installation                                |
-| ----------- | ------- | ------------------------------------------- |
-| **Bun**     | 1.3+    | `curl -fsSL https://bun.sh/install \| bash` |
-| **Node.js** | 20+     | Required for some Prisma tooling            |
-| **neonctl** | Latest  | `bun install -g neonctl`                    |
-| **Git**     | 2.x     | System package manager                      |
+| Tool        | Version | Installation                                  |
+| ----------- | ------- | --------------------------------------------- |
+| **Bun**     | 1.3+    | `curl -fsSL https://bun.sh/install \| bash`   |
+| **Node.js** | 22.12+  | Required for the Next.js and passkey runtimes |
+| **neonctl** | Latest  | `bun install -g neonctl`                      |
+| **Git**     | 2.x     | System package manager                        |
 
 ## Quick Start
 

@@ -110,7 +110,7 @@ ANALYZE=true bun run --filter web build
 
 Watch for:
 
-- `recharts` or `framer-motion` in the main bundle (should be split)
+- `recharts` or `motion` in the main bundle (should be split)
 - Any Radix primitive pulled into every route
 - Icon tree-shake failures (`lucide-react` should be per-icon imports)
 
@@ -132,4 +132,4 @@ SW in production. Offline mutation queueing is a Phase 7 item.
 - [ ] Async actions call `announce(...)`
 - [ ] Server-component data reads marked `'use cache'` where safe
 - [ ] Mutations call `updateTag()`
-- [ ] No raw barrel imports from `recharts` / `framer-motion` in client route bundle
+- [ ] No raw barrel imports from `recharts` / `motion` in client route bundle

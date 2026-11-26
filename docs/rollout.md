@@ -52,10 +52,14 @@ and `apps/web/.env.example`.
 
 ### Email (Phase 2 — optional but recommended)
 
-| Variable            | Source                                           | Notes                                |
-| ------------------- | ------------------------------------------------ | ------------------------------------ |
-| `RESEND_API_KEY`    | Resend dashboard                                 | Password reset + notification emails |
-| `RESEND_FROM_EMAIL` | e.g. `"IFFE SACCO <no-reply@sacco.example.org>"` |                                      |
+| Variable            | Source                                             | Notes                                    |
+| ------------------- | -------------------------------------------------- | ---------------------------------------- |
+| `RESEND_API_KEY`    | Resend dashboard                                   | Password reset + notification emails     |
+| `RESEND_FROM_EMAIL` | e.g. `"IFFE SACCO <no-reply@sacco.example.org>"`   |                                          |
+| `SMTP_HOST`         | e.g. `smtp.gmail.com`                              | When set, SMTP is used instead of Resend |
+| `SMTP_PORT`         | `587` (STARTTLS, required) or `465` (implicit TLS) | Defaults to `587`                        |
+| `SMTP_USER`         | Mailbox login, e.g. a Gmail address                | Also the From address                    |
+| `SMTP_PASS`         | Gmail: Google Account → Security → App passwords   | Never the account's real password        |
 
 ### Cron (Phase 3)
 

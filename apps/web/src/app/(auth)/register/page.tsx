@@ -5,7 +5,7 @@ import { useState, useCallback, useEffect } from "react";
 import { useForm, useFieldArray, type FieldErrors, type UseFormReturn } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod/v4";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion, AnimatePresence } from "motion/react";
 import {
   ArrowRight,
   ArrowLeft,

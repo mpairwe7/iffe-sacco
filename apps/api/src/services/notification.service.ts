@@ -17,12 +17,7 @@ import { logger } from "../utils/logger";
 import { sendEmail } from "./email.service";
 
 export type NotificationType =
-  | "transaction_posted"
-  | "loan_due"
-  | "loan_approved"
-  | "security"
-  | "welfare"
-  | "assistant";
+  "transaction_posted" | "loan_due" | "loan_approved" | "security" | "welfare" | "assistant";
 
 export interface NotificationInput {
   userId: string;
@@ -150,13 +145,13 @@ async function sendPush(
   let delivered = 0;
   try {
     const webpush = await import("web-push");
-    webpush.default.setVapidDetails(subject, publicKey, privateKey);
+    webpush.setVapidDetails(subject, publicKey, privateKey);
 
     const body = JSON.stringify(payload);
     await Promise.all(
       subs.map(async (sub) => {
         try {
-          await webpush.default.sendNotification(
+          await webpush.sendNotification(
             {
               endpoint: sub.endpoint,
               keys: { p256dh: sub.p256dh, auth: sub.auth },

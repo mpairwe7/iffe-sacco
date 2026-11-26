@@ -9,7 +9,7 @@
 | **Project**            | `snowy-water-12689441`                                  |
 | **Host**               | `ep-frosty-water-a14qap8n.ap-southeast-1.aws.neon.tech` |
 | **PostgreSQL Version** | 17                                                      |
-| **ORM**                | Prisma 7.5                                              |
+| **ORM**                | Prisma 7.10.1                                           |
 | **Adapter**            | `@prisma/adapter-pg` (node-pg Pool)                     |
 
 ## Connection

@@ -17,7 +17,7 @@ bun run dev          # Start web (3000) and api (4000)
 
 ```
 apps/web           Next.js 16 frontend (44 routes, App Router, Turbopack)
-apps/api           Hono 4 backend (130+ endpoints, Bun + Prisma 7.5)
+apps/api           Hono 4 backend (130+ endpoints, Bun + Prisma 7.10)
 packages/shared    Types, Zod schemas, constants
 packages/ledger    Double-entry money primitives + chart of accounts
 packages/assistant Prompts, tool schemas, types for the AI assistant
@@ -28,14 +28,15 @@ docs/              Architecture, API reference, runbooks, phase history
 
 **Frontend** — Next.js 16 (App Router, Turbopack) · React 19 · Tailwind
 CSS 4 · TanStack Query 5 · Zustand · React Hook Form · Zod 4 · Sonner ·
-Recharts · Framer Motion · Lucide.
+Recharts · Motion · Lucide.
 
-**Backend** — Bun · Hono 4 · Prisma 7.5 · NeonDB (PostgreSQL 17) ·
-Pino · `jose` JWT · bcryptjs · OpenTelemetry.
+**Backend** — Bun · Hono 4 · Prisma 7.10 · NeonDB (PostgreSQL 17) ·
+Pino 10 · `jose` JWT · bcryptjs · OpenTelemetry.
 
 **Platform** — Vercel (Fluid Compute, Cron, Edge Config, AI Gateway,
 Marketplace for Sentry / Neon / Resend) · Husky + lint-staged ·
-GitHub Actions CI (typecheck / lint / test / build / CodeQL).
+GitHub Actions CI (typecheck / lint / test / build / CodeQL). The Next.js
+runtime requires Node.js 22.12 or a compatible newer release.
 
 **Finance** — `decimal.js-light` (via `Money` wrapper, banker's
 rounding) · append-only double-entry ledger · idempotency keys on

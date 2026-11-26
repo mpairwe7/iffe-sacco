@@ -22,8 +22,7 @@ export default function SavingsAccountsPage() {
   const accountsResponse = query.data;
   const accounts = (accountsResponse?.data || []) as AccountRow[];
   const stats = statsQuery.data as
-    | { total?: number; totalBalance?: number; active?: number; dormant?: number }
-    | undefined;
+    { total?: number; totalBalance?: number; active?: number; dormant?: number } | undefined;
 
   const columns = [
     {

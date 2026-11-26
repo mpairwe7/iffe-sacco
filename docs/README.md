@@ -80,27 +80,28 @@ diagnosis steps, resolution actions, and post-incident tasks.
 
 ## Tech stack
 
-| Layer             | Technology                                | Version   |
-| ----------------- | ----------------------------------------- | --------- |
-| **Runtime**       | Bun                                       | 1.3+      |
-| **Frontend**      | Next.js App Router + Turbopack            | 16.2      |
-| **React**         | React                                     | 19        |
-| **Styling**       | Tailwind CSS                              | 4.x       |
-| **UI Components** | Radix UI, Lucide, Recharts, Framer Motion | Latest    |
-| **State**         | Zustand + TanStack Query                  | 5.x       |
-| **Forms**         | React Hook Form + Zod                     | 7.x / 4.x |
-| **Notifications** | Sonner + Web Push (VAPID)                 | 2.x       |
-| **Backend**       | Hono                                      | 4.x       |
-| **ORM**           | Prisma (with Neon adapter)                | 7.5       |
-| **Database**      | PostgreSQL (NeonDB Singapore)             | 17        |
-| **Auth**          | JWT (jose) + bcrypt + WebAuthn passkeys   | —         |
-| **Money**         | decimal.js-light + Prisma Decimal(18,4)   | —         |
-| **Logging**       | Pino                                      | 9.x       |
-| **Errors**        | Sentry (server + client + edge)           | 9.x       |
-| **Tracing**       | OpenTelemetry (dynamic import)            | Latest    |
-| **Email**         | Resend                                    | Latest    |
-| **AI**            | Vercel AI Gateway + Claude Haiku 4.5      | Latest    |
-| **Monorepo**      | Bun Workspaces                            | —         |
+| Layer             | Technology                              | Version         |
+| ----------------- | --------------------------------------- | --------------- |
+| **Runtime**       | Bun (API) + Node.js (Next.js)           | 1.3+ / 22.12+   |
+| **Frontend**      | Next.js App Router + Turbopack          | 16.4            |
+| **React**         | React                                   | 19              |
+| **Styling**       | Tailwind CSS                            | 4.x             |
+| **UI Components** | Radix UI, Lucide, Recharts, Motion      | Latest          |
+| **State**         | Zustand + TanStack Query                | 5.x             |
+| **Forms**         | React Hook Form + resolvers + Zod       | 7.x / 7.x / 4.x |
+| **TypeScript**    | TypeScript + typescript-eslint          | 6.x / 8.74      |
+| **Notifications** | Sonner + Web Push (VAPID)               | 2.x             |
+| **Backend**       | Hono                                    | 4.x             |
+| **ORM**           | Prisma (with Neon adapter)              | 7.10            |
+| **Database**      | PostgreSQL (NeonDB Singapore)           | 17              |
+| **Auth**          | JWT (jose) + bcrypt + WebAuthn passkeys | —               |
+| **Money**         | decimal.js-light + Prisma Decimal(18,4) | —               |
+| **Logging**       | Pino                                    | 10.x            |
+| **Errors**        | Sentry (server + client + edge)         | 11.x            |
+| **Tracing**       | OpenTelemetry (dynamic import)          | Latest          |
+| **Email**         | Resend                                  | Latest          |
+| **AI**            | Vercel AI Gateway + Claude Haiku 4.5    | Latest          |
+| **Monorepo**      | Bun Workspaces                          | —               |
 
 ## Phase deliverables (one-liners)
 

@@ -37,9 +37,14 @@ export function useServerTable(options: UseServerTableOptions = {}) {
     sortOrderParam === "asc" || sortOrderParam === "desc" ? sortOrderParam : (options.initialSortOrder ?? "desc");
   const urlSearch = searchParams.get(k("search")) ?? options.initialSearch ?? "";
 
-  // Local state drives the search input for instant feedback; the committed value
-  // is mirrored to the URL (deferred) and back into the input on external changes.
-  const [search, setSearch] = useState(urlSearch);
+  // Track URL changes with a revision so a stale draft stays invalidated even
+  // if navigation returns to the draft's original search string.
+  const [urlSearchState, setUrlSearchState] = useState({ value: urlSearch, revision: 0 });
+  if (urlSearchState.value !== urlSearch) {
+    setUrlSearchState({ value: urlSearch, revision: urlSearchState.revision + 1 });
+  }
+  const [searchInput, setSearchInput] = useState({ value: urlSearch, sourceRevision: 0 });
+  const search = searchInput.sourceRevision === urlSearchState.revision ? searchInput.value : urlSearch;
   const deferredSearch = useDeferredValue(search.trim());
 
   const setParams = useCallback(
@@ -63,11 +68,6 @@ export function useServerTable(options: UseServerTableOptions = {}) {
     // Only react to the debounced term; urlSearch/setParams are read inside.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [deferredSearch]);
-
-  // Follow external URL changes (back/forward, shared links) into the input.
-  useEffect(() => {
-    setSearch(urlSearch);
-  }, [urlSearch]);
 
   const params: PaginationParams = {
     page,
@@ -99,9 +99,12 @@ export function useServerTable(options: UseServerTableOptions = {}) {
     [setParams],
   );
 
-  const handleSearchChange = useCallback((value: string) => {
-    setSearch(value);
-  }, []);
+  const handleSearchChange = useCallback(
+    (value: string) => {
+      setSearchInput({ value, sourceRevision: urlSearchState.revision });
+    },
+    [urlSearchState.revision],
+  );
 
   return {
     params,

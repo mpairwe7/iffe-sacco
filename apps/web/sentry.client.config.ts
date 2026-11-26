@@ -3,6 +3,7 @@
  * when SENTRY_DSN / NEXT_PUBLIC_SENTRY_DSN is set.
  */
 import * as Sentry from "@sentry/nextjs";
+import { sentryDataCollection } from "./sentry-data-collection";
 
 const dsn = process.env.NEXT_PUBLIC_SENTRY_DSN || process.env.SENTRY_DSN;
 
@@ -14,7 +15,7 @@ if (dsn) {
     tracesSampleRate: Number(process.env.NEXT_PUBLIC_SENTRY_TRACES_SAMPLE_RATE || 0.1),
     replaysSessionSampleRate: 0,
     replaysOnErrorSampleRate: 1.0,
-    sendDefaultPii: false,
+    dataCollection: sentryDataCollection,
     integrations: [
       Sentry.browserTracingIntegration(),
       Sentry.replayIntegration({ maskAllText: true, blockAllMedia: true }),
